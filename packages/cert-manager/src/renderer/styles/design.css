@@ -1,0 +1,893 @@
+/*
+ * The design standard: every component an extension page is built from, in one
+ * file that is the same in every extension but for the prefix. `design.md` in
+ * the freelens-extension skill says when to use each one; this says how it
+ * looks. Change it there and copy it out, never in a package: the copies are
+ * checked against it, and a page that differs from its neighbours is the
+ * defect this file exists to prevent.
+ *
+ * Three rules hold throughout.
+ *
+ * - Colour comes from the host's theme. A value written in here looks right in
+ *   the theme it was written for and wrong in the other. The one literal is
+ *   the white on a pressed filter, which is what the host's own filled buttons
+ *   carry in both themes.
+ * - Everything that holds content sits on one grey: the host's sidebar surface,
+ *   a clear step from the page in either theme. Hover is the host's own hover
+ *   for that surface. Neither `--contentColor` (the page itself) nor
+ *   `--layoutBackground` (identical to the surface in the light theme) will do.
+ * - Anything pressable is a <button>, for the keyboard and the screen reader,
+ *   and a button's browser default is `text-align: center`. Every component that
+ *   can be a button resets it; removing a reset centres a list of names.
+ *
+ * Tones — critical, warning, info, ok — are the host's in every extension, so a
+ * critical row reads the same wherever it is. A domain with colours its users
+ * already know (a scanner's severities, a CD tool's statuses) keeps them for
+ * its own marks, in its own stylesheet: a tag's text, a status dot. Nothing
+ * here is overridden in a package stylesheet.
+ */
+
+.CertManager {
+  --cert-manager-gap-xs: calc(var(--unit, 8px) * 0.5);
+  --cert-manager-gap-sm: var(--unit, 8px);
+  --cert-manager-gap-md: calc(var(--unit, 8px) * 2);
+  --cert-manager-gap-lg: calc(var(--unit, 8px) * 3);
+
+  --cert-manager-small: var(--font-size-small, 12px);
+  --cert-manager-radius: var(--border-radius, 3px);
+  --cert-manager-line: var(--borderFaintColor, rgba(127, 127, 127, 0.25));
+  --cert-manager-line-strong: var(--borderColor, rgba(127, 127, 127, 0.5));
+  --cert-manager-surface: var(--sidebarBackground, rgba(127, 127, 127, 0.15));
+  --cert-manager-surface-hover: var(--sidebarItemHoverBackground, rgba(127, 127, 127, 0.25));
+
+  --cert-manager-tone-critical: var(--colorError);
+  --cert-manager-tone-warning: var(--colorWarning);
+  --cert-manager-tone-ok: var(--colorSuccess);
+  --cert-manager-tone-info: var(--colorInfo);
+
+  color: var(--textColorPrimary);
+}
+
+.CertManager :is(button, a, input):focus-visible {
+  outline: 2px solid var(--colorInfo);
+  outline-offset: 1px;
+}
+
+/* ─── Page ──────────────────────────────────────────────────────────────── */
+
+.CertManager-page {
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding: var(--cert-manager-gap-lg);
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: var(--cert-manager-gap-lg);
+  min-width: 0;
+}
+
+/* The headline and its sublines on the left, the page's one action on the right. */
+.CertManager-page__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--cert-manager-gap-md);
+  flex-wrap: wrap;
+}
+
+.CertManager-page__head > :first-child {
+  flex: 1 1 20em;
+  min-width: 0;
+}
+
+.CertManager-page__headline {
+  display: flex;
+  align-items: baseline;
+  gap: var(--cert-manager-gap-sm);
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: calc(var(--unit, 8px) * 3);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: 1.25;
+}
+
+.CertManager-page__subline {
+  margin: var(--cert-manager-gap-xs) 0 0;
+  color: var(--textColorSecondary);
+}
+
+.CertManager-page__subline--alarm {
+  color: var(--cert-manager-tone-critical);
+}
+
+.CertManager-page__actions {
+  display: grid;
+  justify-items: end;
+  gap: var(--cert-manager-gap-xs);
+  max-width: 28em;
+  text-align: right;
+}
+
+/* ─── Section ───────────────────────────────────────────────────────────── */
+
+.CertManager-section {
+  display: grid;
+  gap: var(--cert-manager-gap-sm);
+  min-width: 0;
+}
+
+/* Title first; whatever comes last is pushed to the right edge. */
+.CertManager-section__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--cert-manager-gap-sm);
+  flex-wrap: wrap;
+}
+
+.CertManager-section__bar > :last-child:not(:first-child) {
+  margin-left: auto;
+}
+
+.CertManager-section__title {
+  margin: 0;
+  font-size: var(--font-size-big, 16px);
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+.CertManager-section__note {
+  margin: 0;
+  color: var(--textColorSecondary);
+}
+
+/* ─── Cards: one number and what it counts ──────────────────────────────── */
+
+/* auto-fill, not auto-fit: a card is the same width on every page, however few. */
+.CertManager-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: var(--cert-manager-gap-sm);
+}
+
+.CertManager-card {
+  display: grid;
+  align-content: start;
+  gap: var(--cert-manager-gap-xs);
+  padding: var(--cert-manager-gap-md);
+  border: 1px solid var(--cert-manager-line);
+  border-radius: var(--cert-manager-radius);
+  background: var(--cert-manager-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.CertManager-card {
+  cursor: pointer;
+}
+
+button.CertManager-card:hover {
+  background: var(--cert-manager-surface-hover);
+  border-color: var(--cert-manager-line-strong);
+}
+
+.CertManager-card__value {
+  font-size: calc(var(--unit, 8px) * 3.5);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.CertManager-card__label {
+  font-size: var(--cert-manager-small);
+  color: var(--textColorSecondary);
+}
+
+.CertManager-card--critical .CertManager-card__value {
+  color: var(--cert-manager-tone-critical);
+}
+
+.CertManager-card--warning .CertManager-card__value {
+  color: var(--cert-manager-tone-warning);
+}
+
+.CertManager-card--info .CertManager-card__value {
+  color: var(--cert-manager-tone-info);
+}
+
+.CertManager-card--ok .CertManager-card__value {
+  color: var(--cert-manager-tone-ok);
+}
+
+/* ─── Lists and rows: one object per line ───────────────────────────────── */
+
+/* A <div>, or an <ol> when the order is the point, as in a chain of objects. */
+.CertManager-list {
+  display: grid;
+  gap: var(--cert-manager-gap-xs);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+ * State, then the object, then a figure, then its menu — each optional but
+ * the object. The tone is the left edge and the colour of the state; the state
+ * column is fixed so states line up down the list.
+ */
+.CertManager-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--cert-manager-gap-md);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--cert-manager-gap-sm) var(--cert-manager-gap-md);
+  border: 1px solid var(--cert-manager-line);
+  border-left: 3px solid var(--cert-manager-line);
+  border-radius: var(--cert-manager-radius);
+  background: var(--cert-manager-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.CertManager-row {
+  cursor: pointer;
+}
+
+/* A row that also carries a menu is a <div> whose main part is the button. */
+button.CertManager-row:hover,
+.CertManager-row:has(> button.CertManager-row__main:hover) {
+  background: var(--cert-manager-surface-hover);
+}
+
+.CertManager-row--critical {
+  border-left-color: var(--cert-manager-tone-critical);
+}
+
+.CertManager-row--warning {
+  border-left-color: var(--cert-manager-tone-warning);
+}
+
+.CertManager-row--info {
+  border-left-color: var(--cert-manager-tone-info);
+}
+
+.CertManager-row--ok {
+  border-left-color: var(--cert-manager-tone-ok);
+}
+
+.CertManager-row__state {
+  flex: 0 0 9em;
+  font-size: var(--cert-manager-small);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+.CertManager-row--critical .CertManager-row__state {
+  color: var(--cert-manager-tone-critical);
+}
+
+.CertManager-row--warning .CertManager-row__state {
+  color: var(--cert-manager-tone-warning);
+}
+
+.CertManager-row--info .CertManager-row__state {
+  color: var(--cert-manager-tone-info);
+}
+
+.CertManager-row--ok .CertManager-row__state {
+  color: var(--cert-manager-tone-ok);
+}
+
+.CertManager-row__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+button.CertManager-row__main {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* The name in bold, then what locates it, on one line that wraps. */
+.CertManager-row__name {
+  display: flex;
+  align-items: baseline;
+  gap: var(--cert-manager-gap-xs) var(--cert-manager-gap-sm);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.CertManager-row__meta {
+  font-size: var(--cert-manager-small);
+  color: var(--textColorSecondary);
+}
+
+.CertManager-row__reason {
+  font-size: var(--cert-manager-small);
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+.CertManager-row__aside {
+  flex: none;
+  font-size: var(--cert-manager-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.CertManager-row__actions {
+  flex: none;
+  align-self: center;
+}
+
+/* ─── Boxes: one object and what belongs to it ──────────────────────────── */
+
+.CertManager-box {
+  display: grid;
+  gap: var(--cert-manager-gap-xs);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--cert-manager-gap-sm) var(--cert-manager-gap-md);
+  border: 1px solid var(--cert-manager-line);
+  border-left: 3px solid var(--cert-manager-line);
+  border-radius: var(--cert-manager-radius);
+  background: var(--cert-manager-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.CertManager-box {
+  cursor: pointer;
+}
+
+button.CertManager-box:hover {
+  background: var(--cert-manager-surface-hover);
+}
+
+.CertManager-box--critical {
+  border-left-color: var(--cert-manager-tone-critical);
+}
+
+.CertManager-box--warning {
+  border-left-color: var(--cert-manager-tone-warning);
+}
+
+.CertManager-box--info {
+  border-left-color: var(--cert-manager-tone-info);
+}
+
+.CertManager-box--ok {
+  border-left-color: var(--cert-manager-tone-ok);
+}
+
+/* Tag, what it is, a count. A head that toggles the box open is the button. */
+.CertManager-box__head {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  align-items: baseline;
+  gap: var(--cert-manager-gap-sm);
+  width: 100%;
+}
+
+button.CertManager-box__head {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.CertManager-box__title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--cert-manager-gap-xs) var(--cert-manager-gap-sm);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.CertManager-box__meta {
+  font-size: var(--cert-manager-small);
+  color: var(--textColorSecondary);
+}
+
+.CertManager-box__count {
+  font-size: var(--cert-manager-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.CertManager-box__reason {
+  margin: 0;
+  font-size: var(--cert-manager-small);
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+/* ─── Chips: an object named inside another ─────────────────────────────── */
+
+.CertManager-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cert-manager-gap-xs);
+}
+
+/* A chip sits on the grey, so it takes the page's colour to stand out from it. */
+.CertManager-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--cert-manager-gap-xs);
+  padding: 1px var(--cert-manager-gap-sm);
+  border: 1px solid transparent;
+  border-radius: var(--cert-manager-radius);
+  background: var(--contentColor, rgba(127, 127, 127, 0.1));
+  font: inherit;
+  font-size: var(--cert-manager-small);
+  color: inherit;
+  text-align: left;
+}
+
+button.CertManager-chip {
+  color: var(--colorInfo);
+  cursor: pointer;
+}
+
+button.CertManager-chip:hover {
+  border-color: var(--colorInfo);
+}
+
+.CertManager-chip__meta {
+  color: var(--textColorSecondary);
+}
+
+/* ─── Tags: a state, in words ───────────────────────────────────────────── */
+
+/* The colour is the text's, so a domain class that sets `color` tones it too. */
+.CertManager-tag {
+  display: inline-block;
+  padding: 0 var(--cert-manager-gap-xs);
+  border: 1px solid currentColor;
+  border-radius: var(--cert-manager-radius);
+  font-size: var(--cert-manager-small);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.CertManager-tag--critical {
+  color: var(--cert-manager-tone-critical);
+}
+
+.CertManager-tag--warning {
+  color: var(--cert-manager-tone-warning);
+}
+
+.CertManager-tag--info {
+  color: var(--cert-manager-tone-info);
+}
+
+.CertManager-tag--ok {
+  color: var(--cert-manager-tone-ok);
+}
+
+.CertManager-tag--neutral {
+  color: var(--textColorSecondary);
+}
+
+/* ─── Tables: many objects, compared column by column ───────────────────── */
+
+/*
+ * Read like the host's own lists — the Vulnerabilities list, the Pods list:
+ * the same header in the same case and colour, rows of the same height — so a
+ * table here does not look foreign beside one of those. It sits on the surface
+ * like every other box, and between its rows the page's colour shows through,
+ * as it does between the rows of a list; the host's faint line is the same grey
+ * as the surface and would vanish.
+ */
+.CertManager-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--cert-manager-line);
+  border-radius: var(--cert-manager-radius);
+  background: var(--cert-manager-surface);
+}
+
+.CertManager-table th {
+  padding: var(--cert-manager-gap-sm) var(--cert-manager-gap-md);
+  border-bottom: 1px solid var(--cert-manager-line-strong);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: 1.25;
+  text-align: left;
+  color: var(--tableHeaderColor, var(--textColorPrimary));
+  white-space: nowrap;
+}
+
+.CertManager-table td {
+  padding: var(--cert-manager-gap-sm) var(--cert-manager-gap-md);
+  border-bottom: 1px solid var(--contentColor, var(--cert-manager-line));
+  line-height: 1.25;
+  vertical-align: baseline;
+  overflow-wrap: anywhere;
+}
+
+.CertManager-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.CertManager-table__number {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * The one column that takes the width left over, and trails off when short.
+ * Beside it, every column that must not break — a name, a date, a revision —
+ * is __shrink: a cell may break anywhere, and the fill column would squeeze an
+ * unmarked neighbour down to a letter per line.
+ */
+.CertManager-table__fill {
+  width: 100%;
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A column as narrow as its content: a date, a revision, an icon. */
+.CertManager-table__shrink {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.CertManager-table__row--clickable {
+  cursor: pointer;
+}
+
+.CertManager-table__row--clickable:hover td {
+  background: var(--cert-manager-surface-hover);
+}
+
+/* ─── Facts: one object's attributes, name and value ────────────────────── */
+
+.CertManager-facts {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--cert-manager-gap-xs) var(--cert-manager-gap-md);
+  margin: 0;
+  padding: var(--cert-manager-gap-sm) var(--cert-manager-gap-md);
+  border: 1px solid var(--cert-manager-line);
+  border-radius: var(--cert-manager-radius);
+  background: var(--cert-manager-surface);
+}
+
+.CertManager-facts dt {
+  color: var(--textColorSecondary);
+}
+
+.CertManager-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ─── Banner: what the whole page needs said first ──────────────────────── */
+
+.CertManager-banner {
+  display: grid;
+  gap: var(--cert-manager-gap-xs);
+  padding: var(--cert-manager-gap-sm) var(--cert-manager-gap-md);
+  border: 1px solid var(--cert-manager-tone-warning);
+  border-radius: var(--cert-manager-radius);
+  background: var(--cert-manager-surface);
+}
+
+.CertManager-banner__title {
+  display: flex;
+  align-items: center;
+  gap: var(--cert-manager-gap-sm);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--cert-manager-tone-warning);
+}
+
+.CertManager-banner__body {
+  overflow-wrap: anywhere;
+}
+
+.CertManager-banner--critical {
+  border-color: var(--cert-manager-tone-critical);
+}
+
+.CertManager-banner--critical .CertManager-banner__title {
+  color: var(--cert-manager-tone-critical);
+}
+
+/* ─── Controls ──────────────────────────────────────────────────────────── */
+
+/* A filter narrows what is shown and says so with `aria-pressed`. */
+.CertManager-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cert-manager-gap-xs);
+}
+
+.CertManager-filter {
+  padding: 2px var(--cert-manager-gap-sm);
+  border: 1px solid var(--cert-manager-line);
+  border-radius: var(--cert-manager-radius);
+  background: transparent;
+  font: inherit;
+  font-size: var(--cert-manager-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.CertManager-filter:hover {
+  border-color: var(--cert-manager-line-strong);
+  color: var(--textColorPrimary);
+}
+
+.CertManager-filter[aria-pressed="true"] {
+  border-color: var(--colorInfo);
+  background: var(--colorInfo);
+  color: #fff;
+}
+
+.CertManager-filter__count {
+  margin-left: var(--cert-manager-gap-xs);
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * A button does something. Primary is what the view exists for; caution is a
+ * write that reaches more than the object in front of the reader.
+ */
+.CertManager-button {
+  padding: var(--cert-manager-gap-xs) var(--cert-manager-gap-md);
+  border: 1px solid var(--cert-manager-line-strong);
+  border-radius: var(--cert-manager-radius);
+  background: var(--cert-manager-surface);
+  font: inherit;
+  color: var(--textColorPrimary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.CertManager-button:hover:not(:disabled) {
+  background: var(--cert-manager-surface-hover);
+}
+
+.CertManager-button--primary {
+  border-color: var(--colorInfo);
+}
+
+.CertManager-button--caution {
+  border-color: var(--cert-manager-tone-warning);
+  color: var(--cert-manager-tone-warning);
+}
+
+.CertManager-button:disabled {
+  border-color: var(--cert-manager-line);
+  color: var(--textColorSecondary);
+  cursor: not-allowed;
+}
+
+/* Buttons side by side: a toolbar, a pager. */
+.CertManager-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--cert-manager-gap-xs);
+  flex-wrap: wrap;
+}
+
+.CertManager-icon-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--textColorSecondary);
+  cursor: pointer;
+}
+
+.CertManager-icon-button:hover {
+  color: var(--textColorPrimary);
+}
+
+.CertManager-search {
+  min-width: 0;
+  padding: var(--cert-manager-gap-xs) var(--cert-manager-gap-sm);
+  border: 1px solid var(--inputControlBorder, var(--cert-manager-line));
+  border-radius: var(--cert-manager-radius);
+  background: var(--inputControlBackground, transparent);
+  font: inherit;
+  color: var(--textColorPrimary);
+}
+
+.CertManager-search:hover {
+  border-color: var(--inputControlHoverBorder, var(--cert-manager-line-strong));
+}
+
+.CertManager-search:focus {
+  outline: none;
+  border-color: var(--colorInfo);
+}
+
+.CertManager-search--wide {
+  flex: 1 1 20rem;
+}
+
+/* A button that reads as a link: it navigates, it does not act. */
+.CertManager-link {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: var(--colorInfo);
+  text-align: left;
+  cursor: pointer;
+}
+
+.CertManager-link:hover,
+.CertManager a:hover {
+  text-decoration: underline;
+}
+
+.CertManager a {
+  color: var(--colorInfo);
+  text-decoration: none;
+}
+
+/* ─── Picker: choose on the left, read on the right ─────────────────────── */
+
+.CertManager-picker {
+  height: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.CertManager-picker__side {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: var(--cert-manager-gap-sm);
+  padding: var(--cert-manager-gap-md);
+  border-right: 1px solid var(--cert-manager-line);
+  min-height: 0;
+}
+
+.CertManager-picker__list {
+  overflow-y: auto;
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 1px;
+  min-height: 0;
+}
+
+.CertManager-picker__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "name aside" "meta aside";
+  align-items: center;
+  gap: 0 var(--cert-manager-gap-sm);
+  padding: var(--cert-manager-gap-sm);
+  border: none;
+  border-left: 2px solid transparent;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.CertManager-picker__item:hover {
+  background: var(--cert-manager-surface-hover);
+}
+
+.CertManager-picker__item--selected {
+  border-left-color: var(--colorInfo);
+  background: var(--cert-manager-surface);
+}
+
+.CertManager-picker__name {
+  grid-area: name;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.CertManager-picker__meta {
+  grid-area: meta;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--cert-manager-small);
+  color: var(--textColorSecondary);
+}
+
+/* Figures, each with its unit in words: "18 critical", "5 days left". */
+.CertManager-picker__aside {
+  grid-area: aside;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: var(--cert-manager-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.CertManager-picker__detail {
+  overflow-y: auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+.CertManager-picker__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+  padding: var(--cert-manager-gap-lg);
+  color: var(--textColorSecondary);
+  text-align: center;
+}
+
+/* ─── Text ──────────────────────────────────────────────────────────────── */
+
+.CertManager-muted {
+  color: var(--textColorSecondary);
+}
+
+/* Small and secondary: the sentence beside a control that explains it. */
+.CertManager-hint {
+  font-size: var(--cert-manager-small);
+  color: var(--textColorSecondary);
+}
+
+/* One monospace: a <code> and a mono span look the same, wherever they are. */
+.CertManager code,
+.CertManager-mono {
+  font-family: var(--font-monospace, monospace);
+  font-size: var(--cert-manager-small);
+}
+
+.CertManager-truncate {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.CertManager-text--critical {
+  color: var(--cert-manager-tone-critical);
+}
+
+.CertManager-text--warning {
+  color: var(--cert-manager-tone-warning);
+}
+
+.CertManager-text--info {
+  color: var(--cert-manager-tone-info);
+}
+
+.CertManager-text--ok {
+  color: var(--cert-manager-tone-ok);
+}

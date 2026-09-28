@@ -1,0 +1,44 @@
+/*
+ * What only the Trivy extension has. Every page, card, row, box, table, filter
+ * and banner comes from design.css, the shared standard; nothing here restyles
+ * one.
+ *
+ * The severity colours are the one palette of its own, and they colour only a
+ * severity: a tag's text, a count beside a workload. They match what Trivy's
+ * own output uses, so someone who reads `trivy image` every day does not have
+ * to re-learn what red means here. A row's edge or a card's number is a tone,
+ * and tones are the host's, as in every extension.
+ *
+ * On the severity marks as well as the root: the Vulnerability Reports list is
+ * the host's page, with no `.Trivy` above its cells, and a count there would
+ * otherwise take no colour at all.
+ */
+
+:is(.Trivy, [class*="Trivy-severity--"]) {
+  --trivy-critical: #d32029;
+  --trivy-high: #e8703a;
+  --trivy-medium: #e8b339;
+  --trivy-low: #3c9ae8;
+  --trivy-unknown: #8c8c8c;
+}
+
+.Trivy-severity--CRITICAL {
+  color: var(--trivy-critical);
+}
+
+.Trivy-severity--HIGH {
+  color: var(--trivy-high);
+}
+
+.Trivy-severity--MEDIUM {
+  color: var(--trivy-medium);
+}
+
+.Trivy-severity--LOW {
+  color: var(--trivy-low);
+}
+
+.Trivy-severity--UNKNOWN,
+.Trivy-severity--NONE {
+  color: var(--trivy-unknown);
+}

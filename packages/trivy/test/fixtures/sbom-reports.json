@@ -1,0 +1,1593 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-27T03:47:13Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "6f89747576",
+          "trivy-operator.container.name": "pebble",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "pebble-57d44f89cd",
+          "trivy-operator.resource.namespace": "acme-test"
+        },
+        "name": "replicaset-pebble-57d44f89cd-pebble",
+        "namespace": "acme-test",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "pebble-57d44f89cd",
+            "uid": "bd1bf52f-2705-46f2-ba3d-84c5991812e5"
+          }
+        ],
+        "resourceVersion": "30173",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/acme-test/sbomreports/replicaset-pebble-57d44f89cd-pebble",
+        "uid": "e386d022-4c64-46e0-94e2-9b36bd0fddd4"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:ddf230642b1a584f519f32e347de1b05a6e4c1f6c35c1863b33effeab5f78199",
+          "repository": "letsencrypt/pebble",
+          "tag": "2.10.1"
+        },
+        "registry": {
+          "server": "ghcr.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 9,
+          "dependenciesCount": 9
+        },
+        "updateTimestamp": "2026-09-28T03:47:47Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-26T22:02:17Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "f498fbb87",
+          "trivy-operator.container.name": "argocd-applicationset-controller",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "argocd-applicationset-controller-5959f79d67",
+          "trivy-operator.resource.namespace": "argocd"
+        },
+        "name": "replicaset-557676bcfb",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "argocd-applicationset-controller-5959f79d67",
+            "uid": "39c77d63-a6ee-457a-b573-772df57b5aeb"
+          }
+        ],
+        "resourceVersion": "28300",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/argocd/sbomreports/replicaset-557676bcfb",
+        "uid": "23cd7d8c-ac7c-4928-bf23-e3740da463c5"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:e2aadfae709d904e87f46ba4aa49601d827b3022db22cd4d03aae816a2e7097b",
+          "repository": "argoproj/argocd",
+          "tag": "v3.5.2"
+        },
+        "registry": {
+          "server": "quay.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 591,
+          "dependenciesCount": 591
+        },
+        "updateTimestamp": "2026-09-28T03:05:55Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-26T22:01:25Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "599787fc88",
+          "trivy-operator.container.name": "argocd-notifications-controller",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "argocd-notifications-controller-5856884878",
+          "trivy-operator.resource.namespace": "argocd"
+        },
+        "name": "replicaset-577f44f84b",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "argocd-notifications-controller-5856884878",
+            "uid": "81b9f627-1eec-4601-94d3-d47b21101f20"
+          }
+        ],
+        "resourceVersion": "28292",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/argocd/sbomreports/replicaset-577f44f84b",
+        "uid": "62430935-9748-4aa2-81eb-b1f5dcc5ba2d"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:e2aadfae709d904e87f46ba4aa49601d827b3022db22cd4d03aae816a2e7097b",
+          "repository": "argoproj/argocd",
+          "tag": "v3.5.2"
+        },
+        "registry": {
+          "server": "quay.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 591,
+          "dependenciesCount": 591
+        },
+        "updateTimestamp": "2026-09-28T03:05:55Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T03:06:10Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "5dc958df9c",
+          "trivy-operator.container.name": "copyutil",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "argocd-dex-server-6f84fd5569",
+          "trivy-operator.resource.namespace": "argocd"
+        },
+        "name": "replicaset-argocd-dex-server-6f84fd5569-copyutil",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "argocd-dex-server-6f84fd5569",
+            "uid": "c170622c-ae3e-4017-8e47-2d0fa1f53e20"
+          }
+        ],
+        "resourceVersion": "28383",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/argocd/sbomreports/replicaset-argocd-dex-server-6f84fd5569-copyutil",
+        "uid": "ed2e696a-4670-4872-8d0f-6c7b59a7d75c"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:e2aadfae709d904e87f46ba4aa49601d827b3022db22cd4d03aae816a2e7097b",
+          "repository": "argoproj/argocd",
+          "tag": "v3.5.2"
+        },
+        "registry": {
+          "server": "quay.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 591,
+          "dependenciesCount": 591
+        },
+        "updateTimestamp": "2026-09-28T03:06:10Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-26T22:01:01Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "5dc958df9c",
+          "trivy-operator.container.name": "dex",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "argocd-dex-server-6f84fd5569",
+          "trivy-operator.resource.namespace": "argocd"
+        },
+        "name": "replicaset-argocd-dex-server-6f84fd5569-dex",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "argocd-dex-server-6f84fd5569",
+            "uid": "c170622c-ae3e-4017-8e47-2d0fa1f53e20"
+          }
+        ],
+        "resourceVersion": "28384",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/argocd/sbomreports/replicaset-argocd-dex-server-6f84fd5569-dex",
+        "uid": "12bc73ae-4118-4d47-9168-ebf3bb9f0edb"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:8499afd690c437f52301efd2b05b2455da5bd2dfc20332cd697dc9937f808462",
+          "repository": "dexidp/dex",
+          "tag": "v2.45.1"
+        },
+        "registry": {
+          "server": "ghcr.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 291,
+          "dependenciesCount": 291
+        },
+        "updateTimestamp": "2026-09-28T03:06:10Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-26T22:00:50Z",
+        "generation": 5,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "6b55b687bb",
+          "trivy-operator.container.name": "redis",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "argocd-redis-86846d5986",
+          "trivy-operator.resource.namespace": "argocd"
+        },
+        "name": "replicaset-argocd-redis-86846d5986-redis",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "argocd-redis-86846d5986",
+            "uid": "3fa3d5f8-7071-4ffd-9742-28e376afc606"
+          }
+        ],
+        "resourceVersion": "61467",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/argocd/sbomreports/replicaset-argocd-redis-86846d5986-redis",
+        "uid": "266fbaf6-92eb-4635-9175-0345703d3223"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:08ad0b1d280850169a790dba1393ff7a90aef951fc19632cf4d3ce4f78e679ba",
+          "repository": "docker/library/redis",
+          "tag": "8.2.3-alpine"
+        },
+        "registry": {
+          "server": "public.ecr.aws"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 24,
+          "dependenciesCount": 24
+        },
+        "updateTimestamp": "2026-09-28T17:36:01Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-27T16:24:08Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "6b55b687bb",
+          "trivy-operator.container.name": "secret-init",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "argocd-redis-86846d5986",
+          "trivy-operator.resource.namespace": "argocd"
+        },
+        "name": "replicaset-argocd-redis-86846d5986-secret-init",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "argocd-redis-86846d5986",
+            "uid": "3fa3d5f8-7071-4ffd-9742-28e376afc606"
+          }
+        ],
+        "resourceVersion": "28469",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/argocd/sbomreports/replicaset-argocd-redis-86846d5986-secret-init",
+        "uid": "951568ef-fce3-4539-bf2e-f0fe7c89e081"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:e2aadfae709d904e87f46ba4aa49601d827b3022db22cd4d03aae816a2e7097b",
+          "repository": "argoproj/argocd",
+          "tag": "v3.5.2"
+        },
+        "registry": {
+          "server": "quay.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 591,
+          "dependenciesCount": 591
+        },
+        "updateTimestamp": "2026-09-28T03:06:33Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-26T22:01:23Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "6f5d6fd655",
+          "trivy-operator.container.name": "argocd-repo-server",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "argocd-repo-server-7d44c57bc8",
+          "trivy-operator.resource.namespace": "argocd"
+        },
+        "name": "replicaset-argocd-repo-server-7d44c57bc8-argocd-repo-server",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "argocd-repo-server-7d44c57bc8",
+            "uid": "4f64af9b-72f7-4c41-a6b6-d0b9c8c2b414"
+          }
+        ],
+        "resourceVersion": "28247",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/argocd/sbomreports/replicaset-argocd-repo-server-7d44c57bc8-argocd-repo-server",
+        "uid": "5e5588f3-a4ed-4cfc-9b41-3cf458fc5e56"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:e2aadfae709d904e87f46ba4aa49601d827b3022db22cd4d03aae816a2e7097b",
+          "repository": "argoproj/argocd",
+          "tag": "v3.5.2"
+        },
+        "registry": {
+          "server": "quay.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 591,
+          "dependenciesCount": 591
+        },
+        "updateTimestamp": "2026-09-28T03:05:51Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-26T22:01:11Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "74d7846bfd",
+          "trivy-operator.container.name": "argocd-server",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "argocd-server-8567f6cc96",
+          "trivy-operator.resource.namespace": "argocd"
+        },
+        "name": "replicaset-argocd-server-8567f6cc96-argocd-server",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "argocd-server-8567f6cc96",
+            "uid": "cb880bc7-ec68-495f-b54c-63afda9d01ce"
+          }
+        ],
+        "resourceVersion": "28227",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/argocd/sbomreports/replicaset-argocd-server-8567f6cc96-argocd-server",
+        "uid": "04dc9800-b839-47a9-94e2-06e0eac2de92"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:e2aadfae709d904e87f46ba4aa49601d827b3022db22cd4d03aae816a2e7097b",
+          "repository": "argoproj/argocd",
+          "tag": "v3.5.2"
+        },
+        "registry": {
+          "server": "quay.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 591,
+          "dependenciesCount": 591
+        },
+        "updateTimestamp": "2026-09-28T03:05:49Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-26T22:01:23Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "65ffd8559c",
+          "trivy-operator.container.name": "argocd-application-controller",
+          "trivy-operator.resource.kind": "StatefulSet",
+          "trivy-operator.resource.name": "argocd-application-controller",
+          "trivy-operator.resource.namespace": "argocd"
+        },
+        "name": "statefulset-68bbf5999d",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "StatefulSet",
+            "name": "argocd-application-controller",
+            "uid": "efb2b991-9193-4904-a877-030c6f73bb13"
+          }
+        ],
+        "resourceVersion": "28209",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/argocd/sbomreports/statefulset-68bbf5999d",
+        "uid": "b4edb7c8-9033-4790-987f-399f0813f67e"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:e2aadfae709d904e87f46ba4aa49601d827b3022db22cd4d03aae816a2e7097b",
+          "repository": "argoproj/argocd",
+          "tag": "v3.5.2"
+        },
+        "registry": {
+          "server": "quay.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 591,
+          "dependenciesCount": 591
+        },
+        "updateTimestamp": "2026-09-28T03:05:46Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-27T03:47:12Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "7bf7dfb9c",
+          "trivy-operator.container.name": "cert-manager-cainjector",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "cert-manager-cainjector-7745d85c9c",
+          "trivy-operator.resource.namespace": "cert-manager"
+        },
+        "name": "replicaset-565f544b64",
+        "namespace": "cert-manager",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "cert-manager-cainjector-7745d85c9c",
+            "uid": "26f3f5fe-b138-4f17-a2e1-e20fc80ab3d1"
+          }
+        ],
+        "resourceVersion": "30140",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/cert-manager/sbomreports/replicaset-565f544b64",
+        "uid": "1889dc0c-ea93-41fb-b4c5-e83a9e397823"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:c85268c64f2e0e76684bf5fe8906caff34b82523561c6affe0fae3546bd87562",
+          "repository": "jetstack/cert-manager-cainjector",
+          "tag": "v1.21.2"
+        },
+        "registry": {
+          "server": "quay.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 86,
+          "dependenciesCount": 86
+        },
+        "updateTimestamp": "2026-09-28T03:47:43Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-27T03:47:03Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "6cb8754465",
+          "trivy-operator.container.name": "cert-manager-controller",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "cert-manager-55f858c7fc",
+          "trivy-operator.resource.namespace": "cert-manager"
+        },
+        "name": "replicaset-cert-manager-55f858c7fc-cert-manager-controller",
+        "namespace": "cert-manager",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "cert-manager-55f858c7fc",
+            "uid": "890352a3-2f5c-4490-86ab-e37e252cdb65"
+          }
+        ],
+        "resourceVersion": "30102",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/cert-manager/sbomreports/replicaset-cert-manager-55f858c7fc-cert-manager-controller",
+        "uid": "78f8ca31-bdfa-4240-839f-a18d161697dc"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:70f532fd9cfde0b09d55687200942399d89838bc2d5d5b45152eb799a15912b8",
+          "repository": "jetstack/cert-manager-controller",
+          "tag": "v1.21.2"
+        },
+        "registry": {
+          "server": "quay.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 187,
+          "dependenciesCount": 187
+        },
+        "updateTimestamp": "2026-09-28T03:47:35Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-27T03:47:11Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "6cc697744f",
+          "trivy-operator.container.name": "cert-manager-webhook",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "cert-manager-webhook-67fd9d5484",
+          "trivy-operator.resource.namespace": "cert-manager"
+        },
+        "name": "replicaset-cert-manager-webhook-67fd9d5484-cert-manager-webhook",
+        "namespace": "cert-manager",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "cert-manager-webhook-67fd9d5484",
+            "uid": "37ff1a9a-4901-40b0-bddd-eaf5ff03470f"
+          }
+        ],
+        "resourceVersion": "30155",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/cert-manager/sbomreports/replicaset-cert-manager-webhook-67fd9d5484-cert-manager-webhook",
+        "uid": "bd8900d5-5248-47d6-b26a-a5418e9b24a3"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:a60e2dac46dbb8a7f3df95c54ce941012f54c2fe022f0ee55aaa1ab40ed957ae",
+          "repository": "jetstack/cert-manager-webhook",
+          "tag": "v1.21.2"
+        },
+        "registry": {
+          "server": "quay.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 105,
+          "dependenciesCount": 105
+        },
+        "updateTimestamp": "2026-09-28T03:47:44Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:37:16Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "d99b7746f",
+          "trivy-operator.container.name": "acmesolver",
+          "trivy-operator.resource.kind": "Pod",
+          "trivy-operator.resource.name": "cm-acme-http-solver-k84hg",
+          "trivy-operator.resource.namespace": "demo"
+        },
+        "name": "pod-cm-acme-http-solver-k84hg-acmesolver",
+        "namespace": "demo",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Pod",
+            "name": "cm-acme-http-solver-k84hg",
+            "uid": "3813c2fb-2a8b-43fb-b9f6-61019b1f5492"
+          }
+        ],
+        "resourceVersion": "61854",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/demo/sbomreports/pod-cm-acme-http-solver-k84hg-acmesolver",
+        "uid": "923bcc25-ae79-4d7c-9080-b36d15fddb73"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:699b40d622211ab7accad8a21b04c5fbaa1841ef7a12621e8de492dbe27b2503",
+          "repository": "jetstack/cert-manager-acmesolver",
+          "tag": "v1.21.2"
+        },
+        "registry": {
+          "server": "quay.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 53,
+          "dependenciesCount": 53
+        },
+        "updateTimestamp": "2026-09-28T17:37:57Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-26T22:01:15Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "5d86579c47",
+          "trivy-operator.container.name": "api",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "api-657b58bb95",
+          "trivy-operator.resource.namespace": "demo"
+        },
+        "name": "replicaset-api-657b58bb95-api",
+        "namespace": "demo",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "api-657b58bb95",
+            "uid": "111016e7-8e43-4b31-b477-e2588e159ec2"
+          }
+        ],
+        "resourceVersion": "28444",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/demo/sbomreports/replicaset-api-657b58bb95-api",
+        "uid": "33e0fc6c-4396-43e4-b7ca-6a2ab5f22c6d"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:2d97f6910b16bd338d3060f261f53f144965f755599aab1acda1e13cf1731b1b",
+          "repository": "library/python",
+          "tag": "3.9-slim"
+        },
+        "registry": {
+          "server": "index.docker.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 108,
+          "dependenciesCount": 108
+        },
+        "updateTimestamp": "2026-09-28T03:06:27Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "0s"
+        },
+        "creationTimestamp": "2026-09-26T22:02:15Z",
+        "generation": 4,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "66d7f58767",
+          "trivy-operator.container.name": "guestbook-ui",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "guestbook-ui-5d6468fd55",
+          "trivy-operator.resource.namespace": "demo"
+        },
+        "name": "replicaset-guestbook-ui-5d6468fd55-guestbook-ui",
+        "namespace": "demo",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "guestbook-ui-5d6468fd55",
+            "uid": "a2bac981-3697-45e8-9f59-e5df1305be3d"
+          }
+        ],
+        "resourceVersion": "62833",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/demo/sbomreports/replicaset-guestbook-ui-5d6468fd55-guestbook-ui",
+        "uid": "b00a26a3-ea41-466c-bec1-0966c436636f"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:a908df8486ff66f2c4daa0d3d8a2fa09846a1fc8efd65649c0109695c7c5cbff",
+          "repository": "google-samples/gb-frontend",
+          "tag": "v5"
+        },
+        "registry": {
+          "server": "gcr.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 525,
+          "dependenciesCount": 525
+        },
+        "updateTimestamp": "2026-09-28T17:48:45Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-27T13:30:23Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "58b646c5b5",
+          "trivy-operator.container.name": "helm-guestbook",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "helm-guestbook-77bb656876",
+          "trivy-operator.resource.namespace": "demo"
+        },
+        "name": "replicaset-helm-guestbook-77bb656876-helm-guestbook",
+        "namespace": "demo",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "helm-guestbook-77bb656876",
+            "uid": "19733b23-6f98-4106-8d28-1da5940a460f"
+          }
+        ],
+        "resourceVersion": "51645",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/demo/sbomreports/replicaset-helm-guestbook-77bb656876-helm-guestbook",
+        "uid": "de15e3a3-0836-4d37-8060-babd5d52c9c8"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:a908df8486ff66f2c4daa0d3d8a2fa09846a1fc8efd65649c0109695c7c5cbff",
+          "repository": "google-samples/gb-frontend",
+          "tag": "v5"
+        },
+        "registry": {
+          "server": "gcr.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 525,
+          "dependenciesCount": 525
+        },
+        "updateTimestamp": "2026-09-28T13:32:11Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:51:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "75cbf579c8",
+          "trivy-operator.container.name": "web",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "web-5774f6f6c7",
+          "trivy-operator.resource.namespace": "demo"
+        },
+        "name": "replicaset-web-5774f6f6c7-web",
+        "namespace": "demo",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "web-5774f6f6c7",
+            "uid": "c3df6844-76dd-43d4-bed8-56899ba1bf8e"
+          }
+        ],
+        "resourceVersion": "63080",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/demo/sbomreports/replicaset-web-5774f6f6c7-web",
+        "uid": "29007c29-373e-4308-b8c9-c6a8a65a50b6"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:f6daac2445b0ce70e64d77442ccf62839f3f1b4c24bf6746a857eff014e798c8",
+          "repository": "library/nginx",
+          "tag": "1.24.0"
+        },
+        "registry": {
+          "server": "index.docker.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 144,
+          "dependenciesCount": 144
+        },
+        "updateTimestamp": "2026-09-28T17:51:21Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "0s"
+        },
+        "creationTimestamp": "2026-09-26T22:03:23Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "75cbf579c8",
+          "trivy-operator.container.name": "web",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "web-794cc4c7f4",
+          "trivy-operator.resource.namespace": "demo"
+        },
+        "name": "replicaset-web-794cc4c7f4-web",
+        "namespace": "demo",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "web-794cc4c7f4",
+            "uid": "a3cb62da-3480-4188-82fd-cd23522b7de7"
+          }
+        ],
+        "resourceVersion": "62929",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/demo/sbomreports/replicaset-web-794cc4c7f4-web",
+        "uid": "8b2cd11e-0722-4bd5-b31c-435b82649a5e"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:f6daac2445b0ce70e64d77442ccf62839f3f1b4c24bf6746a857eff014e798c8",
+          "repository": "library/nginx",
+          "tag": "1.24.0"
+        },
+        "registry": {
+          "server": "index.docker.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 144,
+          "dependenciesCount": 144
+        },
+        "updateTimestamp": "2026-09-28T03:07:43Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-26T22:01:20Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "8598bf6985",
+          "trivy-operator.container.name": "local-path-provisioner",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "local-path-provisioner-77b9867795",
+          "trivy-operator.resource.namespace": "kube-system"
+        },
+        "name": "replicaset-6d9f575c96",
+        "namespace": "kube-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "local-path-provisioner-77b9867795",
+            "uid": "93eeb8b2-c305-4c2b-a55a-a6e215532837"
+          }
+        ],
+        "resourceVersion": "28113",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/kube-system/sbomreports/replicaset-6d9f575c96",
+        "uid": "b3020549-dd62-4fc0-9b6d-c6787305db2a"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:e757967a5ec338f6a9b371c5a9688bedaa8c3578ea3dd4db329ea0084be0a86f",
+          "repository": "rancher/local-path-provisioner",
+          "tag": "v0.0.37"
+        },
+        "registry": {
+          "server": "index.docker.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 56,
+          "dependenciesCount": 56
+        },
+        "updateTimestamp": "2026-09-28T03:05:30Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-26T22:01:57Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "668d9fbcc8",
+          "trivy-operator.container.name": "coredns",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "coredns-54996dc9b4",
+          "trivy-operator.resource.namespace": "kube-system"
+        },
+        "name": "replicaset-coredns-54996dc9b4-coredns",
+        "namespace": "kube-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "coredns-54996dc9b4",
+            "uid": "a777c10e-564e-4142-8972-5644f1ccac1e"
+          }
+        ],
+        "resourceVersion": "28189",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/kube-system/sbomreports/replicaset-coredns-54996dc9b4-coredns",
+        "uid": "dd5b6b10-f6d9-4605-a26a-1f0dbfb3f3c5"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:900f9c109f7a33545d3c811516e8376df9019147b750f5ce3e254468769176ea",
+          "repository": "rancher/mirrored-coredns-coredns",
+          "tag": "1.14.6"
+        },
+        "registry": {
+          "server": "index.docker.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 195,
+          "dependenciesCount": 195
+        },
+        "updateTimestamp": "2026-09-28T03:05:43Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:44:24Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "66d7f58767",
+          "trivy-operator.container.name": "guestbook-ui",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "kustomize-guestbook-ui-5d6468fd55",
+          "trivy-operator.resource.namespace": "kustomize-guestbook"
+        },
+        "name": "replicaset-kustomize-guestbook-ui-5d6468fd55-guestbook-ui",
+        "namespace": "kustomize-guestbook",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "kustomize-guestbook-ui-5d6468fd55",
+            "uid": "f1a5df1b-0a17-4887-bfa6-e29e933f54bb"
+          }
+        ],
+        "resourceVersion": "62508",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/kustomize-guestbook/sbomreports/replicaset-kustomize-guestbook-ui-5d6468fd55-guestbook-ui",
+        "uid": "0a9f25f9-0441-4748-bd50-013cbbb09d9d"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:a908df8486ff66f2c4daa0d3d8a2fa09846a1fc8efd65649c0109695c7c5cbff",
+          "repository": "google-samples/gb-frontend",
+          "tag": "v5"
+        },
+        "registry": {
+          "server": "gcr.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 525,
+          "dependenciesCount": 525
+        },
+        "updateTimestamp": "2026-09-28T17:44:24Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:37:40Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "66d7f58767",
+          "trivy-operator.container.name": "guestbook-ui",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "guestbook-ui-5d6468fd55",
+          "trivy-operator.resource.namespace": "pinned"
+        },
+        "name": "replicaset-guestbook-ui-5d6468fd55-guestbook-ui",
+        "namespace": "pinned",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "guestbook-ui-5d6468fd55",
+            "uid": "7c01847e-21de-4a66-815a-d0de6ba38e89"
+          }
+        ],
+        "resourceVersion": "61822",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/pinned/sbomreports/replicaset-guestbook-ui-5d6468fd55-guestbook-ui",
+        "uid": "c9f83aa4-7858-4508-b77a-66ae4311ea16"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:a908df8486ff66f2c4daa0d3d8a2fa09846a1fc8efd65649c0109695c7c5cbff",
+          "repository": "google-samples/gb-frontend",
+          "tag": "v5"
+        },
+        "registry": {
+          "server": "gcr.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 525,
+          "dependenciesCount": 525
+        },
+        "updateTimestamp": "2026-09-28T17:37:40Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:37:39Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "66d7f58767",
+          "trivy-operator.container.name": "guestbook-ui",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "guestbook-ui-5d6468fd55",
+          "trivy-operator.resource.namespace": "podinfo"
+        },
+        "name": "replicaset-guestbook-ui-5d6468fd55-guestbook-ui",
+        "namespace": "podinfo",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "guestbook-ui-5d6468fd55",
+            "uid": "023c2f91-caae-4ce4-b8d4-1ffda073bb27"
+          }
+        ],
+        "resourceVersion": "61815",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/podinfo/sbomreports/replicaset-guestbook-ui-5d6468fd55-guestbook-ui",
+        "uid": "5ffd4bd9-e7ee-4ff1-8510-782bc147f834"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:a908df8486ff66f2c4daa0d3d8a2fa09846a1fc8efd65649c0109695c7c5cbff",
+          "repository": "google-samples/gb-frontend",
+          "tag": "v5"
+        },
+        "registry": {
+          "server": "gcr.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 525,
+          "dependenciesCount": 525
+        },
+        "updateTimestamp": "2026-09-28T17:37:39Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:36:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "5448c8b6fc",
+          "trivy-operator.container.name": "podinfo",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "podinfo-5695b8677d",
+          "trivy-operator.resource.namespace": "podinfo"
+        },
+        "name": "replicaset-podinfo-5695b8677d-podinfo",
+        "namespace": "podinfo",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "podinfo-5695b8677d",
+            "uid": "fe812842-19d2-4a4a-8f90-9f794ec0465b"
+          }
+        ],
+        "resourceVersion": "61625",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/podinfo/sbomreports/replicaset-podinfo-5695b8677d-podinfo",
+        "uid": "7bdb36b2-828c-49a5-b270-924a7ac51e42"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:ec73780a8425f59ea49f5bc8cdff0d598805a224fbaa1f86c67a244f250fa9da",
+          "repository": "stefanprodan/podinfo",
+          "tag": "6.15.0"
+        },
+        "registry": {
+          "server": "ghcr.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 124,
+          "dependenciesCount": 124
+        },
+        "updateTimestamp": "2026-09-28T17:36:20Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:43:28Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "5b6fd5c945",
+          "trivy-operator.container.name": "upgrade-sql-schema",
+          "trivy-operator.resource.kind": "Job",
+          "trivy-operator.resource.name": "upgrade-sql-schema8088f4c-presync-1790617365",
+          "trivy-operator.resource.namespace": "sync-waves"
+        },
+        "name": "job-749584d6bb",
+        "namespace": "sync-waves",
+        "ownerReferences": [
+          {
+            "apiVersion": "batch/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Job",
+            "name": "upgrade-sql-schema8088f4c-presync-1790617365",
+            "uid": "9ba5c892-1268-4d14-b9d8-fdb59f63f64a"
+          }
+        ],
+        "resourceVersion": "62395",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/sync-waves/sbomreports/job-749584d6bb",
+        "uid": "1e26ce8c-0801-4348-8565-f44cfc35480a"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6",
+          "repository": "library/alpine",
+          "tag": "latest"
+        },
+        "registry": {
+          "server": "index.docker.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 18,
+          "dependenciesCount": 18
+        },
+        "updateTimestamp": "2026-09-28T17:43:28Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:43:56Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "8f5b6f4bc",
+          "trivy-operator.container.name": "page-down",
+          "trivy-operator.resource.kind": "Job",
+          "trivy-operator.resource.name": "maint-page-down",
+          "trivy-operator.resource.namespace": "sync-waves"
+        },
+        "name": "job-maint-page-down-page-down",
+        "namespace": "sync-waves",
+        "ownerReferences": [
+          {
+            "apiVersion": "batch/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Job",
+            "name": "maint-page-down",
+            "uid": "7febb59e-63d2-4e7b-bba2-dc48872e08f6"
+          }
+        ],
+        "resourceVersion": "62475",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/sync-waves/sbomreports/job-maint-page-down-page-down",
+        "uid": "c026d062-61ac-44c2-a50c-b22f5ae118f2"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6",
+          "repository": "library/alpine",
+          "tag": "latest"
+        },
+        "registry": {
+          "server": "index.docker.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 18,
+          "dependenciesCount": 18
+        },
+        "updateTimestamp": "2026-09-28T17:43:56Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:43:47Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "84d6c86f44",
+          "trivy-operator.container.name": "page-up",
+          "trivy-operator.resource.kind": "Job",
+          "trivy-operator.resource.name": "maint-page-up",
+          "trivy-operator.resource.namespace": "sync-waves"
+        },
+        "name": "job-maint-page-up-page-up",
+        "namespace": "sync-waves",
+        "ownerReferences": [
+          {
+            "apiVersion": "batch/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Job",
+            "name": "maint-page-up",
+            "uid": "ffc67ff2-d2e8-423f-adc1-0b41413a2448"
+          }
+        ],
+        "resourceVersion": "62449",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/sync-waves/sbomreports/job-maint-page-up-page-up",
+        "uid": "09c5709f-acad-4561-abb7-ca905c9db8bc"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6",
+          "repository": "library/alpine",
+          "tag": "latest"
+        },
+        "registry": {
+          "server": "index.docker.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 18,
+          "dependenciesCount": 18
+        },
+        "updateTimestamp": "2026-09-28T17:43:47Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:45:29Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "74c49fc7c6",
+          "trivy-operator.container.name": "main",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "backend",
+          "trivy-operator.resource.namespace": "sync-waves"
+        },
+        "name": "replicaset-backend-main",
+        "namespace": "sync-waves",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "backend",
+            "uid": "c8e9543a-6d55-4266-99bb-e47aa86d0ddf"
+          }
+        ],
+        "resourceVersion": "62560",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/sync-waves/sbomreports/replicaset-backend-main",
+        "uid": "5e9fb178-af6c-461d-9a4e-51fe3ba9da66"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:abe47724e466aeab9a345d8e46a221c2fa8953c7848bb4a3bd9976a7199f8cf2",
+          "repository": "library/nginx",
+          "tag": "latest"
+        },
+        "registry": {
+          "server": "index.docker.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 153,
+          "dependenciesCount": 153
+        },
+        "updateTimestamp": "2026-09-28T17:45:29Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:45:50Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "74c49fc7c6",
+          "trivy-operator.container.name": "main",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "frontend",
+          "trivy-operator.resource.namespace": "sync-waves"
+        },
+        "name": "replicaset-frontend-main",
+        "namespace": "sync-waves",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "frontend",
+            "uid": "036e2144-b71e-4ed7-b8ce-21d988961ffd"
+          }
+        ],
+        "resourceVersion": "62585",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/sync-waves/sbomreports/replicaset-frontend-main",
+        "uid": "f0bb389e-3979-499a-a7a9-9c957ab73d14"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:abe47724e466aeab9a345d8e46a221c2fa8953c7848bb4a3bd9976a7199f8cf2",
+          "repository": "library/nginx",
+          "tag": "latest"
+        },
+        "registry": {
+          "server": "index.docker.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 153,
+          "dependenciesCount": 153
+        },
+        "updateTimestamp": "2026-09-28T17:45:50Z"
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "SbomReport",
+      "metadata": {
+        "creationTimestamp": "2026-09-26T22:01:10Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "resource-spec-hash": "759679655b",
+          "trivy-operator.container.name": "trivy-operator",
+          "trivy-operator.resource.kind": "ReplicaSet",
+          "trivy-operator.resource.name": "trivy-operator-95755969c",
+          "trivy-operator.resource.namespace": "trivy-system"
+        },
+        "name": "replicaset-trivy-operator-95755969c-trivy-operator",
+        "namespace": "trivy-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "ReplicaSet",
+            "name": "trivy-operator-95755969c",
+            "uid": "6993f5c1-fe39-49a1-a811-b0ee0ba16014"
+          }
+        ],
+        "resourceVersion": "28271",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/trivy-system/sbomreports/replicaset-trivy-operator-95755969c-trivy-operator",
+        "uid": "0cd8a022-3a2d-4bbf-afac-debc4e1fd8f0"
+      },
+      "report": {
+        "artifact": {
+          "digest": "sha256:0e4f11e9632f34097f259f3a59d34bab4eea8cee9aef510d15cdfc7481d5e49c",
+          "repository": "aquasec/trivy-operator",
+          "tag": "0.34.0"
+        },
+        "registry": {
+          "server": "mirror.gcr.io"
+        },
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.74.0"
+        },
+        "summary": {
+          "componentsCount": 405,
+          "dependenciesCount": 405
+        },
+        "updateTimestamp": "2026-09-28T03:05:51Z"
+      }
+    }
+  ],
+  "kind": "List"
+}

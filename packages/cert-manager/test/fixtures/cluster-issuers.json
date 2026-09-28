@@ -1,0 +1,109 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "ClusterIssuer",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "demo-ca",
+        "resourceVersion": "11961",
+        "selfLink": "/apis/cert-manager.io/v1/clusterissuers/demo-ca",
+        "uid": "3d272dd3-bbc2-4b36-a286-cd25f3a5690f"
+      },
+      "spec": {
+        "ca": {
+          "secretName": "demo-ca-root"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "message": "Signing CA verified",
+            "observedGeneration": 1,
+            "reason": "KeyPairVerified",
+            "status": "True",
+            "type": "Ready"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "ClusterIssuer",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "pebble",
+        "resourceVersion": "12024",
+        "selfLink": "/apis/cert-manager.io/v1/clusterissuers/pebble",
+        "uid": "92ee29bf-60c7-41bb-82ad-519d8fb45977"
+      },
+      "spec": {
+        "acme": {
+          "privateKeySecretRef": {
+            "name": "pebble-account"
+          },
+          "server": "https://pebble.acme-test.svc.cluster.local:14000/dir",
+          "skipTLSVerify": true,
+          "solvers": [
+            {
+              "http01": {
+                "ingress": {
+                  "ingressClassName": "nothing-serves-this"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "acme": {
+          "uri": "https://pebble.acme-test.svc.cluster.local:14000/my-account/78ae414d12642782"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "message": "The ACME account was registered with the ACME server",
+            "observedGeneration": 1,
+            "reason": "ACMEAccountRegistered",
+            "status": "True",
+            "type": "Ready"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "ClusterIssuer",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "selfsigned",
+        "resourceVersion": "11891",
+        "selfLink": "/apis/cert-manager.io/v1/clusterissuers/selfsigned",
+        "uid": "0d5fe78a-6f61-4174-9f95-476f7994d582"
+      },
+      "spec": {
+        "selfSigned": {}
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "observedGeneration": 1,
+            "reason": "IsReady",
+            "status": "True",
+            "type": "Ready"
+          }
+        ]
+      }
+    }
+  ],
+  "kind": "List"
+}

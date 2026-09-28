@@ -1,0 +1,107 @@
+# Sample workloads, so the extensions have something to describe.
+#
+# Deliberately imperfect: the Trivy extension's whole point is separating a
+# workload it judged from one it never looked at, and its config audit needs
+# something to object to. These run as root with no limits on purpose.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: demo
+  labels:
+    app.kubernetes.io/name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          # An old tag on purpose: a current one has nothing to report.
+          image: nginx:1.24.0
+          ports:
+            - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: demo
+  labels:
+    app.kubernetes.io/name: api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: python:3.9-slim
+          command: ["python", "-m", "http.server", "8080"]
+          ports:
+            - containerPort: 8080
+---
+# A workload that never becomes ready, so the overview has something degraded
+# to rank above the rest.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broken
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: broken
+  template:
+    metadata:
+      labels:
+        app: broken
+    spec:
+      containers:
+        - name: broken
+          image: busybox:1.36
+          command: ["sh", "-c", "echo starting; sleep 5; exit 1"]
+---
+# An image that does not exist. Its config audit is written, since that reads the
+# manifest, but the scanner can never pull it, so no SBOM and no verdict ever
+# arrive: the "not looked at" state the Trivy extension exists to show.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unscannable
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unscannable
+  template:
+    metadata:
+      labels:
+        app: unscannable
+    spec:
+      containers:
+        - name: unscannable
+          image: registry.invalid/freelens-addons/nothing:1
+---
+# A ClusterRole the RBAC assessment will object to: reading secrets
+# cluster-wide is what its "Manage secrets" check looks for.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: demo-too-much
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]

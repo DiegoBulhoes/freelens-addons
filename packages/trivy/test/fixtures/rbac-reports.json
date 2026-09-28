@@ -1,0 +1,1059 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s"
+        },
+        "creationTimestamp": "2026-09-26T21:59:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "84c67b7c59",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name": "argocd-application-controller",
+          "trivy-operator.resource.namespace": "argocd"
+        },
+        "name": "role-argocd-application-controller",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "argocd-application-controller",
+            "uid": "c0bb6426-f6b6-427b-8f36-dae8ff6ddbfd"
+          }
+        ],
+        "resourceVersion": "967",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/argocd/rbacassessmentreports/role-argocd-application-controller",
+        "uid": "43f52475-7a57-43e2-a450-92f83b908350"
+      },
+      "report": {
+        "checks": [
+          {
+            "category": "Kubernetes Security Check",
+            "checkID": "AVD-KSV-0113",
+            "description": "Viewing secrets at the namespace scope can lead to escalation if another service account in that namespace has a higher privileged rolebinding or clusterrolebinding bound.",
+            "messages": [
+              "Role 'argocd-application-controller' shouldn't have access to manage secrets in namespace 'argocd'"
+            ],
+            "remediation": "Manage namespace secrets are not allowed. Remove resource 'secrets' from role",
+            "severity": "MEDIUM",
+            "success": false,
+            "title": "Manage namespace secrets"
+          }
+        ],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 1
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s"
+        },
+        "creationTimestamp": "2026-09-26T21:59:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "65b56989fc",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name": "argocd-applicationset-controller",
+          "trivy-operator.resource.namespace": "argocd"
+        },
+        "name": "role-argocd-applicationset-controller",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "argocd-applicationset-controller",
+            "uid": "d8bb35d0-1c84-4363-801c-560712c6ab8b"
+          }
+        ],
+        "resourceVersion": "990",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/argocd/rbacassessmentreports/role-argocd-applicationset-controller",
+        "uid": "687f95ad-80ec-4935-a186-ec59233c991b"
+      },
+      "report": {
+        "checks": [
+          {
+            "category": "Kubernetes Security Check",
+            "checkID": "AVD-KSV-0113",
+            "description": "Viewing secrets at the namespace scope can lead to escalation if another service account in that namespace has a higher privileged rolebinding or clusterrolebinding bound.",
+            "messages": [
+              "Role 'argocd-applicationset-controller' shouldn't have access to manage secrets in namespace 'argocd'"
+            ],
+            "remediation": "Manage namespace secrets are not allowed. Remove resource 'secrets' from role",
+            "severity": "MEDIUM",
+            "success": false,
+            "title": "Manage namespace secrets"
+          }
+        ],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 1
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s"
+        },
+        "creationTimestamp": "2026-09-26T21:59:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "6f869d64cd",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name": "argocd-dex-server",
+          "trivy-operator.resource.namespace": "argocd"
+        },
+        "name": "role-argocd-dex-server",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "argocd-dex-server",
+            "uid": "bd07482d-1feb-481b-9c65-3f553e00a151"
+          }
+        ],
+        "resourceVersion": "1010",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/argocd/rbacassessmentreports/role-argocd-dex-server",
+        "uid": "cfb42519-7acd-493e-b91f-740577e50db7"
+      },
+      "report": {
+        "checks": [
+          {
+            "category": "Kubernetes Security Check",
+            "checkID": "AVD-KSV-0113",
+            "description": "Viewing secrets at the namespace scope can lead to escalation if another service account in that namespace has a higher privileged rolebinding or clusterrolebinding bound.",
+            "messages": [
+              "Role 'argocd-dex-server' shouldn't have access to manage secrets in namespace 'argocd'"
+            ],
+            "remediation": "Manage namespace secrets are not allowed. Remove resource 'secrets' from role",
+            "severity": "MEDIUM",
+            "success": false,
+            "title": "Manage namespace secrets"
+          }
+        ],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 1
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s"
+        },
+        "creationTimestamp": "2026-09-26T21:59:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "79f44b964f",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name": "argocd-notifications-controller",
+          "trivy-operator.resource.namespace": "argocd"
+        },
+        "name": "role-argocd-notifications-controller",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "argocd-notifications-controller",
+            "uid": "03e1a339-f24b-460a-b2a4-71515173316a"
+          }
+        ],
+        "resourceVersion": "962",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/argocd/rbacassessmentreports/role-argocd-notifications-controller",
+        "uid": "1753ec34-5c74-40ef-99d1-5ec0ecf64f2f"
+      },
+      "report": {
+        "checks": [
+          {
+            "category": "Kubernetes Security Check",
+            "checkID": "AVD-KSV-0113",
+            "description": "Viewing secrets at the namespace scope can lead to escalation if another service account in that namespace has a higher privileged rolebinding or clusterrolebinding bound.",
+            "messages": [
+              "Role 'argocd-notifications-controller' shouldn't have access to manage secrets in namespace 'argocd'"
+            ],
+            "remediation": "Manage namespace secrets are not allowed. Remove resource 'secrets' from role",
+            "severity": "MEDIUM",
+            "success": false,
+            "title": "Manage namespace secrets"
+          }
+        ],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 1
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s"
+        },
+        "creationTimestamp": "2026-09-26T21:59:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "5888f8bcd9",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name": "argocd-redis",
+          "trivy-operator.resource.namespace": "argocd"
+        },
+        "name": "role-argocd-redis",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "argocd-redis",
+            "uid": "1de8b039-b4c8-4b76-ab2d-342588d70afb"
+          }
+        ],
+        "resourceVersion": "1002",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/argocd/rbacassessmentreports/role-argocd-redis",
+        "uid": "abe60906-aae2-4dcb-af94-91b3e5751d4f"
+      },
+      "report": {
+        "checks": [
+          {
+            "category": "Kubernetes Security Check",
+            "checkID": "AVD-KSV-0113",
+            "description": "Viewing secrets at the namespace scope can lead to escalation if another service account in that namespace has a higher privileged rolebinding or clusterrolebinding bound.",
+            "messages": [
+              "Role 'argocd-redis' shouldn't have access to manage secrets in namespace 'argocd'"
+            ],
+            "remediation": "Manage namespace secrets are not allowed. Remove resource 'secrets' from role",
+            "severity": "MEDIUM",
+            "success": false,
+            "title": "Manage namespace secrets"
+          }
+        ],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 1
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s"
+        },
+        "creationTimestamp": "2026-09-26T21:59:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "5f69dfc56b",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name": "argocd-server",
+          "trivy-operator.resource.namespace": "argocd"
+        },
+        "name": "role-argocd-server",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "argocd-server",
+            "uid": "6d762616-2020-4d6b-bd20-2d2793fbd0e2"
+          }
+        ],
+        "resourceVersion": "971",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/argocd/rbacassessmentreports/role-argocd-server",
+        "uid": "1672e7e0-eb6e-43f2-b1cd-4c7e1564dcda"
+      },
+      "report": {
+        "checks": [
+          {
+            "category": "Kubernetes Security Check",
+            "checkID": "AVD-KSV-0113",
+            "description": "Viewing secrets at the namespace scope can lead to escalation if another service account in that namespace has a higher privileged rolebinding or clusterrolebinding bound.",
+            "messages": [
+              "Role 'argocd-server' shouldn't have access to manage secrets in namespace 'argocd'"
+            ],
+            "remediation": "Manage namespace secrets are not allowed. Remove resource 'secrets' from role",
+            "severity": "MEDIUM",
+            "success": false,
+            "title": "Manage namespace secrets"
+          },
+          {
+            "category": "Kubernetes Security Check",
+            "checkID": "AVD-KSV-0049",
+            "description": "Some workloads leverage configmaps to store sensitive data or configuration parameters that affect runtime behavior that can be modified by an attacker or combined with another issue to potentially lead to compromise.",
+            "messages": [
+              "Role 'argocd-server' should not have access to resource 'configmaps' for verbs [\"create\", \"update\", \"patch\", \"delete\", \"deletecollection\", \"impersonate\", \"*\"]"
+            ],
+            "remediation": "Remove write permission verbs for resource 'configmaps'",
+            "severity": "MEDIUM",
+            "success": false,
+            "title": "Manage configmaps"
+          }
+        ],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 2
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s",
+          "trivy-operator.resource.name": "cert-manager-webhook:dynamic-serving"
+        },
+        "creationTimestamp": "2026-09-27T03:46:30Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "6d87cdc558",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name-hash": "565fd84cf",
+          "trivy-operator.resource.namespace": "cert-manager"
+        },
+        "name": "role-565fd84cf",
+        "namespace": "cert-manager",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "cert-manager-webhook:dynamic-serving",
+            "uid": "b9ccb357-f2bd-4354-9d7a-eba5da5be34c"
+          }
+        ],
+        "resourceVersion": "11715",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/cert-manager/rbacassessmentreports/role-565fd84cf",
+        "uid": "0635bafd-1aeb-4c80-9fec-55ca5cec3741"
+      },
+      "report": {
+        "checks": [
+          {
+            "category": "Kubernetes Security Check",
+            "checkID": "AVD-KSV-0113",
+            "description": "Viewing secrets at the namespace scope can lead to escalation if another service account in that namespace has a higher privileged rolebinding or clusterrolebinding bound.",
+            "messages": [
+              "Role 'cert-manager-webhook:dynamic-serving' shouldn't have access to manage secrets in namespace 'cert-manager'"
+            ],
+            "remediation": "Manage namespace secrets are not allowed. Remove resource 'secrets' from role",
+            "severity": "MEDIUM",
+            "success": false,
+            "title": "Manage namespace secrets"
+          }
+        ],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 1
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s",
+          "trivy-operator.resource.name": "system:controller:bootstrap-signer"
+        },
+        "creationTimestamp": "2026-09-26T21:59:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "5dbbd4bf65",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name-hash": "b99d4b8d7",
+          "trivy-operator.resource.namespace": "kube-public"
+        },
+        "name": "role-b99d4b8d7",
+        "namespace": "kube-public",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "system:controller:bootstrap-signer",
+            "uid": "5bd3c9af-9421-412e-b792-156ae7d4dbe8"
+          }
+        ],
+        "resourceVersion": "994",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/kube-public/rbacassessmentreports/role-b99d4b8d7",
+        "uid": "5752c8ac-9d03-4ae0-aba1-bd44647b1545"
+      },
+      "report": {
+        "checks": [
+          {
+            "category": "Kubernetes Security Check",
+            "checkID": "AVD-KSV-0049",
+            "description": "Some workloads leverage configmaps to store sensitive data or configuration parameters that affect runtime behavior that can be modified by an attacker or combined with another issue to potentially lead to compromise.",
+            "messages": [
+              "Role 'system:controller:bootstrap-signer' should not have access to resource 'configmaps' for verbs [\"create\", \"update\", \"patch\", \"delete\", \"deletecollection\", \"impersonate\", \"*\"]"
+            ],
+            "remediation": "Remove write permission verbs for resource 'configmaps'",
+            "severity": "MEDIUM",
+            "success": false,
+            "title": "Manage configmaps"
+          }
+        ],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 1
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s",
+          "trivy-operator.resource.name": "cert-manager-cainjector:leaderelection"
+        },
+        "creationTimestamp": "2026-09-27T03:46:29Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "664cc5687f",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name-hash": "5cc59f98f6",
+          "trivy-operator.resource.namespace": "kube-system"
+        },
+        "name": "role-5cc59f98f6",
+        "namespace": "kube-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "cert-manager-cainjector:leaderelection",
+            "uid": "94449603-1bfa-4922-a346-f32c4fb13189"
+          }
+        ],
+        "resourceVersion": "11690",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/kube-system/rbacassessmentreports/role-5cc59f98f6",
+        "uid": "68ced039-b4ab-4a8f-bc90-b3e7949ba10c"
+      },
+      "report": {
+        "checks": [],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 0
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s",
+          "trivy-operator.resource.name": "system::leader-locking-kube-controller-manager"
+        },
+        "creationTimestamp": "2026-09-26T21:59:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "89d66c8d8",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name-hash": "6fbccbcb9d",
+          "trivy-operator.resource.namespace": "kube-system"
+        },
+        "name": "role-6fbccbcb9d",
+        "namespace": "kube-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "system::leader-locking-kube-controller-manager",
+            "uid": "94e6eb53-3b42-4c29-bb2c-a31198f001ee"
+          }
+        ],
+        "resourceVersion": "1005",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/kube-system/rbacassessmentreports/role-6fbccbcb9d",
+        "uid": "6aac45ca-2804-4ebb-99ac-8a0b93acc930"
+      },
+      "report": {
+        "checks": [],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 0
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s",
+          "trivy-operator.resource.name": "system::leader-locking-kube-scheduler"
+        },
+        "creationTimestamp": "2026-09-26T21:59:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "84c897db44",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name-hash": "77cd64c645",
+          "trivy-operator.resource.namespace": "kube-system"
+        },
+        "name": "role-77cd64c645",
+        "namespace": "kube-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "system::leader-locking-kube-scheduler",
+            "uid": "a8a22010-ec11-41c4-9e40-a4e9ad5c426b"
+          }
+        ],
+        "resourceVersion": "1000",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/kube-system/rbacassessmentreports/role-77cd64c645",
+        "uid": "3de968e2-d47b-4b99-87e6-a1903a08d72b"
+      },
+      "report": {
+        "checks": [],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 0
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s",
+          "trivy-operator.resource.name": "system:controller:cloud-provider"
+        },
+        "creationTimestamp": "2026-09-26T21:59:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "7dd894ddbd",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name-hash": "79f88497",
+          "trivy-operator.resource.namespace": "kube-system"
+        },
+        "name": "role-79f88497",
+        "namespace": "kube-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "system:controller:cloud-provider",
+            "uid": "5491fa82-ea67-4581-a320-567c42779c87"
+          }
+        ],
+        "resourceVersion": "1007",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/kube-system/rbacassessmentreports/role-79f88497",
+        "uid": "3bd3a6f3-0308-4bb5-af90-7eef0a694664"
+      },
+      "report": {
+        "checks": [
+          {
+            "category": "Kubernetes Security Check",
+            "checkID": "AVD-KSV-0049",
+            "description": "Some workloads leverage configmaps to store sensitive data or configuration parameters that affect runtime behavior that can be modified by an attacker or combined with another issue to potentially lead to compromise.",
+            "messages": [
+              "Role 'system:controller:cloud-provider' should not have access to resource 'configmaps' for verbs [\"create\", \"update\", \"patch\", \"delete\", \"deletecollection\", \"impersonate\", \"*\"]"
+            ],
+            "remediation": "Remove write permission verbs for resource 'configmaps'",
+            "severity": "MEDIUM",
+            "success": false,
+            "title": "Manage configmaps"
+          }
+        ],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 1
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s",
+          "trivy-operator.resource.name": "cert-manager:leaderelection"
+        },
+        "creationTimestamp": "2026-09-27T03:46:29Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "7c74c49b",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name-hash": "7f4d588ff9",
+          "trivy-operator.resource.namespace": "kube-system"
+        },
+        "name": "role-7f4d588ff9",
+        "namespace": "kube-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "cert-manager:leaderelection",
+            "uid": "6614aa01-1aee-4715-b546-74454ffbb2fc"
+          }
+        ],
+        "resourceVersion": "11696",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/kube-system/rbacassessmentreports/role-7f4d588ff9",
+        "uid": "1f0ce889-4696-45e4-b148-634ba7effe03"
+      },
+      "report": {
+        "checks": [],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 0
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s",
+          "trivy-operator.resource.name": "system:controller:token-cleaner"
+        },
+        "creationTimestamp": "2026-09-26T21:59:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "5798fb47c6",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name-hash": "868458b9d6",
+          "trivy-operator.resource.namespace": "kube-system"
+        },
+        "name": "role-868458b9d6",
+        "namespace": "kube-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "system:controller:token-cleaner",
+            "uid": "99d7f042-8797-4748-b294-31f23176db5e"
+          }
+        ],
+        "resourceVersion": "988",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/kube-system/rbacassessmentreports/role-868458b9d6",
+        "uid": "e39d4ba7-70c2-4eff-8cbe-403667c31f86"
+      },
+      "report": {
+        "checks": [
+          {
+            "category": "Kubernetes Security Check",
+            "checkID": "AVD-KSV-0113",
+            "description": "Viewing secrets at the namespace scope can lead to escalation if another service account in that namespace has a higher privileged rolebinding or clusterrolebinding bound.",
+            "messages": [
+              "Role 'system:controller:token-cleaner' shouldn't have access to manage secrets in namespace 'kube-system'"
+            ],
+            "remediation": "Manage namespace secrets are not allowed. Remove resource 'secrets' from role",
+            "severity": "MEDIUM",
+            "success": false,
+            "title": "Manage namespace secrets"
+          }
+        ],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 1
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s",
+          "trivy-operator.resource.name": "system:controller:bootstrap-signer"
+        },
+        "creationTimestamp": "2026-09-26T21:59:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "56757c8685",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name-hash": "b99d4b8d7",
+          "trivy-operator.resource.namespace": "kube-system"
+        },
+        "name": "role-b99d4b8d7",
+        "namespace": "kube-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "system:controller:bootstrap-signer",
+            "uid": "58decd70-7a91-408e-b3de-0a5542d579c5"
+          }
+        ],
+        "resourceVersion": "983",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/kube-system/rbacassessmentreports/role-b99d4b8d7",
+        "uid": "95601bd8-6f62-4e8a-9fc4-a0727f801f5f"
+      },
+      "report": {
+        "checks": [
+          {
+            "category": "Kubernetes Security Check",
+            "checkID": "AVD-KSV-0113",
+            "description": "Viewing secrets at the namespace scope can lead to escalation if another service account in that namespace has a higher privileged rolebinding or clusterrolebinding bound.",
+            "messages": [
+              "Role 'system:controller:bootstrap-signer' shouldn't have access to manage secrets in namespace 'kube-system'"
+            ],
+            "remediation": "Manage namespace secrets are not allowed. Remove resource 'secrets' from role",
+            "severity": "MEDIUM",
+            "success": false,
+            "title": "Manage namespace secrets"
+          }
+        ],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 1
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s"
+        },
+        "creationTimestamp": "2026-09-26T21:59:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "5b54668487",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name": "extension-apiserver-authentication-reader",
+          "trivy-operator.resource.namespace": "kube-system"
+        },
+        "name": "role-extension-apiserver-authentication-reader",
+        "namespace": "kube-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "extension-apiserver-authentication-reader",
+            "uid": "defde05e-b06a-41b8-9f61-1f09509f75c6"
+          }
+        ],
+        "resourceVersion": "976",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/kube-system/rbacassessmentreports/role-extension-apiserver-authentication-reader",
+        "uid": "19a8dcc1-af21-490e-98ef-a28804c727c5"
+      },
+      "report": {
+        "checks": [],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 0
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s"
+        },
+        "creationTimestamp": "2026-09-26T21:59:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "6b7f65db45",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name": "trivy-operator",
+          "trivy-operator.resource.namespace": "trivy-system"
+        },
+        "name": "role-trivy-operator",
+        "namespace": "trivy-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "trivy-operator",
+            "uid": "191ba492-2fdf-4322-b834-97829bdd6055"
+          }
+        ],
+        "resourceVersion": "997",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/trivy-system/rbacassessmentreports/role-trivy-operator",
+        "uid": "51a7f13f-2e9a-4f7f-83ec-6fb610c5a9b8"
+      },
+      "report": {
+        "checks": [
+          {
+            "category": "Kubernetes Security Check",
+            "checkID": "AVD-KSV-0113",
+            "description": "Viewing secrets at the namespace scope can lead to escalation if another service account in that namespace has a higher privileged rolebinding or clusterrolebinding bound.",
+            "messages": [
+              "Role 'trivy-operator' shouldn't have access to manage secrets in namespace 'trivy-system'"
+            ],
+            "remediation": "Manage namespace secrets are not allowed. Remove resource 'secrets' from role",
+            "severity": "MEDIUM",
+            "success": false,
+            "title": "Manage namespace secrets"
+          },
+          {
+            "category": "Kubernetes Security Check",
+            "checkID": "AVD-KSV-0049",
+            "description": "Some workloads leverage configmaps to store sensitive data or configuration parameters that affect runtime behavior that can be modified by an attacker or combined with another issue to potentially lead to compromise.",
+            "messages": [
+              "Role 'trivy-operator' should not have access to resource 'configmaps' for verbs [\"create\", \"update\", \"patch\", \"delete\", \"deletecollection\", \"impersonate\", \"*\"]"
+            ],
+            "remediation": "Remove write permission verbs for resource 'configmaps'",
+            "severity": "MEDIUM",
+            "success": false,
+            "title": "Manage configmaps"
+          }
+        ],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 2
+        }
+      }
+    },
+    {
+      "apiVersion": "aquasecurity.github.io/v1alpha1",
+      "kind": "RbacAssessmentReport",
+      "metadata": {
+        "annotations": {
+          "trivy-operator.aquasecurity.github.io/report-ttl": "24h0m0s"
+        },
+        "creationTimestamp": "2026-09-26T21:59:21Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "trivy-operator",
+          "plugin-config-hash": "9f85fb657",
+          "resource-spec-hash": "c4f9f64db",
+          "trivy-operator.resource.kind": "Role",
+          "trivy-operator.resource.name": "trivy-operator-leader-election",
+          "trivy-operator.resource.namespace": "trivy-system"
+        },
+        "name": "role-trivy-operator-leader-election",
+        "namespace": "trivy-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "blockOwnerDeletion": false,
+            "controller": true,
+            "kind": "Role",
+            "name": "trivy-operator-leader-election",
+            "uid": "3a6bb7d5-bd7c-47f6-ba2e-80a5299d0f10"
+          }
+        ],
+        "resourceVersion": "956",
+        "selfLink": "/apis/aquasecurity.github.io/v1alpha1/namespaces/trivy-system/rbacassessmentreports/role-trivy-operator-leader-election",
+        "uid": "aec9505e-ecd2-464a-aa14-dd0debf43681"
+      },
+      "report": {
+        "checks": [],
+        "scanner": {
+          "name": "Trivy",
+          "vendor": "Aqua Security",
+          "version": "0.34.0"
+        },
+        "summary": {
+          "criticalCount": 0,
+          "highCount": 0,
+          "lowCount": 0,
+          "mediumCount": 0
+        }
+      }
+    }
+  ],
+  "kind": "List"
+}

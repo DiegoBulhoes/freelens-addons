@@ -1,0 +1,137 @@
+name: freelens-addons
+
+services:
+  # A cluster of its own, so developing an extension does not point at
+  # something that matters. It is disposable: `make cluster-down` takes the
+  # volume with it and the next `make cluster` builds a fresh one.
+  #
+  # The kubeconfig is written to a bind mount under /tmp rather than into the
+  # repository, so it cannot be committed and does not survive a reboot.
+  #
+  # k3s wants its own kernel namespaces; privileged is what the upstream image
+  # documents for running in Docker.
+  #
+  # Two things here were learned the hard way, and both produce a cluster whose
+  # every pod sits in ContainerCreating for as long as you let it:
+  #
+  #   - Do not bind-mount the host's /sys/fs/cgroup. Docker already gives a
+  #     privileged container a writable cgroup2 mount in a namespace of its own;
+  #     the bind mount replaces it with the host's root hierarchy, where the
+  #     subtree kubelet expects was never delegated. runc then fails on
+  #     `write /sys/fs/cgroup/kubepods/.../cgroup.procs: no such file or directory`.
+  #   - Do not share the host's network namespace. Unlike the freelens service,
+  #     k3s has no reason to: what it needs to expose is one port. With the host
+  #     namespace, flannel builds its CNI bridge and iptables chains on the host
+  #     instead, beside a VPN's own rules.
+  #
+  # Publishing the API server on loopback is enough, because the freelens
+  # container does share the host namespace and so reaches 127.0.0.1 here.
+  k3s:
+    image: rancher/k3s:v1.36.4-k3s1@sha256:edad48e12bf81c3a09ac1c05c0c0ffaaa22145980b989d6fae84543a76b83657
+    profiles: ["cluster"]
+    command:
+      - server
+      # Nothing here serves ingress or scrapes metrics, and both cost memory.
+      - --disable=traefik
+      - --disable=metrics-server
+      - --disable=servicelb
+      - --write-kubeconfig-mode=644
+      - --write-kubeconfig=/output/kubeconfig.yaml
+      # The address the kubeconfig will name, reachable from the host.
+      - --tls-san=127.0.0.1
+      # A fixed node name. Without it the node is named after the container's
+      # hostname, which changes whenever the container is recreated, and every
+      # recreate leaves the old node behind with the pods still bound to it.
+      - --node-name=freelens-addons-dev
+      # Image garbage collection that can never reach its target, so the kubelet
+      # warns FreeDiskSpaceFailed on the node every few minutes: the pressure the
+      # ArgoCD overview reads, produced by the kubelet itself rather than faked.
+      - --kubelet-arg=image-gc-high-threshold=1
+      - --kubelet-arg=image-gc-low-threshold=0
+    privileged: true
+    ports:
+      # Loopback only: this cluster is for one developer on one machine.
+      - "127.0.0.1:6443:6443"
+    environment:
+      K3S_TOKEN: ${K3S_TOKEN:-freelens-addons-dev}
+    volumes:
+      - ${DEV_KUBECONFIG_DIR:-/tmp/freelens-addons-k3s}:/output
+      - k3s-server:/var/lib/rancher/k3s
+    # k3s needs its own /run, and a tmpfs keeps it out of any named volume, so a
+    # teardown really does remove everything.
+    tmpfs:
+      - /run
+      - /var/run
+    healthcheck:
+      test: ["CMD", "kubectl", "get", "--raw=/readyz"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    restart: unless-stopped
+
+  # Freelens on a virtual X server, viewable in a browser through noVNC, with
+  # the toolchain that builds the extensions in the same image.
+  #
+  # One service, because developing these extensions is the only thing any of
+  # this is for. `docker compose up` runs the app; `docker compose run` with a
+  # command overrides the entrypoint and runs a build or the tests instead,
+  # without needing the app to be up.
+  #
+  # network_mode: host is load-bearing, not convenience. A cluster on a private
+  # range routed through a VPN on the host is out of reach from a container on a
+  # bridge network. Sharing the host's network namespace inherits that route, and
+  # publishes noVNC straight onto NOVNC_PORT.
+  freelens:
+    build:
+      context: ./dev/freelens
+      args:
+        FREELENS_VERSION: ${FREELENS_VERSION:-1.10.3}
+        USER_UID: ${USER_UID:-1000}
+        USER_GID: ${USER_GID:-1000}
+    image: freelens-addons/freelens:${FREELENS_VERSION:-1.10.3}
+    network_mode: host
+    environment:
+      DISPLAY: ":99"
+      SCREEN_GEOMETRY: ${SCREEN_GEOMETRY:-1600x900x24}
+      VNC_PORT: ${VNC_PORT:-5900}
+      NOVNC_PORT: ${NOVNC_PORT:-6080}
+      KUBECONFIG: /home/dev/.kube/config
+      # Set by `make e2e` to open the debugging port. Empty otherwise, and the
+      # port only ever listens on loopback.
+      FREELENS_EXTRA_ARGS: ${FREELENS_EXTRA_ARGS:-}
+    volumes:
+      # Read-only: development must never be able to rewrite the cluster credentials.
+      #
+      # Long form, for `create_host_path: false`. The short form creates a missing
+      # source as a root-owned directory, and the dev cluster's kubeconfig lives in
+      # /tmp, which a reboot empties: Docker restarts this service first, a
+      # directory appears where k3s writes its kubeconfig, and k3s restarts forever
+      # on "is a directory". Refusing to start instead leaves the path free, and
+      # the restart policy retries once k3s has written the file.
+      - type: bind
+        source: ${KUBECONFIG_PATH:?set KUBECONFIG_PATH in .env — see .env.example}
+        target: /home/dev/.kube/config
+        read_only: true
+        bind:
+          create_host_path: false
+      # The workspace, writable, because this is also where builds run.
+      - .:/workspace
+      # The same packages/ directory again, read-only, at the path Freelens
+      # watches: it (re)loads any subdirectory holding a package.json manifest,
+      # so every packages/<name> is an installed extension.
+      - ./packages:/home/dev/.freelens/extensions:ro
+      # App state (cluster list, enabled extensions, window layout) survives restarts.
+      - freelens-state:/home/dev/.config/Freelens
+      - pnpm-store:/usr/local/share/pnpm/store
+      # Without this, corepack re-downloads the pinned pnpm on every run.
+      - corepack-cache:/home/dev/.cache/node/corepack
+    shm_size: "1gb"
+    stop_grace_period: 10s
+    restart: unless-stopped
+
+volumes:
+  k3s-server:
+  freelens-state:
+  pnpm-store:
+  corepack-cache:

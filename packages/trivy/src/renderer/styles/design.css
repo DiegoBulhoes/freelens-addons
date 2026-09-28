@@ -1,0 +1,893 @@
+/*
+ * The design standard: every component an extension page is built from, in one
+ * file that is the same in every extension but for the prefix. `design.md` in
+ * the freelens-extension skill says when to use each one; this says how it
+ * looks. Change it there and copy it out, never in a package: the copies are
+ * checked against it, and a page that differs from its neighbours is the
+ * defect this file exists to prevent.
+ *
+ * Three rules hold throughout.
+ *
+ * - Colour comes from the host's theme. A value written in here looks right in
+ *   the theme it was written for and wrong in the other. The one literal is
+ *   the white on a pressed filter, which is what the host's own filled buttons
+ *   carry in both themes.
+ * - Everything that holds content sits on one grey: the host's sidebar surface,
+ *   a clear step from the page in either theme. Hover is the host's own hover
+ *   for that surface. Neither `--contentColor` (the page itself) nor
+ *   `--layoutBackground` (identical to the surface in the light theme) will do.
+ * - Anything pressable is a <button>, for the keyboard and the screen reader,
+ *   and a button's browser default is `text-align: center`. Every component that
+ *   can be a button resets it; removing a reset centres a list of names.
+ *
+ * Tones — critical, warning, info, ok — are the host's in every extension, so a
+ * critical row reads the same wherever it is. A domain with colours its users
+ * already know (a scanner's severities, a CD tool's statuses) keeps them for
+ * its own marks, in its own stylesheet: a tag's text, a status dot. Nothing
+ * here is overridden in a package stylesheet.
+ */
+
+.Trivy {
+  --trivy-gap-xs: calc(var(--unit, 8px) * 0.5);
+  --trivy-gap-sm: var(--unit, 8px);
+  --trivy-gap-md: calc(var(--unit, 8px) * 2);
+  --trivy-gap-lg: calc(var(--unit, 8px) * 3);
+
+  --trivy-small: var(--font-size-small, 12px);
+  --trivy-radius: var(--border-radius, 3px);
+  --trivy-line: var(--borderFaintColor, rgba(127, 127, 127, 0.25));
+  --trivy-line-strong: var(--borderColor, rgba(127, 127, 127, 0.5));
+  --trivy-surface: var(--sidebarBackground, rgba(127, 127, 127, 0.15));
+  --trivy-surface-hover: var(--sidebarItemHoverBackground, rgba(127, 127, 127, 0.25));
+
+  --trivy-tone-critical: var(--colorError);
+  --trivy-tone-warning: var(--colorWarning);
+  --trivy-tone-ok: var(--colorSuccess);
+  --trivy-tone-info: var(--colorInfo);
+
+  color: var(--textColorPrimary);
+}
+
+.Trivy :is(button, a, input):focus-visible {
+  outline: 2px solid var(--colorInfo);
+  outline-offset: 1px;
+}
+
+/* ─── Page ──────────────────────────────────────────────────────────────── */
+
+.Trivy-page {
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding: var(--trivy-gap-lg);
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: var(--trivy-gap-lg);
+  min-width: 0;
+}
+
+/* The headline and its sublines on the left, the page's one action on the right. */
+.Trivy-page__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--trivy-gap-md);
+  flex-wrap: wrap;
+}
+
+.Trivy-page__head > :first-child {
+  flex: 1 1 20em;
+  min-width: 0;
+}
+
+.Trivy-page__headline {
+  display: flex;
+  align-items: baseline;
+  gap: var(--trivy-gap-sm);
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: calc(var(--unit, 8px) * 3);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: 1.25;
+}
+
+.Trivy-page__subline {
+  margin: var(--trivy-gap-xs) 0 0;
+  color: var(--textColorSecondary);
+}
+
+.Trivy-page__subline--alarm {
+  color: var(--trivy-tone-critical);
+}
+
+.Trivy-page__actions {
+  display: grid;
+  justify-items: end;
+  gap: var(--trivy-gap-xs);
+  max-width: 28em;
+  text-align: right;
+}
+
+/* ─── Section ───────────────────────────────────────────────────────────── */
+
+.Trivy-section {
+  display: grid;
+  gap: var(--trivy-gap-sm);
+  min-width: 0;
+}
+
+/* Title first; whatever comes last is pushed to the right edge. */
+.Trivy-section__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--trivy-gap-sm);
+  flex-wrap: wrap;
+}
+
+.Trivy-section__bar > :last-child:not(:first-child) {
+  margin-left: auto;
+}
+
+.Trivy-section__title {
+  margin: 0;
+  font-size: var(--font-size-big, 16px);
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+.Trivy-section__note {
+  margin: 0;
+  color: var(--textColorSecondary);
+}
+
+/* ─── Cards: one number and what it counts ──────────────────────────────── */
+
+/* auto-fill, not auto-fit: a card is the same width on every page, however few. */
+.Trivy-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: var(--trivy-gap-sm);
+}
+
+.Trivy-card {
+  display: grid;
+  align-content: start;
+  gap: var(--trivy-gap-xs);
+  padding: var(--trivy-gap-md);
+  border: 1px solid var(--trivy-line);
+  border-radius: var(--trivy-radius);
+  background: var(--trivy-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.Trivy-card {
+  cursor: pointer;
+}
+
+button.Trivy-card:hover {
+  background: var(--trivy-surface-hover);
+  border-color: var(--trivy-line-strong);
+}
+
+.Trivy-card__value {
+  font-size: calc(var(--unit, 8px) * 3.5);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.Trivy-card__label {
+  font-size: var(--trivy-small);
+  color: var(--textColorSecondary);
+}
+
+.Trivy-card--critical .Trivy-card__value {
+  color: var(--trivy-tone-critical);
+}
+
+.Trivy-card--warning .Trivy-card__value {
+  color: var(--trivy-tone-warning);
+}
+
+.Trivy-card--info .Trivy-card__value {
+  color: var(--trivy-tone-info);
+}
+
+.Trivy-card--ok .Trivy-card__value {
+  color: var(--trivy-tone-ok);
+}
+
+/* ─── Lists and rows: one object per line ───────────────────────────────── */
+
+/* A <div>, or an <ol> when the order is the point, as in a chain of objects. */
+.Trivy-list {
+  display: grid;
+  gap: var(--trivy-gap-xs);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+ * State, then the object, then a figure, then its menu — each optional but
+ * the object. The tone is the left edge and the colour of the state; the state
+ * column is fixed so states line up down the list.
+ */
+.Trivy-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--trivy-gap-md);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--trivy-gap-sm) var(--trivy-gap-md);
+  border: 1px solid var(--trivy-line);
+  border-left: 3px solid var(--trivy-line);
+  border-radius: var(--trivy-radius);
+  background: var(--trivy-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.Trivy-row {
+  cursor: pointer;
+}
+
+/* A row that also carries a menu is a <div> whose main part is the button. */
+button.Trivy-row:hover,
+.Trivy-row:has(> button.Trivy-row__main:hover) {
+  background: var(--trivy-surface-hover);
+}
+
+.Trivy-row--critical {
+  border-left-color: var(--trivy-tone-critical);
+}
+
+.Trivy-row--warning {
+  border-left-color: var(--trivy-tone-warning);
+}
+
+.Trivy-row--info {
+  border-left-color: var(--trivy-tone-info);
+}
+
+.Trivy-row--ok {
+  border-left-color: var(--trivy-tone-ok);
+}
+
+.Trivy-row__state {
+  flex: 0 0 9em;
+  font-size: var(--trivy-small);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+.Trivy-row--critical .Trivy-row__state {
+  color: var(--trivy-tone-critical);
+}
+
+.Trivy-row--warning .Trivy-row__state {
+  color: var(--trivy-tone-warning);
+}
+
+.Trivy-row--info .Trivy-row__state {
+  color: var(--trivy-tone-info);
+}
+
+.Trivy-row--ok .Trivy-row__state {
+  color: var(--trivy-tone-ok);
+}
+
+.Trivy-row__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+button.Trivy-row__main {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* The name in bold, then what locates it, on one line that wraps. */
+.Trivy-row__name {
+  display: flex;
+  align-items: baseline;
+  gap: var(--trivy-gap-xs) var(--trivy-gap-sm);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.Trivy-row__meta {
+  font-size: var(--trivy-small);
+  color: var(--textColorSecondary);
+}
+
+.Trivy-row__reason {
+  font-size: var(--trivy-small);
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+.Trivy-row__aside {
+  flex: none;
+  font-size: var(--trivy-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.Trivy-row__actions {
+  flex: none;
+  align-self: center;
+}
+
+/* ─── Boxes: one object and what belongs to it ──────────────────────────── */
+
+.Trivy-box {
+  display: grid;
+  gap: var(--trivy-gap-xs);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--trivy-gap-sm) var(--trivy-gap-md);
+  border: 1px solid var(--trivy-line);
+  border-left: 3px solid var(--trivy-line);
+  border-radius: var(--trivy-radius);
+  background: var(--trivy-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.Trivy-box {
+  cursor: pointer;
+}
+
+button.Trivy-box:hover {
+  background: var(--trivy-surface-hover);
+}
+
+.Trivy-box--critical {
+  border-left-color: var(--trivy-tone-critical);
+}
+
+.Trivy-box--warning {
+  border-left-color: var(--trivy-tone-warning);
+}
+
+.Trivy-box--info {
+  border-left-color: var(--trivy-tone-info);
+}
+
+.Trivy-box--ok {
+  border-left-color: var(--trivy-tone-ok);
+}
+
+/* Tag, what it is, a count. A head that toggles the box open is the button. */
+.Trivy-box__head {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  align-items: baseline;
+  gap: var(--trivy-gap-sm);
+  width: 100%;
+}
+
+button.Trivy-box__head {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.Trivy-box__title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--trivy-gap-xs) var(--trivy-gap-sm);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.Trivy-box__meta {
+  font-size: var(--trivy-small);
+  color: var(--textColorSecondary);
+}
+
+.Trivy-box__count {
+  font-size: var(--trivy-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.Trivy-box__reason {
+  margin: 0;
+  font-size: var(--trivy-small);
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+/* ─── Chips: an object named inside another ─────────────────────────────── */
+
+.Trivy-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--trivy-gap-xs);
+}
+
+/* A chip sits on the grey, so it takes the page's colour to stand out from it. */
+.Trivy-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--trivy-gap-xs);
+  padding: 1px var(--trivy-gap-sm);
+  border: 1px solid transparent;
+  border-radius: var(--trivy-radius);
+  background: var(--contentColor, rgba(127, 127, 127, 0.1));
+  font: inherit;
+  font-size: var(--trivy-small);
+  color: inherit;
+  text-align: left;
+}
+
+button.Trivy-chip {
+  color: var(--colorInfo);
+  cursor: pointer;
+}
+
+button.Trivy-chip:hover {
+  border-color: var(--colorInfo);
+}
+
+.Trivy-chip__meta {
+  color: var(--textColorSecondary);
+}
+
+/* ─── Tags: a state, in words ───────────────────────────────────────────── */
+
+/* The colour is the text's, so a domain class that sets `color` tones it too. */
+.Trivy-tag {
+  display: inline-block;
+  padding: 0 var(--trivy-gap-xs);
+  border: 1px solid currentColor;
+  border-radius: var(--trivy-radius);
+  font-size: var(--trivy-small);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.Trivy-tag--critical {
+  color: var(--trivy-tone-critical);
+}
+
+.Trivy-tag--warning {
+  color: var(--trivy-tone-warning);
+}
+
+.Trivy-tag--info {
+  color: var(--trivy-tone-info);
+}
+
+.Trivy-tag--ok {
+  color: var(--trivy-tone-ok);
+}
+
+.Trivy-tag--neutral {
+  color: var(--textColorSecondary);
+}
+
+/* ─── Tables: many objects, compared column by column ───────────────────── */
+
+/*
+ * Read like the host's own lists — the Vulnerabilities list, the Pods list:
+ * the same header in the same case and colour, rows of the same height — so a
+ * table here does not look foreign beside one of those. It sits on the surface
+ * like every other box, and between its rows the page's colour shows through,
+ * as it does between the rows of a list; the host's faint line is the same grey
+ * as the surface and would vanish.
+ */
+.Trivy-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--trivy-line);
+  border-radius: var(--trivy-radius);
+  background: var(--trivy-surface);
+}
+
+.Trivy-table th {
+  padding: var(--trivy-gap-sm) var(--trivy-gap-md);
+  border-bottom: 1px solid var(--trivy-line-strong);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: 1.25;
+  text-align: left;
+  color: var(--tableHeaderColor, var(--textColorPrimary));
+  white-space: nowrap;
+}
+
+.Trivy-table td {
+  padding: var(--trivy-gap-sm) var(--trivy-gap-md);
+  border-bottom: 1px solid var(--contentColor, var(--trivy-line));
+  line-height: 1.25;
+  vertical-align: baseline;
+  overflow-wrap: anywhere;
+}
+
+.Trivy-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.Trivy-table__number {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * The one column that takes the width left over, and trails off when short.
+ * Beside it, every column that must not break — a name, a date, a revision —
+ * is __shrink: a cell may break anywhere, and the fill column would squeeze an
+ * unmarked neighbour down to a letter per line.
+ */
+.Trivy-table__fill {
+  width: 100%;
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A column as narrow as its content: a date, a revision, an icon. */
+.Trivy-table__shrink {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.Trivy-table__row--clickable {
+  cursor: pointer;
+}
+
+.Trivy-table__row--clickable:hover td {
+  background: var(--trivy-surface-hover);
+}
+
+/* ─── Facts: one object's attributes, name and value ────────────────────── */
+
+.Trivy-facts {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--trivy-gap-xs) var(--trivy-gap-md);
+  margin: 0;
+  padding: var(--trivy-gap-sm) var(--trivy-gap-md);
+  border: 1px solid var(--trivy-line);
+  border-radius: var(--trivy-radius);
+  background: var(--trivy-surface);
+}
+
+.Trivy-facts dt {
+  color: var(--textColorSecondary);
+}
+
+.Trivy-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ─── Banner: what the whole page needs said first ──────────────────────── */
+
+.Trivy-banner {
+  display: grid;
+  gap: var(--trivy-gap-xs);
+  padding: var(--trivy-gap-sm) var(--trivy-gap-md);
+  border: 1px solid var(--trivy-tone-warning);
+  border-radius: var(--trivy-radius);
+  background: var(--trivy-surface);
+}
+
+.Trivy-banner__title {
+  display: flex;
+  align-items: center;
+  gap: var(--trivy-gap-sm);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--trivy-tone-warning);
+}
+
+.Trivy-banner__body {
+  overflow-wrap: anywhere;
+}
+
+.Trivy-banner--critical {
+  border-color: var(--trivy-tone-critical);
+}
+
+.Trivy-banner--critical .Trivy-banner__title {
+  color: var(--trivy-tone-critical);
+}
+
+/* ─── Controls ──────────────────────────────────────────────────────────── */
+
+/* A filter narrows what is shown and says so with `aria-pressed`. */
+.Trivy-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--trivy-gap-xs);
+}
+
+.Trivy-filter {
+  padding: 2px var(--trivy-gap-sm);
+  border: 1px solid var(--trivy-line);
+  border-radius: var(--trivy-radius);
+  background: transparent;
+  font: inherit;
+  font-size: var(--trivy-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.Trivy-filter:hover {
+  border-color: var(--trivy-line-strong);
+  color: var(--textColorPrimary);
+}
+
+.Trivy-filter[aria-pressed="true"] {
+  border-color: var(--colorInfo);
+  background: var(--colorInfo);
+  color: #fff;
+}
+
+.Trivy-filter__count {
+  margin-left: var(--trivy-gap-xs);
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * A button does something. Primary is what the view exists for; caution is a
+ * write that reaches more than the object in front of the reader.
+ */
+.Trivy-button {
+  padding: var(--trivy-gap-xs) var(--trivy-gap-md);
+  border: 1px solid var(--trivy-line-strong);
+  border-radius: var(--trivy-radius);
+  background: var(--trivy-surface);
+  font: inherit;
+  color: var(--textColorPrimary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.Trivy-button:hover:not(:disabled) {
+  background: var(--trivy-surface-hover);
+}
+
+.Trivy-button--primary {
+  border-color: var(--colorInfo);
+}
+
+.Trivy-button--caution {
+  border-color: var(--trivy-tone-warning);
+  color: var(--trivy-tone-warning);
+}
+
+.Trivy-button:disabled {
+  border-color: var(--trivy-line);
+  color: var(--textColorSecondary);
+  cursor: not-allowed;
+}
+
+/* Buttons side by side: a toolbar, a pager. */
+.Trivy-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--trivy-gap-xs);
+  flex-wrap: wrap;
+}
+
+.Trivy-icon-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--textColorSecondary);
+  cursor: pointer;
+}
+
+.Trivy-icon-button:hover {
+  color: var(--textColorPrimary);
+}
+
+.Trivy-search {
+  min-width: 0;
+  padding: var(--trivy-gap-xs) var(--trivy-gap-sm);
+  border: 1px solid var(--inputControlBorder, var(--trivy-line));
+  border-radius: var(--trivy-radius);
+  background: var(--inputControlBackground, transparent);
+  font: inherit;
+  color: var(--textColorPrimary);
+}
+
+.Trivy-search:hover {
+  border-color: var(--inputControlHoverBorder, var(--trivy-line-strong));
+}
+
+.Trivy-search:focus {
+  outline: none;
+  border-color: var(--colorInfo);
+}
+
+.Trivy-search--wide {
+  flex: 1 1 20rem;
+}
+
+/* A button that reads as a link: it navigates, it does not act. */
+.Trivy-link {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: var(--colorInfo);
+  text-align: left;
+  cursor: pointer;
+}
+
+.Trivy-link:hover,
+.Trivy a:hover {
+  text-decoration: underline;
+}
+
+.Trivy a {
+  color: var(--colorInfo);
+  text-decoration: none;
+}
+
+/* ─── Picker: choose on the left, read on the right ─────────────────────── */
+
+.Trivy-picker {
+  height: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.Trivy-picker__side {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: var(--trivy-gap-sm);
+  padding: var(--trivy-gap-md);
+  border-right: 1px solid var(--trivy-line);
+  min-height: 0;
+}
+
+.Trivy-picker__list {
+  overflow-y: auto;
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 1px;
+  min-height: 0;
+}
+
+.Trivy-picker__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "name aside" "meta aside";
+  align-items: center;
+  gap: 0 var(--trivy-gap-sm);
+  padding: var(--trivy-gap-sm);
+  border: none;
+  border-left: 2px solid transparent;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.Trivy-picker__item:hover {
+  background: var(--trivy-surface-hover);
+}
+
+.Trivy-picker__item--selected {
+  border-left-color: var(--colorInfo);
+  background: var(--trivy-surface);
+}
+
+.Trivy-picker__name {
+  grid-area: name;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.Trivy-picker__meta {
+  grid-area: meta;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--trivy-small);
+  color: var(--textColorSecondary);
+}
+
+/* Figures, each with its unit in words: "18 critical", "5 days left". */
+.Trivy-picker__aside {
+  grid-area: aside;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: var(--trivy-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.Trivy-picker__detail {
+  overflow-y: auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+.Trivy-picker__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+  padding: var(--trivy-gap-lg);
+  color: var(--textColorSecondary);
+  text-align: center;
+}
+
+/* ─── Text ──────────────────────────────────────────────────────────────── */
+
+.Trivy-muted {
+  color: var(--textColorSecondary);
+}
+
+/* Small and secondary: the sentence beside a control that explains it. */
+.Trivy-hint {
+  font-size: var(--trivy-small);
+  color: var(--textColorSecondary);
+}
+
+/* One monospace: a <code> and a mono span look the same, wherever they are. */
+.Trivy code,
+.Trivy-mono {
+  font-family: var(--font-monospace, monospace);
+  font-size: var(--trivy-small);
+}
+
+.Trivy-truncate {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.Trivy-text--critical {
+  color: var(--trivy-tone-critical);
+}
+
+.Trivy-text--warning {
+  color: var(--trivy-tone-warning);
+}
+
+.Trivy-text--info {
+  color: var(--trivy-tone-info);
+}
+
+.Trivy-text--ok {
+  color: var(--trivy-tone-ok);
+}

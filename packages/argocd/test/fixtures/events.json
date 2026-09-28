@@ -1,0 +1,1360 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "pebble-57d44f89cd-lh8jw",
+        "namespace": "acme-test",
+        "resourceVersion": "27837",
+        "uid": "b64de49b-816a-46a5-9f36-72f5297c2c98"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "pebble-57d44f89cd-lh8jw.18d98c554d419b78",
+        "namespace": "acme-test",
+        "resourceVersion": "60407",
+        "selfLink": "/api/v1/namespaces/acme-test/events/pebble-57d44f89cd-lh8jw.18d98c554d419b78",
+        "uid": "5d58e316-552c-45e4-a45f-95667f7934f3"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:35:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{pebble}",
+        "kind": "Pod",
+        "name": "pebble-57d44f89cd-m4jpt",
+        "namespace": "acme-test",
+        "resourceVersion": "60898",
+        "uid": "ff40530b-5d32-4c04-8381-c62cf3c6d6cd"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:35:24Z",
+      "message": "Readiness probe failed: dial tcp 198.51.100.10:14000: connect: connection refused",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:35:24Z",
+        "name": "pebble-57d44f89cd-m4jpt.18d98c9afbb89d8a",
+        "namespace": "acme-test",
+        "resourceVersion": "61010",
+        "selfLink": "/api/v1/namespaces/acme-test/events/pebble-57d44f89cd-m4jpt.18d98c9afbb89d8a",
+        "uid": "313468cc-3dd8-4123-ab3e-4e66bbfda73e"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "argocd-application-controller-0",
+        "namespace": "argocd",
+        "resourceVersion": "28036",
+        "uid": "6c31a124-6cc2-49cb-9ede-2f788ffc8c0b"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "argocd-application-controller-0.18d98c553646648d",
+        "namespace": "argocd",
+        "resourceVersion": "60392",
+        "selfLink": "/api/v1/namespaces/argocd/events/argocd-application-controller-0.18d98c553646648d",
+        "uid": "ac15a57a-2b93-416c-8e0d-6e346c3393bb"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "argocd-applicationset-controller-5959f79d67-888vq",
+        "namespace": "argocd",
+        "resourceVersion": "27805",
+        "uid": "42b4bb61-6a59-408e-9403-8b8684239c0b"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "argocd-applicationset-controller-5959f79d67-888vq.18d98c552ec2b023",
+        "namespace": "argocd",
+        "resourceVersion": "60352",
+        "selfLink": "/api/v1/namespaces/argocd/events/argocd-applicationset-controller-5959f79d67-888vq.18d98c552ec2b023",
+        "uid": "12487ff0-b3e3-4c6b-9a03-5e7c08a89569"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "argocd-dex-server-6f84fd5569-74vp5",
+        "namespace": "argocd",
+        "resourceVersion": "27984",
+        "uid": "88a635cd-e0a6-4d1d-b3d1-91ba61f93e2d"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "argocd-dex-server-6f84fd5569-74vp5.18d98c552c8fc53a",
+        "namespace": "argocd",
+        "resourceVersion": "60326",
+        "selfLink": "/api/v1/namespaces/argocd/events/argocd-dex-server-6f84fd5569-74vp5.18d98c552c8fc53a",
+        "uid": "3419a197-3bab-43c9-9934-35086ebcc393"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "argocd-notifications-controller-5856884878-tndnk",
+        "namespace": "argocd",
+        "resourceVersion": "27814",
+        "uid": "0498af9f-39f8-4ac8-9f44-0e2c33927227"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "argocd-notifications-controller-5856884878-tndnk.18d98c552f3c37c2",
+        "namespace": "argocd",
+        "resourceVersion": "60369",
+        "selfLink": "/api/v1/namespaces/argocd/events/argocd-notifications-controller-5856884878-tndnk.18d98c552f3c37c2",
+        "uid": "bd0e3415-cd77-425a-b99f-92775540bbd7"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "argocd-redis-86846d5986-nbvkf",
+        "namespace": "argocd",
+        "resourceVersion": "27899",
+        "uid": "aa24d91c-19f8-432b-9de5-f735cb80b5d1"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "argocd-redis-86846d5986-nbvkf.18d98c552dcf3754",
+        "namespace": "argocd",
+        "resourceVersion": "60342",
+        "selfLink": "/api/v1/namespaces/argocd/events/argocd-redis-86846d5986-nbvkf.18d98c552dcf3754",
+        "uid": "cd1c1e05-b274-443c-96a6-48373fcb240d"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "argocd-repo-server-7d44c57bc8-qr7hc",
+        "namespace": "argocd",
+        "resourceVersion": "28011",
+        "uid": "e4724b8d-8d49-4310-bb09-a99e5cc7c453"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "argocd-repo-server-7d44c57bc8-qr7hc.18d98c552588a61d",
+        "namespace": "argocd",
+        "resourceVersion": "60296",
+        "selfLink": "/api/v1/namespaces/argocd/events/argocd-repo-server-7d44c57bc8-qr7hc.18d98c552588a61d",
+        "uid": "ce1b7d75-97e4-40e9-8413-94d2a989c63b"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "argocd-server-8567f6cc96-bpl6k",
+        "namespace": "argocd",
+        "resourceVersion": "28017",
+        "uid": "fff34d6c-7205-419b-88a5-788cc2e0eef8"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "argocd-server-8567f6cc96-bpl6k.18d98c5527dc1384",
+        "namespace": "argocd",
+        "resourceVersion": "60305",
+        "selfLink": "/api/v1/namespaces/argocd/events/argocd-server-8567f6cc96-bpl6k.18d98c5527dc1384",
+        "uid": "903a851b-5707-461a-bdb0-3a6f582fbae4"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "cert-manager-55f858c7fc-gzt7l",
+        "namespace": "cert-manager",
+        "resourceVersion": "27693",
+        "uid": "20c90961-21a1-4838-9ba6-b3b334c4e534"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "cert-manager-55f858c7fc-gzt7l.18d98c552eec1b1e",
+        "namespace": "cert-manager",
+        "resourceVersion": "60361",
+        "selfLink": "/api/v1/namespaces/cert-manager/events/cert-manager-55f858c7fc-gzt7l.18d98c552eec1b1e",
+        "uid": "f9165eb0-57fa-438a-a5b6-4ab3a5946e13"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "cert-manager-cainjector-7745d85c9c-fdn6z",
+        "namespace": "cert-manager",
+        "resourceVersion": "27713",
+        "uid": "02c083cf-2c86-4232-8acd-470c2d9c61ea"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "cert-manager-cainjector-7745d85c9c-fdn6z.18d98c5528d7988b",
+        "namespace": "cert-manager",
+        "resourceVersion": "60321",
+        "selfLink": "/api/v1/namespaces/cert-manager/events/cert-manager-cainjector-7745d85c9c-fdn6z.18d98c5528d7988b",
+        "uid": "6ecdb9c7-40ae-4f3d-a71d-edf56b78168b"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "cert-manager-webhook-67fd9d5484-n9qkk",
+        "namespace": "cert-manager",
+        "resourceVersion": "28001",
+        "uid": "d8d9157d-7c69-4db9-b103-9c80d94fa956"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "cert-manager-webhook-67fd9d5484-n9qkk.18d98c552a06e042",
+        "namespace": "cert-manager",
+        "resourceVersion": "60324",
+        "selfLink": "/api/v1/namespaces/cert-manager/events/cert-manager-webhook-67fd9d5484-n9qkk.18d98c552a06e042",
+        "uid": "c33b2097-c732-4aa8-8146-4dd649b8ee17"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:34:00Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Node",
+        "name": "freelens-addons-dev"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:34:00Z",
+      "message": "invalid capacity 0 on image filesystem",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:34:00Z",
+        "name": "freelens-addons-dev.18d98c87701c7df9",
+        "namespace": "default",
+        "resourceVersion": "60495",
+        "selfLink": "/api/v1/namespaces/default/events/freelens-addons-dev.18d98c87701c7df9",
+        "uid": "052f65c0-ef68-4f86-b849-4cad7577e320"
+      },
+      "reason": "InvalidDiskCapacity",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:39:00Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Node",
+        "name": "freelens-addons-dev"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:39:00Z",
+      "message": "Insufficient free disk space on the node's image filesystem (40% of 1.8 TiB used). Failed to free sufficient space by deleting unused images (freed 80267741 bytes). Investigate disk usage, as it could be used by active images, logs, volumes, or other data.",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:39:00Z",
+        "name": "freelens-addons-dev.18d98ccd694b4463",
+        "namespace": "default",
+        "resourceVersion": "61921",
+        "selfLink": "/api/v1/namespaces/default/events/freelens-addons-dev.18d98ccd694b4463",
+        "uid": "84f050ca-9e7b-4bbe-b3df-ee76ce6e9cdc"
+      },
+      "reason": "FreeDiskSpaceFailed",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:39:00Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Node",
+        "name": "freelens-addons-dev"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:39:00Z",
+      "message": "Insufficient free disk space on the node's image filesystem (40% of 1.8 TiB used). Failed to free sufficient space by deleting unused images (freed 80267741 bytes). Investigate disk usage, as it could be used by active images, logs, volumes, or other data.",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:39:00Z",
+        "name": "freelens-addons-dev.18d98ccd694d76ea",
+        "namespace": "default",
+        "resourceVersion": "61922",
+        "selfLink": "/api/v1/namespaces/default/events/freelens-addons-dev.18d98ccd694d76ea",
+        "uid": "9c4c316b-8cb9-46e7-a5e4-44713f2a2848"
+      },
+      "reason": "ImageGCFailed",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:44:00Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Node",
+        "name": "freelens-addons-dev"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:44:00Z",
+      "message": "Insufficient free disk space on the node's image filesystem (40% of 1.8 TiB used). Failed to free sufficient space by deleting unused images (freed 0 bytes). Investigate disk usage, as it could be used by active images, logs, volumes, or other data.",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:44:00Z",
+        "name": "freelens-addons-dev.18d98d1346908ef4",
+        "namespace": "default",
+        "resourceVersion": "62484",
+        "selfLink": "/api/v1/namespaces/default/events/freelens-addons-dev.18d98d1346908ef4",
+        "uid": "01e661b8-3a57-4b6f-9300-3d6942e53e1f"
+      },
+      "reason": "FreeDiskSpaceFailed",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:44:00Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Node",
+        "name": "freelens-addons-dev"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:44:00Z",
+      "message": "Insufficient free disk space on the node's image filesystem (40% of 1.8 TiB used). Failed to free sufficient space by deleting unused images (freed 0 bytes). Investigate disk usage, as it could be used by active images, logs, volumes, or other data.",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:44:00Z",
+        "name": "freelens-addons-dev.18d98d1346918c61",
+        "namespace": "default",
+        "resourceVersion": "62485",
+        "selfLink": "/api/v1/namespaces/default/events/freelens-addons-dev.18d98d1346918c61",
+        "uid": "30260a01-4515-4b15-8553-d9b762af0e81"
+      },
+      "reason": "ImageGCFailed",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "api-657b58bb95-c4qcl",
+        "namespace": "demo",
+        "resourceVersion": "27680",
+        "uid": "5e6a4350-699f-4ebf-aaa5-217a1fb7ed1f"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "api-657b58bb95-c4qcl.18d98c554155f1f7",
+        "namespace": "demo",
+        "resourceVersion": "60400",
+        "selfLink": "/api/v1/namespaces/demo/events/api-657b58bb95-c4qcl.18d98c554155f1f7",
+        "uid": "1ce64e25-cc53-4751-9efc-ccd1789a67d7"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "api-657b58bb95-lltxn",
+        "namespace": "demo",
+        "resourceVersion": "27737",
+        "uid": "335f4ec0-8002-4cfd-afae-8743bf60fb9d"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "api-657b58bb95-lltxn.18d98c552e74c279",
+        "namespace": "demo",
+        "resourceVersion": "60347",
+        "selfLink": "/api/v1/namespaces/demo/events/api-657b58bb95-lltxn.18d98c552e74c279",
+        "uid": "1e963d0e-6e95-4906-aeb5-12eef7e28a2c"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 735,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T03:05:03Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{broken}",
+        "kind": "Pod",
+        "name": "broken-86d6fd94d-p94cn",
+        "namespace": "demo",
+        "resourceVersion": "27462",
+        "uid": "382f4b3f-3eda-4857-8201-921a03a36213"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:25:14Z",
+      "message": "Back-off restarting failed container broken in pod broken-86d6fd94d-p94cn_demo(382f4b3f-3eda-4857-8201-921a03a36213)",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T03:05:03Z",
+        "name": "broken-86d6fd94d-p94cn.18d95d1c73d1970d",
+        "namespace": "demo",
+        "resourceVersion": "60063",
+        "selfLink": "/api/v1/namespaces/demo/events/broken-86d6fd94d-p94cn.18d95d1c73d1970d",
+        "uid": "cb7b7214-4e10-4162-b6de-48d9d2bbe206"
+      },
+      "reason": "BackOff",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "c9d6d7d80874",
+      "source": {
+        "component": "kubelet",
+        "host": "c9d6d7d80874"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 10,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:35:35Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{broken}",
+        "kind": "Pod",
+        "name": "broken-86d6fd94d-vk7nj",
+        "namespace": "demo",
+        "resourceVersion": "60794",
+        "uid": "4a32d5f2-e40d-4f1e-994e-c67ec8f4c8bf"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:45:43Z",
+      "message": "Back-off restarting failed container broken in pod broken-86d6fd94d-vk7nj_demo(4a32d5f2-e40d-4f1e-994e-c67ec8f4c8bf)",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:35:35Z",
+        "name": "broken-86d6fd94d-vk7nj.18d98c9da1e1f632",
+        "namespace": "demo",
+        "resourceVersion": "62570",
+        "selfLink": "/api/v1/namespaces/demo/events/broken-86d6fd94d-vk7nj.18d98c9da1e1f632",
+        "uid": "35ca4a22-e020-4f1c-b2e1-47c9122f980f"
+      },
+      "reason": "BackOff",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 178,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T03:04:58Z",
+      "involvedObject": {
+        "apiVersion": "cert-manager.io/v1",
+        "kind": "Issuer",
+        "name": "broken-ca",
+        "namespace": "demo",
+        "resourceVersion": "11905",
+        "uid": "d2819c07-7cc2-4796-8ea6-685ab3333ca9"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:25:13Z",
+      "message": "Error getting keypair for CA issuer: secrets \"no-such-secret\" not found",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T03:04:59Z",
+        "name": "broken-ca.18d95d1b4fbb8149",
+        "namespace": "demo",
+        "resourceVersion": "60062",
+        "selfLink": "/api/v1/namespaces/demo/events/broken-ca.18d95d1b4fbb8149",
+        "uid": "bfd11aef-8e8a-4f5a-bae8-7aabf4f7de4d"
+      },
+      "reason": "ErrGetKeyPair",
+      "reportingComponent": "cert-manager-issuers",
+      "reportingInstance": "",
+      "source": {
+        "component": "cert-manager-issuers"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 8,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:36:28Z",
+      "involvedObject": {
+        "apiVersion": "cert-manager.io/v1",
+        "kind": "Issuer",
+        "name": "broken-ca",
+        "namespace": "demo",
+        "resourceVersion": "11905",
+        "uid": "d2819c07-7cc2-4796-8ea6-685ab3333ca9"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:46:43Z",
+      "message": "Error getting keypair for CA issuer: secrets \"no-such-secret\" not found",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:36:28Z",
+        "name": "broken-ca.18d98caa13a523b3",
+        "namespace": "demo",
+        "resourceVersion": "62629",
+        "selfLink": "/api/v1/namespaces/demo/events/broken-ca.18d98caa13a523b3",
+        "uid": "a95a3e09-f76f-415a-bf68-5195ba6c1a10"
+      },
+      "reason": "ErrGetKeyPair",
+      "reportingComponent": "cert-manager-issuers",
+      "reportingInstance": "",
+      "source": {
+        "component": "cert-manager-issuers"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 8,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:36:28Z",
+      "involvedObject": {
+        "apiVersion": "cert-manager.io/v1",
+        "kind": "Issuer",
+        "name": "broken-ca",
+        "namespace": "demo",
+        "resourceVersion": "11905",
+        "uid": "d2819c07-7cc2-4796-8ea6-685ab3333ca9"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:46:43Z",
+      "message": "Error initializing issuer: secrets \"no-such-secret\" not found",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:36:28Z",
+        "name": "broken-ca.18d98caa13aa8525",
+        "namespace": "demo",
+        "resourceVersion": "62630",
+        "selfLink": "/api/v1/namespaces/demo/events/broken-ca.18d98caa13aa8525",
+        "uid": "0c2a28d9-9b77-4c9d-b158-4c409f398c3a"
+      },
+      "reason": "ErrInitIssuer",
+      "reportingComponent": "cert-manager-issuers",
+      "reportingInstance": "",
+      "source": {
+        "component": "cert-manager-issuers"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "cm-acme-http-solver-g4jll",
+        "namespace": "demo",
+        "resourceVersion": "28028",
+        "uid": "f8886a15-f797-4141-b3e1-87367788ad31"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "cm-acme-http-solver-g4jll.18d98c552fca3ec5",
+        "namespace": "demo",
+        "resourceVersion": "60385",
+        "selfLink": "/api/v1/namespaces/demo/events/cm-acme-http-solver-g4jll.18d98c552fca3ec5",
+        "uid": "36e8ae38-acf3-490e-b5be-23be1c48d60a"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 184,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T03:04:58Z",
+      "involvedObject": {
+        "apiVersion": "cert-manager.io/v1",
+        "kind": "Issuer",
+        "name": "flaky-ca",
+        "namespace": "demo",
+        "resourceVersion": "12202",
+        "uid": "ad4d09ed-3e8d-4c38-8ea7-4ed0a64ef3d8"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:25:43Z",
+      "message": "Error getting keypair for CA issuer: secrets \"flaky-ca-key\" not found",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T03:04:59Z",
+        "name": "flaky-ca.18d95d1b4fbbcb0e",
+        "namespace": "demo",
+        "resourceVersion": "60089",
+        "selfLink": "/api/v1/namespaces/demo/events/flaky-ca.18d95d1b4fbbcb0e",
+        "uid": "3f8b4706-3289-4d51-a0cb-6e58edcaa353"
+      },
+      "reason": "ErrGetKeyPair",
+      "reportingComponent": "cert-manager-issuers",
+      "reportingInstance": "",
+      "source": {
+        "component": "cert-manager-issuers"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 8,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:36:28Z",
+      "involvedObject": {
+        "apiVersion": "cert-manager.io/v1",
+        "kind": "Issuer",
+        "name": "flaky-ca",
+        "namespace": "demo",
+        "resourceVersion": "47200",
+        "uid": "ad4d09ed-3e8d-4c38-8ea7-4ed0a64ef3d8"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:46:43Z",
+      "message": "Error getting keypair for CA issuer: secrets \"flaky-ca-key\" not found",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:36:28Z",
+        "name": "flaky-ca.18d98caa13a55092",
+        "namespace": "demo",
+        "resourceVersion": "62627",
+        "selfLink": "/api/v1/namespaces/demo/events/flaky-ca.18d98caa13a55092",
+        "uid": "9b3d17f0-427f-4708-a872-6038f306e22b"
+      },
+      "reason": "ErrGetKeyPair",
+      "reportingComponent": "cert-manager-issuers",
+      "reportingInstance": "",
+      "source": {
+        "component": "cert-manager-issuers"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 8,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:36:28Z",
+      "involvedObject": {
+        "apiVersion": "cert-manager.io/v1",
+        "kind": "Issuer",
+        "name": "flaky-ca",
+        "namespace": "demo",
+        "resourceVersion": "47200",
+        "uid": "ad4d09ed-3e8d-4c38-8ea7-4ed0a64ef3d8"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:46:43Z",
+      "message": "Error initializing issuer: secrets \"flaky-ca-key\" not found",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:36:28Z",
+        "name": "flaky-ca.18d98caa13a972e7",
+        "namespace": "demo",
+        "resourceVersion": "62628",
+        "selfLink": "/api/v1/namespaces/demo/events/flaky-ca.18d98caa13a972e7",
+        "uid": "a5110c99-9d07-4147-a23a-9e23a5f5eb99"
+      },
+      "reason": "ErrInitIssuer",
+      "reportingComponent": "cert-manager-issuers",
+      "reportingInstance": "",
+      "source": {
+        "component": "cert-manager-issuers"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "guestbook-ui-5d6468fd55-6gb7c",
+        "namespace": "demo",
+        "resourceVersion": "27746",
+        "uid": "bf6453f2-e8bb-4dc9-8ac3-7c3ee5a758bb"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "guestbook-ui-5d6468fd55-6gb7c.18d98c552f8e7fad",
+        "namespace": "demo",
+        "resourceVersion": "60381",
+        "selfLink": "/api/v1/namespaces/demo/events/guestbook-ui-5d6468fd55-6gb7c.18d98c552f8e7fad",
+        "uid": "24ecef63-d5e3-4da3-bea2-aaa575b97dca"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:36:02Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{guestbook-ui}",
+        "kind": "Pod",
+        "name": "guestbook-ui-6cbb7b6d85-bmjzp",
+        "namespace": "demo",
+        "resourceVersion": "61440",
+        "uid": "9c26dbf2-658d-401e-a9d2-4a2ae366b063"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:36:02Z",
+      "message": "Failed to pull image \"gcr.io/heptio-images/ks-guestbook-demo:0.2\": failed to pull and unpack image \"gcr.io/heptio-images/ks-guestbook-demo:0.2\": failed to resolve reference \"gcr.io/heptio-images/ks-guestbook-demo:0.2\": failed to authorize: failed to fetch anonymous token: unexpected status from GET request to https://gcr.io/v2/token?scope=repository%3Aheptio-images%2Fgcr.io%2Fks-guestbook-demo%3Apull&scope=repository%3Aheptio-images%2Fks-guestbook-demo%3Apull&service=gcr.io: 403 Forbidden",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:36:02Z",
+        "name": "guestbook-ui-6cbb7b6d85-bmjzp.18d98ca404890805",
+        "namespace": "demo",
+        "resourceVersion": "61523",
+        "selfLink": "/api/v1/namespaces/demo/events/guestbook-ui-6cbb7b6d85-bmjzp.18d98ca404890805",
+        "uid": "d1d26e48-9d17-4e12-805d-1084f3e36e70"
+      },
+      "reason": "Failed",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:36:02Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{guestbook-ui}",
+        "kind": "Pod",
+        "name": "guestbook-ui-6cbb7b6d85-bmjzp",
+        "namespace": "demo",
+        "resourceVersion": "61440",
+        "uid": "9c26dbf2-658d-401e-a9d2-4a2ae366b063"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:36:02Z",
+      "message": "Error: ErrImagePull",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:36:02Z",
+        "name": "guestbook-ui-6cbb7b6d85-bmjzp.18d98ca4048e95f4",
+        "namespace": "demo",
+        "resourceVersion": "61524",
+        "selfLink": "/api/v1/namespaces/demo/events/guestbook-ui-6cbb7b6d85-bmjzp.18d98ca4048e95f4",
+        "uid": "a6c0b713-0c33-458c-a6f8-1eb854f4b9c8"
+      },
+      "reason": "Failed",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:47:00Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{guestbook-ui}",
+        "kind": "Pod",
+        "name": "guestbook-ui-6cbb7b6d85-csjkr",
+        "namespace": "demo",
+        "resourceVersion": "62653",
+        "uid": "334e2b0c-972b-4b25-a417-52d45c7b2770"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:47:00Z",
+      "message": "Failed to pull image \"gcr.io/heptio-images/ks-guestbook-demo:0.2\": failed to pull and unpack image \"gcr.io/heptio-images/ks-guestbook-demo:0.2\": failed to resolve reference \"gcr.io/heptio-images/ks-guestbook-demo:0.2\": failed to authorize: failed to fetch anonymous token: unexpected status from GET request to https://gcr.io/v2/token?scope=repository%3Aheptio-images%2Fgcr.io%2Fks-guestbook-demo%3Apull&scope=repository%3Aheptio-images%2Fks-guestbook-demo%3Apull&service=gcr.io: 403 Forbidden",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:47:00Z",
+        "name": "guestbook-ui-6cbb7b6d85-csjkr.18d98d3d14b05d96",
+        "namespace": "demo",
+        "resourceVersion": "62721",
+        "selfLink": "/api/v1/namespaces/demo/events/guestbook-ui-6cbb7b6d85-csjkr.18d98d3d14b05d96",
+        "uid": "3cdb22c2-ac80-43e6-a852-3b9797c55039"
+      },
+      "reason": "Failed",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:47:00Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{guestbook-ui}",
+        "kind": "Pod",
+        "name": "guestbook-ui-6cbb7b6d85-csjkr",
+        "namespace": "demo",
+        "resourceVersion": "62653",
+        "uid": "334e2b0c-972b-4b25-a417-52d45c7b2770"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:47:00Z",
+      "message": "Error: ErrImagePull",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:47:00Z",
+        "name": "guestbook-ui-6cbb7b6d85-csjkr.18d98d3d14b3b125",
+        "namespace": "demo",
+        "resourceVersion": "62722",
+        "selfLink": "/api/v1/namespaces/demo/events/guestbook-ui-6cbb7b6d85-csjkr.18d98d3d14b3b125",
+        "uid": "ca4b76b7-ec5a-40f2-9746-d2ad9f1f94b7"
+      },
+      "reason": "Failed",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "helm-guestbook-77bb656876-bp6st",
+        "namespace": "demo",
+        "resourceVersion": "27782",
+        "uid": "4d071db1-392a-4215-a631-f6326ba80d4b"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "helm-guestbook-77bb656876-bp6st.18d98c55263e28ee",
+        "namespace": "demo",
+        "resourceVersion": "60298",
+        "selfLink": "/api/v1/namespaces/demo/events/helm-guestbook-77bb656876-bp6st.18d98c55263e28ee",
+        "uid": "caf868e4-0013-44dd-8c3f-1c8847a1c580"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:36:11Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{helm-guestbook}",
+        "kind": "Pod",
+        "name": "helm-guestbook-77bb656876-kj7bb",
+        "namespace": "demo",
+        "resourceVersion": "61574",
+        "uid": "ac7e2dc6-0034-4215-8af3-90536a3b96b2"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:36:11Z",
+      "message": "Readiness probe failed: Get \"http://198.51.100.11:80/\": dial tcp 198.51.100.11:80: connect: connection refused",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:36:11Z",
+        "name": "helm-guestbook-77bb656876-kj7bb.18d98ca5f187ea07",
+        "namespace": "demo",
+        "resourceVersion": "61592",
+        "selfLink": "/api/v1/namespaces/demo/events/helm-guestbook-77bb656876-kj7bb.18d98ca5f187ea07",
+        "uid": "a662e054-6583-4e71-abc2-a916e25eeda0"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:35:23Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{helm-guestbook}",
+        "kind": "Pod",
+        "name": "helm-guestbook-77bb656876-lnr7d",
+        "namespace": "demo",
+        "resourceVersion": "60803",
+        "uid": "08b53167-9591-48cd-86ca-cdb3dade2539"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:35:23Z",
+      "message": "Readiness probe failed: Get \"http://198.51.100.12:80/\": dial tcp 198.51.100.12:80: connect: connection refused",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:35:23Z",
+        "name": "helm-guestbook-77bb656876-lnr7d.18d98c9ae153e513",
+        "namespace": "demo",
+        "resourceVersion": "60955",
+        "selfLink": "/api/v1/namespaces/demo/events/helm-guestbook-77bb656876-lnr7d.18d98c9ae153e513",
+        "uid": "17542236-4b0d-4071-9d42-859ff30acc30"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "web-794cc4c7f4-wr7pd",
+        "namespace": "demo",
+        "resourceVersion": "27739",
+        "uid": "5092f526-d121-494b-ab2f-83351dba4171"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "web-794cc4c7f4-wr7pd.18d98c552f12665e",
+        "namespace": "demo",
+        "resourceVersion": "60367",
+        "selfLink": "/api/v1/namespaces/demo/events/web-794cc4c7f4-wr7pd.18d98c552f12665e",
+        "uid": "481ceb57-6481-44d8-a040-250b567fecc5"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "coredns-54996dc9b4-q8x77",
+        "namespace": "kube-system",
+        "resourceVersion": "27778",
+        "uid": "e77a0992-fc2e-4ec7-a526-eb7911296c5b"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "coredns-54996dc9b4-q8x77.18d98c552e3d9884",
+        "namespace": "kube-system",
+        "resourceVersion": "60344",
+        "selfLink": "/api/v1/namespaces/kube-system/events/coredns-54996dc9b4-q8x77.18d98c552e3d9884",
+        "uid": "45f84e63-ac3e-419a-ac11-e37a13c4678c"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:35:23Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{coredns}",
+        "kind": "Pod",
+        "name": "coredns-54996dc9b4-tpms6",
+        "namespace": "kube-system",
+        "resourceVersion": "60866",
+        "uid": "a837f8b1-709d-4a9d-9ad4-e2b760b63fa3"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:35:23Z",
+      "message": "Readiness probe failed: Get \"http://198.51.100.13:8181/ready\": dial tcp 198.51.100.13:8181: connect: connection refused",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:35:23Z",
+        "name": "coredns-54996dc9b4-tpms6.18d98c9aec25b2ae",
+        "namespace": "kube-system",
+        "resourceVersion": "60981",
+        "selfLink": "/api/v1/namespaces/kube-system/events/coredns-54996dc9b4-tpms6.18d98c9aec25b2ae",
+        "uid": "3eb0c034-c7cc-4e16-a0ee-5f351e1b9496"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "local-path-provisioner-77b9867795-njjjt",
+        "namespace": "kube-system",
+        "resourceVersion": "27689",
+        "uid": "26725802-e98f-412e-8309-26902af03548"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "local-path-provisioner-77b9867795-njjjt.18d98c554749b7a0",
+        "namespace": "kube-system",
+        "resourceVersion": "60406",
+        "selfLink": "/api/v1/namespaces/kube-system/events/local-path-provisioner-77b9867795-njjjt.18d98c554749b7a0",
+        "uid": "7c946212-8ffe-44e7-9dac-21cad1e18eb6"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:36:00Z",
+      "involvedObject": {
+        "apiVersion": "batch/v1",
+        "kind": "Job",
+        "name": "scan-vulnerabilityreport-75796767b8",
+        "namespace": "trivy-system",
+        "resourceVersion": "61459",
+        "uid": "638d2e77-477c-4dbf-8ee2-e1b535a6c7c1"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:36:00Z",
+      "message": "Job has reached the specified backoff limit",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:36:00Z",
+        "name": "scan-vulnerabilityreport-75796767b8.18d98ca38eb2a35c",
+        "namespace": "trivy-system",
+        "resourceVersion": "61464",
+        "selfLink": "/api/v1/namespaces/trivy-system/events/scan-vulnerabilityreport-75796767b8.18d98ca38eb2a35c",
+        "uid": "6bd3cb27-fed8-4f05-adbd-c24b0d29f2ec"
+      },
+      "reason": "BackoffLimitExceeded",
+      "reportingComponent": "job-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "job-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-09-28T17:30:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "trivy-operator-95755969c-wvkxk",
+        "namespace": "trivy-system",
+        "resourceVersion": "28006",
+        "uid": "a5f7c9e0-a9d4-4378-adfe-a7fd35685ef6"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-09-28T17:30:24Z",
+      "message": "Node is not ready",
+      "metadata": {
+        "creationTimestamp": "2026-09-28T17:30:24Z",
+        "name": "trivy-operator-95755969c-wvkxk.18d98c553b6bf15c",
+        "namespace": "trivy-system",
+        "resourceVersion": "60396",
+        "selfLink": "/api/v1/namespaces/trivy-system/events/trivy-operator-95755969c-wvkxk.18d98c553b6bf15c",
+        "uid": "1eaa91e6-8802-425f-a775-2afcd06cadde"
+      },
+      "reason": "NodeNotReady",
+      "reportingComponent": "node-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "node-controller"
+      },
+      "type": "Warning"
+    }
+  ],
+  "kind": "List"
+}

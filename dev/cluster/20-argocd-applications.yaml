@@ -1,0 +1,195 @@
+# Applications for the ArgoCD extension to describe.
+#
+# They point at a public repository so nothing here needs credentials, and
+# they are deliberately a mixed set: one that syncs cleanly, one that will not
+# resolve, and one held back from automated sync. An overview with everything
+# green shows nothing about how it ranks.
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: demo
+  namespace: argocd
+spec:
+  description: Sample project for extension development
+  sourceRepos: ["*"]
+  destinations:
+    - namespace: "*"
+      server: "*"
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: demo
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    targetRevision: HEAD
+    path: guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo
+  syncPolicy:
+    automated:
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: helm-guestbook
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: demo
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    targetRevision: HEAD
+    path: helm-guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo
+---
+# Points at a path that does not exist, so it stays degraded and the overview
+# has something to put at the top.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: missing-path
+  namespace: argocd
+spec:
+  project: demo
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    targetRevision: HEAD
+    path: no-such-directory
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo
+  syncPolicy:
+    automated: {}
+---
+# Fails at comparison: the revision does not exist, so ArgoCD cannot work out
+# what it should be applying. The attention rule reads that as critical, which
+# is what gives the overview more than one severity to sort.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bad-revision
+  namespace: argocd
+spec:
+  project: demo
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    targetRevision: no-such-branch
+    path: guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo
+  syncPolicy:
+    automated: {}
+---
+# Fails at apply rather than at comparison: the namespace does not exist and
+# nothing here asks ArgoCD to create it. A second failure mode, because an
+# overview that ranks them should be developed against more than one.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bad-namespace
+  namespace: argocd
+spec:
+  project: demo
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    targetRevision: HEAD
+    path: guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: nowhere-at-all
+  syncPolicy:
+    automated: {}
+---
+# An app-of-apps: the example repository's own `apps` chart, told to render two
+# children instead of its full list, several of which need plugins this cluster
+# does not run. The children land in the `default` project.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: apps
+  namespace: argocd
+spec:
+  project: demo
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    targetRevision: HEAD
+    path: apps
+    helm:
+      valuesObject:
+        # The chart's template reads `destination` on every entry.
+        applications:
+          - name: kustomize-guestbook
+            destination:
+              namespace: kustomize-guestbook
+          - name: sync-waves
+            destination:
+              namespace: sync-waves
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+# Two sources in one Application: a Helm chart from its repository at a version
+# range, and plain manifests from git. Reading `spec.source` alone sees neither.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: podinfo
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  project: demo
+  sources:
+    - repoURL: https://stefanprodan.github.io/podinfo
+      chart: podinfo
+      targetRevision: 6.*
+    - repoURL: https://github.com/argoproj/argocd-example-apps.git
+      targetRevision: HEAD
+      path: guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: podinfo
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# Pinned to a commit: the one kind of reference the next push cannot move.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook-pinned
+  namespace: argocd
+spec:
+  project: demo
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    targetRevision: f58c7ed8cfe28ad70701c5923fdbd0154388ea9f
+    path: guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: pinned
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true

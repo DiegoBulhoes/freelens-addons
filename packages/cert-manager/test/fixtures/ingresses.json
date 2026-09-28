@@ -1,0 +1,211 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "networking.k8s.io/v1",
+      "kind": "Ingress",
+      "metadata": {
+        "annotations": {
+          "nginx.ingress.kubernetes.io/whitelist-source-range": "198.51.100.10/0,::/0"
+        },
+        "creationTimestamp": "2026-09-27T03:46:45Z",
+        "generateName": "cm-acme-http-solver-",
+        "generation": 1,
+        "labels": {
+          "acme.cert-manager.io/http-domain": "656541016",
+          "acme.cert-manager.io/http-token": "1437601642",
+          "acme.cert-manager.io/http01-solver": "true"
+        },
+        "name": "cm-acme-http-solver-xdz6d",
+        "namespace": "demo",
+        "ownerReferences": [
+          {
+            "apiVersion": "acme.cert-manager.io/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Challenge",
+            "name": "acme-web-1-751204009-3652422171",
+            "uid": "9e9e1163-07dc-4ef2-bf2d-c9fdfcb08353"
+          }
+        ],
+        "resourceVersion": "12195",
+        "selfLink": "/apis/networking.k8s.io/v1/namespaces/demo/ingresses/cm-acme-http-solver-xdz6d",
+        "uid": "7ec2ad68-7571-46c9-91bc-28d96fcc5fb8"
+      },
+      "spec": {
+        "ingressClassName": "nothing-serves-this",
+        "rules": [
+          {
+            "host": "acme.demo.test",
+            "http": {
+              "paths": [
+                {
+                  "backend": {
+                    "service": {
+                      "name": "cm-acme-http-solver-qx22b",
+                      "port": {
+                        "number": 8089
+                      }
+                    }
+                  },
+                  "path": "/.well-known/acme-challenge/redacted-by-fixture-export",
+                  "pathType": "Exact"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "networking.k8s.io/v1",
+      "kind": "Ingress",
+      "metadata": {
+        "annotations": {
+          "cert-manager.io/cluster-issuer": "demo-ca"
+        },
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "managed",
+        "namespace": "demo",
+        "resourceVersion": "11998",
+        "selfLink": "/apis/networking.k8s.io/v1/namespaces/demo/ingresses/managed",
+        "uid": "20880790-c7e2-48bc-92a2-085a5535531d"
+      },
+      "spec": {
+        "rules": [
+          {
+            "host": "managed.demo.test",
+            "http": {
+              "paths": [
+                {
+                  "backend": {
+                    "service": {
+                      "name": "web",
+                      "port": {
+                        "number": 80
+                      }
+                    }
+                  },
+                  "path": "/",
+                  "pathType": "Prefix"
+                }
+              ]
+            }
+          }
+        ],
+        "tls": [
+          {
+            "hosts": [
+              "managed.demo.test"
+            ],
+            "secretName": "managed-tls"
+          }
+        ]
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "networking.k8s.io/v1",
+      "kind": "Ingress",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "missing-secret",
+        "namespace": "demo",
+        "resourceVersion": "12008",
+        "selfLink": "/apis/networking.k8s.io/v1/namespaces/demo/ingresses/missing-secret",
+        "uid": "4ec54c8f-86f0-45c1-9e08-4bce5a728cf0"
+      },
+      "spec": {
+        "rules": [
+          {
+            "host": "missing.demo.test",
+            "http": {
+              "paths": [
+                {
+                  "backend": {
+                    "service": {
+                      "name": "web",
+                      "port": {
+                        "number": 80
+                      }
+                    }
+                  },
+                  "path": "/",
+                  "pathType": "Prefix"
+                }
+              ]
+            }
+          }
+        ],
+        "tls": [
+          {
+            "hosts": [
+              "missing.demo.test"
+            ],
+            "secretName": "nowhere-tls"
+          }
+        ]
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "networking.k8s.io/v1",
+      "kind": "Ingress",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "unmanaged",
+        "namespace": "demo",
+        "resourceVersion": "12004",
+        "selfLink": "/apis/networking.k8s.io/v1/namespaces/demo/ingresses/unmanaged",
+        "uid": "fd33a985-53c0-4757-bf9d-a904c61b96aa"
+      },
+      "spec": {
+        "rules": [
+          {
+            "host": "unmanaged.demo.test",
+            "http": {
+              "paths": [
+                {
+                  "backend": {
+                    "service": {
+                      "name": "web",
+                      "port": {
+                        "number": 80
+                      }
+                    }
+                  },
+                  "path": "/",
+                  "pathType": "Prefix"
+                }
+              ]
+            }
+          }
+        ],
+        "tls": [
+          {
+            "hosts": [
+              "unmanaged.demo.test"
+            ],
+            "secretName": "hand-made-tls"
+          }
+        ]
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    }
+  ],
+  "kind": "List"
+}

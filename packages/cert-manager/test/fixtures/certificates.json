@@ -1,0 +1,416 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "Certificate",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "demo-ca-root",
+        "namespace": "cert-manager",
+        "resourceVersion": "11977",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/cert-manager/certificates/demo-ca-root",
+        "uid": "34b3e737-83a9-4569-bf0d-780e930eb50a"
+      },
+      "spec": {
+        "commonName": "demo-ca",
+        "duration": "8760h",
+        "isCA": true,
+        "issuerRef": {
+          "kind": "ClusterIssuer",
+          "name": "selfsigned"
+        },
+        "privateKey": {
+          "algorithm": "ECDSA",
+          "size": 256
+        },
+        "secretName": "demo-ca-root"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "message": "Certificate is up to date and has not expired",
+            "observedGeneration": 1,
+            "reason": "Ready",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "notAfter": "2027-09-27T03:46:43Z",
+        "notBefore": "2026-09-27T03:46:43Z",
+        "renewalTime": "2027-05-28T11:46:43Z",
+        "revision": 1
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "Certificate",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "acme-web",
+        "namespace": "demo",
+        "resourceVersion": "12086",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificates/acme-web",
+        "uid": "e75d9d65-dba9-4c96-bb89-f8f863d3cb53"
+      },
+      "spec": {
+        "dnsNames": [
+          "acme.demo.test"
+        ],
+        "issuerRef": {
+          "kind": "ClusterIssuer",
+          "name": "pebble"
+        },
+        "secretName": "acme-web"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "message": "Issuing certificate as Secret does not exist",
+            "observedGeneration": 1,
+            "reason": "DoesNotExist",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "message": "Issuing certificate as Secret does not exist",
+            "observedGeneration": 1,
+            "reason": "DoesNotExist",
+            "status": "True",
+            "type": "Issuing"
+          }
+        ],
+        "nextPrivateKeySecretName": "acme-web-48q29"
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "Certificate",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "ends-this-month",
+        "namespace": "demo",
+        "resourceVersion": "12127",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificates/ends-this-month",
+        "uid": "9f4f1b0e-94ec-432b-8ece-5caa2e11c4db"
+      },
+      "spec": {
+        "dnsNames": [
+          "month.demo.test"
+        ],
+        "duration": "480h",
+        "issuerRef": {
+          "kind": "ClusterIssuer",
+          "name": "demo-ca"
+        },
+        "renewBefore": "120h",
+        "secretName": "ends-this-month"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "message": "Certificate is up to date and has not expired",
+            "observedGeneration": 1,
+            "reason": "Ready",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "notAfter": "2026-10-17T03:46:43Z",
+        "notBefore": "2026-09-27T03:46:43Z",
+        "renewalTime": "2026-10-12T03:46:43Z",
+        "revision": 1
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "Certificate",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "ends-this-week",
+        "namespace": "demo",
+        "resourceVersion": "12070",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificates/ends-this-week",
+        "uid": "1a49be7d-d992-4529-b0b3-f22cc02c3d73"
+      },
+      "spec": {
+        "dnsNames": [
+          "week.demo.test"
+        ],
+        "duration": "144h",
+        "issuerRef": {
+          "kind": "ClusterIssuer",
+          "name": "demo-ca"
+        },
+        "renewBefore": "24h",
+        "secretName": "ends-this-week"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "message": "Certificate is up to date and has not expired",
+            "observedGeneration": 1,
+            "reason": "Ready",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "notAfter": "2026-10-03T03:46:43Z",
+        "notBefore": "2026-09-27T03:46:43Z",
+        "renewalTime": "2026-10-02T03:46:43Z",
+        "revision": 1
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "Certificate",
+      "metadata": {
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "managed-tls",
+        "namespace": "demo",
+        "ownerReferences": [
+          {
+            "apiVersion": "networking.k8s.io/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Ingress",
+            "name": "managed",
+            "uid": "20880790-c7e2-48bc-92a2-085a5535531d"
+          }
+        ],
+        "resourceVersion": "12160",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificates/managed-tls",
+        "uid": "89de9529-f1c9-474e-8e79-d24c7c2a79bb"
+      },
+      "spec": {
+        "dnsNames": [
+          "managed.demo.test"
+        ],
+        "issuerRef": {
+          "group": "cert-manager.io",
+          "kind": "ClusterIssuer",
+          "name": "demo-ca"
+        },
+        "secretName": "managed-tls",
+        "usages": [
+          "digital signature",
+          "key encipherment"
+        ]
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "message": "Certificate is up to date and has not expired",
+            "observedGeneration": 1,
+            "reason": "Ready",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "notAfter": "2026-12-26T03:46:43Z",
+        "notBefore": "2026-09-27T03:46:43Z",
+        "renewalTime": "2026-11-26T03:46:43Z",
+        "revision": 1
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "Certificate",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "never-issued",
+        "namespace": "demo",
+        "resourceVersion": "12065",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificates/never-issued",
+        "uid": "b9af6bee-4d67-43b6-8a43-64b975931ce6"
+      },
+      "spec": {
+        "dnsNames": [
+          "never.demo.test"
+        ],
+        "issuerRef": {
+          "kind": "Issuer",
+          "name": "broken-ca"
+        },
+        "secretName": "never-issued"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "message": "Issuing certificate as Secret does not exist",
+            "observedGeneration": 1,
+            "reason": "DoesNotExist",
+            "status": "True",
+            "type": "Issuing"
+          },
+          {
+            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "message": "Issuing certificate as Secret does not exist",
+            "observedGeneration": 1,
+            "reason": "DoesNotExist",
+            "status": "False",
+            "type": "Ready"
+          }
+        ],
+        "nextPrivateKeySecretName": "never-issued-grnn2"
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "Certificate",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "orphan",
+        "namespace": "demo",
+        "resourceVersion": "12029",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificates/orphan",
+        "uid": "7fe4eeb2-aa42-47a9-a956-c5c3ec13a55e"
+      },
+      "spec": {
+        "dnsNames": [
+          "orphan.demo.test"
+        ],
+        "issuerRef": {
+          "kind": "ClusterIssuer",
+          "name": "does-not-exist"
+        },
+        "secretName": "orphan"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "message": "Issuing certificate as Secret does not exist",
+            "observedGeneration": 1,
+            "reason": "DoesNotExist",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "message": "Issuing certificate as Secret does not exist",
+            "observedGeneration": 1,
+            "reason": "DoesNotExist",
+            "status": "True",
+            "type": "Issuing"
+          }
+        ],
+        "nextPrivateKeySecretName": "orphan-x2867"
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "Certificate",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "renewal-stalls",
+        "namespace": "demo",
+        "resourceVersion": "12480",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificates/renewal-stalls",
+        "uid": "1a34dcae-27ab-46b6-b811-1d02b5ca771c"
+      },
+      "spec": {
+        "dnsNames": [
+          "stalls.demo.test"
+        ],
+        "duration": "24h",
+        "issuerRef": {
+          "kind": "Issuer",
+          "name": "flaky-ca"
+        },
+        "renewBefore": "23h57m",
+        "secretName": "renewal-stalls"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "message": "Certificate is up to date and has not expired",
+            "observedGeneration": 1,
+            "reason": "Ready",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2026-09-27T03:49:43Z",
+            "message": "Renewing certificate as renewal was scheduled at 2026-09-27 03:49:43 +0000 UTC",
+            "observedGeneration": 1,
+            "reason": "Renewing",
+            "status": "True",
+            "type": "Issuing"
+          }
+        ],
+        "nextPrivateKeySecretName": "renewal-stalls-fgn2r",
+        "notAfter": "2026-09-28T03:46:43Z",
+        "notBefore": "2026-09-27T03:46:43Z",
+        "renewalTime": "2026-09-27T03:49:43Z",
+        "revision": 1
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "Certificate",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "web-tls",
+        "namespace": "demo",
+        "resourceVersion": "12156",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificates/web-tls",
+        "uid": "d5c7d9e5-2640-497b-9c24-566ececd4790"
+      },
+      "spec": {
+        "dnsNames": [
+          "web.demo.test"
+        ],
+        "duration": "2160h",
+        "issuerRef": {
+          "kind": "ClusterIssuer",
+          "name": "demo-ca"
+        },
+        "renewBefore": "360h",
+        "secretName": "web-tls"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "message": "Certificate is up to date and has not expired",
+            "observedGeneration": 1,
+            "reason": "Ready",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "notAfter": "2026-12-26T03:46:43Z",
+        "notBefore": "2026-09-27T03:46:43Z",
+        "renewalTime": "2026-12-11T03:46:43Z",
+        "revision": 1
+      }
+    }
+  ],
+  "kind": "List"
+}

@@ -1,0 +1,306 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "v1",
+      "kind": "Node",
+      "metadata": {
+        "annotations": {
+          "alpha.kubernetes.io/provided-node-ip": "198.51.100.10",
+          "flannel.alpha.coreos.com/backend-data": "{\"VNI\":1,\"VtepMAC\":\"26:c2:4f:55:31:77\"}",
+          "flannel.alpha.coreos.com/backend-type": "vxlan",
+          "flannel.alpha.coreos.com/kube-subnet-manager": "true",
+          "flannel.alpha.coreos.com/public-ip": "198.51.100.10",
+          "k3s.io/hostname": "c4bd3b67d0bc",
+          "k3s.io/internal-ip": "198.51.100.10",
+          "k3s.io/node-args": "[\"server\",\"--disable\",\"traefik\",\"--disable\",\"metrics-server\",\"--disable\",\"servicelb\",\"--write-kubeconfig-mode\",\"644\",\"--write-kubeconfig\",\"/output/kubeconfig.yaml\",\"--tls-san\",\"127.0.0.1\",\"--node-name\",\"freelens-addons-dev\",\"--kubelet-arg\",\"image-gc-high-threshold=1\",\"--kubelet-arg\",\"image-gc-low-threshold=0\"]",
+          "k3s.io/node-config-hash": "KGXJ5FSAA3JV3ESRTWXX7JA6RFPE7CHQHYUGU6NZBH4HLVBCEWMQ====",
+          "k3s.io/node-env": "{\"K3S_TOKEN\":\"********\"}",
+          "node.alpha.kubernetes.io/ttl": "0",
+          "volumes.kubernetes.io/controller-managed-attach-detach": "true"
+        },
+        "creationTimestamp": "2026-09-28T17:34:00Z",
+        "finalizers": [
+          "wrangler.cattle.io/node"
+        ],
+        "labels": {
+          "beta.kubernetes.io/arch": "amd64",
+          "beta.kubernetes.io/instance-type": "k3s",
+          "beta.kubernetes.io/os": "linux",
+          "kubernetes.io/arch": "amd64",
+          "kubernetes.io/hostname": "freelens-addons-dev",
+          "kubernetes.io/os": "linux",
+          "node-role.kubernetes.io/control-plane": "true",
+          "node.kubernetes.io/instance-type": "k3s"
+        },
+        "name": "freelens-addons-dev",
+        "resourceVersion": "62414",
+        "selfLink": "/api/v1/nodes/freelens-addons-dev",
+        "uid": "a811ed15-d1ff-4cae-8522-d4e4e540ebb7"
+      },
+      "spec": {
+        "podCIDR": "198.51.100.11/24",
+        "podCIDRs": [
+          "198.51.100.11/24"
+        ],
+        "providerID": "k3s://freelens-addons-dev"
+      },
+      "status": {
+        "addresses": [
+          {
+            "address": "198.51.100.10",
+            "type": "InternalIP"
+          },
+          {
+            "address": "c4bd3b67d0bc",
+            "type": "Hostname"
+          }
+        ],
+        "allocatable": {
+          "cpu": "16",
+          "ephemeral-storage": "1911266929190",
+          "hugepages-1Gi": "0",
+          "hugepages-2Mi": "0",
+          "memory": "23755728Ki",
+          "pods": "110"
+        },
+        "capacity": {
+          "cpu": "16",
+          "ephemeral-storage": "1964706960Ki",
+          "hugepages-1Gi": "0",
+          "hugepages-2Mi": "0",
+          "memory": "23755728Ki",
+          "pods": "110"
+        },
+        "conditions": [
+          {
+            "lastHeartbeatTime": "2026-09-28T17:43:31Z",
+            "lastTransitionTime": "2026-09-28T17:34:00Z",
+            "message": "kubelet has sufficient memory available",
+            "reason": "KubeletHasSufficientMemory",
+            "status": "False",
+            "type": "MemoryPressure"
+          },
+          {
+            "lastHeartbeatTime": "2026-09-28T17:43:31Z",
+            "lastTransitionTime": "2026-09-28T17:34:00Z",
+            "message": "kubelet has no disk pressure",
+            "reason": "KubeletHasNoDiskPressure",
+            "status": "False",
+            "type": "DiskPressure"
+          },
+          {
+            "lastHeartbeatTime": "2026-09-28T17:43:31Z",
+            "lastTransitionTime": "2026-09-28T17:34:00Z",
+            "message": "kubelet has sufficient PID available",
+            "reason": "KubeletHasSufficientPID",
+            "status": "False",
+            "type": "PIDPressure"
+          },
+          {
+            "lastHeartbeatTime": "2026-09-28T17:43:31Z",
+            "lastTransitionTime": "2026-09-28T17:34:00Z",
+            "message": "kubelet is posting ready status",
+            "reason": "KubeletReady",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "daemonEndpoints": {
+          "kubeletEndpoint": {
+            "Port": 10250
+          }
+        },
+        "declaredFeatures": [
+          "ExtendWebSocketsToKubelet",
+          "InPlacePodLevelResourcesVerticalScaling",
+          "InPlacePodVerticalScalingInitContainers",
+          "RestartAllContainersOnContainerExits"
+        ],
+        "features": {
+          "supplementalGroupsPolicy": true
+        },
+        "images": [
+          {
+            "names": [
+              "gcr.io/google-samples/gb-frontend@sha256:a908df8486ff66f2c4daa0d3d8a2fa09846a1fc8efd65649c0109695c7c5cbff",
+              "gcr.io/google-samples/gb-frontend:v5"
+            ],
+            "sizeBytes": 341206372
+          },
+          {
+            "names": [
+              "quay.io/argoproj/argocd@sha256:e2aadfae709d904e87f46ba4aa49601d827b3022db22cd4d03aae816a2e7097b",
+              "quay.io/argoproj/argocd:v3.5.2"
+            ],
+            "sizeBytes": 210607287
+          },
+          {
+            "names": [
+              "docker.io/library/nginx@sha256:abe47724e466aeab9a345d8e46a221c2fa8953c7848bb4a3bd9976a7199f8cf2",
+              "docker.io/library/nginx:latest"
+            ],
+            "sizeBytes": 63422407
+          },
+          {
+            "names": [
+              "mirror.gcr.io/aquasec/trivy@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969",
+              "mirror.gcr.io/aquasec/trivy:0.74.0"
+            ],
+            "sizeBytes": 61124324
+          },
+          {
+            "names": [
+              "docker.io/library/nginx@sha256:f6daac2445b0ce70e64d77442ccf62839f3f1b4c24bf6746a857eff014e798c8",
+              "docker.io/library/nginx:1.24.0"
+            ],
+            "sizeBytes": 57053721
+          },
+          {
+            "names": [
+              "mirror.gcr.io/aquasec/trivy-operator@sha256:0e4f11e9632f34097f259f3a59d34bab4eea8cee9aef510d15cdfc7481d5e49c",
+              "mirror.gcr.io/aquasec/trivy-operator:0.34.0"
+            ],
+            "sizeBytes": 51359170
+          },
+          {
+            "names": [
+              "ghcr.io/dexidp/dex@sha256:8499afd690c437f52301efd2b05b2455da5bd2dfc20332cd697dc9937f808462",
+              "ghcr.io/dexidp/dex:v2.45.1"
+            ],
+            "sizeBytes": 48093166
+          },
+          {
+            "names": [
+              "docker.io/library/python@sha256:2d97f6910b16bd338d3060f261f53f144965f755599aab1acda1e13cf1731b1b",
+              "docker.io/library/python:3.9-slim"
+            ],
+            "sizeBytes": 44973445
+          },
+          {
+            "names": [
+              "ghcr.io/stefanprodan/podinfo@sha256:ec73780a8425f59ea49f5bc8cdff0d598805a224fbaa1f86c67a244f250fa9da",
+              "ghcr.io/stefanprodan/podinfo:6.15.0"
+            ],
+            "sizeBytes": 34763248
+          },
+          {
+            "names": [
+              "public.ecr.aws/docker/library/redis@sha256:08ad0b1d280850169a790dba1393ff7a90aef951fc19632cf4d3ce4f78e679ba",
+              "public.ecr.aws/docker/library/redis:8.2.3-alpine"
+            ],
+            "sizeBytes": 27510315
+          },
+          {
+            "names": [
+              "quay.io/jetstack/cert-manager-controller@sha256:70f532fd9cfde0b09d55687200942399d89838bc2d5d5b45152eb799a15912b8",
+              "quay.io/jetstack/cert-manager-controller:v1.21.2"
+            ],
+            "sizeBytes": 24897549
+          },
+          {
+            "names": [
+              "docker.io/rancher/mirrored-coredns-coredns@sha256:900f9c109f7a33545d3c811516e8376df9019147b750f5ce3e254468769176ea",
+              "docker.io/rancher/mirrored-coredns-coredns:1.14.6"
+            ],
+            "sizeBytes": 23758055
+          },
+          {
+            "names": [
+              "quay.io/jetstack/cert-manager-webhook@sha256:a60e2dac46dbb8a7f3df95c54ce941012f54c2fe022f0ee55aaa1ab40ed957ae",
+              "quay.io/jetstack/cert-manager-webhook:v1.21.2"
+            ],
+            "sizeBytes": 19827800
+          },
+          {
+            "names": [
+              "docker.io/rancher/local-path-provisioner@sha256:e757967a5ec338f6a9b371c5a9688bedaa8c3578ea3dd4db329ea0084be0a86f",
+              "docker.io/rancher/local-path-provisioner:v0.0.37"
+            ],
+            "sizeBytes": 15066012
+          },
+          {
+            "names": [
+              "quay.io/jetstack/cert-manager-cainjector@sha256:c85268c64f2e0e76684bf5fe8906caff34b82523561c6affe0fae3546bd87562",
+              "quay.io/jetstack/cert-manager-cainjector:v1.21.2"
+            ],
+            "sizeBytes": 12400412
+          },
+          {
+            "names": [
+              "quay.io/jetstack/cert-manager-acmesolver@sha256:699b40d622211ab7accad8a21b04c5fbaa1841ef7a12621e8de492dbe27b2503",
+              "quay.io/jetstack/cert-manager-acmesolver:v1.21.2"
+            ],
+            "sizeBytes": 6617794
+          },
+          {
+            "names": [
+              "docker.io/library/alpine@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6",
+              "docker.io/library/alpine:latest"
+            ],
+            "sizeBytes": 3860589
+          },
+          {
+            "names": [
+              "ghcr.io/letsencrypt/pebble@sha256:ddf230642b1a584f519f32e347de1b05a6e4c1f6c35c1863b33effeab5f78199"
+            ],
+            "sizeBytes": 3338056
+          },
+          {
+            "names": [
+              "docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662",
+              "docker.io/library/busybox:1.36"
+            ],
+            "sizeBytes": 2217006
+          },
+          {
+            "names": [
+              "docker.io/rancher/mirrored-pause@sha256:f548e0e8e3dc1896ca956272154dde3314e8cc4fde0a57577ee9fa1c63f5baf4",
+              "docker.io/rancher/mirrored-pause:3.10.2"
+            ],
+            "sizeBytes": 320805
+          }
+        ],
+        "nodeInfo": {
+          "architecture": "amd64",
+          "bootID": "fixture-bootid",
+          "containerRuntimeVersion": "containerd://2.3.4-k3s1.36",
+          "kernelVersion": "7.0.0-34-generic",
+          "kubeProxyVersion": "",
+          "kubeletVersion": "v1.36.4+k3s1",
+          "machineID": "fixture-machineid",
+          "operatingSystem": "linux",
+          "osImage": "K3s v1.36.4+k3s1",
+          "swap": {
+            "capacity": 8589930496
+          },
+          "systemUUID": "fixture-systemuuid"
+        },
+        "runtimeHandlers": [
+          {
+            "features": {
+              "recursiveReadOnlyMounts": true,
+              "userNamespaces": true
+            },
+            "name": ""
+          },
+          {
+            "features": {
+              "recursiveReadOnlyMounts": true,
+              "userNamespaces": true
+            },
+            "name": "runc"
+          },
+          {
+            "features": {
+              "recursiveReadOnlyMounts": false,
+              "userNamespaces": false
+            },
+            "name": "runhcs-wcow-process"
+          }
+        ]
+      }
+    }
+  ],
+  "kind": "List"
+}

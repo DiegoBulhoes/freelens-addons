@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: {}
+
+# Least privilege by default. A job needing more asks for it explicitly.
+permissions:
+  contents: read
+
+# A new push to a PR makes the previous run irrelevant.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Actions are pinned to commit SHAs rather than tags: a tag can be moved to
+  # point at different code, a SHA cannot.
+  CHECKOUT: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+  SETUP_NODE: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+
+jobs:
+  quality:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Enable pnpm
+        # The version and its integrity hash come from packageManager.
+        run: corepack enable pnpm
+
+      # --frozen-lockfile also enforces this repo's supply-chain policy: pnpm
+      # re-checks every entry against minimumReleaseAge and fails on anything
+      # published less than 15 days ago.
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Typecheck
+        run: pnpm run -r type:check
+
+      # Coverage thresholds are part of the run: the suite fails if the
+      # decision-making layer drops below them, so a new branch cannot arrive
+      # untested without someone noticing.
+      - name: Test
+        run: pnpm run -r test:coverage
+
+      - name: Build
+        run: pnpm run -r build
+
+      # The Freelens loader reads `require(entrypoint).default` and expects a
+      # constructor. Every way of getting that wrong fails silently at load
+      # time, so it is asserted here rather than discovered in the app.
+      - name: Verify extension bundles
+        run: bash scripts/verify-bundles.sh
+
+      # Every extension carries the design standard as a copy of one file in the
+      # freelens-extension skill. A copy edited in place is the start of three
+      # extensions looking like three products again.
+      - name: Verify the design standard
+        run: bash scripts/sync-design.sh --check
+
+  images:
+    name: Container images
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Building the image is also the check that FREELENS_SHA256 still matches
+      # the release being downloaded: a mismatch fails the build.
+      - name: Build the image
+        run: docker build ./dev/freelens
+
+

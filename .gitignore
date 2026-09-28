@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output — each extension builds into out/, which Freelens loads directly
+out/
+dist/
+*.tsbuildinfo
+
+# Extension packages
+*.tgz
+
+# Local environment — never commit; it points at kubeconfigs outside the repo
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Editors
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tooling caches
+.turbo/
+coverage/

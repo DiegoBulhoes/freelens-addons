@@ -1,0 +1,11 @@
+{
+  "name": "@freelens-addons/build",
+  "version": "0.0.0",
+  "private": true,
+  "description": "electron-vite configuration shared by every extension",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "electron-vite": "^5.0.0",
+    "vite": "^7.3.0"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "Issuer",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "broken-ca",
+        "namespace": "demo",
+        "resourceVersion": "11905",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/issuers/broken-ca",
+        "uid": "d2819c07-7cc2-4796-8ea6-685ab3333ca9"
+      },
+      "spec": {
+        "ca": {
+          "secretName": "no-such-secret"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "message": "Error getting keypair for CA issuer: secrets \"no-such-secret\" not found",
+            "observedGeneration": 1,
+            "reason": "ErrGetKeyPair",
+            "status": "False",
+            "type": "Ready"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "Issuer",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "flaky-ca",
+        "namespace": "demo",
+        "resourceVersion": "12202",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/issuers/flaky-ca",
+        "uid": "ad4d09ed-3e8d-4c38-8ea7-4ed0a64ef3d8"
+      },
+      "spec": {
+        "ca": {
+          "secretName": "flaky-ca-key"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-09-27T03:46:45Z",
+            "message": "Error getting keypair for CA issuer: secrets \"flaky-ca-key\" not found",
+            "observedGeneration": 1,
+            "reason": "ErrGetKeyPair",
+            "status": "False",
+            "type": "Ready"
+          }
+        ]
+      }
+    }
+  ],
+  "kind": "List"
+}

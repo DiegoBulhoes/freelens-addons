@@ -1,0 +1,127 @@
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Mondays — a dependency with no new commits still acquires new CVEs.
+    - cron: "17 6 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+# Scanners run as containers pinned by digest rather than as third-party
+# actions. An action runs arbitrary code from someone else's repository with
+# access to this workflow's context; a digest-pinned image runs exactly the
+# bytes that were reviewed, with only the mounted directory in reach. The only
+# actions used anywhere here are GitHub's own, pinned to commit SHAs.
+env:
+  GITLEAKS: ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f # v8.30.1
+  OSV_SCANNER: ghcr.io/google/osv-scanner@sha256:afd838850ac1a0fcc15ff4a041dc9ba11123c3f0d2666217a5f0fcf9222b55fa # v2.6.0
+  HADOLINT: hadolint/hadolint@sha256:27086352fd5e1907ea2b934eb1023f217c5ae087992eb59fde121dce9c9ff21e # v2.14.0
+  TRIVY: aquasec/trivy@sha256:1c78ed1ef824ab8bb05b04359d186e4c1229d0b3e67005faacb54a7d71974f73 # 0.69.1
+
+jobs:
+  # Guards the controls themselves: the 15-day dependency floor, opt-in build
+  # scripts, digest-pinned images, checksummed downloads, SHA-pinned actions.
+  # Weakening any of them is then a red build, not a quiet YAML edit.
+  policy:
+    name: Supply-chain policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: bash scripts/verify-supply-chain.sh
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Full history: a secret removed in a later commit is still in the
+          # objects, and still has to be rotated.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Scan history for secrets
+        run: |
+          docker run --rm -v "${PWD}:/repo:ro" "${GITLEAKS}" \
+            detect --source=/repo --redact --verbose --no-banner
+
+  dependencies:
+    name: Vulnerable dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Blocks on anything it finds, with no exception list. A transitive
+      # package carrying an advisory is pinned forward to the fixed version in
+      # pnpm-workspace.yaml instead, so the scan stays something to read rather
+      # than something to configure around.
+      #
+      # No SARIF upload: the run fails loudly instead, and the finding is in its
+      # log.
+      - name: OSV scan
+        run: |
+          docker run --rm -v "${PWD}:/repo:ro" -w /repo "${OSV_SCANNER}" \
+            scan source --lockfile=/repo/pnpm-lock.yaml
+
+  dockerfiles:
+    name: Dockerfile lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # DL3008 wants apt versions pinned. Debian's archive keeps only the
+      # current version of a package, so a pin stops resolving as soon as the
+      # distribution moves and breaks the build for an unrelated reason. The
+      # package set is pinned by the base image digest instead.
+      - name: hadolint
+        run: |
+          docker run --rm -i "${HADOLINT}" \
+            hadolint --ignore DL3008 - < dev/freelens/Dockerfile
+
+  image:
+    name: Image CVEs
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Also the check that FREELENS_SHA256 still matches the published
+      # release: a mismatch fails the build.
+      - name: Build the Freelens image
+        run: docker build -t freelens-addons/freelens:ci ./dev/freelens
+
+      # Reported, not enforced. The image carries Electron and Chromium, whose
+      # CVEs cannot be fixed here — only a Freelens release can. Failing on them
+      # would leave this permanently red, which teaches people to ignore it.
+      # What is actionable is the Debian layer, and that shows up in the table.
+      - name: Scan the image
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            "${TRIVY}" image \
+              --severity HIGH,CRITICAL \
+              --ignore-unfixed \
+              --exit-code 0 \
+              --scanners vuln \
+              freelens-addons/freelens:ci

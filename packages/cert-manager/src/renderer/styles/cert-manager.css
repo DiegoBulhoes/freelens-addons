@@ -1,0 +1,113 @@
+/*
+ * What only the cert-manager extension has: the validity bar and the commands
+ * to copy. The chain from issuer to challenge is the standard's list of rows. Every page, card, row, box,
+ * filter and banner comes from design.css, the shared standard; nothing here
+ * restyles one, and every colour is a host token or a tone.
+ */
+
+/* ─── Validity: issued, renewal due, now, expires ──────────────────────── */
+
+.CertManager-validity {
+  display: grid;
+  gap: var(--cert-manager-gap-xs);
+}
+
+.CertManager-validity__track {
+  position: relative;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--cert-manager-surface);
+}
+
+.CertManager-validity__used {
+  height: 100%;
+  border-radius: 5px;
+  background: var(--cert-manager-tone-ok);
+}
+
+.CertManager-validity__track--overdue .CertManager-validity__used {
+  background: var(--cert-manager-tone-warning);
+}
+
+/* The mark and the now-line sit on the track, centred on their position. */
+.CertManager-validity__renewal,
+.CertManager-validity__now {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  transform: translateX(-50%);
+}
+
+.CertManager-validity__renewal-mark {
+  display: block;
+  width: 2px;
+  height: 18px;
+  background: var(--textColorSecondary);
+}
+
+.CertManager-validity__now {
+  width: 3px;
+  border-radius: 1px;
+  background: var(--textColorPrimary);
+}
+
+/* Issued on the left, renewal due in the middle, expires on the right. */
+.CertManager-validity__ends {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--cert-manager-gap-sm);
+  font-size: var(--cert-manager-small);
+  color: var(--textColorSecondary);
+}
+
+.CertManager-validity__end {
+  display: grid;
+  gap: 2px;
+}
+
+.CertManager-validity__end--middle {
+  text-align: center;
+}
+
+.CertManager-validity__end--last {
+  text-align: right;
+}
+
+.CertManager-validity__date {
+  color: var(--textColorPrimary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Commands: what to run, and a button to copy it ───────────────────── */
+
+.CertManager-commands {
+  display: grid;
+  gap: var(--cert-manager-gap-sm);
+  padding: var(--cert-manager-gap-sm) var(--cert-manager-gap-md);
+  border: 1px solid var(--cert-manager-line);
+  border-radius: var(--cert-manager-radius);
+  background: var(--cert-manager-surface);
+}
+
+.CertManager-command {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "label copy" "text copy";
+  gap: 2px var(--cert-manager-gap-sm);
+  align-items: center;
+}
+
+.CertManager-command__label {
+  grid-area: label;
+  font-size: var(--cert-manager-small);
+  color: var(--textColorSecondary);
+}
+
+.CertManager-command__text {
+  grid-area: text;
+  overflow-wrap: anywhere;
+}
+
+.CertManager-command .CertManager-icon-button {
+  grid-area: copy;
+}

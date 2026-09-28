@@ -1,0 +1,71 @@
+/*
+ * What only the ArgoCD extension has. Every page, card, row, table, filter and
+ * banner comes from design.css, the shared standard; nothing here restyles one.
+ *
+ * ArgoCD's own status colours are the one palette of its own, on the status
+ * badges only: someone who reads the ArgoCD web UI every day should recognise
+ * a degraded Application here without re-learning what the colours mean. The
+ * tones — a row's edge, a card's number — stay the host's, as in every
+ * extension.
+ */
+
+/*
+ * On the badge as well as the root: the Applications list and the details
+ * drawer are the host's pages, with no `.ArgoCD` above the cells, and a badge
+ * there would otherwise draw its dot in no colour at all.
+ */
+.ArgoCD,
+.ArgoCD-badge {
+  --argocd-healthy: #18be94;
+  --argocd-progressing: #0d94ff;
+  --argocd-degraded: #e96d76;
+  --argocd-suspended: #766f94;
+  --argocd-missing: #f4c030;
+  --argocd-unknown: #ccd6dd;
+}
+
+/* ─── Status badges: a dot in ArgoCD's colour, then the word ───────────── */
+
+.ArgoCD-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--argocd-gap-xs, 4px);
+  white-space: nowrap;
+}
+
+.ArgoCD-badge__dot {
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--argocd-unknown);
+}
+
+.ArgoCD-badge--Healthy .ArgoCD-badge__dot,
+.ArgoCD-badge--Synced .ArgoCD-badge__dot {
+  background: var(--argocd-healthy);
+}
+
+.ArgoCD-badge--Progressing .ArgoCD-badge__dot {
+  background: var(--argocd-progressing);
+}
+
+.ArgoCD-badge--Degraded .ArgoCD-badge__dot {
+  background: var(--argocd-degraded);
+}
+
+.ArgoCD-badge--Suspended .ArgoCD-badge__dot {
+  background: var(--argocd-suspended);
+}
+
+.ArgoCD-badge--Missing .ArgoCD-badge__dot,
+.ArgoCD-badge--OutOfSync .ArgoCD-badge__dot {
+  background: var(--argocd-missing);
+}
+
+/* ─── Pinned Applications ──────────────────────────────────────────────── */
+
+.ArgoCD-row__pin {
+  align-self: center;
+  color: var(--colorInfo);
+}

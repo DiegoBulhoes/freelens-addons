@@ -1,0 +1,78 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "acme.cert-manager.io/v1",
+      "kind": "Order",
+      "metadata": {
+        "annotations": {
+          "cert-manager.io/certificate-name": "acme-web",
+          "cert-manager.io/certificate-revision": "1",
+          "cert-manager.io/private-key-secret-name": "acme-web-48q29"
+        },
+        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "generation": 1,
+        "name": "acme-web-1-751204009",
+        "namespace": "demo",
+        "ownerReferences": [
+          {
+            "apiVersion": "cert-manager.io/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "CertificateRequest",
+            "name": "acme-web-1",
+            "uid": "2db1a026-dd19-4fee-a59f-a21835c503aa"
+          }
+        ],
+        "resourceVersion": "12141",
+        "selfLink": "/apis/acme.cert-manager.io/v1/namespaces/demo/orders/acme-web-1-751204009",
+        "uid": "9ec33193-a392-4a04-974b-0c24d9794a74"
+      },
+      "spec": {
+        "dnsNames": [
+          "acme.demo.test"
+        ],
+        "issuerRef": {
+          "kind": "ClusterIssuer",
+          "name": "pebble"
+        }
+      },
+      "status": {
+        "authorizations": [
+          {
+            "challenges": [
+              {
+                "type": "tls-alpn-01",
+                "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/aW_5XdMA9oYAqabbmVLwSyHdux_YF-eBGsUzSyWk8Xc"
+              },
+              {
+                "type": "http-01",
+                "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/35XUQ7uODBpTzobPn02zLv_qlWDPeMS20LEZB08EJ_U"
+              },
+              {
+                "type": "dns-01",
+                "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/5k5PPRt8NU176cgZfawxIDhpnjYjeAS13xCeTYKm4ig"
+              },
+              {
+                "type": "dns-persist-01",
+                "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/RQO0i2_IDl1smdVCJy9JKR1VnGStR1vvhZwTFR9VmrU"
+              },
+              {
+                "type": "dns-account-01",
+                "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/w7Hl5Do7mqtfmp8Da7RBxMLxMALLj9_KjhDMuoMV5aw"
+              }
+            ],
+            "identifier": "acme.demo.test",
+            "initialState": "pending",
+            "url": "https://pebble.acme-test.svc.cluster.local:14000/authZ/Ij8tfjupVPvnJB3mq_cnvhIOTTd4DTxO-xBNeIUfLOk",
+            "wildcard": false
+          }
+        ],
+        "finalizeURL": "https://pebble.acme-test.svc.cluster.local:14000/finalize-order/LKxtnCQunmQ2rdB-oe5OTBAZOhoEJxclTh35PuPzkJU",
+        "state": "pending",
+        "url": "https://pebble.acme-test.svc.cluster.local:14000/my-order/LKxtnCQunmQ2rdB-oe5OTBAZOhoEJxclTh35PuPzkJU"
+      }
+    }
+  ],
+  "kind": "List"
+}
