@@ -6,6 +6,7 @@ import {
   FREEZE_WINDOW,
   frozenWindows,
   isFrozen,
+  isRiskyChoice,
   REFRESH_ANNOTATION,
   refreshPatch,
   revisionOfHistory,
@@ -13,15 +14,11 @@ import {
   syncPatch,
   terminatePatch,
   thawedWindows,
+  wasForced,
+  windowsFor,
 } from "../src/renderer/api/patches";
 import type { SyncWindow } from "../src/renderer/api/types";
 import { application, appProjects, statusOf, variantOf } from "./fixtures";
-
-/**
- * These are the only bodies this extension writes into a cluster, which makes
- * them the only place a mistake reaches production. Every assertion here is
- * about the exact shape ArgoCD's controller reads.
- */
 
 describe("patches — what gets written", () => {
   it("asks for a refresh with the annotation the controller watches", () => {
@@ -35,8 +32,7 @@ describe("patches — what gets written", () => {
     const patch = syncPatch({ prune: false });
 
     expect(patch.operation.sync).toEqual({ prune: false });
-    // Pinning would re-apply whatever was last synced, which is not what
-    // "sync" means to the person clicking it.
+    // A pinned revision would re-apply the last sync instead of the source's head.
     expect(patch.operation.sync).not.toHaveProperty("revision");
     expect(patch.operation.initiatedBy).toEqual({ username: "freelens" });
   });
@@ -46,13 +42,28 @@ describe("patches — what gets written", () => {
     expect(syncPatch({ prune: false }).operation.sync.prune).toBe(false);
   });
 
+  it("forces on the hook strategy, as ArgoCD's own UI does, and only when asked", () => {
+    expect(syncPatch({ prune: true, force: true }).operation.sync).toEqual({
+      prune: true,
+      syncStrategy: { hook: { force: true } },
+    });
+    expect(syncPatch({ prune: false, force: false }).operation.sync).toEqual({ prune: false });
+  });
+
+  it("recognises a forced sync by either strategy", () => {
+    expect(wasForced({ syncStrategy: { hook: { force: true } } })).toBe(true);
+    expect(wasForced({ syncStrategy: { apply: { force: true } } })).toBe(true);
+    expect(wasForced({ syncStrategy: { hook: {} } })).toBe(false);
+    expect(wasForced({})).toBe(false);
+    expect(wasForced(undefined)).toBe(false);
+  });
+
   it("terminates by clearing the operation, not by writing a phase", () => {
     expect(terminatePatch()).toEqual({ operation: null });
   });
 
   it("turns automated sync off with an explicit null", () => {
-    // `undefined` would be dropped from the JSON and the patch would do
-    // nothing at all; null is what removes the field.
+    // `undefined` is dropped from JSON; only null removes the field.
     expect(disableAutoSyncPatch().spec.syncPolicy.automated).toBeNull();
   });
 
@@ -94,8 +105,6 @@ describe("patches — when the history does not say what it should", () => {
   });
 
   it("still produces a rollback patch when the revision is unknown", () => {
-    // ArgoCD then syncs to the source's declared revision; an absent field is
-    // better than the string "undefined".
     expect(rollbackPatch(undefined, 3).operation.sync.revision).toBeUndefined();
   });
 });
@@ -163,5 +172,28 @@ describe("freezing — the sync windows a freeze produces", () => {
 
     expect(marked[0]?.description).toBe(FREEZE_DESCRIPTION);
     expect(thawedWindows([{ ...handWritten, description: "Frozen elsewhere" }])).toHaveLength(1);
+  });
+});
+
+describe("freezing and resuming as each other's undo", () => {
+  it("freezes and resumes from whatever the project holds now", () => {
+    const project = appProjects()[0];
+    if (!project) throw new Error("no AppProject in the fixtures");
+
+    const existing = AppProject.getSyncWindows(project);
+    const frozen = windowsFor(existing, true);
+
+    expect(frozen).toEqual([...existing, FREEZE_WINDOW]);
+    expect(windowsFor(frozen, false)).toEqual(existing);
+    expect(windowsFor(frozen, true)).toBe(frozen);
+  });
+});
+
+describe("which syncs ask for the Application's name", () => {
+  it("asks once prune or force is ticked, and not for a plain sync", () => {
+    expect(isRiskyChoice({ prune: false, force: false })).toBe(false);
+    expect(isRiskyChoice({ prune: false })).toBe(false);
+    expect(isRiskyChoice({ prune: true, force: false })).toBe(true);
+    expect(isRiskyChoice({ prune: false, force: true })).toBe(true);
   });
 });

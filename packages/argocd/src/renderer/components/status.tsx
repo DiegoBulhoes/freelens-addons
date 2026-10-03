@@ -23,3 +23,13 @@ export function SyncBadge({ status, detail }: { status: SyncStatusCode; detail?:
     </span>
   );
 }
+
+export type Tone = "critical" | "warning" | "info" | "ok";
+
+export function Status({ tone, label, title }: { tone?: Tone; label: string; title?: string }) {
+  return (
+    <span className={`ArgoCD-status${tone ? ` ArgoCD-status--${tone}` : ""}`} title={title}>
+      {label}
+    </span>
+  );
+}

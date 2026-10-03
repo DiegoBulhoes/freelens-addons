@@ -157,8 +157,6 @@ describe("an AppProject whose spec makes no sense", () => {
       clusterResourceWhitelist: [{ group: "*", kind: "*" }],
     });
 
-    // A second entry means someone wrote something deliberate; "*" plus one
-    // more is not the shape the default project ships with.
     expect(AppProject.isUnrestricted(twoRepos)).toBe(false);
   });
 
@@ -172,12 +170,7 @@ describe("an AppProject whose spec makes no sense", () => {
 });
 
 describe("the project index against the filter it replaces", () => {
-  /**
-   * The filter as it was before the index, kept here as the oracle. If the two
-   * disagree on any input the index is wrong, and the inputs that matter are
-   * the names no Application carries: `getProject` has no fallback, so a
-   * missing project is a real key in the map and was never equal to a name.
-   */
+  /** The linear filter, kept as the oracle for the index. */
   function filterForProject(object: AppProject, all: Application[]): Application[] {
     const name = object.getName();
 

@@ -1,38 +1,20 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import type { Session } from "../../../build/e2e/cdp";
+import { dialogColourViolations } from "../../../build/e2e/design";
 import {
+  clickByText,
   clickSidebar,
+  hoverForTooltip,
   notificationText,
   openWorkbench,
+  textOf,
   waitFor,
 } from "../../../build/e2e/freelens";
 import { showAllAttention } from "./attention";
 
-/**
- * Every control this extension renders, clicked — except the ones that change
- * the cluster.
- *
- * A card that looks pressable and goes nowhere, a chip that highlights and
- * filters nothing, a copy button that copies an empty string: all three render
- * perfectly and all three are useless.
- *
- * Deliberately not here:
- *
- *   - `Sync...`, `Refresh` and `Hard Refresh`, from the row menu, and
- *     `Refresh N` / `Sync N` from the section bar. Those patch Applications in
- *     the cluster. The development cluster is disposable and could carry it, but
- *     it was decided that this suite stays read-only; `patches.ts` covers what
- *     they send.
- *   - `Logs`, which opens the host's own log dialog for a pod of the Application.
- *     What it opens is Freelens' UI, not this extension's.
- *   - `Pin to the top`, which has a flow of its own in `flow-pin.e2e.ts`,
- *     followed as far as the file it writes.
- *
- * Needs a running workbench with remote debugging on. `make e2e` starts one.
- */
+// Read-only on purpose: Sync and Refresh are opened as far as their confirmation, then cancelled.
 
-/** Each card, by the label under its number, and where pressing it should land. */
 const CARDS: [label: string, destination: string][] = [
   ["Applications", "/applications"],
   ["Projects", "/projects"],
@@ -44,7 +26,6 @@ const CARDS: [label: string, destination: string][] = [
   ["No auto-sync", "/applications?status=manual"],
 ];
 
-/** The menu items that only read, and what each promises afterwards. */
 const COPIES: [item: string, says: RegExp][] = [
   ["Copy argocd sync command", /copied/i],
   ["Copy kubectl sync patch", /copied/i],
@@ -67,7 +48,6 @@ describe("the controls on the ArgoCD pages", () => {
       frame,
     );
 
-  /** The path of this extension's own pages, with its prefix taken off. */
   const where = () =>
     session.evaluate<string>(
       `location.pathname.replace('/extension/freelens-addons--argocd', '') + location.search`,
@@ -106,8 +86,6 @@ describe("the controls on the ArgoCD pages", () => {
             : undefined;
         });
 
-        // A status card is a question — "which ones are degraded?" — so the answer
-        // has to arrive narrowed, not as the whole list.
         expect(landed).toContain(destination);
       },
       90_000,
@@ -148,7 +126,7 @@ describe("the controls on the ArgoCD pages", () => {
         ).toBe(1);
       }
 
-      // The filter outlives the run; leave it on All for whatever opens the page next.
+      // The filter persists across runs; leave it on All.
       await showAllAttention(session, frame);
       expect(await countOf('[data-section="attention"] .ArgoCD-row')).toBe(all);
     }, 120_000);
@@ -171,9 +149,7 @@ describe("the controls on the ArgoCD pages", () => {
 
       expect(pressed, "the moving-target section has no copy button").toBe(true);
 
-      // Not the clipboard itself: reading it needs a permission this frame has
-      // not been granted. What is checked is the promise made to the operator,
-      // and that it names a number rather than saying nothing was there.
+      // Reading the clipboard needs a permission the frame lacks, so check the notification.
       expect(await notificationText(session, frame)).toMatch(/\d+ Application names? copied/i);
     }, 90_000);
 
@@ -205,5 +181,215 @@ describe("the controls on the ArgoCD pages", () => {
       },
       120_000,
     );
+  });
+
+  describe("the bar under the ticked rows of the Applications list", () => {
+    const TICKS = ".ArgoCDApplications .TableRow .TableCell.checkbox";
+    const BAR = '[data-section="selection"]';
+
+    beforeAll(async () => {
+      await clickSidebar(session, frame, "argocd-applications", "argocd");
+      await waitFor("two Applications", async () => (await countOf(TICKS)) >= 2 || undefined);
+    }, 90_000);
+
+    const tick = (index: number) =>
+      session.evaluate(
+        `document.querySelectorAll(${JSON.stringify(TICKS)})[${index}].click()`,
+        frame,
+      );
+
+    it("is not there until a row is ticked", async () => {
+      expect(await countOf(BAR)).toBe(0);
+    });
+
+    it("counts the ticked rows, and asks before a sync, with prune off", async () => {
+      await tick(0);
+      await tick(1);
+
+      const count = await waitFor("the bar", async () => {
+        const text = await session.evaluate<string>(
+          `document.querySelector(${JSON.stringify(`${BAR} .ArgoCD-selection__count`)})?.textContent ?? ""`,
+          frame,
+        );
+
+        return text || undefined;
+      });
+
+      expect(count).toBe("2 selected");
+      expect(await textOf(session, frame, `${BAR} .ArgoCD-hint`)).toContain("only Sync does");
+
+      const targets = `${BAR} [id^='tooltip_target_']`;
+      const tooltips: string[] = [];
+
+      for (let index = 0; index < (await countOf(targets)); index++) {
+        // Leave the others first, or the previous hover's tooltip is the one read.
+        await session.evaluate(
+          `document.querySelectorAll(${JSON.stringify(targets)}).forEach((each, at) => {
+            for (const type of ["pointerleave", "pointerout", "mouseleave", "mouseout"]) {
+              each.dispatchEvent(new MouseEvent(type, { bubbles: true }));
+            }
+            each.toggleAttribute("data-hovered", at === ${index});
+          })`,
+          frame,
+        );
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        tooltips.push(await hoverForTooltip(session, frame, `${BAR} [data-hovered]`));
+      }
+
+      expect(tooltips).toEqual([
+        expect.stringContaining("Changes nothing in the cluster"),
+        expect.stringContaining("cached"),
+        expect.stringContaining("offers prune"),
+      ]);
+
+      await clickByText(session, frame, `${BAR} button`, "Sync");
+
+      const dialog = await waitFor("the confirmation", async () => {
+        const text = await session.evaluate<string>(
+          "document.querySelector('.ConfirmDialog')?.textContent ?? ''",
+          frame,
+        );
+
+        return text || undefined;
+      });
+
+      expect(dialog).toContain("Sync the 2 selected Applications?");
+      expect(dialog).toContain("Type confirm to confirm.");
+      expect(await countOf('.ConfirmDialog input[aria-label="Confirmation"]')).toBe(1);
+      expect(await dialogColourViolations(session, frame, "ArgoCD")).toEqual([]);
+      expect(dialog).toContain("Prune");
+      const ticks = () =>
+        session.evaluate<boolean[]>(
+          "[...document.querySelectorAll('.ConfirmDialog input[type=checkbox]')].map((box) => box.checked)",
+          frame,
+        );
+
+      expect(await ticks(), "prune and force must both start off").toEqual([false, false]);
+
+      await clickByText(session, frame, ".ConfirmDialog .Checkbox", "Force");
+      await waitFor("the force warning", async () =>
+        (
+          await session.evaluate<string>(
+            "document.querySelector('.ConfirmDialog')?.textContent ?? ''",
+            frame,
+          )
+        ).includes("without graceful deletion")
+          ? true
+          : undefined,
+      );
+      expect(await ticks()).toEqual([false, true]);
+
+      await clickByText(session, frame, ".ConfirmDialog button", "Cancel");
+      await waitFor("the dialog to close", async () =>
+        (await countOf(".ConfirmDialog")) === 0 ? true : undefined,
+      );
+    }, 60_000);
+
+    it("goes away once nothing is ticked", async () => {
+      await tick(0);
+      await tick(1);
+      await waitFor("the bar to go", async () => ((await countOf(BAR)) === 0 ? true : undefined));
+    }, 30_000);
+  });
+  const dialogText = () =>
+    waitFor("the confirmation", async () => {
+      const text = await session.evaluate<string>(
+        "document.querySelector('.ConfirmDialog')?.textContent ?? ''",
+        frame,
+      );
+
+      return text || undefined;
+    });
+
+  const cancelDialog = async () => {
+    await clickByText(session, frame, ".ConfirmDialog button", "Cancel");
+    await waitFor("the dialog to close", async () =>
+      (await countOf(".ConfirmDialog")) === 0 ? true : undefined,
+    );
+  };
+
+  const typedFields = () => countOf('.ConfirmDialog input[aria-label="Confirmation"]');
+
+  /** Menu labels ending in an ellipsis; there should be none. */
+  const ellipses = () =>
+    session.evaluate<string[]>(
+      `[...document.querySelectorAll('.MenuItem .title')]
+         .map((each) => each.textContent.trim())
+         .filter((label) => /(\\.\\.\\.|…)$/.test(label))`,
+      frame,
+    );
+
+  describe("the confirmations that ask for a typed word", () => {
+    it("asks for an Application's name only once prune or force is ticked", async () => {
+      await openDashboard();
+      await showAllAttention(session, frame);
+
+      const name = await textOf(session, frame, '[data-section="attention"] .ArgoCD-row__name b');
+
+      await session.evaluate(
+        "document.querySelector('[data-section=\"attention\"] .ArgoCD-row__actions i.Icon')?.click()",
+        frame,
+      );
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+      expect(await ellipses()).toEqual([]);
+      await clickByText(session, frame, ".MenuItem", "Sync");
+
+      expect(await dialogText()).toContain(`Sync ${name}`);
+      expect(await typedFields(), "a plain sync asks for no name").toBe(0);
+
+      await clickByText(session, frame, ".ConfirmDialog .Checkbox", "Prune");
+      await waitFor("the name field", async () => ((await typedFields()) === 1 ? true : undefined));
+      expect(await dialogText()).toContain(`Type ${name} to confirm.`);
+      expect(await dialogColourViolations(session, frame, "ArgoCD")).toEqual([]);
+
+      await clickByText(session, frame, ".ConfirmDialog .Checkbox", "Prune");
+      await waitFor("the name field to go", async () =>
+        (await typedFields()) === 0 ? true : undefined,
+      );
+
+      await cancelDialog();
+    }, 90_000);
+
+    it("asks for the word confirm before the overview syncs what it shows", async () => {
+      await openDashboard();
+      await showAllAttention(session, frame);
+
+      await clickByText(
+        session,
+        frame,
+        '[data-section="attention"] .ArgoCD-actions button',
+        "Sync",
+      );
+
+      expect(await dialogText()).toContain("Type confirm to confirm.");
+      expect(await typedFields()).toBe(1);
+
+      await cancelDialog();
+    }, 90_000);
+
+    it("asks for the word confirm before a project syncs all its Applications", async () => {
+      await clickSidebar(session, frame, "argocd-projects", "argocd");
+      await waitFor(
+        "a project",
+        async () =>
+          (await countOf(".ArgoCDAppProjects .TableRow .TableCell.menu i.Icon")) > 0 || undefined,
+      );
+
+      await session.evaluate(
+        "document.querySelector('.ArgoCDAppProjects .TableRow .TableCell.menu i.Icon').click()",
+        frame,
+      );
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+      expect(await ellipses()).toEqual([]);
+      await clickByText(session, frame, ".MenuItem", "Sync all");
+
+      const dialog = await dialogText();
+
+      expect(dialog).toMatch(/Sync all \d+ Applications? in/);
+      expect(dialog).toContain("Type confirm to confirm.");
+      expect(await dialogColourViolations(session, frame, "ArgoCD")).toEqual([]);
+
+      await cancelDialog();
+    }, 90_000);
   });
 });

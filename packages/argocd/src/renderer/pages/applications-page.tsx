@@ -2,6 +2,7 @@ import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 
 import { Application, type ApplicationApi } from "../api/application";
+import { SelectionActions } from "../components/selection-actions";
 import { HealthBadge, SyncBadge } from "../components/status";
 import { ArgoCDStyles } from "../components/styles";
 import { useKubeStore } from "../components/use-kube-store";
@@ -39,7 +40,7 @@ function renderResources(object: Application) {
   if (outOfSync === 0) return <span>{total} synced</span>;
 
   return (
-    <span style={{ color: "#f4c030" }}>
+    <span style={{ color: "var(--colorWarning)" }}>
       {outOfSync} of {total} drifting
     </span>
   );
@@ -84,7 +85,6 @@ export interface ApplicationsPageProps {
   params?: {
     project: { get(): string };
     status: { get(): string };
-    /** Set when arriving from the overview, so the row clicked is the row shown. */
     name: { get(): string };
   };
 }
@@ -111,7 +111,7 @@ export const ApplicationsPage = observer(({ params }: ApplicationsPageProps) => 
 
   return (
     <>
-      {/* The host's page: the badges in its cells need the stylesheet all the same. */}
+      {/* A host layout mounts none of our styles; the badges need them. */}
       <ArgoCDStyles />
       <KubeObjectListLayout<Application, ApplicationApi>
         tableId="argoCDApplicationsTable"
@@ -129,14 +129,19 @@ export const ApplicationsPage = observer(({ params }: ApplicationsPageProps) => 
         ]
           .filter(Boolean)
           .join(" · ")}
-        // The header's own count reports the store: a filtered list reads "51 items" above five rows.
+        // The host's count is of the whole store, not the filtered rows.
         customizeHeader={({ info }) => ({
           info: filtered.length === total ? info : `${filtered.length} of ${total}`,
         })}
-        // getItems, not filterCallbacks: a filter callback only runs while a matching filter is
-        // registered active in the layout's filter store, so alone it silently does nothing.
+        // Not filterCallbacks: they run only while a matching filter is active, so alone do nothing.
         getItems={() => filtered}
         renderTableHeader={renderTableHeader}
+        renderFooter={(parent) => (
+          <SelectionActions
+            getItems={() => parent.items}
+            pickOnlySelected={(items) => store.pickOnlySelected(items)}
+          />
+        )}
         renderTableContents={(object: Application) => [
           <WithTooltip key="name">{object.getName()}</WithTooltip>,
           <WithTooltip key="project">{Application.getProject(object)}</WithTooltip>,

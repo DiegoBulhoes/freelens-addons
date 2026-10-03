@@ -49,7 +49,6 @@ describe("the overview, against the cluster as it was", () => {
 
     expect(drifting).toBeDefined();
     expect(drifting?.drifting?.length).toBeGreaterThan(0);
-    // "Kind/name", which is what the operator has to go and look at.
     expect(drifting?.drifting?.[0]).toMatch(/^[A-Za-z]+\/\S+/);
   });
 
@@ -135,8 +134,7 @@ describe("the overview, when something is wrong", () => {
     expect(item?.headline).toBe("Not reconciled");
   });
 
-  // What ArgoCD writes when a targetRevision names a branch that does not exist:
-  // health stays Healthy, sync goes Unknown, and only the condition says why.
+  // A missing branch leaves health Healthy and sync Unknown; only the condition says why.
   it("surfaces an Application ArgoCD cannot compare with git", () => {
     const unreadable = variantOf("guestbook", (data) => {
       const status = statusOf(data);

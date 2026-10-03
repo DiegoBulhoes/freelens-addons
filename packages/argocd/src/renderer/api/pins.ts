@@ -2,7 +2,6 @@ import { readState, writeState } from "./local-state";
 
 const STORAGE_KEY = "freelens-addons.argocd.pins";
 
-// Ids are `<namespace>/<name>`, the same identity `idOf` builds for acknowledgements.
 export function listPins(): string[] {
   const value = readState<unknown>(STORAGE_KEY, []);
 
@@ -22,4 +21,12 @@ export function togglePin(id: string): boolean {
   writeState(STORAGE_KEY, pinned ? pins.filter((entry) => entry !== id) : [...pins, id]);
 
   return !pinned;
+}
+
+export function setPinned(id: string, pinned: boolean): void {
+  const pins = listPins();
+
+  if (pins.includes(id) === pinned) return;
+
+  writeState(STORAGE_KEY, pinned ? [...pins, id] : pins.filter((entry) => entry !== id));
 }

@@ -5,17 +5,14 @@ import {
   refreshPatch,
   revisionOfHistory,
   rollbackPatch,
+  type SyncChoice,
   syncPatch,
   terminatePatch,
 } from "./patches";
 
-// Nothing here calls the ArgoCD API server: the controller watches its own resources, so a refresh
-// is an annotation and a sync is a field, which is why the Kubernetes credentials alone suffice.
-
 export type { RefreshMode } from "./patches";
 
 export interface SyncOptions {
-  /** Deletes resources that no longer exist in git. */
   prune: boolean;
 }
 
@@ -36,9 +33,9 @@ export async function refreshApplication(
 
 export async function syncApplication(
   application: Application,
-  { prune }: SyncOptions,
+  options: SyncChoice,
 ): Promise<void> {
-  await apiFor().patch(descriptorFor(application), syncPatch({ prune }) as never, "merge");
+  await apiFor().patch(descriptorFor(application), syncPatch(options) as never, "merge");
 }
 
 export async function rollbackApplication(

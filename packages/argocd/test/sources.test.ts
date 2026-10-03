@@ -37,8 +37,7 @@ describe("exposure across the real estate", () => {
 
     expect(new Set(references).size).toBe(references.length);
 
-    // Several directories of one repository at one branch are moved by the same
-    // commit; splitting them per path would answer the wrong question.
+    // One commit moves every path of a repository at a branch, so they group together.
     const widest = exposure.moving[0];
 
     expect(widest).toBeDefined();

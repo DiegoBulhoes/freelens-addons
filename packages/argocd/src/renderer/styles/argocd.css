@@ -1,19 +1,6 @@
-/*
- * What only the ArgoCD extension has. Every page, card, row, table, filter and
- * banner comes from design.css, the shared standard; nothing here restyles one.
- *
- * ArgoCD's own status colours are the one palette of its own, on the status
- * badges only: someone who reads the ArgoCD web UI every day should recognise
- * a degraded Application here without re-learning what the colours mean. The
- * tones — a row's edge, a card's number — stay the host's, as in every
- * extension.
- */
+/* Domain only: ArgoCD's status palette, on badges. Components come from design.css. */
 
-/*
- * On the badge as well as the root: the Applications list and the details
- * drawer are the host's pages, with no `.ArgoCD` above the cells, and a badge
- * there would otherwise draw its dot in no colour at all.
- */
+/* Also on the badge: host pages have no `.ArgoCD` above the cells. */
 .ArgoCD,
 .ArgoCD-badge {
   --argocd-healthy: #18be94;
@@ -23,8 +10,6 @@
   --argocd-missing: #f4c030;
   --argocd-unknown: #ccd6dd;
 }
-
-/* ─── Status badges: a dot in ArgoCD's colour, then the word ───────────── */
 
 .ArgoCD-badge {
   display: inline-flex;
@@ -62,8 +47,6 @@
 .ArgoCD-badge--OutOfSync .ArgoCD-badge__dot {
   background: var(--argocd-missing);
 }
-
-/* ─── Pinned Applications ──────────────────────────────────────────────── */
 
 .ArgoCD-row__pin {
   align-self: center;

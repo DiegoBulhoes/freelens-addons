@@ -1,17 +1,7 @@
 import type { Session } from "../../../build/e2e/cdp";
 import { clickByText, waitFor } from "../../../build/e2e/freelens";
 
-/**
- * Puts the attention list on All and waits for its rows; returns how many.
- *
- * Only the attention list's rows: "Syncing repeatedly" below it uses the same row,
- * and neither filter nor search applies there.
- *
- * The dashboard remembers its filter across restarts, so a suite that opens it
- * reads whatever filter the last run left pressed — and one whose rows have
- * since drained, a Progressing Application that settled, shows an empty list.
- * A test that needs the rows asks for all of them instead of inheriting that.
- */
+/** Puts the attention list on All (the filter persists across runs) and returns its row count. */
 export async function showAllAttention(session: Session, frame: number): Promise<number> {
   const count = (selector: string) =>
     session.evaluate<number>(

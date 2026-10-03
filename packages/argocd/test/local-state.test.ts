@@ -8,15 +8,9 @@ import {
   snapshot,
   writeState,
 } from "../src/renderer/api/local-state";
-import { isPinned, listPins, togglePin } from "../src/renderer/api/pins";
+import { isPinned, listPins, setPinned, togglePin } from "../src/renderer/api/pins";
 import { readPreferences, writePreference } from "../src/renderer/api/preferences";
 import { application } from "./fixtures";
-
-/**
- * The store is a record in memory; `persist.ts` is what puts it in a file.
- * Seeding therefore goes through `hydrate`, which is the one thing a loaded
- * file can do to this module.
- */
 
 afterEach(() => {
   hydrate({});
@@ -38,6 +32,22 @@ describe("remembering an operator's working state", () => {
 
     expect(togglePin(id)).toBe(false);
     expect(isPinned(id)).toBe(false);
+  });
+
+  it("sets a pin either way, for the Undo of a pin or an unpin", () => {
+    const first = idOf(application("guestbook"));
+    const second = idOf(application("podinfo"));
+
+    setPinned(first, true);
+    setPinned(second, true);
+    setPinned(first, true);
+
+    expect(listPins()).toEqual([first, second]);
+
+    setPinned(first, false);
+    setPinned(first, false);
+
+    expect(listPins()).toEqual([second]);
   });
 
   it("remembers one preference without dropping the others", () => {

@@ -1,0 +1,496 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "argocd-image-updater.argoproj.io/v1alpha1",
+      "kind": "ImageUpdater",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T00:22:23Z",
+        "finalizers": [
+          "resources-finalizer.argocd-image-updater.argoproj.io"
+        ],
+        "generation": 1,
+        "name": "bad-pattern",
+        "namespace": "argocd",
+        "resourceVersion": "317017",
+        "selfLink": "/apis/argocd-image-updater.argoproj.io/v1alpha1/namespaces/argocd/imageupdaters/bad-pattern",
+        "uid": "7f8783fb-82ed-4b9b-8901-df5ce60ff195"
+      },
+      "spec": {
+        "applicationRefs": [
+          {
+            "images": [
+              {
+                "alias": "podinfo",
+                "imageName": "ghcr.io/stefanprodan/podinfo:6.14.x"
+              }
+            ],
+            "namePattern": "image-updates-[",
+            "useAnnotations": false
+          }
+        ]
+      },
+      "status": {
+        "applicationsMatched": 0,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T00:48:26Z",
+            "message": "Last check completed. Awaiting next cycle.",
+            "observedGeneration": 1,
+            "reason": "Idle",
+            "status": "False",
+            "type": "Reconciling"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T00:22:23Z",
+            "message": "invalid application name pattern 'image-updates-[': syntax error in pattern",
+            "observedGeneration": 1,
+            "reason": "ReconcileError",
+            "status": "True",
+            "type": "Error"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T00:22:23Z",
+            "message": "Reconciliation failed: invalid application name pattern 'image-updates-[': syntax error in pattern",
+            "observedGeneration": 1,
+            "reason": "ReconcileFailed",
+            "status": "False",
+            "type": "Ready"
+          }
+        ],
+        "imagesManaged": 0,
+        "lastCheckedAt": "2026-10-03T00:48:26Z",
+        "observedGeneration": 1
+      }
+    },
+    {
+      "apiVersion": "argocd-image-updater.argoproj.io/v1alpha1",
+      "kind": "ImageUpdater",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T00:22:02Z",
+        "finalizers": [
+          "resources-finalizer.argocd-image-updater.argoproj.io"
+        ],
+        "generation": 1,
+        "name": "from-annotations",
+        "namespace": "argocd",
+        "resourceVersion": "316988",
+        "selfLink": "/apis/argocd-image-updater.argoproj.io/v1alpha1/namespaces/argocd/imageupdaters/from-annotations",
+        "uid": "0a67e5ca-c7b7-47b1-a89b-b302ea4a4816"
+      },
+      "spec": {
+        "applicationRefs": [
+          {
+            "namePattern": "legacy-*",
+            "useAnnotations": true
+          }
+        ]
+      },
+      "status": {
+        "applicationsMatched": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T00:48:13Z",
+            "message": "Last check completed. Awaiting next cycle.",
+            "observedGeneration": 1,
+            "reason": "Idle",
+            "status": "False",
+            "type": "Reconciling"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T00:22:02Z",
+            "message": "No errors during last reconciliation.",
+            "observedGeneration": 1,
+            "reason": "NoErrors",
+            "status": "False",
+            "type": "Error"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T00:22:02Z",
+            "message": "Reconciled 1 applications, 0 images updated.",
+            "observedGeneration": 1,
+            "reason": "ReconcileSucceeded",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "imagesManaged": 1,
+        "lastCheckedAt": "2026-10-03T00:48:13Z",
+        "observedGeneration": 1
+      }
+    },
+    {
+      "apiVersion": "argocd-image-updater.argoproj.io/v1alpha1",
+      "kind": "ImageUpdater",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T00:15:30Z",
+        "finalizers": [
+          "resources-finalizer.argocd-image-updater.argoproj.io"
+        ],
+        "generation": 1,
+        "name": "frontend-private",
+        "namespace": "argocd",
+        "resourceVersion": "316921",
+        "selfLink": "/apis/argocd-image-updater.argoproj.io/v1alpha1/namespaces/argocd/imageupdaters/frontend-private",
+        "uid": "89cf237f-2a2c-4831-aa1e-846632d3d62c"
+      },
+      "spec": {
+        "applicationRefs": [
+          {
+            "images": [
+              {
+                "alias": "frontend",
+                "commonUpdateSettings": {
+                  "forceUpdate": false,
+                  "pullSecret": "pullsecret:argocd/no-such-secret",
+                  "updateStrategy": "newest-build"
+                },
+                "imageName": "gcr.io/google-samples/gb-frontend",
+                "manifestTargets": {
+                  "helm": {
+                    "name": "image.repository",
+                    "tag": "image.tag"
+                  }
+                }
+              }
+            ],
+            "namePattern": "helm-guestbook",
+            "useAnnotations": false
+          }
+        ],
+        "writeBackConfig": {
+          "method": "argocd"
+        }
+      },
+      "status": {
+        "applicationsMatched": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T00:47:30Z",
+            "message": "Last check completed. Awaiting next cycle.",
+            "observedGeneration": 1,
+            "reason": "Idle",
+            "status": "False",
+            "type": "Reconciling"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T00:15:30Z",
+            "message": "1 error(s) occurred during image update checks.",
+            "observedGeneration": 1,
+            "reason": "PartialErrors",
+            "status": "True",
+            "type": "Error"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T00:15:30Z",
+            "message": "Reconciled 1 applications with 1 errors, 0 images updated.",
+            "observedGeneration": 1,
+            "reason": "ReconcileCompletedWithErrors",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "imagesManaged": 1,
+        "lastCheckedAt": "2026-10-03T00:47:30Z",
+        "observedGeneration": 1
+      }
+    },
+    {
+      "apiVersion": "argocd-image-updater.argoproj.io/v1alpha1",
+      "kind": "ImageUpdater",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T00:18:16Z",
+        "finalizers": [
+          "resources-finalizer.argocd-image-updater.argoproj.io"
+        ],
+        "generation": 1,
+        "name": "plain-manifests",
+        "namespace": "argocd",
+        "resourceVersion": "317015",
+        "selfLink": "/apis/argocd-image-updater.argoproj.io/v1alpha1/namespaces/argocd/imageupdaters/plain-manifests",
+        "uid": "c61f49e2-9c41-4b05-887f-fdbc9f813aa0"
+      },
+      "spec": {
+        "applicationRefs": [
+          {
+            "images": [
+              {
+                "alias": "frontend",
+                "imageName": "gcr.io/google-samples/gb-frontend"
+              }
+            ],
+            "namePattern": "guestbook-pinned",
+            "useAnnotations": false
+          }
+        ],
+        "writeBackConfig": {
+          "method": "argocd"
+        }
+      },
+      "status": {
+        "applicationsMatched": 0,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T00:48:26Z",
+            "message": "Last check completed. Awaiting next cycle.",
+            "observedGeneration": 1,
+            "reason": "Idle",
+            "status": "False",
+            "type": "Reconciling"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T00:18:16Z",
+            "message": "No errors during last reconciliation.",
+            "observedGeneration": 1,
+            "reason": "NoErrors",
+            "status": "False",
+            "type": "Error"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T00:18:16Z",
+            "message": "Reconciled 0 applications, 0 images updated.",
+            "observedGeneration": 1,
+            "reason": "ReconcileSucceeded",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "imagesManaged": 0,
+        "lastCheckedAt": "2026-10-03T00:48:26Z",
+        "observedGeneration": 1
+      }
+    },
+    {
+      "apiVersion": "argocd-image-updater.argoproj.io/v1alpha1",
+      "kind": "ImageUpdater",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T00:45:09Z",
+        "finalizers": [
+          "resources-finalizer.argocd-image-updater.argoproj.io"
+        ],
+        "generation": 1,
+        "name": "podinfo-chart",
+        "namespace": "argocd",
+        "resourceVersion": "316815",
+        "selfLink": "/apis/argocd-image-updater.argoproj.io/v1alpha1/namespaces/argocd/imageupdaters/podinfo-chart",
+        "uid": "cdb17099-faa7-4cba-8f3d-c6afd5d01070"
+      },
+      "spec": {
+        "applicationRefs": [
+          {
+            "images": [
+              {
+                "alias": "podinfo",
+                "imageName": "ghcr.io/stefanprodan/podinfo:6.14.x",
+                "manifestTargets": {
+                  "helm": {
+                    "name": "image.repository",
+                    "tag": "image.tag"
+                  }
+                }
+              }
+            ],
+            "namePattern": "helm-image-updates",
+            "useAnnotations": false
+          }
+        ],
+        "writeBackConfig": {
+          "method": "argocd"
+        }
+      },
+      "status": {
+        "applicationsMatched": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T00:47:10Z",
+            "message": "Last check completed. Awaiting next cycle.",
+            "observedGeneration": 1,
+            "reason": "Idle",
+            "status": "False",
+            "type": "Reconciling"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T00:45:09Z",
+            "message": "No errors during last reconciliation.",
+            "observedGeneration": 1,
+            "reason": "NoErrors",
+            "status": "False",
+            "type": "Error"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T00:45:09Z",
+            "message": "Reconciled 1 applications, 1 images updated.",
+            "observedGeneration": 1,
+            "reason": "ReconcileSucceeded",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "imagesManaged": 1,
+        "lastCheckedAt": "2026-10-03T00:47:10Z",
+        "lastUpdatedAt": "2026-10-03T00:47:10Z",
+        "observedGeneration": 1,
+        "recentUpdates": [
+          {
+            "alias": "podinfo",
+            "applicationsUpdated": 1,
+            "image": "ghcr.io/stefanprodan/podinfo",
+            "message": "Updated from 6.13.0 to 6.14.1.",
+            "newVersion": "6.14.1",
+            "updatedAt": "2026-10-03T00:47:10Z"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "argocd-image-updater.argoproj.io/v1alpha1",
+      "kind": "ImageUpdater",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T00:13:44Z",
+        "finalizers": [
+          "resources-finalizer.argocd-image-updater.argoproj.io"
+        ],
+        "generation": 1,
+        "name": "podinfo-patches",
+        "namespace": "argocd",
+        "resourceVersion": "317013",
+        "selfLink": "/apis/argocd-image-updater.argoproj.io/v1alpha1/namespaces/argocd/imageupdaters/podinfo-patches",
+        "uid": "61763c25-395f-4375-817f-d73b6484b90a"
+      },
+      "spec": {
+        "applicationRefs": [
+          {
+            "images": [
+              {
+                "alias": "podinfo",
+                "commonUpdateSettings": {
+                  "forceUpdate": false,
+                  "updateStrategy": "semver"
+                },
+                "imageName": "ghcr.io/stefanprodan/podinfo:6.14.x"
+              }
+            ],
+            "namePattern": "image-updates",
+            "useAnnotations": false
+          }
+        ],
+        "writeBackConfig": {
+          "method": "argocd"
+        }
+      },
+      "status": {
+        "applicationsMatched": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T00:48:26Z",
+            "message": "Last check completed. Awaiting next cycle.",
+            "observedGeneration": 1,
+            "reason": "Idle",
+            "status": "False",
+            "type": "Reconciling"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T00:14:13Z",
+            "message": "No errors during last reconciliation.",
+            "observedGeneration": 1,
+            "reason": "NoErrors",
+            "status": "False",
+            "type": "Error"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T00:14:13Z",
+            "message": "Reconciled 1 applications, 0 images updated.",
+            "observedGeneration": 1,
+            "reason": "ReconcileSucceeded",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "imagesManaged": 1,
+        "lastCheckedAt": "2026-10-03T00:48:26Z",
+        "lastUpdatedAt": "2026-10-03T00:14:13Z",
+        "observedGeneration": 1,
+        "recentUpdates": [
+          {
+            "alias": "podinfo",
+            "applicationsUpdated": 1,
+            "image": "ghcr.io/stefanprodan/podinfo",
+            "message": "Updated from 6.13.0 to 6.14.1.",
+            "newVersion": "6.14.1",
+            "updatedAt": "2026-10-03T00:14:13Z"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "argocd-image-updater.argoproj.io/v1alpha1",
+      "kind": "ImageUpdater",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T00:13:44Z",
+        "finalizers": [
+          "resources-finalizer.argocd-image-updater.argoproj.io"
+        ],
+        "generation": 1,
+        "name": "retired",
+        "namespace": "argocd",
+        "resourceVersion": "317019",
+        "selfLink": "/apis/argocd-image-updater.argoproj.io/v1alpha1/namespaces/argocd/imageupdaters/retired",
+        "uid": "91eef655-a344-4461-86ec-9f600ef45910"
+      },
+      "spec": {
+        "applicationRefs": [
+          {
+            "images": [
+              {
+                "alias": "legacy-api",
+                "imageName": "ghcr.io/stefanprodan/podinfo:5.x"
+              }
+            ],
+            "namePattern": "retired-*",
+            "useAnnotations": false
+          }
+        ]
+      },
+      "status": {
+        "applicationsMatched": 0,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T00:48:26Z",
+            "message": "Last check completed. Awaiting next cycle.",
+            "observedGeneration": 1,
+            "reason": "Idle",
+            "status": "False",
+            "type": "Reconciling"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T00:14:13Z",
+            "message": "No errors during last reconciliation.",
+            "observedGeneration": 1,
+            "reason": "NoErrors",
+            "status": "False",
+            "type": "Error"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T00:14:13Z",
+            "message": "Reconciled 0 applications, 0 images updated.",
+            "observedGeneration": 1,
+            "reason": "ReconcileSucceeded",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "imagesManaged": 0,
+        "lastCheckedAt": "2026-10-03T00:48:26Z",
+        "observedGeneration": 1
+      }
+    }
+  ],
+  "kind": "List"
+}

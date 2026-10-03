@@ -2,8 +2,7 @@ import type { Ingress, Pod } from "@freelensapp/kube-object";
 
 import { Application } from "./application";
 
-// Configurable as `application.instanceLabelKey`; a cluster that changed it is why
-// selectApplicationPods also falls back to matching pod names.
+// Configurable in ArgoCD (`application.instanceLabelKey`), hence the pod-name fallback.
 export const INSTANCE_LABEL = "app.kubernetes.io/instance";
 
 const WORKLOAD_KINDS = new Set(["Deployment", "StatefulSet", "DaemonSet", "Job", "ReplicaSet"]);
@@ -47,8 +46,7 @@ export function findArgoCDUrlIn(ingresses: Ingress[], namespace: string): string
     if (ingress.getNs() !== namespace) continue;
 
     for (const rule of ingress.spec?.rules ?? []) {
-      // The backend is a union: networking.k8s.io/v1 names a service object, the older shape names
-      // it as a string, so both are read structurally.
+      // The backend names the service as an object (networking.k8s.io/v1) or a string (older).
       const servesArgo = (rule.http?.paths ?? []).some((path) => {
         const backend = path.backend as { service?: { name?: string }; serviceName?: string };
         const name = backend?.service?.name ?? backend?.serviceName;
@@ -63,10 +61,9 @@ export function findArgoCDUrlIn(ingresses: Ingress[], namespace: string): string
   return undefined;
 }
 
-/** What one pod listing asked for, and how much of it was refused. */
 export interface PodListing {
   requestedNamespaces: string[];
-  /** Which namespaces refused is not knowable: the host's onLoadFailure carries no namespace. */
+  /** Which namespaces refused is unknowable: the host's onLoadFailure carries none. */
   unreadableCount: number;
 }
 
@@ -88,7 +85,6 @@ export function describeMissingPods(applicationName: string, listing: PodListing
     return `Could not list pods in ${nameNamespaces(requestedNamespaces)}. ${unknown}`;
   }
 
-  // "some" rather than the count: one refusal can stand for the whole request, so a number here
-  // would be a second unverified claim in a sentence that exists to avoid the first.
+  // "some", not a count: one refusal can stand for the whole request.
   return `Could not list pods in some of the ${requestedNamespaces.length} namespaces ${applicationName} deploys to. ${unknown}`;
 }

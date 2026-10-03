@@ -4,26 +4,18 @@ import {
   applyToEachApplication,
   type BulkOutcome,
   describeOutcome,
+  listNames,
   refreshEach,
   syncEach,
 } from "../src/renderer/api/bulk";
 import { applications } from "./fixtures";
 
-/**
- * The action passed in is a real function rather than a stand-in for the
- * cluster. What this has to get right is that every Application is attempted
- * exactly once, that one failure does not abandon the rest, and that the ones
- * that failed come back named.
- */
-
-/** An action that records what it was called with and always succeeds. */
 function recordingAction(calledWith: string[]) {
   return async (application: Application) => {
     calledWith.push(application.getName());
   };
 }
 
-/** An action that rejects for the named Applications and succeeds for the rest. */
 function actionFailingFor(namesThatFail: string[]) {
   return async (application: Application) => {
     if (namesThatFail.includes(application.getName())) {
@@ -73,8 +65,6 @@ describe("applying an action to every Application", () => {
       stillRunning -= 1;
     });
 
-    // A runner that returned early would leave work in flight here, and the
-    // operator would read a report of something that had not happened yet.
     expect(stillRunning).toBe(0);
   });
 });
@@ -136,7 +126,6 @@ describe("applying an action to a set that makes no sense", () => {
     const targets = applications().slice(0, 1);
 
     const outcome = await applyToEachApplication(targets, () =>
-      // What a transport-level failure often looks like by the time it arrives.
       Promise.reject("the API server closed the connection"),
     );
 
@@ -144,9 +133,7 @@ describe("applying an action to a set that makes no sense", () => {
   });
 
   it("turns an action that cannot be issued at all into named failures", async () => {
-    // With no registered extension there is no API to patch through, which is
-    // the same shape as a network error: it must arrive as a named failure
-    // rather than as an exception that abandons the batch.
+    // No registered extension means no API; that must come back as a named failure, not a throw.
     const targets = applications().slice(0, 3);
     const outcome = await refreshEach(targets);
 
@@ -203,5 +190,20 @@ describe("describing what happened", () => {
     expect(describeOutcome("Synced", outcomeWith(0, ["alpha"]))).toBe(
       "Synced 0, failed on 1: alpha",
     );
+  });
+});
+
+describe("listNames", () => {
+  it("says nothing for nobody and the one name for one", () => {
+    expect(listNames([])).toBe("");
+    expect(listNames(["alpha"])).toBe("alpha");
+  });
+
+  it("joins the last name with 'and'", () => {
+    expect(listNames(["alpha", "beta", "gamma"])).toBe("alpha, beta and gamma");
+  });
+
+  it("names the first few and counts the rest", () => {
+    expect(listNames(["a", "b", "c", "d", "e"], 2)).toBe("a, b and 3 more");
   });
 });

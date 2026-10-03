@@ -1,0 +1,168 @@
+# One rule per state the page ranks, all produced by the controller itself:
+#
+#   podinfo-patches  really updates, 6.13.0 to the newest 6.14 patch (a closed line).
+#   frontend-private fails every cycle (missing pull secret) yet reports Ready=True.
+#                    Targets helm-guestbook: plain-directory Applications are skipped.
+#   retired          matches no Application.
+#   plain-manifests  names an Application the controller skips.
+#   from-annotations reads its images from the Application's annotations.
+#   podinfo-chart    the podinfo update as Helm parameters.
+#
+# Ready=False lives in 41-image-updater-refused.yaml, which is not seeded.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: image-updates
+  namespace: argocd
+spec:
+  project: demo
+  source:
+    repoURL: https://github.com/stefanprodan/podinfo.git
+    targetRevision: 6.13.0
+    path: kustomize
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: image-updates
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: podinfo-patches
+  namespace: argocd
+spec:
+  writeBackConfig:
+    method: argocd
+  applicationRefs:
+    - namePattern: image-updates
+      images:
+        - alias: podinfo
+          imageName: ghcr.io/stefanprodan/podinfo:6.14.x
+          commonUpdateSettings:
+            updateStrategy: semver
+---
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: frontend-private
+  namespace: argocd
+spec:
+  writeBackConfig:
+    method: argocd
+  applicationRefs:
+    - namePattern: helm-guestbook
+      images:
+        - alias: frontend
+          imageName: gcr.io/google-samples/gb-frontend
+          manifestTargets:
+            helm:
+              name: image.repository
+              tag: image.tag
+          commonUpdateSettings:
+            updateStrategy: newest-build
+            pullSecret: pullsecret:argocd/no-such-secret
+---
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: retired
+  namespace: argocd
+spec:
+  applicationRefs:
+    - namePattern: retired-*
+      images:
+        - alias: legacy-api
+          imageName: ghcr.io/stefanprodan/podinfo:5.x
+---
+# guestbook-pinned is a plain directory, so this counts none, like `retired`.
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: plain-manifests
+  namespace: argocd
+spec:
+  writeBackConfig:
+    method: argocd
+  applicationRefs:
+    - namePattern: guestbook-pinned
+      images:
+        - alias: frontend
+          imageName: gcr.io/google-samples/gb-frontend
+---
+# The pre-1.0 annotation style. The 6.13 line has one release, so it never moves.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: legacy-annotations
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: podinfo=ghcr.io/stefanprodan/podinfo:6.13.x
+    argocd-image-updater.argoproj.io/podinfo.update-strategy: semver
+    argocd-image-updater.argoproj.io/write-back-method: argocd
+spec:
+  project: demo
+  source:
+    repoURL: https://github.com/stefanprodan/podinfo.git
+    targetRevision: 6.13.0
+    path: kustomize
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: legacy-annotations
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: from-annotations
+  namespace: argocd
+spec:
+  applicationRefs:
+    - namePattern: legacy-*
+      useAnnotations: true
+---
+# Helm keeps the override elsewhere than Kustomize; undoing an update must find both.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: helm-image-updates
+  namespace: argocd
+spec:
+  project: demo
+  source:
+    repoURL: https://stefanprodan.github.io/podinfo
+    chart: podinfo
+    targetRevision: 6.13.0
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: helm-image-updates
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: podinfo-chart
+  namespace: argocd
+spec:
+  writeBackConfig:
+    method: argocd
+  applicationRefs:
+    - namePattern: helm-image-updates
+      images:
+        - alias: podinfo
+          imageName: ghcr.io/stefanprodan/podinfo:6.14.x
+          manifestTargets:
+            helm:
+              name: image.repository
+              tag: image.tag

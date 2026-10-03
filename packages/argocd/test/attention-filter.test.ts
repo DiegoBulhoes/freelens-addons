@@ -14,16 +14,8 @@ import { idOf } from "../src/renderer/api/identity";
 import { type AttentionItem, getAttentionItems } from "../src/renderer/api/overview";
 import { applications, fixtureNow } from "./fixtures";
 
-/**
- * This is the layer that decides which rows an operator sees. A filter that
- * silently matches nothing looks exactly like a cluster with nothing wrong,
- * which is how a broken one survived here once before, found only by looking
- * at the screen.
- */
-
 const NOW = fixtureNow();
 
-/** The real attention list from the fixtures, which is what the page filters. */
 function attentionItems(): AttentionItem[] {
   return getAttentionItems(applications(), NOW);
 }
@@ -93,8 +85,7 @@ describe("filtering the attention list", () => {
 
     expect(drifting).toBeDefined();
 
-    // A name that exists, under a filter it does not belong to: the search
-    // matching must not be enough to bring it back.
+    // A matching search must not override the filter.
     const remaining = selectAttentionItems(items, {
       filter: "broken",
       searchText: drifting.application.getName(),
@@ -151,7 +142,6 @@ describe("the chips offered", () => {
       );
     }
 
-    // Nothing is pinned, so the pinned chip would lead nowhere.
     expect(chips.map((chip) => chip.key)).not.toContain("mine");
   });
 
@@ -257,8 +247,7 @@ describe("paging the rows", () => {
   it("clamps a cursor left past the end by a filter change", () => {
     const page = pageOf(rows, 99, 8);
 
-    // Showing an empty page would leave the operator wondering where the rows
-    // went; the last page is the honest answer.
+    // An out-of-range page clamps to the last one.
     expect(page.pageIndex).toBe(2);
     expect(page.items).toHaveLength(4);
   });

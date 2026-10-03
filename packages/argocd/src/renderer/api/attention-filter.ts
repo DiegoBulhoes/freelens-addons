@@ -55,15 +55,7 @@ export interface FilterChip {
   total: number;
 }
 
-/**
- * The chips the attention section offers, each with how many rows it would show.
- *
- * An empty filter is left out — a chip that leads to nothing is noise — except
- * All, and except the one in use. The filter is remembered across restarts, and
- * what it matched can drain away in between: a Progressing Application settles.
- * Hiding the chip then would leave an empty list with nothing lit to say why,
- * and nothing to press that says so.
- */
+/** Empty chips are hidden, except All and the active one: a remembered filter can drain to nothing. */
 export function filterChips(
   items: AttentionItem[],
   active: FilterKey,
@@ -100,7 +92,7 @@ export function selectAttentionItems(
   );
 }
 
-/** Relies on sort being stable: severity order has to survive inside each group. */
+/** Relies on a stable sort to keep severity order within each group. */
 export function sortPinnedFirst(items: AttentionItem[], pinnedIds: Set<string>): AttentionItem[] {
   if (pinnedIds.size === 0) return items;
 

@@ -10,7 +10,7 @@ import {
   selectAttentionItems,
   sortPinnedFirst,
 } from "../api/attention-filter";
-import { type BulkOutcome, describeOutcome, refreshEach, syncEach } from "../api/bulk";
+import { type BulkOutcome, describeOutcome, listNames, refreshEach, syncEach } from "../api/bulk";
 import { copyToClipboard } from "../api/cli";
 import { groupDeploysByRevision } from "../api/insights";
 import { getAttentionItems, getCounts, getRecentDeploys, getRepeatedSyncs } from "../api/overview";
@@ -23,6 +23,8 @@ import {
   controllerNamespaceOf,
   openComponentLogs,
 } from "../api/workloads";
+import { confirmWrite } from "../components/confirm";
+import { NamespaceFilter } from "../components/namespace-filter";
 import { ArgoCDStyles } from "../components/styles";
 import { useArgoCDStores } from "../hooks/use-argocd-stores";
 import { useArgoCDUrl } from "../hooks/use-argocd-url";
@@ -44,7 +46,7 @@ function initialFilter(): FilterKey {
 }
 
 const {
-  Component: { ConfirmDialog, Icon, MenuActions, MenuItem, Notifications },
+  Component: { Icon, MenuActions, MenuItem, Notifications },
 } = Renderer;
 
 export interface DashboardPageProps {
@@ -67,9 +69,6 @@ export const DashboardPage = observer(({ extension }: DashboardPageProps) => {
   const attention = getAttentionItems(applications);
   const criticalCount = attention.filter((item) => item.severity === "critical").length;
 
-  // Measured at 0.17 ms for the whole derivation on a 52-Application fleet. The memo this
-  // replaces never hit: `attention` is a fresh array every render. See attention-section.tsx for
-  // why keying one on `applications` instead would be worse than not memoising at all.
   const ordered = sortPinnedFirst(
     selectAttentionItems(attention, { filter, searchText: query, pinnedIds }),
     pinnedIds,
@@ -104,9 +103,7 @@ export const DashboardPage = observer(({ extension }: DashboardPageProps) => {
     void extension.navigate("applications", status ? { status } : {});
   };
 
-  // The overview cannot open the host's details drawer — it is not rendered on
-  // an extension page — so a row leads to the Applications list narrowed to it,
-  // which does mount the drawer.
+  // The details drawer is not mounted on an extension page; the Applications list mounts it.
   const openApplicationNamed = (application: Application) => {
     void extension.navigate("applications", { name: application.getName() });
   };
@@ -125,33 +122,28 @@ export const DashboardPage = observer(({ extension }: DashboardPageProps) => {
   ) => {
     const targets = ordered.map((item) => item.application);
 
-    ConfirmDialog.open({
-      labelOk: `${verb} ${targets.length}`,
-      okButtonProps: destructive ? { accent: true } : { primary: true },
-      message: (
-        <div>
-          <p>
-            {verb} all <b>{targets.length}</b> Applications matching{" "}
-            <b>{FILTER_LABELS[filter].toLowerCase()}</b>
-            {query.trim() && (
-              <>
-                {" and "}
-                <b>{query.trim()}</b>
-              </>
-            )}
-            ?
-          </p>
-          <p className="ArgoCD-muted">
-            {targets
-              .slice(0, 6)
-              .map((application) => application.getName())
-              .join(", ")}
-            {targets.length > 6 && ` and ${targets.length - 6} more`}.
-            {destructive &&
-              "  Nothing is pruned: resources that are no longer in git stay, as with a plain sync."}
-          </p>
-        </div>
+    confirmWrite({
+      question: (
+        <>
+          {verb} all <b>{targets.length}</b> Applications matching{" "}
+          <b>{FILTER_LABELS[filter].toLowerCase()}</b>
+          {query.trim() && (
+            <>
+              {" and "}
+              <b>{query.trim()}</b>
+            </>
+          )}
+          ?
+        </>
       ),
+      detail: `${listNames(targets.map((application) => application.getName()))}.${
+        destructive
+          ? " Nothing is pruned: resources that are no longer in git stay, as with a plain sync."
+          : ""
+      }`,
+      label: `${verb} ${targets.length}`,
+      destructive,
+      typed: destructive ? () => "confirm" : undefined,
       ok: async () => {
         setIsWorking(true);
 
@@ -188,13 +180,13 @@ export const DashboardPage = observer(({ extension }: DashboardPageProps) => {
             >
               {ARGOCD_COMPONENTS.map((component) => (
                 <MenuItem key={component} onClick={() => void showComponentLogs(component)}>
-                  <Icon material="subject" />
+                  <Icon material="subject" tooltip={`Opens the logs of ${component}`} />
                   <span className="title">{component.replace("argocd-", "")}</span>
                 </MenuItem>
               ))}
               {argoUrl && (
                 <MenuItem onClick={() => window.open(argoUrl, "_blank", "noopener")}>
-                  <Icon material="open_in_new" />
+                  <Icon material="open_in_new" tooltip="Opens ArgoCD's own web UI in the browser" />
                   <span className="title">Open the ArgoCD UI</span>
                 </MenuItem>
               )}
@@ -221,6 +213,9 @@ export const DashboardPage = observer(({ extension }: DashboardPageProps) => {
           {pinnedIds.size > 0 && (
             <p className="ArgoCD-page__subline">{pinnedIds.size} pinned to the top.</p>
           )}
+        </div>
+        <div className="ArgoCD-page__actions">
+          <NamespaceFilter />
         </div>
       </div>
 
@@ -251,9 +246,11 @@ export const DashboardPage = observer(({ extension }: DashboardPageProps) => {
           onMarksChanged={reloadMarks}
           onOpen={openApplicationNamed}
           onRefreshAll={() =>
-            runBulkAction("Refresh", "Refreshed", refreshEach, { destructive: false })
+            runBulkAction("Refresh", "Requested a refresh of", refreshEach, { destructive: false })
           }
-          onSyncAll={() => runBulkAction("Sync", "Synced", syncEach, { destructive: true })}
+          onSyncAll={() =>
+            runBulkAction("Sync", "Started a sync on", syncEach, { destructive: true })
+          }
         />
       )}
 

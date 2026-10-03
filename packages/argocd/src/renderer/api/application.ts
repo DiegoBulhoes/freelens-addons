@@ -12,8 +12,7 @@ import type {
   SyncStatusCode,
 } from "./types";
 
-// A source is declared as either `source` or `sources`, and most of `status` is absent until the
-// controller has reconciled at least once, so every accessor here has to tolerate both.
+// Every accessor tolerates `source` or `sources`, and a `status` not yet reconciled.
 export class Application extends Renderer.K8sApi.LensExtensionKubeObject<
   Renderer.K8sApi.KubeObjectMetadata,
   ApplicationStatus,

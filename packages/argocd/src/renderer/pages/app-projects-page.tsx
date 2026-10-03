@@ -71,11 +71,8 @@ export const AppProjectsPage = observer(() => {
   const store = useKubeStore(() => AppProject.getStore<AppProject>());
   const applicationStore = useKubeStore(() => Application.getStore<Application>());
 
-  // A computed rather than a useMemo over items: `items` is a MobX array mutated in place, so a
-  // memo would freeze at whatever the store held on mount. Not read in this body either, which
-  // would re-render the whole layout on every watch event — each row reads it in its own Observer.
-  // While the Applications column is the active sort the host's Table reads it too, so the
-  // subscription is narrowed for the rows, not for everything.
+  // A computed, since `items` is mutated in place; read per row, not here, so a watch event does
+  // not re-render the whole layout.
   const applicationsByProject = useMemo(
     () =>
       computed(() =>

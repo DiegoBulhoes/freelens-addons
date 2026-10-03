@@ -4,25 +4,7 @@ import type { Session } from "../../../build/e2e/cdp";
 import { clickSidebar, openWorkbench, typeInto, waitFor } from "../../../build/e2e/freelens";
 import { showAllAttention } from "./attention";
 
-/**
- * The filter field written into the attention list.
- *
- * Its rules are covered by unit tests and covered well: `getAttentionItems` and
- * `attention-filter.ts` have dozens of cases between them. What no unit test can
- * say is whether a keystroke in the rendered page reaches them — the field can be
- * a controlled input whose value never moves, or wired to a state the list does
- * not read — and that half has been broken in this repository before without any
- * suite noticing.
- *
- * This one filters by absence rather than by a name read off the page. The
- * attention list holds only what needs attention, which on a healthy cluster is
- * one row or none, so narrowing it to a name proves less than emptying it does.
- *
- * Needs a running workbench with remote debugging on. `make e2e` starts one.
- */
-
-// The attention list's rows only: "Syncing repeatedly" uses the same component
-// and is not filtered.
+// Attention rows only: "Syncing repeatedly" uses the same component and is not filtered.
 const ROW = '[data-section="attention"] .ArgoCD-row';
 
 describe("the ArgoCD attention list filters", () => {

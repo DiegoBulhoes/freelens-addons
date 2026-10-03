@@ -1,6 +1,5 @@
 import type { RevisionHistory } from "./types";
 
-/** 7 is git's default abbreviation and the shortest form ArgoCD writes; 40 is the full hash. */
 const GIT_REVISION_PATTERN = /^[0-9a-f]{7,40}$/;
 
 const FULL_GIT_REVISION_PATTERN = /^[0-9a-f]{40}$/;
@@ -9,7 +8,6 @@ export function isGitRevision(candidate: string): boolean {
   return GIT_REVISION_PATTERN.test(candidate);
 }
 
-/** A multi-source deploy records `revisions` in source order; a single-source one, `revision`. */
 export function revisionsOfDeploy(deploy: RevisionHistory | undefined): string[] {
   if (!deploy) return [];
 

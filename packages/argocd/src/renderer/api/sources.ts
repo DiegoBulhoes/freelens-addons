@@ -18,7 +18,6 @@ export function classifySource(source: ApplicationSource): SourceKind {
   if (VERSION_RANGE.test(revision)) return "range";
   if (MOVING_REFS.has(revision.toLowerCase())) return "branch";
 
-  // An unrecognised ref is a named branch: still moving, never pinned.
   return "branch";
 }
 
@@ -37,7 +36,7 @@ export interface SourceExposure {
   total: number;
 }
 
-/** `path` is deliberately out of the key: every path of one repo at `main` moves together. */
+/** `path` is out of the key: every path of one repo at one ref moves together. */
 function groupKeyOf(source: ApplicationSource): string {
   return [source.repoURL ?? "", source.chart ?? "", source.targetRevision ?? ""].join("|");
 }
@@ -70,7 +69,6 @@ function addToGroup(
     return;
   }
 
-  // A multi-source Application can reach the same group twice.
   if (!existing.applications.includes(application)) existing.applications.push(application);
 }
 

@@ -2,18 +2,10 @@ import { Application } from "./application";
 import type { DeployEntry } from "./overview";
 import { findGitRevision, revisionsOfDeploy } from "./revisions";
 
-/**
- * The parent of each of these Applications, found in one pass over the fleet.
- *
- * `applications` is the rows being asked about, not the fleet, so the pass
- * stops once all of them have an answer.
- */
 export function getParentsOf(
   applications: Application[],
   all: Application[],
 ): Map<Application, Application> {
-  // Two Applications can share a name across namespaces, so a name maps to a
-  // list and the namespace rule below decides between them.
   const wanted = new Map<string | undefined, Application[]>();
 
   for (const application of applications) {
@@ -27,8 +19,6 @@ export function getParentsOf(
   const unanswered = new Set(applications);
 
   for (const candidate of all) {
-    // `all` is walked in order and the first match wins, as the find() this
-    // replaces did, so nothing later can change an answer.
     if (unanswered.size === 0) break;
 
     for (const resource of Application.getManagedResources(candidate)) {
@@ -40,9 +30,7 @@ export function getParentsOf(
 
         const namespace = application.getNs();
 
-        // Written as the comparison rather than a bucket test on purpose: `??`
-        // falls back on null as well as undefined, and `=== undefined` would
-        // quietly disagree with the scan.
+        // Not `=== undefined`: `??` also falls back on null.
         if ((resource.namespace ?? namespace) !== namespace) continue;
 
         parents.set(application, candidate);
@@ -54,7 +42,6 @@ export function getParentsOf(
   return parents;
 }
 
-/** The Application that manages this one, in an app-of-apps layout. */
 export function getParentOf(application: Application, all: Application[]): Application | undefined {
   return getParentsOf([application], all).get(application);
 }

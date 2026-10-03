@@ -6,19 +6,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { hydrate, readState, writeState } from "../src/renderer/api/local-state";
 import { flushState, startPersistingState } from "../src/renderer/api/persist";
 
-/**
- * The real filesystem, in a real temporary directory. What this has to get
- * right is that state reaches the disk and comes back, and that every way the
- * folder lookup can fail still leaves a usable extension — the loader awaits
- * this inside one Promise.all covering every extension in the frame.
- */
-
 const CLUSTER_HOST = "289e8b234825329f053f98f8d145e660.renderer.freelens.app:45555";
 const CLUSTER_FILE = "289e8b234825329f053f98f8d145e660.json";
 
 let folder: string;
 
-/** An extension whose folder is a real directory, which is all persist.ts asks of it. */
 function extensionWithFolder(path: string) {
   return { getExtensionFileFolder: async () => path };
 }
@@ -52,7 +44,7 @@ describe("keeping an operator's state across a restart", () => {
     writeState("freelens-addons.argocd.pins", ["argocd/helm-guestbook"]);
     await flushState();
 
-    // The restart: the port in the host changes, everything in memory is gone.
+    // Simulates a restart: memory is gone.
     hydrate({});
     expect(readState("freelens-addons.argocd.pins", [])).toEqual([]);
 
@@ -102,11 +94,7 @@ describe("keeping an operator's state across a restart", () => {
   });
 });
 
-/**
- * These cases are indistinguishable from no persistence at all, which is the
- * point of them: every failure has to degrade to what the extension did before.
- * The suite above is what fails if persist.ts stops working.
- */
+/** Every failure must degrade to no persistence, never block startup. */
 describe("starting up when the state cannot be reached", () => {
   it("survives a folder lookup that rejects, and still remembers within the session", async () => {
     const failing = {
@@ -125,8 +113,7 @@ describe("starting up when the state cannot be reached", () => {
     vi.useFakeTimers();
 
     try {
-      // A pending promise is the one failure the host's loader does not survive:
-      // its Promise.all covers every extension in the frame, Freelens' own too.
+      // A never-settling promise would hang the host's Promise.all over every extension.
       const starting = startPersistingState(
         { getExtensionFileFolder: () => new Promise<string>(() => {}) },
         CLUSTER_HOST,
@@ -171,8 +158,6 @@ describe("starting up against a file nobody should have written", () => {
 
     writeState("freelens-addons.argocd.pins", ["argocd/one"]);
 
-    // A write that cannot land must not take the frame down with it, and the
-    // operator keeps what they set for as long as the window is open.
     await expect(flushState()).resolves.toBeUndefined();
     expect(readState("freelens-addons.argocd.pins", [])).toEqual(["argocd/one"]);
   });

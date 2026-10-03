@@ -63,11 +63,7 @@ function diagnoseBrokenHealth(application: Application): Finding | undefined {
   };
 }
 
-/**
- * An Application ArgoCD cannot compare with git — a branch that does not exist,
- * a path that is not there — keeps its last health, and reports its sync as
- * Unknown. Nothing turns red. The condition is the only place it says so.
- */
+// An Application ArgoCD cannot compare with git keeps its last health; only the condition says so.
 const CONDITION_HEADLINES: Record<string, string> = {
   ComparisonError: "Git error",
   InvalidSpecError: "Invalid spec",
@@ -163,7 +159,7 @@ function diagnoseTransientHealth(application: Application): Finding | undefined 
   };
 }
 
-/** Order is precedence: the first diagnosis that answers is the one reported. */
+/** Order is precedence: the first diagnosis that answers is reported. */
 const DIAGNOSES: Diagnosis[] = [
   diagnoseBrokenHealth,
   diagnoseConditionError,
@@ -273,7 +269,7 @@ function compareByMostRecent(first: DeployEntry, second: DeployEntry): number {
   return second.at - first.at;
 }
 
-/** From `status.history`: Kubernetes events carry a TTL and are garbage collected. */
+/** From `status.history`: Kubernetes events expire. */
 export function getRecentDeploys(applications: Application[], limit = 12): DeployEntry[] {
   return applications
     .flatMap((application) =>

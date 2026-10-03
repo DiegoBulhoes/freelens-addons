@@ -4,45 +4,28 @@ import { join } from "node:path";
 import { clusterIdFromHost, stateFileName } from "./cluster-scope";
 import { hydrate, onStateChange, snapshot } from "./local-state";
 
-/**
- * Where an operator's pins are kept: one JSON file per cluster, in the
- * folder Freelens hands this extension. That is what the host does with its own
- * per-cluster UI state in `lens-local-storage/<clusterId>.json`, and it is the
- * only place the state survives a restart.
- *
- * Node is reachable here: the cluster frame runs with `nodeIntegration: true`,
- * `nodeIntegrationInSubFrames: true` and `contextIsolation: false`, and the
- * host's own renderer bundle requires `fs-extra`.
- */
+// Not localStorage, which a new origin port wipes every launch. Node is reachable: the
+// cluster frame runs with nodeIntegration and without context isolation.
 
 interface FileFolderOwner {
   getExtensionFileFolder(): Promise<string>;
 }
 
-/**
- * The loader awaits every extension's `onActivate` inside one `Promise.all`
- * before it registers any page, so a hang here would stall every extension in
- * the frame, Freelens' own bundled ones included. A rejection it survives — it
- * logs and registers anyway — but a pending promise it does not. Hence a cap
- * rather than a bare await.
- */
+// Every extension's onActivate is awaited in one Promise.all: a hang here stalls them all.
 const FOLDER_TIMEOUT_MS = 5_000;
 
 let filePath: string | undefined;
 let writes: Promise<void> = Promise.resolve();
 let unsubscribe: (() => void) | undefined;
 
-/**
- * Never rejects. Every way this can fail ends with the state in memory for the
- * life of the frame, which is exactly what the extension had before.
- */
+/** Never rejects; on failure the state stays in memory. */
 export async function startPersistingState(
   extension: FileFolderOwner,
   host: string,
 ): Promise<void> {
   const fileName = stateFileName(clusterIdFromHost(host));
 
-  // The root frame, where there is no cluster and no UI of ours to remember.
+  // The root frame: no cluster, no UI of ours.
   if (fileName === undefined) return;
 
   const folder = await extensionFolderOrNothing(extension);
@@ -51,16 +34,13 @@ export async function startPersistingState(
 
   filePath = join(folder, fileName);
 
-  // The folder name is a hash of a random salt, remembered in
-  // lens-filesystem-provisioner-store.json. Say where it landed: a line in the
-  // frame log beats losing every pin in silence if that mapping ever moves.
+  // The folder name is a salted hash, so log where it landed.
   console.log(`[argocd] operator state: ${filePath}`);
 
   try {
     hydrate(JSON.parse(await fs.readFile(filePath, "utf8")));
   } catch {
-    // No file on the first run, or one that cannot be read or parsed. Either
-    // way the honest answer is no state, which is what an unhydrated store is.
+    // Missing or unreadable: start empty.
   }
 
   unsubscribe = onStateChange(() => {
@@ -68,7 +48,6 @@ export async function startPersistingState(
   });
 }
 
-/** Called from onDeactivate, so a pin set a moment earlier reaches the disk. */
 export async function flushState(): Promise<void> {
   unsubscribe?.();
   unsubscribe = undefined;
@@ -101,12 +80,7 @@ async function extensionFolderOrNothing(extension: FileFolderOwner): Promise<str
   }
 }
 
-/**
- * Write-through rather than debounced: a pin is one click and the file is a few
- * kilobytes, so a debounce would only be a window in which a pin is lost. The
- * chain serialises writes, and temp-then-rename keeps a crash mid-write from
- * leaving a truncated file that would read back as no state at all.
- */
+/** Writes are chained, and temp-then-rename keeps a crash from leaving a truncated file. */
 async function writeSnapshot(): Promise<void> {
   if (filePath === undefined) return;
 

@@ -1,7 +1,7 @@
 import { AppProject } from "./app-project";
 import type { Application } from "./application";
 import { revisionsOfDeploy } from "./revisions";
-import type { SyncWindow } from "./types";
+import type { SyncStrategy, SyncWindow } from "./types";
 
 export const REFRESH_ANNOTATION = "argocd.argoproj.io/refresh";
 
@@ -14,14 +14,28 @@ export function refreshPatch(mode: RefreshMode) {
   return { metadata: { annotations: { [REFRESH_ANNOTATION]: mode } } };
 }
 
-/** No target revision, so ArgoCD syncs what the source declares, not stale manifests. */
-export function syncPatch({ prune }: { prune: boolean }) {
+export interface SyncChoice {
+  prune: boolean;
+  /** As `kubectl replace --force`: delete and recreate, skipping graceful deletion. */
+  force?: boolean;
+}
+
+/** Force goes on the hook strategy, as ArgoCD's UI does; `apply.force` would skip hooks. */
+export function syncPatch({ prune, force = false }: SyncChoice) {
   return {
     operation: {
-      sync: { prune },
+      sync: force ? { prune, syncStrategy: { hook: { force: true } } } : { prune },
       initiatedBy: { username: "freelens" },
     },
   };
+}
+
+export function isRiskyChoice({ prune, force }: SyncChoice): boolean {
+  return prune || Boolean(force);
+}
+
+export function wasForced(sync: { syncStrategy?: SyncStrategy } | undefined): boolean {
+  return Boolean(sync?.syncStrategy?.hook?.force || sync?.syncStrategy?.apply?.force);
 }
 
 export function rollbackPatch(revision: string | undefined, historyId: number) {
@@ -74,4 +88,9 @@ export function frozenWindows(existing: SyncWindow[]): SyncWindow[] {
 
 export function thawedWindows(existing: SyncWindow[]): SyncWindow[] {
   return existing.filter((window) => window.description !== FREEZE_DESCRIPTION);
+}
+
+/** Starts from the project as it is now: an Undo runs after the first write changed it. */
+export function windowsFor(existing: SyncWindow[], frozen: boolean): SyncWindow[] {
+  return frozen ? frozenWindows(existing) : thawedWindows(existing);
 }

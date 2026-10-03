@@ -30,7 +30,12 @@ export function AttentionRow({
     <div className={`ArgoCD-row ArgoCD-row--${item.severity}`}>
       <span className="ArgoCD-row__state">{item.headline}</span>
 
-      <button type="button" className="ArgoCD-row__main" onClick={() => onOpen(application)}>
+      <button
+        type="button"
+        className="ArgoCD-row__main"
+        title="Opens it in the Applications list, with its details"
+        onClick={() => onOpen(application)}
+      >
         <span className="ArgoCD-row__name">
           {pinned && <Icon small material="push_pin" className="ArgoCD-row__pin" />}
           <b>{application.getName()}</b>

@@ -9,18 +9,7 @@ import {
   waitFor,
 } from "../../../build/e2e/freelens";
 
-/**
- * Whether the numbers on the page are the cluster's numbers.
- *
- * Every other file here checks that something rendered. This one checks that what
- * rendered is true: the counts are compared against the API, asked of the host's
- * own proxy from inside the frame, so nothing about the development cluster is
- * written down. A card reading "2 Degraded" when the cluster has three is a
- * worse defect than a card that fails to render, because nobody looks twice at a
- * number.
- *
- * Needs a running workbench with remote debugging on. `make e2e` starts one.
- */
+// Counts are compared against the API via the host's proxy, so no cluster contents are written down.
 
 const APPLICATIONS = "/apis/argoproj.io/v1alpha1/applications";
 const PROJECTS = "/apis/argoproj.io/v1alpha1/appprojects";
@@ -84,10 +73,7 @@ describe("the numbers the ArgoCD overview shows", () => {
     expect(await cardValue("Healthy"), "Healthy").toBe(withHealth("Healthy"));
     expect(await cardValue("Progressing"), "Progressing").toBe(withHealth("Progressing"));
 
-    // The card reads "Degraded" and counts Missing as well — `BROKEN_HEALTH` in
-    // overview.ts, on the grounds that an Application whose resources are absent
-    // is no more deployed than one whose resources are failing. Worth knowing,
-    // because the label alone does not say so.
+    // "Degraded" also counts Missing (`BROKEN_HEALTH` in overview.ts).
     expect(await cardValue("Degraded"), "Degraded, which is Degraded + Missing").toBe(
       withHealth("Degraded") + withHealth("Missing"),
     );
@@ -106,9 +92,7 @@ describe("the numbers the ArgoCD overview shows", () => {
       frame,
     );
 
-    // "N of M Applications need attention": M is every Application, and N is what
-    // the list below actually lists. A headline that disagrees with its own list
-    // is the kind of thing nobody notices for months.
+    // "N of M": N must match the list below, M every Application.
     const match = /(\d+) of (\d+) Applications/.exec(headline);
 
     expect(match, `the headline does not count: ${headline}`).not.toBeNull();
@@ -127,8 +111,6 @@ describe("the numbers the ArgoCD overview shows", () => {
 
     const before = await names();
 
-    // Ordering can only be shown to be ordering when there is more than one row
-    // and the one moved is not already first.
     expect(before.length, "one row cannot demonstrate an order").toBeGreaterThan(1);
 
     const last = before.at(-1);
@@ -171,7 +153,7 @@ describe("the numbers the ArgoCD overview shows", () => {
 
     expect(promoted[0]).toBe(last);
 
-    // Put it back, so the next run starts where this one did.
+    // Unpin so the next run starts from the same state.
     expect(await menu(last)).toBe(true);
     expect(await item("Unpin")).toBe(true);
 

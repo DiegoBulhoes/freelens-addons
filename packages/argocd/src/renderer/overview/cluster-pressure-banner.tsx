@@ -6,11 +6,7 @@ const {
   Navigation: { navigate },
 } = Renderer;
 
-/**
- * The host's Nodes page, narrowed to this one. Not `showDetails`: it merges a
- * query parameter into the current route, and the details drawer is rendered
- * only on pages that mount it — which the overview does not.
- */
+/** Not `showDetails`: the overview does not mount the details drawer. */
 function nodeUrl(node: string): string {
   return `/nodes?search=${encodeURIComponent(node)}`;
 }
@@ -44,7 +40,7 @@ export function ClusterPressureBanner({ pressures }: { pressures: ClusterPressur
               type="button"
               className="ArgoCD-chip"
               onClick={() => navigate(nodeUrl(pressure.node))}
-              title={pressure.message}
+              title={`Opens the node in the Nodes list. ${pressure.message ?? ""}`.trim()}
             >
               {label}
             </button>

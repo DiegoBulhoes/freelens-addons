@@ -1,5 +1,4 @@
 import { Renderer } from "@freelensapp/extensions";
-import { useState } from "react";
 
 import {
   type RefreshMode,
@@ -10,78 +9,59 @@ import {
 } from "../api/actions";
 import { Application } from "../api/application";
 import { copyToClipboard } from "../api/cli";
+import { isRiskyChoice, type SyncChoice } from "../api/patches";
 import { describeMissingPods } from "../api/workload-selection";
 import { getApplicationPods, openPodLogs } from "../api/workloads";
+import { confirmWrite, notifyDone } from "../components/confirm";
+import { describeChoice, SyncChoices } from "../components/sync-choices";
 
 const {
-  Component: { Checkbox, ConfirmDialog, Notifications },
+  Component: { Notifications },
 } = Renderer;
 
-interface PruneChoice {
-  prune: boolean;
-}
-
-// The tick lives in a shared object, not React state: ConfirmDialog renders the message once and
-// calls ok later, so ok cannot read a hook.
-function SyncConfirmation({
-  application,
-  choice,
-}: {
-  application: Application;
-  choice: PruneChoice;
-}) {
-  const [prune, setPrune] = useState(choice.prune);
-  const { total } = Application.getResourceRollup(application);
-
-  return (
-    <div>
-      <p>
-        Sync <b>{application.getName()}</b> to <b>{Application.getDestination(application)}</b>?
-      </p>
-      <p className="ArgoCD-muted">
-        ArgoCD will apply what is in git. {total} managed resource{total === 1 ? "" : "s"} may be
-        affected.
-      </p>
-      <Checkbox
-        label="Prune: also delete resources that are no longer in git"
-        value={prune}
-        onChange={(value: boolean) => {
-          choice.prune = value;
-          setPrune(value);
-        }}
-      />
-    </div>
-  );
-}
-
-/** Changes nothing in the cluster, which is why this one asks for no confirmation. */
+/** No confirmation: a refresh changes nothing in the cluster. */
 export async function refreshAndReport(application: Application, mode: RefreshMode): Promise<void> {
   const name = application.getName();
 
   try {
     await refreshApplication(application, mode);
     Notifications.ok(
-      `${mode === "hard" ? "Hard refresh" : "Refresh"} requested for ${name}. ArgoCD will re-compare it against git.`,
+      `${mode === "hard" ? "Hard refresh" : "Refresh"} requested for ${name}: ArgoCD compares it with git again.`,
     );
   } catch (error) {
     Notifications.checkedError(error, `Could not refresh ${name}`);
   }
 }
 
+/** The choice and the typed name reach `ok` through callbacks: ConfirmDialog copies its message's props. */
 export function confirmAndSync(application: Application): void {
   const name = application.getName();
-  const choice: PruneChoice = { prune: false };
+  const { total } = Application.getResourceRollup(application);
+  let choice: SyncChoice = { prune: false, force: false };
 
-  ConfirmDialog.open({
-    labelOk: "Sync",
-    okButtonProps: { primary: true },
-    message: <SyncConfirmation application={application} choice={choice} />,
+  confirmWrite({
+    question: (
+      <>
+        Sync <b>{name}</b> to <b>{Application.getDestination(application)}</b>?
+      </>
+    ),
+    detail: `ArgoCD will apply what is in git. ${total} managed resource${total === 1 ? "" : "s"} may be affected.`,
+    form: (onType) => (
+      <SyncChoices
+        typedName={name}
+        onType={onType}
+        onChange={(picked) => {
+          choice = picked;
+        }}
+      />
+    ),
+    label: "Sync",
+    destructive: false,
+    typed: () => (isRiskyChoice(choice) ? name : undefined),
     ok: async () => {
       try {
-        await syncApplication(application, { prune: choice.prune });
-        Notifications.ok(
-          `Sync started for ${name}${choice.prune ? " with prune" : ""}. Watch the Sync column for progress.`,
-        );
+        await syncApplication(application, choice);
+        notifyDone(`Sync started for ${name}${describeChoice(choice)}.`);
       } catch (error) {
         Notifications.checkedError(error, `Could not start a sync for ${name}`);
       }
@@ -116,25 +96,22 @@ export function confirmAndRollback(
 ): void {
   const name = application.getName();
 
-  ConfirmDialog.open({
-    labelOk: "Roll back",
-    okButtonProps: { accent: true },
-    message: (
-      <div>
-        <p>
-          Roll <b>{name}</b> back to deploy <b>#{historyId}</b> ({revision})?
-        </p>
-        <p className="ArgoCD-muted">
-          This also turns off automated sync. With it on, self-heal would put the newer revision
-          back at once and the rollback would seem to do nothing. Turn it back on in git once the
-          cause is fixed.
-        </p>
-      </div>
+  confirmWrite({
+    question: (
+      <>
+        Roll <b>{name}</b> back to deploy <b>#{historyId}</b> ({revision})?
+      </>
     ),
+    detail:
+      "This also turns off automated sync. With it on, self-heal would put the newer revision back at once and the rollback would seem to do nothing. Turn it back on in git once the cause is fixed.",
+    label: "Roll back",
+    destructive: true,
     ok: async () => {
       try {
         await rollbackApplication(application, historyId, { disableAutoSync: true });
-        Notifications.ok(`Rolling ${name} back to deploy #${historyId}. Auto-sync is now off.`);
+        notifyDone(
+          `Rollback of ${name} to deploy #${historyId} started, and its automated sync was turned off.`,
+        );
       } catch (error) {
         Notifications.checkedError(error, `Could not roll ${name} back`);
       }
@@ -145,18 +122,19 @@ export function confirmAndRollback(
 export function confirmAndTerminate(application: Application): void {
   const name = application.getName();
 
-  ConfirmDialog.open({
-    labelOk: "Terminate",
-    okButtonProps: { accent: true },
-    message: (
-      <p>
-        Terminate the running sync on <b>{name}</b>? Whatever ArgoCD already applied stays as it is.
-      </p>
+  confirmWrite({
+    question: (
+      <>
+        Terminate the running sync on <b>{name}</b>?
+      </>
     ),
+    detail: "Whatever ArgoCD already applied stays as it is.",
+    label: "Terminate",
+    destructive: true,
     ok: async () => {
       try {
         await terminateSync(application);
-        Notifications.ok(`Sync terminated on ${name}.`);
+        notifyDone(`Terminated the running sync on ${name}.`);
       } catch (error) {
         Notifications.checkedError(error, `Could not terminate the sync on ${name}`);
       }

@@ -3,7 +3,6 @@ import { readState, writeState } from "./local-state";
 const STORAGE_KEY = "freelens-addons.argocd.preferences";
 
 export interface Preferences {
-  /** A `FilterKey` from the overview, validated there rather than here. */
   attentionFilter?: string;
 }
 

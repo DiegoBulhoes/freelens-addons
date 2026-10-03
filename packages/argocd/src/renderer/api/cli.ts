@@ -53,7 +53,6 @@ export function describeForHandover(application: Application): string {
   ].join("\n");
 }
 
-/** Electron grants the renderer clipboard access, so a resolved promise is the whole check. */
 export async function copyToClipboard(text: string): Promise<void> {
   await navigator.clipboard.writeText(text);
 }

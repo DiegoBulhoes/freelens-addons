@@ -3,13 +3,6 @@ import { describe, expect, it } from "vitest";
 import { Application, shortenRevision } from "../src/renderer/api/application";
 import { application, applications, statusOf, variantOf } from "./fixtures";
 
-/**
- * The accessors exist because the raw shape is awkward in ways that would
- * otherwise be repeated at every call site. Each group below is one of those
- * ways: what the cluster normally sends, what it sends when something is
- * wrong, and what it sends that nobody expects.
- */
-
 describe("Application — what the cluster normally reports", () => {
   it("reads a single-source Application's source", () => {
     const single = applications().find(

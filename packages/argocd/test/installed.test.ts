@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { CRD_NAMES, isInstalled } from "../src/renderer/api/installed";
+import {
+  CRD_NAMES,
+  hasImageUpdater,
+  IMAGE_UPDATER_CRD,
+  isInstalled,
+} from "../src/renderer/api/installed";
 
-/**
- * Whether the sidebar group shows. Wrong one way, the group sits on every
- * cluster with pages that can only say there is nothing there; wrong the other,
- * it vanishes from the one cluster it was installed for.
- */
 describe("whether ArgoCD is installed", () => {
   it.each(CRD_NAMES)("counts it installed when %s is there, among others", (name) => {
     expect(isInstalled(["certificates.cert-manager.io", name, "widgets.example.test"])).toBe(true);
@@ -20,5 +20,13 @@ describe("whether ArgoCD is installed", () => {
     expect(isInstalled(["certificates.cert-manager.io", "widgets.example.test"])).toBe(false);
     expect(isInstalled(CRD_NAMES.map((name) => name.toUpperCase()))).toBe(false);
     expect(isInstalled(CRD_NAMES.map((name) => name.split(".")[0] ?? name))).toBe(false);
+  });
+});
+
+describe("whether Argo CD Image Updater is installed", () => {
+  it("counts it installed from its own CRD, and only from that", () => {
+    expect(hasImageUpdater(["applications.argoproj.io", IMAGE_UPDATER_CRD])).toBe(true);
+    expect(hasImageUpdater(["applications.argoproj.io", "imageupdaters.example.test"])).toBe(false);
+    expect(hasImageUpdater([])).toBe(false);
   });
 });

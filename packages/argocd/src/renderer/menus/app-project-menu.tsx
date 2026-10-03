@@ -1,19 +1,20 @@
 import { Renderer } from "@freelensapp/extensions";
-import { useState } from "react";
 
 import type { AppProject } from "../api/app-project";
 import { type BulkOutcome, describeOutcome } from "../api/bulk";
+import type { SyncChoice } from "../api/patches";
 import {
   applicationsOf,
-  freezeProject,
   isFrozen,
   refreshProjectApplications,
+  setFrozen,
   syncProjectApplications,
-  unfreezeProject,
 } from "../api/project-actions";
+import { confirmWrite, notifyDone } from "../components/confirm";
+import { describeChoice, SyncChoices } from "../components/sync-choices";
 
 const {
-  Component: { Checkbox, ConfirmDialog, Icon, MenuItem, Notifications },
+  Component: { Icon, MenuItem, Notifications },
 } = Renderer;
 
 export interface AppProjectMenuItemProps {
@@ -30,36 +31,7 @@ function notifyOutcome(pastTenseVerb: string, outcome: BulkOutcome) {
   else Notifications.error(sentence);
 }
 
-function BulkSyncConfirmation({
-  project,
-  count,
-  state,
-}: {
-  project: AppProject;
-  count: number;
-  state: { prune: boolean };
-}) {
-  const [prune, setPrune] = useState(state.prune);
-
-  return (
-    <div>
-      <p>
-        Sync all <b>{count}</b> Application{count === 1 ? "" : "s"} in <b>{project.getName()}</b>?
-      </p>
-      <p style={{ opacity: 0.8 }}>
-        Each one will have ArgoCD apply what is in git. This cannot be undone from here.
-      </p>
-      <Checkbox
-        label="Prune: also delete resources that are no longer in git"
-        value={prune}
-        onChange={(value: boolean) => {
-          state.prune = value;
-          setPrune(value);
-        }}
-      />
-    </div>
-  );
-}
+const plural = (count: number) => `${count} Application${count === 1 ? "" : "s"}`;
 
 export function AppProjectMenuItem({
   object,
@@ -74,36 +46,39 @@ export function AppProjectMenuItem({
     void extension.navigate(APPLICATIONS_PAGE, { project: name });
   };
 
+  const setFrozenAndReport = async (freeze: boolean) => {
+    await setFrozen(object, freeze);
+    notifyDone(
+      freeze
+        ? `Froze deploys for ${name}: ArgoCD stopped syncing its ${plural(applications.length)}.`
+        : `Resumed deploys for ${name}.`,
+      {
+        done: freeze ? `Resumed deploys for ${name}.` : `Froze deploys for ${name} again.`,
+        failed: `Could not change the sync window on ${name}`,
+        run: () => setFrozen(object, !freeze),
+      },
+    );
+  };
+
   const toggleFreeze = () => {
-    ConfirmDialog.open({
-      labelOk: frozen ? "Resume" : "Freeze",
-      okButtonProps: frozen ? { primary: true } : { accent: true },
-      message: frozen ? (
-        <p>
-          Resume deploys for <b>{name}</b>? ArgoCD will start reconciling its {applications.length}{" "}
-          Application{applications.length === 1 ? "" : "s"} again.
-        </p>
+    confirmWrite({
+      question: frozen ? (
+        <>
+          Resume deploys for <b>{name}</b>?
+        </>
       ) : (
-        <div>
-          <p>
-            Freeze deploys for <b>{name}</b>?
-          </p>
-          <p style={{ opacity: 0.8 }}>
-            A deny sync window is added to the project, so ArgoCD stops syncing its{" "}
-            {applications.length} Application{applications.length === 1 ? "" : "s"} , automated and
-            manual alike, until it is resumed. Nothing already running is rolled back.
-          </p>
-        </div>
+        <>
+          Freeze deploys for <b>{name}</b>?
+        </>
       ),
+      detail: frozen
+        ? `ArgoCD will start reconciling its ${plural(applications.length)} again.`
+        : `A deny sync window is added to the project, so ArgoCD stops syncing its ${plural(applications.length)}, automated and manual alike, until it is resumed. Nothing already running is rolled back.`,
+      label: frozen ? "Resume" : "Freeze",
+      destructive: !frozen,
       ok: async () => {
         try {
-          if (frozen) {
-            await unfreezeProject(object);
-            Notifications.ok(`Deploys resumed for ${name}.`);
-          } else {
-            await freezeProject(object);
-            Notifications.ok(`Deploys frozen for ${name}. ArgoCD will not sync its Applications.`);
-          }
+          await setFrozenAndReport(!frozen);
         } catch (error) {
           Notifications.checkedError(error, `Could not change the sync window on ${name}`);
         }
@@ -112,19 +87,19 @@ export function AppProjectMenuItem({
   };
 
   const refreshAll = () => {
-    ConfirmDialog.open({
-      labelOk: "Refresh all",
-      okButtonProps: { primary: true },
-      message: (
-        <p>
+    confirmWrite({
+      question: (
+        <>
           Refresh all <b>{applications.length}</b> Application
-          {applications.length === 1 ? "" : "s"} in <b>{name}</b>? ArgoCD re-compares them with git
-          and applies nothing.
-        </p>
+          {applications.length === 1 ? "" : "s"} in <b>{name}</b>?
+        </>
       ),
+      detail: "ArgoCD compares them with git again and applies nothing.",
+      label: `Refresh ${applications.length}`,
+      destructive: false,
       ok: async () => {
         try {
-          notifyOutcome("Refreshed", await refreshProjectApplications(object));
+          notifyOutcome("Requested a refresh of", await refreshProjectApplications(object));
         } catch (error) {
           Notifications.checkedError(error, `Could not refresh the Applications of ${name}`);
         }
@@ -133,15 +108,32 @@ export function AppProjectMenuItem({
   };
 
   const syncAll = () => {
-    const state = { prune: false };
+    let choice: SyncChoice = { prune: false, force: false };
 
-    ConfirmDialog.open({
-      labelOk: "Sync all",
-      okButtonProps: { accent: true },
-      message: <BulkSyncConfirmation project={object} count={applications.length} state={state} />,
+    confirmWrite({
+      question: (
+        <>
+          Sync all <b>{applications.length}</b> Application{applications.length === 1 ? "" : "s"} in{" "}
+          <b>{name}</b>?
+        </>
+      ),
+      detail: "Each one will have ArgoCD apply what is in git. This cannot be undone from here.",
+      form: (
+        <SyncChoices
+          onChange={(picked) => {
+            choice = picked;
+          }}
+        />
+      ),
+      label: `Sync ${applications.length}`,
+      destructive: true,
+      typed: () => "confirm",
       ok: async () => {
         try {
-          notifyOutcome("Synced", await syncProjectApplications(object, { prune: state.prune }));
+          notifyOutcome(
+            `Started a sync${describeChoice(choice)} on`,
+            await syncProjectApplications(object, choice),
+          );
         } catch (error) {
           Notifications.checkedError(error, `Could not sync the Applications of ${name}`);
         }
@@ -152,7 +144,11 @@ export function AppProjectMenuItem({
   return (
     <>
       <MenuItem onClick={viewApplications}>
-        <Icon material="list" interactive={toolbar} tooltip="Show this project's Applications" />
+        <Icon
+          material="list"
+          interactive={toolbar}
+          tooltip="Opens the Applications list narrowed to this project"
+        />
         <span className="title">Applications ({applications.length})</span>
       </MenuItem>
 
@@ -160,19 +156,31 @@ export function AppProjectMenuItem({
         <Icon
           material={frozen ? "play_arrow" : "pause"}
           interactive={toolbar}
-          tooltip={frozen ? "Remove the deny sync window" : "Stop ArgoCD syncing this project"}
+          tooltip={
+            frozen
+              ? "Removes the deny sync window, so ArgoCD syncs this project again"
+              : "Adds a deny sync window, so ArgoCD stops syncing this project"
+          }
         />
         <span className="title">{frozen ? "Resume deploys" : "Freeze deploys"}</span>
       </MenuItem>
 
       <MenuItem onClick={refreshAll}>
-        <Icon material="refresh" interactive={toolbar} tooltip="Re-compare all with git" />
-        <span className="title">Refresh all...</span>
+        <Icon
+          material="refresh"
+          interactive={toolbar}
+          tooltip="Compares every Application of the project with git again. Changes nothing in the cluster"
+        />
+        <span className="title">Refresh all</span>
       </MenuItem>
 
       <MenuItem onClick={syncAll}>
-        <Icon material="sync" interactive={toolbar} tooltip="Apply git to all" />
-        <span className="title">Sync all...</span>
+        <Icon
+          material="sync"
+          interactive={toolbar}
+          tooltip="Applies git to every Application of the project. Asks you to type confirm"
+        />
+        <span className="title">Sync all</span>
       </MenuItem>
     </>
   );

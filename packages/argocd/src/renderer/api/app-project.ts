@@ -69,20 +69,10 @@ export class AppProject extends Renderer.K8sApi.LensExtensionKubeObject<
     );
   }
 
-  /**
-   * Every Application grouped under the project it names, in one pass.
-   *
-   * A page showing many projects asks the same question once per row; this is
-   * the answer for all of them, so the fleet is walked once instead of once per
-   * row.
-   */
   static groupApplicationsByProject(applications: Application[]): Map<string, Application[]> {
     const byProject = new Map<string, Application[]>();
 
     for (const application of applications) {
-      // `getProject` has no fallback, so an Application without one groups
-      // under its own key and is therefore in no real project's group — the
-      // same answer the `=== name` filter this replaces gave.
       const project = Application.getProject(application);
       const group = byProject.get(project);
 

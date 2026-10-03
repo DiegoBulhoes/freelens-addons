@@ -130,7 +130,6 @@ describe("relationships given nonsense", () => {
 
     expect(cohorts).toHaveLength(1);
     expect(cohorts[0]?.revision).toBe("—");
-    // The cohort's time is the most recent of its members, not the first seen.
     expect(cohorts[0]?.at).toBe(2);
   });
 
@@ -172,8 +171,7 @@ describe("relationships given nonsense", () => {
       statusOf(data).resources = [{ kind: "Application", name: child.getName(), status: "Synced" }];
     });
 
-    // ArgoCD leaves the namespace off when it is the Application's own, so a
-    // strict comparison would lose the whole app-of-apps link.
+    // ArgoCD omits the namespace when it is the Application's own.
     expect(getChildrenOf(parent, [child])).toEqual([child]);
     expect(getParentOf(child, [parent, child])).toBe(parent);
   });
@@ -198,7 +196,6 @@ describe("relationships given nonsense", () => {
   it("offers no link for a repository URL it cannot turn into a web address", () => {
     const bare = variantOf("guestbook", (data) => {
       data.spec.sources = undefined;
-      // Names github, so it passes the host check, but has no scheme to strip.
       data.spec.source = { repoURL: "github.com/org/repo", path: ".", targetRevision: "main" };
       statusOf(data).history = [
         { id: 1, revision: "aaaaaaa" },
@@ -226,12 +223,7 @@ describe("relationships given nonsense", () => {
 });
 
 describe("the parent index against the scan it replaces", () => {
-  /**
-   * The scan as it was before the index, kept here as the oracle. If the two
-   * ever disagree on any input, the index is wrong — that is the whole point
-   * of this suite, and `??` falling back on null as well as undefined is where
-   * a hand-rolled index would have diverged.
-   */
+  /** The linear scan, kept as the oracle for the index. */
   function scanForParent(application: Application, all: Application[]): Application | undefined {
     const name = application.getName();
     const namespace = application.getNs();
@@ -296,8 +288,7 @@ describe("the parent index on resource entries the cluster has not produced", ()
     });
 
   it("treats a null namespace the same way `??` does, not as a missing key", () => {
-    // `(resource.namespace ?? namespace) === namespace` falls back on null too,
-    // so a null entry matches the child's own namespace exactly as undefined does.
+    // `??` treats null like undefined, so a null namespace matches the child's own.
     const child = childOf("argocd");
     const parent = parentDeclaring({ namespace: null });
 
@@ -319,7 +310,6 @@ describe("the parent index on resource entries the cluster has not produced", ()
   });
 
   it("does not match an empty name by truthiness", () => {
-    // A filter on `resource.name` would drop this entry; the scan compares it.
     const child = childOf("argocd");
     const parent = parentDeclaring({ name: "" });
 

@@ -5,8 +5,9 @@ import type { Application } from "../api/application";
 import { argocdCommand, describeForHandover, kubectlCommand } from "../api/cli";
 import { idOf } from "../api/identity";
 import { getCompareUrl } from "../api/insights";
-import { isPinned, togglePin } from "../api/pins";
+import { isPinned, setPinned } from "../api/pins";
 import { revisionsOfDeploy, shortenRevision } from "../api/revisions";
+import { notifyDone } from "../components/confirm";
 import {
   confirmAndRollback,
   confirmAndSync,
@@ -17,15 +18,15 @@ import {
 } from "./application-commands";
 
 const {
-  Component: { Icon, MenuItem, Notifications },
+  Component: { Icon, MenuItem },
 } = Renderer;
 
 const MAX_ROLLBACK_TARGETS = 3;
 
-/** Freelens supplies these; it exports the registration type but not this props type. */
+/** Freelens does not export this props type. */
 export interface ApplicationMenuItemProps {
   object: Application;
-  /** Set when rendered in the details drawer toolbar rather than the row menu. */
+  /** Set in the details drawer toolbar, unset in the row menu. */
   toolbar?: boolean;
   onChanged?: () => void;
 }
@@ -44,12 +45,20 @@ export function ApplicationMenuItem({ object, toolbar, onChanged }: ApplicationM
   return (
     <>
       <MenuItem onClick={() => void openLogsAndReport(object)}>
-        <Icon material="subject" interactive={toolbar} tooltip="Open the log viewer" />
+        <Icon
+          material="subject"
+          interactive={toolbar}
+          tooltip="Opens the logs of the Application's first pod"
+        />
         <span className="title">Logs</span>
       </MenuItem>
 
       <MenuItem onClick={() => void refreshAndReport(object, "normal")}>
-        <Icon material="refresh" interactive={toolbar} tooltip="Refresh: re-compare with git" />
+        <Icon
+          material="refresh"
+          interactive={toolbar}
+          tooltip="Compares it with git again. Changes nothing in the cluster"
+        />
         <span className="title">Refresh</span>
       </MenuItem>
 
@@ -57,20 +66,28 @@ export function ApplicationMenuItem({ object, toolbar, onChanged }: ApplicationM
         <Icon
           material="layers_clear"
           interactive={toolbar}
-          tooltip="Hard refresh: drop the cached manifests and re-render them"
+          tooltip="Drops the cached manifests and generates them again. Changes nothing in the cluster"
         />
-        <span className="title">Hard Refresh</span>
+        <span className="title">Hard refresh</span>
       </MenuItem>
 
       <MenuItem onClick={() => confirmAndSync(object)}>
-        <Icon material="sync" interactive={toolbar} tooltip="Sync: apply what is in git" />
-        <span className="title">Sync...</span>
+        <Icon
+          material="sync"
+          interactive={toolbar}
+          tooltip="Applies what is in git. Asks first, with prune and force off"
+        />
+        <span className="title">Sync</span>
       </MenuItem>
 
       {isSyncInFlight && (
         <MenuItem onClick={() => confirmAndTerminate(object)}>
-          <Icon material="stop_circle" interactive={toolbar} tooltip="Stop the sync in flight" />
-          <span className="title">Terminate sync...</span>
+          <Icon
+            material="stop_circle"
+            interactive={toolbar}
+            tooltip="Stops the sync in flight. What it applied stays"
+          />
+          <span className="title">Terminate sync</span>
         </MenuItem>
       )}
 
@@ -82,7 +99,11 @@ export function ApplicationMenuItem({ object, toolbar, onChanged }: ApplicationM
             key={deploy.id}
             onClick={() => confirmAndRollback(object, deploy.id ?? 0, revision)}
           >
-            <Icon material="undo" interactive={toolbar} tooltip="Roll back to this deploy" />
+            <Icon
+              material="undo"
+              interactive={toolbar}
+              tooltip="Syncs this deploy's revision and turns automated sync off"
+            />
             <span className="title">
               Roll back to #{deploy.id} ({revision})
             </span>
@@ -95,7 +116,7 @@ export function ApplicationMenuItem({ object, toolbar, onChanged }: ApplicationM
           <Icon
             material="difference"
             interactive={toolbar}
-            tooltip="What changed since the previous deploy"
+            tooltip="Opens the git diff since the previous deploy"
           />
           <span className="title">What changed in git</span>
         </MenuItem>
@@ -105,7 +126,7 @@ export function ApplicationMenuItem({ object, toolbar, onChanged }: ApplicationM
         <Icon
           material="terminal"
           interactive={toolbar}
-          tooltip="Copy the argocd app sync command"
+          tooltip="Copies the argocd app sync command"
         />
         <span className="title">Copy argocd sync command</span>
       </MenuItem>
@@ -114,7 +135,7 @@ export function ApplicationMenuItem({ object, toolbar, onChanged }: ApplicationM
         <Icon
           material="data_object"
           interactive={toolbar}
-          tooltip="Copy the kubectl patch this extension issues to sync"
+          tooltip="Copies the kubectl patch this extension sends to sync"
         />
         <span className="title">Copy kubectl sync patch</span>
       </MenuItem>
@@ -123,23 +144,32 @@ export function ApplicationMenuItem({ object, toolbar, onChanged }: ApplicationM
         <Icon
           material="summarize"
           interactive={toolbar}
-          tooltip="Copy a status summary: sync, health and revision"
+          tooltip="Copies its sync, health and revision as text"
         />
         <span className="title">Copy status summary</span>
       </MenuItem>
 
       <MenuItem
         onClick={() => {
-          const nowPinned = togglePin(id);
+          const nowPinned = !pinned;
 
-          Notifications.ok(`${name} ${nowPinned ? "pinned" : "unpinned"}.`);
+          setPinned(id, nowPinned);
           onChanged?.();
+          notifyDone(nowPinned ? `Pinned ${name} to the top.` : `Unpinned ${name}.`, {
+            done: nowPinned ? `Unpinned ${name}.` : `Pinned ${name} to the top again.`,
+            failed: `Could not change the pin on ${name}`,
+            run: async () => setPinned(id, !nowPinned),
+          });
         }}
       >
         <Icon
           material={pinned ? "push_pin" : "vertical_align_top"}
           interactive={toolbar}
-          tooltip={pinned ? "Unpin it" : "Keep this one at the top"}
+          tooltip={
+            pinned
+              ? "Lets it fall back to its place in the list"
+              : "Keeps it at the top of the overview"
+          }
         />
         <span className="title">{pinned ? "Unpin" : "Pin to the top"}</span>
       </MenuItem>

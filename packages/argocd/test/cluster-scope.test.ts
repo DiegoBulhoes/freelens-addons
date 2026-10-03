@@ -2,11 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { clusterIdFromHost, stateFileName } from "../src/renderer/api/cluster-scope";
 
-/**
- * Every expectation here was checked against the host's own
- * `getClusterIdFromHost` by running both over the same inputs, including the
- * three that look like bugs and are not.
- */
+// Expectations match the host's `getClusterIdFromHost`, including the cases that look like bugs.
 
 const CLUSTER_ID = "289e8b234825329f053f98f8d145e660";
 

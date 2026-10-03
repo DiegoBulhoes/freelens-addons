@@ -7,10 +7,10 @@
       "metadata": {
         "annotations": {},
         "creationTimestamp": "2026-09-28T17:29:46Z",
-        "generation": 12,
+        "generation": 1986,
         "name": "apps",
         "namespace": "argocd",
-        "resourceVersion": "62577",
+        "resourceVersion": "316741",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/apps",
         "uid": "fd526df8-abb1-44ec-8930-a5ab400b9402"
       },
@@ -131,7 +131,7 @@
           "phase": "Succeeded",
           "startedAt": "2026-09-28T17:42:44Z"
         },
-        "reconciledAt": "2026-09-28T17:45:48Z",
+        "reconciledAt": "2026-10-03T00:46:16Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -197,10 +197,10 @@
       "metadata": {
         "annotations": {},
         "creationTimestamp": "2026-09-27T01:27:06Z",
-        "generation": 456,
+        "generation": 2410,
         "name": "bad-namespace",
         "namespace": "argocd",
-        "resourceVersion": "62607",
+        "resourceVersion": "316947",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/bad-namespace",
         "uid": "4d898469-ba3d-40b0-a69a-6a59a95d0fff"
       },
@@ -256,7 +256,7 @@
           "retryCount": 5,
           "startedAt": "2026-09-27T13:29:32Z"
         },
-        "reconciledAt": "2026-09-28T17:46:15Z",
+        "reconciledAt": "2026-10-03T00:47:38Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -301,10 +301,10 @@
       "metadata": {
         "annotations": {},
         "creationTimestamp": "2026-09-27T01:27:06Z",
-        "generation": 442,
+        "generation": 2387,
         "name": "bad-revision",
         "namespace": "argocd",
-        "resourceVersion": "62613",
+        "resourceVersion": "317022",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/bad-revision",
         "uid": "1290f172-627c-4b99-b316-39e29afea787"
       },
@@ -336,7 +336,7 @@
           "lastTransitionTime": "2026-09-27T01:27:07Z",
           "status": "Healthy"
         },
-        "reconciledAt": "2026-09-28T17:46:25Z",
+        "reconciledAt": "2026-10-03T00:48:30Z",
         "resourceHealthSource": "appTree",
         "sync": {
           "comparedTo": {
@@ -366,10 +366,10 @@
         "finalizers": [
           "resources-finalizer.argocd.argoproj.io"
         ],
-        "generation": 11,
+        "generation": 1972,
         "name": "example.kustomize-guestbook",
         "namespace": "argocd",
-        "resourceVersion": "62599",
+        "resourceVersion": "316689",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/example.kustomize-guestbook",
         "uid": "4e639a5c-7c74-4121-9ebb-f7302ae5e296"
       },
@@ -442,7 +442,7 @@
           "phase": "Succeeded",
           "startedAt": "2026-09-28T17:42:45Z"
         },
-        "reconciledAt": "2026-09-28T17:46:04Z",
+        "reconciledAt": "2026-10-03T00:45:45Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -496,10 +496,10 @@
         "finalizers": [
           "resources-finalizer.argocd.argoproj.io"
         ],
-        "generation": 23,
+        "generation": 2000,
         "name": "example.sync-waves",
         "namespace": "argocd",
-        "resourceVersion": "62589",
+        "resourceVersion": "317011",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/example.sync-waves",
         "uid": "07e0ac3f-e2c4-4257-846e-86d2a74c87da"
       },
@@ -572,7 +572,7 @@
           "phase": "Succeeded",
           "startedAt": "2026-09-28T17:42:45Z"
         },
-        "reconciledAt": "2026-09-28T17:45:50Z",
+        "reconciledAt": "2026-10-03T00:48:25Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -669,10 +669,10 @@
           "argocd.argoproj.io/sync-wave": "1"
         },
         "creationTimestamp": "2026-09-26T21:59:42Z",
-        "generation": 546,
+        "generation": 2593,
         "name": "guestbook",
         "namespace": "argocd",
-        "resourceVersion": "62699",
+        "resourceVersion": "317180",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/guestbook",
         "uid": "0431b0ec-7b04-427b-a173-04afb7ab67d8"
       },
@@ -696,28 +696,14 @@
       "status": {
         "controllerNamespace": "argocd",
         "health": {
-          "lastTransitionTime": "2026-09-28T17:46:58Z",
+          "lastTransitionTime": "2026-10-03T00:48:55Z",
           "status": "Healthy"
         },
         "history": [
           {
-            "deployStartedAt": "2026-09-26T21:59:47Z",
-            "deployedAt": "2026-09-26T21:59:47Z",
-            "id": 0,
-            "initiatedBy": {
-              "automated": true
-            },
-            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
-            "source": {
-              "path": "guestbook",
-              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
-              "targetRevision": "HEAD"
-            }
-          },
-          {
-            "deployStartedAt": "2026-09-28T17:35:59Z",
-            "deployedAt": "2026-09-28T17:36:00Z",
-            "id": 1,
+            "deployStartedAt": "2026-10-03T00:19:05Z",
+            "deployedAt": "2026-10-03T00:19:06Z",
+            "id": 9,
             "initiatedBy": {
               "username": "seed"
             },
@@ -729,9 +715,9 @@
             }
           },
           {
-            "deployStartedAt": "2026-09-28T17:36:00Z",
-            "deployedAt": "2026-09-28T17:36:01Z",
-            "id": 2,
+            "deployStartedAt": "2026-10-03T00:19:06Z",
+            "deployedAt": "2026-10-03T00:19:06Z",
+            "id": 10,
             "initiatedBy": {
               "automated": true
             },
@@ -743,9 +729,9 @@
             }
           },
           {
-            "deployStartedAt": "2026-09-28T17:36:02Z",
-            "deployedAt": "2026-09-28T17:36:03Z",
-            "id": 3,
+            "deployStartedAt": "2026-10-03T00:24:51Z",
+            "deployedAt": "2026-10-03T00:24:52Z",
+            "id": 11,
             "initiatedBy": {
               "username": "seed"
             },
@@ -757,9 +743,9 @@
             }
           },
           {
-            "deployStartedAt": "2026-09-28T17:36:05Z",
-            "deployedAt": "2026-09-28T17:36:06Z",
-            "id": 4,
+            "deployStartedAt": "2026-10-03T00:24:54Z",
+            "deployedAt": "2026-10-03T00:24:54Z",
+            "id": 12,
             "initiatedBy": {
               "username": "seed"
             },
@@ -771,9 +757,9 @@
             }
           },
           {
-            "deployStartedAt": "2026-09-28T17:46:56Z",
-            "deployedAt": "2026-09-28T17:46:57Z",
-            "id": 5,
+            "deployStartedAt": "2026-10-03T00:24:56Z",
+            "deployedAt": "2026-10-03T00:24:56Z",
+            "id": 13,
             "initiatedBy": {
               "username": "seed"
             },
@@ -785,9 +771,65 @@
             }
           },
           {
-            "deployStartedAt": "2026-09-28T17:46:57Z",
-            "deployedAt": "2026-09-28T17:46:58Z",
-            "id": 6,
+            "deployStartedAt": "2026-10-03T00:24:57Z",
+            "deployedAt": "2026-10-03T00:24:57Z",
+            "id": 14,
+            "initiatedBy": {
+              "automated": true
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-03T00:48:49Z",
+            "deployedAt": "2026-10-03T00:48:49Z",
+            "id": 15,
+            "initiatedBy": {
+              "username": "seed"
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-03T00:48:51Z",
+            "deployedAt": "2026-10-03T00:48:52Z",
+            "id": 16,
+            "initiatedBy": {
+              "username": "seed"
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-03T00:48:54Z",
+            "deployedAt": "2026-10-03T00:48:54Z",
+            "id": 17,
+            "initiatedBy": {
+              "username": "seed"
+            },
+            "revision": "5c2d89b897c4df42e06f94622f857dc4d7adc8f8",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-03T00:48:54Z",
+            "deployedAt": "2026-10-03T00:48:54Z",
+            "id": 18,
             "initiatedBy": {
               "automated": true
             },
@@ -800,7 +842,7 @@
           }
         ],
         "operationState": {
-          "finishedAt": "2026-09-28T17:46:58Z",
+          "finishedAt": "2026-10-03T00:48:55Z",
           "message": "successfully synced (all tasks run)",
           "operation": {
             "initiatedBy": {
@@ -810,6 +852,14 @@
               "limit": 5
             },
             "sync": {
+              "autoHealAttemptsCount": 1,
+              "resources": [
+                {
+                  "group": "apps",
+                  "kind": "Deployment",
+                  "name": "guestbook-ui"
+                }
+              ],
               "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
               "source": {
                 "path": "guestbook",
@@ -819,9 +869,9 @@
             }
           },
           "phase": "Succeeded",
-          "startedAt": "2026-09-28T17:46:57Z"
+          "startedAt": "2026-10-03T00:48:55Z"
         },
-        "reconciledAt": "2026-09-28T17:46:58Z",
+        "reconciledAt": "2026-10-03T00:48:55Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -844,8 +894,7 @@
         "sourceType": "Directory",
         "summary": {
           "images": [
-            "gcr.io/google-samples/gb-frontend:v5",
-            "gcr.io/heptio-images/ks-guestbook-demo:0.2"
+            "gcr.io/google-samples/gb-frontend:v5"
           ]
         },
         "sync": {
@@ -871,10 +920,10 @@
       "metadata": {
         "annotations": {},
         "creationTimestamp": "2026-09-28T17:29:46Z",
-        "generation": 14,
+        "generation": 1988,
         "name": "guestbook-pinned",
         "namespace": "argocd",
-        "resourceVersion": "62591",
+        "resourceVersion": "316739",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/guestbook-pinned",
         "uid": "bb19ec57-01b4-49e9-97eb-f68a3680e51b"
       },
@@ -943,7 +992,7 @@
           "phase": "Succeeded",
           "startedAt": "2026-09-28T17:35:39Z"
         },
-        "reconciledAt": "2026-09-28T17:45:53Z",
+        "reconciledAt": "2026-10-03T00:46:14Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -994,10 +1043,10 @@
           "argocd.argoproj.io/sync-wave": "2"
         },
         "creationTimestamp": "2026-09-26T21:59:42Z",
-        "generation": 519,
+        "generation": 2504,
         "name": "helm-guestbook",
         "namespace": "argocd",
-        "resourceVersion": "62614",
+        "resourceVersion": "317202",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/helm-guestbook",
         "uid": "c9c6e15b-0276-4f9a-928a-987ca5bd901f"
       },
@@ -1016,8 +1065,8 @@
       "status": {
         "controllerNamespace": "argocd",
         "health": {
-          "lastTransitionTime": "2026-09-28T17:36:11Z",
-          "status": "Healthy"
+          "lastTransitionTime": "2026-10-03T00:48:59Z",
+          "status": "Progressing"
         },
         "history": [
           {
@@ -1047,10 +1096,52 @@
               "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
               "targetRevision": "HEAD"
             }
+          },
+          {
+            "deployStartedAt": "2026-10-03T00:19:08Z",
+            "deployedAt": "2026-10-03T00:19:09Z",
+            "id": 2,
+            "initiatedBy": {
+              "username": "seed"
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "helm-guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-03T00:24:59Z",
+            "deployedAt": "2026-10-03T00:24:59Z",
+            "id": 3,
+            "initiatedBy": {
+              "username": "seed"
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "helm-guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-03T00:48:56Z",
+            "deployedAt": "2026-10-03T00:48:57Z",
+            "id": 4,
+            "initiatedBy": {
+              "username": "seed"
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "helm-guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
           }
         ],
         "operationState": {
-          "finishedAt": "2026-09-28T17:36:09Z",
+          "finishedAt": "2026-10-03T00:48:57Z",
           "message": "successfully synced (all tasks run)",
           "operation": {
             "initiatedBy": {
@@ -1062,9 +1153,9 @@
             }
           },
           "phase": "Succeeded",
-          "startedAt": "2026-09-28T17:36:08Z"
+          "startedAt": "2026-10-03T00:48:56Z"
         },
-        "reconciledAt": "2026-09-28T17:46:26Z",
+        "reconciledAt": "2026-10-03T00:48:57Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -1111,11 +1202,529 @@
       "kind": "Application",
       "metadata": {
         "annotations": {},
+        "creationTimestamp": "2026-10-03T00:45:09Z",
+        "generation": 25,
+        "name": "helm-image-updates",
+        "namespace": "argocd",
+        "resourceVersion": "316907",
+        "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/helm-image-updates",
+        "uid": "a211d721-b944-4a61-a4a2-55509c4df570"
+      },
+      "spec": {
+        "destination": {
+          "namespace": "helm-image-updates",
+          "server": "https://kubernetes.default.svc"
+        },
+        "project": "demo",
+        "source": {
+          "chart": "podinfo",
+          "helm": {
+            "parameters": [
+              {
+                "forceString": true,
+                "name": "image.repository",
+                "value": "ghcr.io/stefanprodan/podinfo"
+              },
+              {
+                "forceString": true,
+                "name": "image.tag",
+                "value": "6.14.1"
+              }
+            ]
+          },
+          "repoURL": "https://stefanprodan.github.io/podinfo",
+          "targetRevision": "6.13.0"
+        },
+        "syncPolicy": {
+          "automated": {
+            "selfHeal": true
+          },
+          "syncOptions": [
+            "CreateNamespace=true"
+          ]
+        }
+      },
+      "status": {
+        "controllerNamespace": "argocd",
+        "health": {
+          "lastTransitionTime": "2026-10-03T00:47:22Z",
+          "status": "Healthy"
+        },
+        "history": [
+          {
+            "deployStartedAt": "2026-10-03T00:45:10Z",
+            "deployedAt": "2026-10-03T00:45:10Z",
+            "id": 0,
+            "initiatedBy": {
+              "automated": true
+            },
+            "revision": "6.13.0",
+            "source": {
+              "chart": "podinfo",
+              "repoURL": "https://stefanprodan.github.io/podinfo",
+              "targetRevision": "6.13.0"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-03T00:47:10Z",
+            "deployedAt": "2026-10-03T00:47:10Z",
+            "id": 1,
+            "initiatedBy": {
+              "automated": true
+            },
+            "revision": "6.13.0",
+            "source": {
+              "chart": "podinfo",
+              "helm": {
+                "parameters": [
+                  {
+                    "forceString": true,
+                    "name": "image.repository",
+                    "value": "ghcr.io/stefanprodan/podinfo"
+                  },
+                  {
+                    "forceString": true,
+                    "name": "image.tag",
+                    "value": "6.14.1"
+                  }
+                ]
+              },
+              "repoURL": "https://stefanprodan.github.io/podinfo",
+              "targetRevision": "6.13.0"
+            }
+          }
+        ],
+        "operationState": {
+          "finishedAt": "2026-10-03T00:47:10Z",
+          "message": "successfully synced (all tasks run)",
+          "operation": {
+            "initiatedBy": {
+              "automated": true
+            },
+            "retry": {
+              "limit": 5
+            },
+            "sync": {
+              "revision": "6.13.0",
+              "source": {
+                "chart": "podinfo",
+                "helm": {
+                  "parameters": [
+                    {
+                      "forceString": true,
+                      "name": "image.repository",
+                      "value": "ghcr.io/stefanprodan/podinfo"
+                    },
+                    {
+                      "forceString": true,
+                      "name": "image.tag",
+                      "value": "6.14.1"
+                    }
+                  ]
+                },
+                "repoURL": "https://stefanprodan.github.io/podinfo",
+                "targetRevision": "6.13.0"
+              },
+              "syncOptions": [
+                "CreateNamespace=true"
+              ]
+            }
+          },
+          "phase": "Succeeded",
+          "startedAt": "2026-10-03T00:47:10Z"
+        },
+        "reconciledAt": "2026-10-03T00:47:10Z",
+        "resourceHealthSource": "appTree",
+        "resources": [
+          {
+            "kind": "Service",
+            "name": "helm-image-updates-podinfo",
+            "namespace": "helm-image-updates",
+            "status": "Synced",
+            "version": "v1"
+          },
+          {
+            "group": "apps",
+            "kind": "Deployment",
+            "name": "helm-image-updates-podinfo",
+            "namespace": "helm-image-updates",
+            "status": "Synced",
+            "version": "v1"
+          }
+        ],
+        "sourceHydrator": {},
+        "sourceType": "Helm",
+        "summary": {
+          "images": [
+            "ghcr.io/stefanprodan/podinfo:6.14.1"
+          ]
+        },
+        "sync": {
+          "comparedTo": {
+            "destination": {
+              "namespace": "helm-image-updates",
+              "server": "https://kubernetes.default.svc"
+            },
+            "source": {
+              "chart": "podinfo",
+              "helm": {
+                "parameters": [
+                  {
+                    "forceString": true,
+                    "name": "image.repository",
+                    "value": "ghcr.io/stefanprodan/podinfo"
+                  },
+                  {
+                    "forceString": true,
+                    "name": "image.tag",
+                    "value": "6.14.1"
+                  }
+                ]
+              },
+              "repoURL": "https://stefanprodan.github.io/podinfo",
+              "targetRevision": "6.13.0"
+            }
+          },
+          "revision": "6.13.0",
+          "status": "Synced"
+        }
+      }
+    },
+    {
+      "apiVersion": "argoproj.io/v1alpha1",
+      "kind": "Application",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T00:13:42Z",
+        "generation": 35,
+        "name": "image-updates",
+        "namespace": "argocd",
+        "resourceVersion": "316745",
+        "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/image-updates",
+        "uid": "e0253942-00f5-4e8d-9e1a-dfa393134fc4"
+      },
+      "spec": {
+        "destination": {
+          "namespace": "image-updates",
+          "server": "https://kubernetes.default.svc"
+        },
+        "project": "demo",
+        "source": {
+          "kustomize": {
+            "images": [
+              "ghcr.io/stefanprodan/podinfo:6.14.1"
+            ]
+          },
+          "path": "kustomize",
+          "repoURL": "https://github.com/stefanprodan/podinfo.git",
+          "targetRevision": "6.13.0"
+        },
+        "syncPolicy": {
+          "automated": {
+            "selfHeal": true
+          },
+          "syncOptions": [
+            "CreateNamespace=true"
+          ]
+        }
+      },
+      "status": {
+        "controllerNamespace": "argocd",
+        "health": {
+          "lastTransitionTime": "2026-10-03T00:14:14Z",
+          "status": "Degraded"
+        },
+        "history": [
+          {
+            "deployStartedAt": "2026-10-03T00:13:44Z",
+            "deployedAt": "2026-10-03T00:13:44Z",
+            "id": 0,
+            "initiatedBy": {
+              "automated": true
+            },
+            "revision": "875ffa9431368708aef7fb968a4cc369a72884ad",
+            "source": {
+              "path": "kustomize",
+              "repoURL": "https://github.com/stefanprodan/podinfo.git",
+              "targetRevision": "6.13.0"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-03T00:14:14Z",
+            "deployedAt": "2026-10-03T00:14:14Z",
+            "id": 1,
+            "initiatedBy": {
+              "automated": true
+            },
+            "revision": "875ffa9431368708aef7fb968a4cc369a72884ad",
+            "source": {
+              "kustomize": {
+                "images": [
+                  "ghcr.io/stefanprodan/podinfo:6.14.1"
+                ]
+              },
+              "path": "kustomize",
+              "repoURL": "https://github.com/stefanprodan/podinfo.git",
+              "targetRevision": "6.13.0"
+            }
+          }
+        ],
+        "operationState": {
+          "finishedAt": "2026-10-03T00:14:14Z",
+          "message": "successfully synced (all tasks run)",
+          "operation": {
+            "initiatedBy": {
+              "automated": true
+            },
+            "retry": {
+              "limit": 5
+            },
+            "sync": {
+              "autoHealAttemptsCount": 1,
+              "resources": [
+                {
+                  "group": "apps",
+                  "kind": "Deployment",
+                  "name": "podinfo"
+                }
+              ],
+              "revision": "875ffa9431368708aef7fb968a4cc369a72884ad",
+              "source": {
+                "kustomize": {
+                  "images": [
+                    "ghcr.io/stefanprodan/podinfo:6.14.1"
+                  ]
+                },
+                "path": "kustomize",
+                "repoURL": "https://github.com/stefanprodan/podinfo.git",
+                "targetRevision": "6.13.0"
+              },
+              "syncOptions": [
+                "CreateNamespace=true"
+              ]
+            }
+          },
+          "phase": "Succeeded",
+          "startedAt": "2026-10-03T00:14:14Z"
+        },
+        "reconciledAt": "2026-10-03T00:46:20Z",
+        "resourceHealthSource": "appTree",
+        "resources": [
+          {
+            "kind": "Service",
+            "name": "podinfo",
+            "namespace": "image-updates",
+            "status": "Synced",
+            "version": "v1"
+          },
+          {
+            "group": "apps",
+            "kind": "Deployment",
+            "name": "podinfo",
+            "namespace": "image-updates",
+            "status": "Synced",
+            "version": "v1"
+          },
+          {
+            "group": "autoscaling",
+            "kind": "HorizontalPodAutoscaler",
+            "name": "podinfo",
+            "namespace": "image-updates",
+            "status": "Synced",
+            "version": "v2"
+          }
+        ],
+        "sourceHydrator": {},
+        "sourceType": "Kustomize",
+        "summary": {
+          "images": [
+            "ghcr.io/stefanprodan/podinfo:6.14.1"
+          ]
+        },
+        "sync": {
+          "comparedTo": {
+            "destination": {
+              "namespace": "image-updates",
+              "server": "https://kubernetes.default.svc"
+            },
+            "source": {
+              "kustomize": {
+                "images": [
+                  "ghcr.io/stefanprodan/podinfo:6.14.1"
+                ]
+              },
+              "path": "kustomize",
+              "repoURL": "https://github.com/stefanprodan/podinfo.git",
+              "targetRevision": "6.13.0"
+            }
+          },
+          "revision": "875ffa9431368708aef7fb968a4cc369a72884ad",
+          "status": "Synced"
+        }
+      }
+    },
+    {
+      "apiVersion": "argoproj.io/v1alpha1",
+      "kind": "Application",
+      "metadata": {
+        "annotations": {
+          "argocd-image-updater.argoproj.io/image-list": "podinfo=ghcr.io/stefanprodan/podinfo:6.13.x",
+          "argocd-image-updater.argoproj.io/podinfo.update-strategy": "semver",
+          "argocd-image-updater.argoproj.io/write-back-method": "argocd"
+        },
+        "creationTimestamp": "2026-10-03T00:22:02Z",
+        "generation": 24,
+        "name": "legacy-annotations",
+        "namespace": "argocd",
+        "resourceVersion": "316999",
+        "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/legacy-annotations",
+        "uid": "e77aa709-1d52-40d0-acd4-2a1a0b775c9e"
+      },
+      "spec": {
+        "destination": {
+          "namespace": "legacy-annotations",
+          "server": "https://kubernetes.default.svc"
+        },
+        "project": "demo",
+        "source": {
+          "path": "kustomize",
+          "repoURL": "https://github.com/stefanprodan/podinfo.git",
+          "targetRevision": "6.13.0"
+        },
+        "syncPolicy": {
+          "automated": {
+            "selfHeal": true
+          },
+          "syncOptions": [
+            "CreateNamespace=true"
+          ]
+        }
+      },
+      "status": {
+        "controllerNamespace": "argocd",
+        "health": {
+          "lastTransitionTime": "2026-10-03T00:22:33Z",
+          "status": "Degraded"
+        },
+        "history": [
+          {
+            "deployStartedAt": "2026-10-03T00:22:03Z",
+            "deployedAt": "2026-10-03T00:22:03Z",
+            "id": 0,
+            "initiatedBy": {
+              "automated": true
+            },
+            "revision": "875ffa9431368708aef7fb968a4cc369a72884ad",
+            "source": {
+              "path": "kustomize",
+              "repoURL": "https://github.com/stefanprodan/podinfo.git",
+              "targetRevision": "6.13.0"
+            }
+          }
+        ],
+        "operationState": {
+          "finishedAt": "2026-10-03T00:22:03Z",
+          "message": "successfully synced (all tasks run)",
+          "operation": {
+            "initiatedBy": {
+              "automated": true
+            },
+            "retry": {
+              "limit": 5
+            },
+            "sync": {
+              "autoHealAttemptsCount": 1,
+              "resources": [
+                {
+                  "kind": "Service",
+                  "name": "podinfo"
+                },
+                {
+                  "group": "apps",
+                  "kind": "Deployment",
+                  "name": "podinfo"
+                },
+                {
+                  "group": "autoscaling",
+                  "kind": "HorizontalPodAutoscaler",
+                  "name": "podinfo"
+                }
+              ],
+              "revision": "875ffa9431368708aef7fb968a4cc369a72884ad",
+              "source": {
+                "path": "kustomize",
+                "repoURL": "https://github.com/stefanprodan/podinfo.git",
+                "targetRevision": "6.13.0"
+              },
+              "syncOptions": [
+                "CreateNamespace=true"
+              ]
+            }
+          },
+          "phase": "Succeeded",
+          "startedAt": "2026-10-03T00:22:03Z"
+        },
+        "reconciledAt": "2026-10-03T00:48:17Z",
+        "resourceHealthSource": "appTree",
+        "resources": [
+          {
+            "kind": "Service",
+            "name": "podinfo",
+            "namespace": "legacy-annotations",
+            "status": "Synced",
+            "version": "v1"
+          },
+          {
+            "group": "apps",
+            "kind": "Deployment",
+            "name": "podinfo",
+            "namespace": "legacy-annotations",
+            "status": "Synced",
+            "version": "v1"
+          },
+          {
+            "group": "autoscaling",
+            "kind": "HorizontalPodAutoscaler",
+            "name": "podinfo",
+            "namespace": "legacy-annotations",
+            "status": "Synced",
+            "version": "v2"
+          }
+        ],
+        "sourceHydrator": {},
+        "sourceType": "Kustomize",
+        "summary": {
+          "images": [
+            "ghcr.io/stefanprodan/podinfo:6.13.0"
+          ]
+        },
+        "sync": {
+          "comparedTo": {
+            "destination": {
+              "namespace": "legacy-annotations",
+              "server": "https://kubernetes.default.svc"
+            },
+            "source": {
+              "path": "kustomize",
+              "repoURL": "https://github.com/stefanprodan/podinfo.git",
+              "targetRevision": "6.13.0"
+            }
+          },
+          "revision": "875ffa9431368708aef7fb968a4cc369a72884ad",
+          "status": "Synced"
+        }
+      }
+    },
+    {
+      "apiVersion": "argoproj.io/v1alpha1",
+      "kind": "Application",
+      "metadata": {
+        "annotations": {},
         "creationTimestamp": "2026-09-26T21:59:42Z",
-        "generation": 502,
+        "generation": 2458,
         "name": "missing-path",
         "namespace": "argocd",
-        "resourceVersion": "62593",
+        "resourceVersion": "316726",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/missing-path",
         "uid": "e31c6212-bae8-4a92-98d2-3058921372be"
       },
@@ -1137,7 +1746,7 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-28T17:45:56Z",
+            "lastTransitionTime": "2026-10-03T00:23:53Z",
             "message": "Failed to load target state: failed to generate manifest for source 1 of 1: rpc error: code = Unknown desc = Manifest generation error (cached): no-such-directory: app path does not exist",
             "type": "ComparisonError"
           }
@@ -1147,7 +1756,7 @@
           "lastTransitionTime": "2026-09-26T21:59:47Z",
           "status": "Healthy"
         },
-        "reconciledAt": "2026-09-28T17:45:56Z",
+        "reconciledAt": "2026-10-03T00:46:06Z",
         "resourceHealthSource": "appTree",
         "sync": {
           "comparedTo": {
@@ -1174,10 +1783,10 @@
           "argocd.argoproj.io/sync-wave": "3"
         },
         "creationTimestamp": "2026-09-28T17:29:46Z",
-        "generation": 16,
+        "generation": 1990,
         "name": "podinfo",
         "namespace": "argocd",
-        "resourceVersion": "62615",
+        "resourceVersion": "316991",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/podinfo",
         "uid": "82db56bc-e646-472d-92b3-3c08cf560bcb"
       },
@@ -1299,7 +1908,7 @@
           "phase": "Succeeded",
           "startedAt": "2026-09-28T17:35:40Z"
         },
-        "reconciledAt": "2026-09-28T17:46:26Z",
+        "reconciledAt": "2026-10-03T00:48:14Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {

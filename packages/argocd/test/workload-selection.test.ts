@@ -106,8 +106,7 @@ describe("picking pods when nothing matches", () => {
       ];
     });
 
-    // "guestbook-x" does not begin with "guest-", and the hyphen is what
-    // separates a workload's name from its pod suffix.
+    // The hyphen separates a workload's name from its pod suffix.
     expect(selectApplicationPods([pod("guestbook-x", "demo")], target)).toEqual([]);
   });
 });
@@ -222,8 +221,7 @@ describe("finding the ArgoCD UI among Ingresses that make no sense", () => {
   });
 
   it("matches a service whose name merely contains argocd-server", () => {
-    // Helm release prefixes are common, and the name is checked by substring
-    // precisely so `my-release-argocd-server` still resolves.
+    // Matched by substring so Helm-prefixed names like `my-release-argocd-server` resolve.
     const prefixed = ingress("argocd", "argo.example.test", {
       service: { name: "my-release-argocd-server" },
     });
@@ -239,18 +237,12 @@ describe("finding the ArgoCD UI among Ingresses that make no sense", () => {
   });
 });
 
-/**
- * The sentence an operator reads when no pod came back. Before this existed the page said "has no
- * running pods" whether it had looked or been refused, which is the one thing it must not do.
- */
 describe("saying what a failed pod listing means", () => {
   const listing = (requestedNamespaces: string[], unreadableCount: number): PodListing => ({
     requestedNamespaces,
     unreadableCount,
   });
 
-  // The sentence turns on how many namespaces were asked for, so the real
-  // Application is spread over one, two and several of them.
   const spreadOver = (namespaces: string[]) =>
     variantOf("guestbook", (data) => {
       statusOf(data).resources = namespaces.map((namespace) => ({
@@ -295,7 +287,7 @@ describe("saying what a failed pod listing means", () => {
     const text = describeMissingPods("guestbook", listing(twoNamespaces, 1));
 
     expect(text).toContain("some of the 2 namespaces");
-    // Naming one would be a fresh invention: onLoadFailure never says which refused.
+    // onLoadFailure never says which namespace refused.
     for (const namespace of twoNamespaces) expect(text).not.toContain(namespace);
   });
 
@@ -308,8 +300,6 @@ describe("saying what a failed pod listing means", () => {
     expect(text).not.toContain(",");
   });
 
-  // Pins the contract of the getApplicationPods short-circuit rather than catching a bug: with
-  // nothing requested nothing can be refused, so no implementation reaches the naming branch.
   it("falls back to the plain sentence when no namespace was attempted", () => {
     expect(describeMissingPods("guestbook", listing([], 0))).toBe(
       "guestbook has no running pods to read logs from.",

@@ -7,12 +7,7 @@ import {
   type StoreFacts,
 } from "../src/renderer/api/store-state";
 
-/**
- * Not knowing and knowing there is nothing look identical on this page, and
- * only one of them deserves a quiet screen. The host's `loadAll` never
- * rejects — it empties the store and sets a flag — so an unreachable cluster
- * arrives as a store that exists and holds nothing.
- */
+// The host's `loadAll` never rejects: an unreachable cluster arrives as an empty store plus a flag.
 
 const facts = (over: Partial<StoreFacts> = {}): StoreFacts => ({
   registered: true,
@@ -55,9 +50,7 @@ describe("deciding whether the page knows anything", () => {
 
 describe("deciding during a normal startup", () => {
   it("is connecting while the retry budget is unspent, even after a failure", () => {
-    // The first attempts routinely fail while the cluster connects; that is the
-    // whole reason the budget exists. Calling it unreachable would light an
-    // alarm on every launch.
+    // Early failures are normal while the cluster connects.
     expect(getOverviewState(facts({ failed: true, gaveUp: false }))).toBe("connecting");
   });
 

@@ -9,24 +9,7 @@ import {
   waitFor,
 } from "../../../build/e2e/freelens";
 
-/**
- * Every page this extension registers, opened and read.
- *
- * What this catches is the gap `verify-bundles.sh` cannot reach. That script
- * asserts the shape of a bundle — a default export that is a class, no host
- * module bundled — and a bundle can satisfy all of it and still throw on mount,
- * render an empty state against a cluster that has data, or never appear in the
- * sidebar at all. Every one of those is silent: the page is simply blank.
- *
- * The rows are asserted as "more than none" rather than as a number. A count is
- * the development cluster's contents on the day it was written, and `make
- * cluster` will seed a different number the moment a manifest changes.
- *
- * Needs a running workbench with remote debugging on. `make e2e` starts one.
- */
-
 interface PageCheck {
-  /** The id this extension registered, which is also how the sidebar is driven. */
   id: string;
   /** Something the page renders only once it has its data. */
   expect: { selector: string; matches: RegExp };
@@ -35,7 +18,7 @@ interface PageCheck {
 const PAGES: PageCheck[] = [
   {
     id: "argocd-dashboard",
-    // The headline counts Applications, so a scope with none says so instead.
+    // A scope with no Applications reads "in sync" instead of a count.
     expect: { selector: ".ArgoCD-page__headline", matches: /\d+ of \d+ Applications|in sync/i },
   },
   {
@@ -46,7 +29,27 @@ const PAGES: PageCheck[] = [
     id: "argocd-projects",
     expect: { selector: ".ArgoCDAppProjects", matches: /\S/ },
   },
+  {
+    id: "image-updater-overview",
+    expect: { selector: ".ArgoCD-page__headline", matches: /Image Updater rules/ },
+  },
+  {
+    id: "image-updater-rules",
+    expect: { selector: ".ArgoCD-page__headline", matches: /^Image Updater rules \d+ items?$/ },
+  },
+  {
+    id: "image-updater-images",
+    expect: { selector: ".ArgoCD-page__headline", matches: /^Watched images \d+ items?$/ },
+  },
+  {
+    id: "image-updater-updates",
+    expect: { selector: ".ArgoCD-page__headline", matches: /^Last updates \d+ items?$/ },
+  },
 ];
+
+/** Image Updater's screens sit one sidebar level deeper. */
+const groupsOf = (id: string) =>
+  id.startsWith("image-updater-") ? ["argocd", "argocd-image-updater"] : "argocd";
 
 describe("every page the ArgoCD extension registers renders", () => {
   let session: Session;
@@ -62,7 +65,7 @@ describe("every page the ArgoCD extension registers renders", () => {
 
   for (const page of PAGES) {
     it(`opens ${page.id}`, async () => {
-      await clickSidebar(session, frame, page.id, "argocd");
+      await clickSidebar(session, frame, page.id, groupsOf(page.id));
 
       const text = await waitFor(`${page.id} to render`, async () => {
         const found = await textOf(session, frame, page.expect.selector);
@@ -75,9 +78,6 @@ describe("every page the ArgoCD extension registers renders", () => {
   }
 
   it("lists the Applications and Projects the cluster has", async () => {
-    // One assertion over two pages rather than one each: what is being checked
-    // is that the store behind our own overview is the store the host's list
-    // pages fill, which is a single property.
     const counted: Record<string, number> = {};
 
     for (const id of ["argocd-applications", "argocd-projects"] as const) {

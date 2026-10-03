@@ -1,5 +1,4 @@
-// Status is optional throughout: ArgoCD populates it lazily, so an Application observed
-// mid-reconciliation legitimately has neither health nor sync yet.
+// Status is optional: ArgoCD fills it lazily, so a new Application has no health or sync yet.
 import type { Renderer } from "@freelensapp/extensions";
 
 export interface ArgoCDKubeObjectCRD extends Renderer.K8sApi.LensExtensionKubeObjectCRD {
@@ -10,9 +9,7 @@ export interface ApplicationSource {
   repoURL?: string;
   path?: string;
   targetRevision?: string;
-  /** Set for a Helm chart source instead of `path`. */
   chart?: string;
-  /** Names this source so another one can refer to it as `$<ref>`. */
   ref?: string;
   helm?: {
     valueFiles?: string[];
@@ -32,7 +29,6 @@ export interface ApplicationSource {
 
 export interface ApplicationDestination {
   server?: string;
-  /** Alternative to `server`: the cluster's name in ArgoCD. */
   name?: string;
   namespace?: string;
 }
@@ -57,7 +53,7 @@ export interface SyncPolicy {
 export interface ApplicationSpec {
   project: string;
   destination: ApplicationDestination;
-  /** Exactly one of `source` or `sources` is ever set; read both via `Application.getSources`. */
+  /** Exactly one of `source` or `sources` is set; read via `Application.getSources`. */
   source?: ApplicationSource;
   sources?: ApplicationSource[];
   syncPolicy?: SyncPolicy;
@@ -96,7 +92,6 @@ export interface ResourceStatus {
 export interface SyncStatus {
   status?: SyncStatusCode;
   revision?: string;
-  /** Present instead of `revision` when the Application has multiple sources. */
   revisions?: string[];
   comparedTo?: {
     destination?: ApplicationDestination;
@@ -117,6 +112,7 @@ export interface OperationState {
       prune?: boolean;
       dryRun?: boolean;
       syncOptions?: string[];
+      syncStrategy?: SyncStrategy;
     };
     initiatedBy?: {
       username?: string;
@@ -172,11 +168,11 @@ export interface ApplicationStatus {
     images?: string[];
     externalURLs?: string[];
   };
+  sourceType?: string;
   sourceTypes?: string[];
   controllerNamespace?: string;
 }
 
-/** A group/kind pair, with "*" meaning "any". */
 export interface ResourceGroupKind {
   group?: string;
   kind?: string;
@@ -185,7 +181,6 @@ export interface ResourceGroupKind {
 export interface ProjectRole {
   name?: string;
   description?: string;
-  /** Casbin lines, e.g. `p, proj:x:role, applications, sync, x/*, allow`. */
   policies?: string[];
   groups?: string[];
   jwtTokens?: { iat?: number; exp?: number; id?: string }[];
@@ -199,7 +194,6 @@ export interface SyncWindow {
   applications?: string[];
   namespaces?: string[];
   clusters?: string[];
-  /** Whether a human can still sync while a deny window is in force. */
   manualSync?: boolean;
   andOperator?: boolean;
   description?: string;
@@ -208,7 +202,6 @@ export interface SyncWindow {
 export interface AppProjectSpec {
   description?: string;
   sourceRepos?: string[];
-  /** Namespaces an Application of this project may itself live in. */
   sourceNamespaces?: string[];
   destinations?: ApplicationDestination[];
   clusterResourceWhitelist?: ResourceGroupKind[];
@@ -225,5 +218,10 @@ export interface AppProjectSpec {
   permitOnlyProjectScopedClusters?: boolean;
 }
 
-/** Empty on purpose: ArgoCD writes nothing useful to an AppProject's status. */
 export type AppProjectStatus = Record<string, unknown>;
+
+/** `hook` is the default and runs hooks; `apply` skips them. */
+export interface SyncStrategy {
+  hook?: { force?: boolean };
+  apply?: { force?: boolean };
+}

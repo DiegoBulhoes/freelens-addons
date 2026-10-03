@@ -32,6 +32,7 @@ export function SyncingRepeatedly({
             <button
               type="button"
               className="ArgoCD-row__main"
+              title="Opens it in the Applications list, with its details"
               onClick={() => onOpen(entry.application)}
             >
               <span className="ArgoCD-row__name">

@@ -68,10 +68,10 @@ export function refreshEach(
 
 export function syncEach(
   applications: Application[],
-  { prune = false }: { prune?: boolean } = {},
+  { prune = false, force = false }: { prune?: boolean; force?: boolean } = {},
 ): Promise<BulkOutcome> {
   return applyToEachApplication(applications, (application) =>
-    syncApplication(application, { prune }),
+    syncApplication(application, { prune, force }),
   );
 }
 
@@ -91,4 +91,14 @@ export function describeOutcome(pastTenseVerb: string, outcome: BulkOutcome): st
   const trailing = failures.length > MAX_NAMES_IN_SENTENCE ? "…" : "";
 
   return `${pastTenseVerb} ${succeeded}, failed on ${failures.length}: ${named}${trailing}`;
+}
+
+export function listNames(names: string[], shown = 6): string {
+  if (names.length <= shown) {
+    if (names.length <= 1) return names.join("");
+
+    return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+  }
+
+  return `${names.slice(0, shown).join(", ")} and ${names.length - shown} more`;
 }

@@ -3,10 +3,15 @@ import { computed } from "mobx";
 
 import { AppProject } from "./api/app-project";
 import { Application } from "./api/application";
-import { isInstalled } from "./api/installed";
+import { hasImageUpdater, isInstalled } from "./api/installed";
 import { flushState, startPersistingState } from "./api/persist";
 import { ApplicationDetails } from "./details/application-details";
 import { ArgoCDIcon } from "./icons/argocd";
+import { ImageUpdaterImagesPage } from "./image-updater/images-page";
+import { ImageUpdaterOverviewPage } from "./image-updater/overview-page";
+import { IMAGE_UPDATER_PAGES } from "./image-updater/pages";
+import { ImageUpdaterRulesPage } from "./image-updater/rules-page";
+import { ImageUpdaterUpdatesPage } from "./image-updater/updates-page";
 import { AppProjectMenuItem } from "./menus/app-project-menu";
 import { ApplicationMenuItem } from "./menus/application-menu";
 import { AppProjectsPage } from "./pages/app-projects-page";
@@ -20,14 +25,16 @@ const PAGES = {
 } as const;
 
 // Registration fields are read right after construction; computing them in onActivate is too late.
-/**
- * The sidebar's own CRD list: the host keeps it loaded and watched while the
- * cluster is open, so the group appears and disappears with the operator,
- * without a reload. Until the list first arrives the group stays hidden.
- */
+// crdStore is kept loaded and watched by the host's sidebar, so visibility follows the CRDs live.
 const installed = computed(() =>
   isInstalled(Renderer.K8sApi.crdStore.items.map((crd) => crd.getName())),
 );
+
+const imageUpdaterInstalled = computed(() => {
+  const names = Renderer.K8sApi.crdStore.items.map((crd) => crd.getName());
+
+  return isInstalled(names) && hasImageUpdater(names);
+});
 
 export default class ArgoCDRenderer extends Renderer.LensExtension {
   override kubeObjectDetailItems = [
@@ -82,6 +89,22 @@ export default class ArgoCDRenderer extends Renderer.LensExtension {
         Page: () => <AppProjectsPage />,
       },
     },
+    {
+      id: IMAGE_UPDATER_PAGES.overview,
+      components: { Page: () => <ImageUpdaterOverviewPage extension={this} /> },
+    },
+    {
+      id: IMAGE_UPDATER_PAGES.rules,
+      components: { Page: () => <ImageUpdaterRulesPage extension={this} /> },
+    },
+    {
+      id: IMAGE_UPDATER_PAGES.images,
+      components: { Page: () => <ImageUpdaterImagesPage extension={this} /> },
+    },
+    {
+      id: IMAGE_UPDATER_PAGES.updates,
+      components: { Page: () => <ImageUpdaterUpdatesPage extension={this} /> },
+    },
   ];
 
   override clusterPageMenus = [
@@ -89,8 +112,7 @@ export default class ArgoCDRenderer extends Renderer.LensExtension {
       id: "argocd",
       visible: installed,
       title: "ArgoCD",
-      // Freelens numbers its own sidebar items in tens (Favourites 0, Cluster 10, to Custom
-      // Resources 110); an extension without a number lands after all of them.
+      // The host's own items are numbered in tens from 0; without a number the group lands last.
       orderNumber: 5,
       components: {
         Icon: ArgoCDIcon,
@@ -120,12 +142,32 @@ export default class ArgoCDRenderer extends Renderer.LensExtension {
       title: "Projects",
       components: {},
     },
+    {
+      id: "argocd-image-updater",
+      visible: imageUpdaterInstalled,
+      parentId: "argocd",
+      title: "Image Updater",
+      components: {},
+    },
+    ...(
+      [
+        ["image-updater-overview", IMAGE_UPDATER_PAGES.overview, "Overview"],
+        ["image-updater-rules", IMAGE_UPDATER_PAGES.rules, "Rules"],
+        ["image-updater-images", IMAGE_UPDATER_PAGES.images, "Images"],
+        ["image-updater-updates", IMAGE_UPDATER_PAGES.updates, "Updates"],
+      ] as const
+    ).map(([id, pageId, title]) => ({
+      id,
+      visible: imageUpdaterInstalled,
+      parentId: "argocd-image-updater",
+      target: { pageId },
+      title,
+      components: {},
+    })),
   ];
 
   override async onActivate(): Promise<void> {
-    // Before any page exists: the loader awaits every onActivate and only then
-    // calls register(), so the synchronous readers never run against an empty
-    // store. startPersistingState never rejects, so this cannot stall the frame.
+    // Awaited so state is loaded before register() mounts any page; it never rejects.
     await startPersistingState(this, location.host);
 
     console.log(

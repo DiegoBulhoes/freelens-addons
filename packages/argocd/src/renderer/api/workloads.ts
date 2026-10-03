@@ -13,8 +13,7 @@ const {
   K8sApi: { podsStore, ingressStore },
 } = Renderer;
 
-// logTabStore.createWorkloadTab resolves pods with getPodsByOwnerId, which matches direct owners
-// only, so it reports "no pods" for a Deployment, whose pods belong to its ReplicaSet.
+// createWorkloadTab matches pods by direct owner only, so it finds none for a Deployment.
 
 export type Pod = (typeof podsStore.items)[number];
 
@@ -25,16 +24,8 @@ type NamespacedStore = {
   }): Promise<unknown>;
 };
 
-/**
- * Without `onLoadFailure` one refused namespace rethrows out of the host's `loadItems` and
- * `loadAll` calls `resetOnError`, emptying a store shared with the rest of Freelens and setting
- * `isLoaded` false, which leaves every open view's watch deaf.
- *
- * One call for the whole list, never one per namespace: `loadItems` overwrites the store's
- * `loadedNamespaces`, which `subscribe()` reads to choose what to watch.
- *
- * The callback also suppresses the host's own warning, so the reason is logged here or nowhere.
- */
+// Without `onLoadFailure`, one refused namespace makes the host empty this shared store.
+// One call for all namespaces: `loadItems` overwrites `loadedNamespaces`, which the watch reads.
 async function listWithRefusalCount(
   store: NamespacedStore,
   kind: string,
@@ -67,8 +58,7 @@ export async function getApplicationPods(application: Application): Promise<PodL
 
   const unreadableCount = await listWithRefusalCount(podsStore, "pods", namespaces);
 
-  // Selecting from the store, not from loadAll's return value: the store is sorted by name and
-  // holds pods this listing did not ask for, and the caller opens pods[0].
+  // From the store, not loadAll's result: the caller opens pods[0] of a name-sorted list.
   return {
     pods: selectApplicationPods(podsStore.items, application),
     listing: { requestedNamespaces: namespaces, unreadableCount },
@@ -123,9 +113,6 @@ export async function openComponentLogs(
 }
 
 export async function findArgoCDUrl(namespace: string): Promise<string | undefined> {
-  // The count is ignored deliberately: an absent sidebar link is not worth a notification, and the
-  // caller already treats undefined as "offer no link". The deleted catch could never run — the
-  // host's loadAll has no rejecting path.
   await listWithRefusalCount(ingressStore, "ingresses", [namespace]);
 
   return findArgoCDUrlIn(ingressStore.items, namespace);

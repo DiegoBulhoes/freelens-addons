@@ -1,9 +1,11 @@
 import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 import { Application, shortenRevision } from "../api/application";
+import { wasForced } from "../api/patches";
 import type { ApplicationSource, ResourceStatus } from "../api/types";
 import { HealthBadge, SyncBadge } from "../components/status";
 import { ArgoCDStyles } from "../components/styles";
+import { ImageUpdaterSection } from "./image-updater-section";
 
 const {
   Component: { DrawerItem, DrawerTitle, Table, TableCell, TableHead, TableRow },
@@ -30,7 +32,7 @@ function describeSource(source: ApplicationSource): string {
   return `${target}${revision}`;
 }
 
-/** The resource's own API path, which is what showDetails takes — not a details URL. */
+/** The API path showDetails takes, not a details URL. */
 function selfLinkFor(resource: ResourceStatus): string | undefined {
   const { group, version, kind, name, namespace } = resource;
 
@@ -111,6 +113,7 @@ function LastSync({ application }: { application: Application }) {
       {operation.operation?.sync?.prune !== undefined && (
         <DrawerItem name="Prune">{String(operation.operation.sync.prune)}</DrawerItem>
       )}
+      {wasForced(operation.operation?.sync) && <DrawerItem name="Force">true</DrawerItem>}
     </>
   );
 }
@@ -161,7 +164,7 @@ export const ApplicationDetails = observer(
     const images = Application.getImages(object);
 
     return (
-      <div className="ArgoCDApplicationDetails">
+      <div className="ArgoCD ArgoCDApplicationDetails">
         <ArgoCDStyles />
         <DrawerItem name="Destination">{Application.getDestination(object)}</DrawerItem>
         {Application.getHealthMessage(object) && (
@@ -218,6 +221,8 @@ export const ApplicationDetails = observer(
             ))}
           </>
         )}
+
+        <ImageUpdaterSection application={object} />
 
         <History application={object} />
       </div>

@@ -1,11 +1,8 @@
 import { AppProject, type AppProjectApi } from "./app-project";
 import { Application } from "./application";
 import { type BulkOutcome, refreshEach, syncEach } from "./bulk";
-import { frozenWindows, thawedWindows } from "./patches";
+import { windowsFor } from "./patches";
 import type { SyncWindow } from "./types";
-
-// A freeze is ArgoCD's own mechanism: a `deny` sync window that is always open stops the controller
-// syncing anything belonging to the project.
 
 export { isFrozen } from "./patches";
 
@@ -14,23 +11,23 @@ async function writeSyncWindows(project: AppProject, syncWindows: SyncWindow[]):
 
   await api.patch(
     { name: project.getName(), namespace: project.getNs() },
-    // A merge patch replaces the whole list, which is why the new one is computed from the current.
+    // A merge patch replaces the whole list.
     { spec: { syncWindows } },
     "merge",
   );
 }
 
-export async function freezeProject(project: AppProject): Promise<void> {
-  const existing = AppProject.getSyncWindows(project);
-  const frozen = frozenWindows(existing);
+/** Reads the project as it is now: the notification's Undo runs after the first write changed it. */
+export async function setFrozen(project: AppProject, frozen: boolean): Promise<void> {
+  const api = AppProject.getApi<AppProject, AppProjectApi>();
+  const current =
+    (await api.get({ name: project.getName(), namespace: project.getNs() })) ?? project;
+  const existing = AppProject.getSyncWindows(current);
+  const next = windowsFor(existing, frozen);
 
-  if (frozen === existing) return;
+  if (next === existing) return;
 
-  await writeSyncWindows(project, frozen);
-}
-
-export async function unfreezeProject(project: AppProject): Promise<void> {
-  await writeSyncWindows(project, thawedWindows(AppProject.getSyncWindows(project)));
+  await writeSyncWindows(current, next);
 }
 
 export function applicationsOf(project: AppProject): Application[] {
@@ -45,7 +42,7 @@ export function refreshProjectApplications(project: AppProject): Promise<BulkOut
 
 export function syncProjectApplications(
   project: AppProject,
-  { prune }: { prune: boolean },
+  options: { prune: boolean; force?: boolean },
 ): Promise<BulkOutcome> {
-  return syncEach(applicationsOf(project), { prune });
+  return syncEach(applicationsOf(project), options);
 }

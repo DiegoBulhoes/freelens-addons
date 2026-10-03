@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { getPressure, RECENT_EVENT_MS } from "../src/renderer/api/pressure";
 import { events, nodes } from "./fixtures";
 
-/** The newest warning in the fixtures, so "recent" means what it meant then. */
+/** The newest warning in the fixtures, used as `now`. */
 function newestEventAt(): number {
   return Math.max(
     ...events().map((event) => Date.parse(event.lastTimestamp ?? event.eventTime ?? "")),
