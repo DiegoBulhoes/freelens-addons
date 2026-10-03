@@ -23,11 +23,7 @@ const PROBLEM_SENTENCE = {
     "Still valid, but its renewal is failing. It will expire unless the cause is fixed.",
 } as const;
 
-/**
- * One certificate: where it is in its life, why it is stuck if it is, and what to
- * run. The Secret opens in the host's own list, narrowed to it — from a page like
- * this one, the host's details drawer cannot be opened at all.
- */
+// The Secret opens in the host's list: the details drawer cannot open from here.
 export function CertificateDetail({
   certificate,
   inputs,
@@ -83,7 +79,12 @@ export function CertificateDetail({
       <section className="CertManager-section">
         <div className="CertManager-section__bar">
           <h2 className="CertManager-section__title">Issuance chain</h2>
-          <button type="button" className="CertManager-link" onClick={onOpenIssuers}>
+          <button
+            type="button"
+            className="CertManager-link"
+            title="Opens the issuers page, with what depends on each"
+            onClick={onOpenIssuers}
+          >
             All issuers
           </button>
         </div>
@@ -103,6 +104,7 @@ export function CertificateDetail({
               <button
                 type="button"
                 className="CertManager-link"
+                title={`Opens the Secrets list narrowed to ${secretName}`}
                 onClick={() => navigate(`/secrets?search=${encodeURIComponent(secretName)}`)}
               >
                 {secretName}

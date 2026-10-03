@@ -1,9 +1,4 @@
-/**
- * The fields of cert-manager's kinds that anything here reads, taken from what a
- * cluster actually returns rather than from the CRD schema. Everything is
- * optional because a freshly created object has no status at all, and the code
- * that reads these has to say something sensible about it.
- */
+// All optional: a freshly created object has no status at all.
 
 export interface CertManagerCRD {
   apiVersions: string[];
@@ -23,7 +18,6 @@ export interface Condition {
   lastTransitionTime?: string;
 }
 
-/** `kind` is optional in the API and means `Issuer` when absent. */
 export interface IssuerRef {
   name: string;
   kind?: string;
@@ -81,7 +75,6 @@ export interface OrderSpec {
   commonName?: string;
 }
 
-/** An ACME order's lifecycle, as cert-manager spells it. */
 export type AcmeState =
   | "pending"
   | "ready"
@@ -111,17 +104,11 @@ export interface ChallengeStatus {
   processing?: boolean;
 }
 
-/**
- * The corner of a Kubernetes object the decision modules need. Both the host's
- * own classes and a KubeObject built from a fixture satisfy it, which is what
- * lets those modules be tested without a store.
- */
 export interface ObjectLike {
   getName(): string;
   getNs(): string | undefined;
   metadata: {
     uid?: string;
-    /** What a write sends back as a precondition, so it cannot overwrite a newer version. */
     resourceVersion?: string;
     generation?: number;
     annotations?: Record<string, string>;
@@ -156,7 +143,7 @@ export interface ChallengeLike extends ObjectLike {
   status?: ChallengeStatus;
 }
 
-/** A Secret, by what it is and who manages it. Never its data. */
+// Never its data.
 export interface SecretLike extends ObjectLike {
   type?: string;
 }

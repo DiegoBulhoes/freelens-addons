@@ -1,20 +1,20 @@
 import type { Renderer as RendererTypes } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 
-import { getIssuerRows, getMissingIssuers, type IssuerIndex } from "../api/issuers";
+import {
+  getIssuerRows,
+  getMissingIssuers,
+  type IssuerIndex,
+  type IssuerRow,
+  issuerStatusOf,
+  issuersHeadline,
+} from "../api/issuers";
 import type { CertificateLike } from "../api/types";
+import { NamespaceFilter } from "../components/namespace-filter";
+import { Status } from "../components/status";
 import { CertManagerStyles } from "../components/styles";
 import { useCertManagerStores } from "../hooks/use-cert-manager-stores";
 
-/**
- * Every issuer as a box, as the Trivy extension lists its RBAC checks: a
- * line saying what it is and whether it works, the reason when it does not, and
- * the certificates that depend on it as chips to open. Issuers and ClusterIssuers
- * together, which the host's lists cannot do — they are one kind each.
- *
- * Broken first, then the ones certificates name and that do not exist, then the
- * working ones by how much depends on them: the order an operator fixes them in.
- */
 export const IssuersPage = observer(({ extension }: { extension: RendererTypes.LensExtension }) => {
   const stores = useCertManagerStores();
 
@@ -49,6 +49,7 @@ export const IssuersPage = observer(({ extension }: { extension: RendererTypes.L
             type="button"
             key={`${certificate.getNs()}/${certificate.getName()}`}
             className="CertManager-chip"
+            title={`Opens ${certificate.getName()} in the certificates page`}
             onClick={() => open(certificate)}
           >
             <span>{certificate.getName()}</span>
@@ -69,16 +70,23 @@ export const IssuersPage = observer(({ extension }: { extension: RendererTypes.L
       <CertManagerStyles />
       <div className="CertManager-page__head">
         <div>
-          <h1 className="CertManager-page__headline">
-            {broken.length === 0
-              ? `All ${rows.length} issuers are ready`
-              : `${broken.length} of ${rows.length} issuers are not ready`}
-          </h1>
+          <h1 className="CertManager-page__headline">{issuersHeadline(rows, missing)}</h1>
           <p className="CertManager-page__subline">
-            Each issuer lists the certificates that stop renewing if it breaks.
+            Each issuer lists the certificates that stop renewing if it breaks. ClusterIssuers are
+            listed whatever namespaces are chosen; their certificates, only in those.
           </p>
         </div>
+        <div className="CertManager-page__actions">
+          <NamespaceFilter />
+        </div>
       </div>
+
+      {rows.length + missing.length === 0 && (
+        <p className="CertManager-section__note">
+          No Issuer in the namespaces chosen and no ClusterIssuer, and no certificate there names
+          one.
+        </p>
+      )}
 
       <div className="CertManager-list">
         {broken.map((row) => (
@@ -88,9 +96,7 @@ export const IssuersPage = observer(({ extension }: { extension: RendererTypes.L
             data-state="failed"
           >
             <div className="CertManager-box__head">
-              <span className="CertManager-tag CertManager-tag--critical">
-                {row.reason ?? "not ready"}
-              </span>
+              <IssuerStatus row={row} />
               <span className="CertManager-box__title">
                 <code>{row.issuer.getName()}</code>
                 <span className="CertManager-box__meta">
@@ -111,7 +117,7 @@ export const IssuersPage = observer(({ extension }: { extension: RendererTypes.L
             data-state="missing"
           >
             <div className="CertManager-box__head">
-              <span className="CertManager-tag CertManager-tag--critical">missing</span>
+              <Status tone="critical" label="Missing" />
               <span className="CertManager-box__title">
                 <code>{entry.name}</code>
                 <span className="CertManager-box__meta">
@@ -135,7 +141,7 @@ export const IssuersPage = observer(({ extension }: { extension: RendererTypes.L
             data-state="ready"
           >
             <div className="CertManager-box__head">
-              <span className="CertManager-tag CertManager-tag--ok">ready</span>
+              <IssuerStatus row={row} />
               <span className="CertManager-box__title">
                 <code>{row.issuer.getName()}</code>
                 <span className="CertManager-box__meta">
@@ -151,3 +157,9 @@ export const IssuersPage = observer(({ extension }: { extension: RendererTypes.L
     </div>
   );
 });
+
+function IssuerStatus({ row }: { row: IssuerRow }) {
+  const status = issuerStatusOf(row);
+
+  return <Status tone={status.tone} label={status.label} />;
+}

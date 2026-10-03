@@ -2,6 +2,7 @@ import { Renderer } from "@freelensapp/extensions";
 import { useEffect, useState } from "react";
 
 import { API_PROXY } from "../api/actions";
+import { scopeKey, withinScope } from "../api/namespace-scope";
 import {
   METADATA_ONLY,
   type PartialObjectMetadataList,
@@ -9,6 +10,8 @@ import {
   tlsSecretsFrom,
 } from "../api/secret-metadata";
 import type { IngressLike, SecretLike } from "../api/types";
+import { useLoadedStores } from "./load-stores";
+import { useNamespaceScope } from "./use-namespace-scope";
 
 const {
   K8sApi: { ingressStore },
@@ -17,28 +20,18 @@ const {
 export interface TlsInventory {
   ingresses: IngressLike[];
   secrets: SecretLike[];
-  /** Set when TLS Secrets could not be listed — most often, no permission to. */
   secretsError?: string;
   secretsLoaded: boolean;
 }
 
-/**
- * Ingresses from the host's store, and TLS Secrets by name only. Pure access:
- * what is managed and what is not is decided in `unmanaged.ts`.
- */
 export function useTlsInventory(): TlsInventory {
   const [secrets, setSecrets] = useState<SecretLike[]>([]);
   const [secretsError, setSecretsError] = useState<string | undefined>();
   const [secretsLoaded, setSecretsLoaded] = useState(false);
 
-  useEffect(() => {
-    void ingressStore.loadAll({
-      onLoadFailure: (error: unknown) =>
-        console.warn("[cert-manager] could not list Ingresses", error),
-    });
+  const scope = useNamespaceScope();
 
-    return ingressStore.subscribe();
-  }, []);
+  useLoadedStores([ingressStore], scopeKey(scope));
 
   useEffect(() => {
     let cancelled = false;
@@ -51,8 +44,7 @@ export function useTlsInventory(): TlsInventory {
 
         if (!response.ok) throw new Error(`${response.status} ${response.statusText}`.trim());
 
-        // Mapped the moment it arrives: the raw response still holds every
-        // annotation, the last-applied one with its values among them.
+        // Mapped on arrival: the raw response carries the last-applied annotation's values.
         const listed = tlsSecretsFrom((await response.json()) as PartialObjectMetadataList);
 
         if (!cancelled) {
@@ -73,9 +65,10 @@ export function useTlsInventory(): TlsInventory {
     };
   }, []);
 
+  // Secrets are listed cluster-wide, so the scope applies here; Ingresses too, until the reload lands.
   return {
-    ingresses: ingressStore.items as unknown as IngressLike[],
-    secrets,
+    ingresses: withinScope(ingressStore.items as unknown as IngressLike[], scope),
+    secrets: withinScope(secrets, scope),
     secretsError,
     secretsLoaded,
   };

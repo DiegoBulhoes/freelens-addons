@@ -1,18 +1,9 @@
 import { describeRefusal, renewalPatch, statusPath } from "./renewal";
 import type { CertificateLike } from "./types";
 
-/**
- * The one write this extension makes, and the one place it is sent from. Every
- * decision about it — whether to offer it, what the patch holds, what a refusal
- * means — is in `renewal.ts` and covered; this only carries it.
- *
- * Sent through the host's Kubernetes proxy on the frame's own origin, because the
- * extension API's KubeApi patches a resource and not its status subresource, and
- * a condition written to the resource itself is silently dropped by the API
- * server.
- */
+// Through the host proxy: the extension KubeApi cannot patch the status subresource,
+// and conditions written to the resource itself are silently dropped.
 
-/** The host's proxy, the path its own KubeApi requests go through. */
 export const API_PROXY = "/api-kube";
 
 export type RenewalOutcome = { ok: true } | { ok: false; message: string };

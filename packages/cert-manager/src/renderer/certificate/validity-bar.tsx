@@ -6,14 +6,6 @@ const {
   Component: { WithTooltip },
 } = Renderer;
 
-/**
- * Where now sits in a certificate's life, with the renewal time marked.
- *
- * A bar with "now" past the renewal mark says "this should have renewed" at a
- * glance, which is the one thing a list of certificates cannot show. Under it,
- * the three moments that bound it — issued, renewal due, expires — each with
- * its date and how far it is from now, so the glance and the numbers agree.
- */
 export function ValidityBar({
   validity,
   overdue,

@@ -11,18 +11,6 @@ import {
   waitFor,
 } from "../../../build/e2e/freelens";
 
-/**
- * How the pages are laid out, which nothing else here looks at.
- *
- * Every row that can be clicked is a `<button>`, and a button's default is
- * `text-align: center`; a colour written into the stylesheet looks right in one
- * theme only; a Challenge's reason is a long line with a URL in it and pushes a
- * page sideways unless something lets it wrap. And the validity bar is the one
- * piece of drawn UI: its "now" marker has to sit on its track.
- *
- * Needs a running workbench with remote debugging on. `make e2e` starts one.
- */
-
 const PAGES: [id: string, container: string][] = [
   ["cert-manager-overview", ".CertManager-page"],
   ["cert-manager-certificates", ".CertManager-picker"],
@@ -30,13 +18,12 @@ const PAGES: [id: string, container: string][] = [
   ["cert-manager-unmanaged", ".CertManager-page"],
 ];
 
-/** Every page, and something each renders only once its data has arrived. */
 const DESIGN: [id: string, ready: string][] = [
   ["cert-manager-overview", ".CertManager-row"],
   ["cert-manager-certificates", ".CertManager-picker__detail .CertManager-row"],
   ["cert-manager-issuers", ".CertManager-box"],
   ["cert-manager-requests", ".CertManagerRequests .TableRow"],
-  ["cert-manager-unmanaged", ".CertManager-box"],
+  ["cert-manager-unmanaged", '[data-section="served"] tbody tr'],
 ];
 
 describe("how the cert-manager pages are laid out", () => {
@@ -49,9 +36,6 @@ describe("how the cert-manager pages are laid out", () => {
 
   afterAll(() => session?.close());
 
-  // The standard's promises, read off every page once it has something on it:
-  // the surface grey, left-aligned buttons, the pressed filter's accent, and no
-  // class of ours that no stylesheet defines. See build/e2e/design.ts.
   it.each(DESIGN)(
     "builds %s from the design standard",
     async (id, ready) => {
@@ -101,8 +85,6 @@ describe("how the cert-manager pages are laid out", () => {
       async () => (await countOf(".CertManager-picker__item")) > 0 || undefined,
     );
 
-    // The first row is the most urgent: on the seeded cluster, the ACME one with
-    // the longest reason. Whatever it is, the detail pane must not scroll sideways.
     await session.evaluate("document.querySelector('.CertManager-picker__item').click()", frame);
     await waitFor(
       "its chain",
@@ -157,9 +139,7 @@ describe("how the cert-manager pages are laid out", () => {
 
     expect(surface, "the box and the page are the same colour").not.toBe(page);
 
-    // `:not(:hover)`: Xvfb's pointer rests at the centre of the screen, which is
-    // where the first attention row happens to be, and that row reads its hover
-    // colour — the synthetic events these tests dispatch never move the real one.
+    // Xvfb's pointer rests over the first row, so a hovered element reads its hover colour.
     for (const selector of [".CertManager-card:not(:hover)", ".CertManager-row:not(:hover)"]) {
       expect(await computedStyle(session, frame, selector, "background-color"), selector).toBe(
         surface,

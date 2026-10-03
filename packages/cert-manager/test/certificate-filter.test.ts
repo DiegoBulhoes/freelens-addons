@@ -9,12 +9,6 @@ import {
 } from "../src/renderer/api/certificate-filter";
 import { certificateNamed, certificates, fixtureNow } from "./fixtures";
 
-/**
- * What the picker shows for each chip and each thing typed. A filter decides
- * what an operator sees, and one that silently drops a certificate is worse than
- * no filter at all.
- */
-
 const now = fixtureNow();
 const names = (filter: Parameters<typeof matchesFilter>[1]) =>
   certificates()

@@ -28,16 +28,6 @@ import issuersJson from "./fixtures/issuers.json";
 import ordersJson from "./fixtures/orders.json";
 import tlsSecretsJson from "./fixtures/tls-secrets.json";
 
-/**
- * Real contents of the development cluster, exported by
- * `scripts/export-fixtures.sh` and sanitised: Secrets carry no data, requests no
- * CSR and no requester, and nothing names the machine. The cluster was seeded to
- * be awkward — a certificate whose renewal is failing while it is still valid, one
- * naming an issuer that does not exist, one waiting on an issuer that never became
- * ready, an ACME certificate stuck at its Challenge, an Ingress serving a Secret
- * nothing manages — because those are the cases the extension exists for.
- */
-
 type Raw = { items: unknown[] };
 
 function build<T>(Kind: new (data: never) => T, json: unknown): T[] {
@@ -72,7 +62,6 @@ export function challenges(): ChallengeLike[] {
   return build(Challenge, challengesJson) as unknown as ChallengeLike[];
 }
 
-/** The host's Secret and Ingress are KubeObjects too; the real base class stands in. */
 export function tlsSecrets(): SecretLike[] {
   return build(KubeObject, tlsSecretsJson) as unknown as SecretLike[];
 }
@@ -81,12 +70,7 @@ export function ingresses(): IngressLike[] {
   return build(KubeObject, ingressesJson) as unknown as IngressLike[];
 }
 
-/**
- * A real object with one thing changed, for the state the cluster did not
- * produce: an external issuer, a denied request, an order that went through.
- * Never a hand-written object — the change is the only part the test invents,
- * and every other field is exactly what the cluster returned.
- */
+// A real object with one field changed, for a state the cluster did not produce.
 // biome-ignore lint/suspicious/noExplicitAny: a variant edits one field of whatever shape the kind has
 export function variantOf<T extends object>(original: T, change: (raw: any) => void): T {
   const raw = JSON.parse(JSON.stringify(original));
@@ -104,12 +88,7 @@ export function certificateNamed(name: string): CertificateLike {
   return found;
 }
 
-/**
- * The moment the fixtures were exported. Unlike the other packages, this cannot
- * be the newest timestamp inside them: cert-manager writes renewalTime and
- * notAfter once, so the newest one can be the very instant a renewal fell due —
- * and measured from that instant, no renewal is ever late.
- */
+// Not the newest timestamp: that can be the instant a renewal fell due, from which none is late.
 export function fixtureNow(): number {
   return Date.parse(exportedAt.exportedAt);
 }

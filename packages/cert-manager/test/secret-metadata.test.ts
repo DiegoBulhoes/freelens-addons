@@ -10,11 +10,7 @@ import { managingCertificateOf } from "../src/renderer/api/unmanaged";
 import { certificates } from "./fixtures";
 import tlsSecretsJson from "./fixtures/tls-secrets.json";
 
-/**
- * What the extension keeps of a Secret. The fixtures are already sanitised, so
- * the last-applied annotation — the one that carries values — is put back on a
- * copy to show it does not survive the mapping.
- */
+// Fixtures are sanitised, so last-applied is put back on a copy to show it is dropped.
 
 const asMetadataList = (items: unknown[]): PartialObjectMetadataList => ({
   items: items.map((item) => ({ metadata: (item as { metadata: object }).metadata })),

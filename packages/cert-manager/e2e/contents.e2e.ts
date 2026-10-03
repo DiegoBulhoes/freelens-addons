@@ -10,26 +10,11 @@ import {
   waitFor,
 } from "../../../build/e2e/freelens";
 
-/**
- * Whether the numbers on the pages are true.
- *
- * Where the truth is something the cluster states outright — how many
- * Certificates exist, which are not Ready, which Ingress entries serve a Secret
- * — it is asked for, through the host's own proxy from inside the frame, so
- * nothing about the development cluster is written down here.
- *
- * Where the truth is a rule of this extension's — which renewals are late,
- * which certificates end within the month — asking would mean re-implementing
- * the rule in the test. There the check is that the page agrees with itself: a
- * card has to count exactly what the list it opens shows. A card and its list
- * disagreeing is the kind of thing nobody notices for months.
- *
- * Needs a running workbench with remote debugging on. `make e2e` starts one.
- */
-
 interface CertificateStatus {
   status?: { conditions?: { type: string; status: string }[] };
 }
+
+const SERVED_ROWS = '[data-section="served"] tbody tr';
 
 interface IngressTls {
   spec?: { tls?: { secretName?: string }[] };
@@ -62,7 +47,6 @@ describe("the numbers the cert-manager pages show", () => {
     await waitFor("the cards", async () => (await countOf(".CertManager-card")) > 0 || undefined);
   };
 
-  /** The number above a card's label. */
   const cardValue = (label: string) =>
     session.evaluate<number>(
       `(() => {
@@ -73,7 +57,6 @@ describe("the numbers the cert-manager pages show", () => {
       frame,
     );
 
-  /** How many rows the picker lists under a chip, reached by pressing the card. */
   const listedBehind = async (label: string) => {
     await openOverview();
     await clickByText(session, frame, "button.CertManager-card", label);
@@ -179,7 +162,7 @@ describe("the numbers the cert-manager pages show", () => {
     await clickSidebar(session, frame, "cert-manager-unmanaged", "cert-manager");
 
     const served = await waitFor("the served list", async () => {
-      const rows = await countOf(".CertManager-box");
+      const rows = await countOf(SERVED_ROWS);
 
       return rows > 0 ? rows : undefined;
     });
@@ -190,14 +173,11 @@ describe("the numbers the cert-manager pages show", () => {
     const gaps = await cardValue("Served TLS with no Certificate");
 
     await clickSidebar(session, frame, "cert-manager-unmanaged", "cert-manager");
-    await waitFor(
-      "the served list",
-      async () => (await countOf(".CertManager-box")) > 0 || undefined,
-    );
+    await waitFor("the served list", async () => (await countOf(SERVED_ROWS)) > 0 || undefined);
 
     const listedGaps =
-      (await countOf('.CertManager-box[data-state="unmanaged"]')) +
-      (await countOf('.CertManager-box[data-state="missing"]'));
+      (await countOf(`${SERVED_ROWS}[data-state="unmanaged"]`)) +
+      (await countOf(`${SERVED_ROWS}[data-state="missing"]`));
 
     expect(listedGaps).toBe(gaps);
   }, 150_000);

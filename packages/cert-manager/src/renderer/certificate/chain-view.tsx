@@ -14,12 +14,6 @@ const TONE: Record<ChainLink["state"], string> = {
   missing: " CertManager-row--critical",
 };
 
-/**
- * Issuer → Certificate → CertificateRequest → Order → Challenge, one row each
- * in the standard's list, in order, with the link that causes the rest marked
- * as the cause. The reason sits on that link, where cert-manager put it, rather
- * than repeated on the Certificate that only shows the symptom.
- */
 export function ChainView({ chain, explanation }: { chain: ChainLink[]; explanation?: ChainLink }) {
   return (
     <ol className="CertManager-list">

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  certificateStatusOf,
   compareByUrgency,
   getAttentionItems,
   headlineOf,
@@ -9,13 +10,6 @@ import {
 } from "../src/renderer/api/attention";
 import { ALARM_DAYS } from "../src/renderer/api/expiry";
 import { certificateNamed, certificates, fixtureNow } from "./fixtures";
-
-/**
- * The overview's list is for acting on, so what it holds is a claim that a
- * person is needed. These check each claim against the certificate that should
- * make it, and that the healthy ones — including the ones ending this month on
- * schedule — make none.
- */
 
 const DAY = 24 * 60 * 60 * 1000;
 const now = fixtureNow();
@@ -126,5 +120,25 @@ describe("the headline", () => {
     expect(headlineOf(0, 9)).toBe("All 9 certificates are fine");
     expect(headlineOf(0, 1)).toBe("All 1 certificate is fine");
     expect(headlineOf(0, 0)).toBe("No certificates");
+  });
+});
+
+describe("a certificate's state, as a dot and a word", () => {
+  it("is its problem, in the problem's tone", () => {
+    expect(certificateStatusOf(certificateNamed("orphan"), now)).toEqual({
+      label: "Not ready",
+      tone: "critical",
+    });
+    expect(certificateStatusOf(certificateNamed("renewal-stalls"), now)).toEqual({
+      label: "Renewal failing",
+      tone: "warning",
+    });
+  });
+
+  it("is Ready for a certificate with nothing wrong, even one ending this week", () => {
+    expect(certificateStatusOf(certificateNamed("ends-this-week"), now)).toEqual({
+      label: "Ready",
+      tone: "ok",
+    });
   });
 });

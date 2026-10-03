@@ -12,12 +12,6 @@ import {
   orders,
 } from "./fixtures";
 
-/**
- * The commands offered for each stuck certificate. The extension runs none of
- * them, so what matters is that the one offered points at the actual cause —
- * a renew button in front of a broken issuer only fails again.
- */
-
 const now = fixtureNow();
 const inputs: ChainInputs = {
   index: issuerIndex(),

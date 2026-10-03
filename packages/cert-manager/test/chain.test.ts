@@ -17,12 +17,6 @@ import {
   variantOf,
 } from "./fixtures";
 
-/**
- * The reason a certificate is stuck is usually three kinds away from it. These
- * walk the real objects the cluster made for each stuck certificate and check
- * that the link picked out is the one that explains the rest.
- */
-
 const inputs: ChainInputs = {
   index: issuerIndex(),
   requests: certificateRequests(),

@@ -3,15 +3,7 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-/**
- * A guard on the fixtures themselves, because this is the one package that
- * exports Secrets. `scripts/sanitise-fixture.py` removes their data; this fails
- * the build if a fixture ever carries it anyway — a refresh with an old
- * sanitiser, a hand edit, a kind that grew a field.
- *
- * It checks the shape and the text both. The shape is what the sanitiser
- * promises; the text is what would actually leak.
- */
+// This package exports Secrets: fail if a fixture carries what the sanitiser removes.
 
 const FIXTURES = join(__dirname, "fixtures");
 
@@ -50,8 +42,6 @@ describe("the fixtures carry no secrets", () => {
     expect(text).not.toMatch(/"[A-Za-z0-9+/=]{200,}"/);
   });
 
-  // ACME's side of the conversation with the CA. Gitleaks fails the build on
-  // the tokens; this fails it first, and names the file.
   it.each(files)("%s holds no ACME token, key authorisation or account detail", (file) => {
     const text = readFileSync(join(FIXTURES, file), "utf8");
 
@@ -60,8 +50,7 @@ describe("the fixtures carry no secrets", () => {
     }
   });
 
-  // The token again, inside the URL the CA fetches: the solver Ingress's path
-  // and the Challenge's self-check message both carry it.
+  // The token also sits in the solver path and the self-check message.
   it.each(files)("%s names no ACME challenge path but the redacted one", (file) => {
     const text = readFileSync(join(FIXTURES, file), "utf8");
 

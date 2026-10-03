@@ -1,12 +1,7 @@
-import { problemOf, severityOf } from "../api/attention";
+import { certificateStatusOf } from "../api/attention";
 import { ALARM_DAYS, describeTimeLeft, expiresWithin } from "../api/expiry";
 import type { CertificateLike } from "../api/types";
-
-const PROBLEM_LABEL = {
-  expired: "expired",
-  "not-ready": "not ready",
-  "renewal-overdue": "renewal failing",
-} as const;
+import { Status } from "../components/status";
 
 export function certificateKey(certificate: {
   getNs(): string | undefined;
@@ -15,7 +10,6 @@ export function certificateKey(certificate: {
   return `${certificate.getNs() ?? ""}/${certificate.getName()}`;
 }
 
-/** The selectable column. Narrow on purpose: the detail beside it is the content. */
 export function CertificateList({
   certificates,
   selected,
@@ -31,7 +25,7 @@ export function CertificateList({
     <div className="CertManager-picker__list">
       {certificates.map((certificate) => {
         const key = certificateKey(certificate);
-        const problem = problemOf(certificate, now);
+        const status = certificateStatusOf(certificate, now);
         const alarm = expiresWithin(certificate, now, ALARM_DAYS);
 
         return (
@@ -39,17 +33,12 @@ export function CertificateList({
             type="button"
             key={key}
             className={`CertManager-picker__item${key === selected ? " CertManager-picker__item--selected" : ""}`}
+            title={`Shows ${certificate.getName()} beside the list`}
             onClick={() => onSelect(certificate)}
           >
             <span className="CertManager-picker__name">{certificate.getName()}</span>
             <span className="CertManager-picker__meta">
-              {certificate.getNs()}
-              {problem && (
-                <span className={`CertManager-text--${severityOf(problem)}`}>
-                  {" "}
-                  · {PROBLEM_LABEL[problem]}
-                </span>
-              )}
+              {certificate.getNs()} · <Status tone={status.tone} label={status.label} />
             </span>
             <span
               className={`CertManager-picker__aside${alarm ? " CertManager-text--warning" : ""}`}

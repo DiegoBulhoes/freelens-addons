@@ -9,21 +9,7 @@ import {
   waitFor,
 } from "../../../build/e2e/freelens";
 
-/**
- * The task the extension exists for, done the way a person does it.
- *
- * A renewal is failing on a certificate that still reads as fine everywhere
- * else. From the overview: find it, open it, read which object explains it,
- * copy the command that describes that object, go to it, see what else depends
- * on it, come back, and end on the Secret in the host's own list. Every step is
- * a different page or a different kind of link, and each one has broken
- * somewhere before — a row that navigates nowhere, a drawer that cannot open
- * from here, a selection that does not survive a round trip.
- *
- * One `it`, because a test per step would let the journey pass halfway.
- *
- * Needs a running workbench with remote debugging on. `make e2e` starts one.
- */
+// One `it`: a test per step would let the journey pass halfway.
 
 describe("a failing renewal, from the overview to the Secret", () => {
   let session: Session;
@@ -52,7 +38,6 @@ describe("a failing renewal, from the overview to the Secret", () => {
       async () => (await countOf(".CertManager-list .CertManager-row")) > 0 || undefined,
     );
 
-    // 1. The row the list calls a failing renewal. It reads as fine anywhere else.
     const name = await session.evaluate<string>(
       `[...document.querySelectorAll('.CertManager-list .CertManager-row')]
          .find((row) => row.querySelector('.CertManager-row__state')?.textContent.trim() === "Renewal failing")
@@ -71,7 +56,6 @@ describe("a failing renewal, from the overview to the Secret", () => {
       return true;
     `);
 
-    // 2. The picker, on that certificate, saying what is wrong.
     const landed = await waitFor("the picker on it", async () => {
       const path = await where();
 
@@ -86,7 +70,6 @@ describe("a failing renewal, from the overview to the Secret", () => {
       /renewal is failing/i,
     );
 
-    // 3. The link that explains it, and the command that describes it.
     const explains = await session.evaluate<{ kind: string; name: string }>(
       `(() => {
         const link = document.querySelector('.CertManager-row[data-explains]');
@@ -113,7 +96,6 @@ describe("a failing renewal, from the overview to the Secret", () => {
 
     expect(await notificationSaying(session, frame, describe)).toContain(describe);
 
-    // 4. Its issuers, where the same certificate is listed as depending on it.
     await click(`
       const button = [...document.querySelectorAll('.CertManager-link')]
         .find((each) => each.textContent.trim() === "All issuers");
@@ -122,8 +104,7 @@ describe("a failing renewal, from the overview to the Secret", () => {
       return true;
     `);
 
-    // By pathname: arriving on the picker with namespace and name in the query,
-    // the navigation carries that query along to a page that ignores it.
+    // By pathname: the picker's query is carried along to a page that ignores it.
     await waitFor(
       "the issuers page",
       async () =>
@@ -139,7 +120,6 @@ describe("a failing renewal, from the overview to the Secret", () => {
       return true;
     `);
 
-    // 5. Back to it, by way of what it depends on.
     await waitFor("the picker on it again", async () => {
       const headline = await textOf(
         session,
@@ -150,8 +130,7 @@ describe("a failing renewal, from the overview to the Secret", () => {
       return headline === name ? headline : undefined;
     });
 
-    // 6. And to the Secret it writes, in the host's own list — the details drawer
-    //    cannot be opened from an extension page, so the list is narrowed to it.
+    // The details drawer cannot open from an extension page, so the list is narrowed to it.
     const secret = await session.evaluate<string>(
       `[...document.querySelectorAll('.CertManager-facts dd .CertManager-link')][0]?.textContent.trim() ?? ""`,
       frame,

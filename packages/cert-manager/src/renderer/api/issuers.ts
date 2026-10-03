@@ -1,22 +1,11 @@
 import { conditionOf } from "./expiry";
 import type { CertificateLike, IssuerLike, IssuerRef } from "./types";
 
-/**
- * Which issuer a certificate names, whether it exists, and whether it works.
- *
- * One broken issuer is many broken certificates, and a list of issuers shows
- * none of them. These rules draw the line between the two.
- */
-
 const CERT_MANAGER_GROUP = "cert-manager.io";
 
 export type IssuerKind = "Issuer" | "ClusterIssuer" | "External";
 
-/**
- * `kind` is optional in an issuerRef and means `Issuer` when absent. A `group`
- * other than cert-manager's names an external issuer — AWS PCA, Google CAS,
- * step-ca — whose objects this extension does not read and cannot judge.
- */
+// Another `group` is an external issuer (AWS PCA, step-ca...) this extension cannot judge.
 export function issuerKindOf(ref: IssuerRef): IssuerKind {
   if (ref.group && ref.group !== CERT_MANAGER_GROUP) return "External";
 
@@ -28,7 +17,6 @@ export interface IssuerIndex {
   clusterIssuers: IssuerLike[];
 }
 
-/** The issuer a certificate names: an Issuer in its own namespace, or a ClusterIssuer. */
 export function resolveIssuer(
   certificate: CertificateLike,
   index: IssuerIndex,
@@ -67,7 +55,6 @@ export function issuerTypeOf(issuer: IssuerLike): IssuerType {
   return "Other";
 }
 
-/** Whether a certificate is waiting on an issuer that exists and is not ready. */
 export function dependsOnBrokenIssuer(certificate: CertificateLike, index: IssuerIndex): boolean {
   const issuer = resolveIssuer(certificate, index);
 
@@ -84,11 +71,6 @@ export interface IssuerRow {
   dependents: CertificateLike[];
 }
 
-/**
- * Every issuer, with the certificates that name it. Broken ones first, and
- * among those the ones more certificates depend on — that is the order an
- * operator fixes them in.
- */
 export function getIssuerRows(index: IssuerIndex, certificates: CertificateLike[]): IssuerRow[] {
   const rows: IssuerRow[] = [
     ...index.issuers.map((issuer) => ({ issuer, kind: "Issuer" as const })),
@@ -120,16 +102,10 @@ export function getIssuerRows(index: IssuerIndex, certificates: CertificateLike[
 export interface MissingIssuer {
   kind: "Issuer" | "ClusterIssuer";
   name: string;
-  /** Where it was looked for: the certificate's namespace for an Issuer. */
   namespace?: string;
   dependents: CertificateLike[];
 }
 
-/**
- * Issuers that certificates name and that do not exist. Not an issuer that is
- * broken — there is nothing to be broken — which is why these are counted apart:
- * the fix is to create something, or to correct a name.
- */
 export function getMissingIssuers(
   index: IssuerIndex,
   certificates: CertificateLike[],
@@ -151,4 +127,20 @@ export function getMissingIssuers(
   }
 
   return [...missing.values()].sort((first, second) => first.name.localeCompare(second.name));
+}
+
+export function issuerStatusOf(row: IssuerRow): { label: string; tone: "critical" | "ok" } {
+  return row.ready
+    ? { label: "Ready", tone: "ok" }
+    : { label: row.reason ?? "Not ready", tone: "critical" };
+}
+
+export function issuersHeadline(rows: IssuerRow[], missing: MissingIssuer[]): string {
+  const total = rows.length + missing.length;
+  const failing = rows.filter((row) => !row.ready).length + missing.length;
+
+  if (total === 0) return "No issuers";
+  if (failing === 0) return `All ${total} ${total === 1 ? "issuer is" : "issuers are"} ready`;
+
+  return `${failing} of ${total} ${total === 1 ? "issuer" : "issuers"} ${failing === 1 ? "is" : "are"} not ready or missing`;
 }

@@ -1,22 +1,18 @@
-export type Tone = "critical" | "warning" | "info" | "ok";
+import type { Tone } from "./status";
 
-/**
- * One number and what it counts. A card that can be pressed is a `<button>` —
- * for the keyboard and the screen reader — and takes the operator to the list
- * the number summarises; one that cannot is a plain block.
- */
 export function StatCard({
   value,
   label,
   tone,
   onOpen,
+  title,
 }: {
   value: number;
   label: string;
   tone?: Tone;
   onOpen?: () => void;
+  title?: string;
 }) {
-  // A count of problems is only alarming when there is one.
   const className = `CertManager-card${tone && value > 0 ? ` CertManager-card--${tone}` : ""}`;
   const content = (
     <>
@@ -28,7 +24,7 @@ export function StatCard({
   if (!onOpen) return <div className={className}>{content}</div>;
 
   return (
-    <button type="button" className={className} onClick={onOpen}>
+    <button type="button" className={className} title={title} onClick={onOpen}>
       {content}
     </button>
   );

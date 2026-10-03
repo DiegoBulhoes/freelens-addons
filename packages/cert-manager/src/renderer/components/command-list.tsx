@@ -6,11 +6,7 @@ const {
   Component: { Icon, Notifications },
 } = Renderer;
 
-/**
- * Commands to copy, never to run. Electron grants the renderer clipboard access,
- * so a resolved promise is the whole check; the notification is how the
- * operator knows it happened without switching windows to paste.
- */
+// Electron grants the renderer clipboard access, so a resolved promise is the whole check.
 export function CommandList({ commands }: { commands: Command[] }) {
   const copy = async (command: Command) => {
     try {
@@ -31,6 +27,7 @@ export function CommandList({ commands }: { commands: Command[] }) {
             type="button"
             className="CertManager-icon-button"
             aria-label={`Copy ${command.command}`}
+            title="Copies the command to the clipboard; runs nothing"
             onClick={() => void copy(command)}
           >
             <Icon small material="content_copy" />

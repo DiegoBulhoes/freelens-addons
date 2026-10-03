@@ -14,13 +14,6 @@ import type {
   OrderStatus,
 } from "./types";
 
-/**
- * The six cert-manager kinds, registered with the host so it builds a store for
- * each. Registration is all this module does — every rule that reads these lives
- * in a module that takes them as plain data — so it is excluded from coverage the
- * way `reports.ts` is in the Trivy extension.
- */
-
 const CORE = "cert-manager.io/v1";
 const ACME = "acme.cert-manager.io/v1";
 

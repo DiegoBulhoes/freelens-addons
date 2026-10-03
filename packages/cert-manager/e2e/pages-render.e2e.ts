@@ -9,25 +9,11 @@ import {
   waitFor,
 } from "../../../build/e2e/freelens";
 
-/**
- * Every page this extension registers, opened and read.
- *
- * What this catches is the gap `verify-bundles.sh` cannot reach. That script
- * asserts the shape of a bundle, and a bundle can satisfy all of it and still
- * throw on mount, render an empty state against a cluster that has data, or
- * never appear in the sidebar at all. Every one of those is silent.
- *
- * Counts are "more than none", never a number: a number is the development
- * cluster's contents on the day it was written.
- *
- * Needs a running workbench with remote debugging on. `make e2e` starts one.
- */
+// Counts are "more than none": a number would be the dev cluster's contents.
 
 interface PageCheck {
   id: string;
-  /** Something the page renders only once it has its data. */
   expect: { selector: string; matches: RegExp };
-  /** Rows it lists once it has them. */
   rows: string;
 }
 
@@ -61,7 +47,7 @@ const PAGES: PageCheck[] = [
   {
     id: "cert-manager-unmanaged",
     expect: { selector: ".CertManager-page__headline", matches: /TLS Secret/ },
-    rows: ".CertManager-box",
+    rows: '[data-section="served"] tbody tr',
   },
 ];
 

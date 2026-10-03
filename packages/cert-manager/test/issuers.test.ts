@@ -6,16 +6,12 @@ import {
   getMissingIssuers,
   isIssuerReady,
   issuerKindOf,
+  issuerStatusOf,
+  issuersHeadline,
   issuerTypeOf,
   resolveIssuer,
 } from "../src/renderer/api/issuers";
 import { certificateNamed, certificates, clusterIssuers, issuerIndex, variantOf } from "./fixtures";
-
-/**
- * One broken issuer is many broken certificates, and the line between them is
- * drawn here. An issuer resolved wrongly does not throw — it silently fails to
- * match, and a certificate waiting on a broken issuer reads as waiting on nothing.
- */
 
 const index = issuerIndex();
 
@@ -198,5 +194,59 @@ describe("issuers that are named and do not exist", () => {
     ]);
 
     expect(missing.map((each) => each.name)).toEqual(["alpha", "zulu"]);
+  });
+});
+
+describe("what the issuers page says", () => {
+  const rows = getIssuerRows(index, certificates());
+  const missing = getMissingIssuers(index, certificates());
+
+  const rowOf = (name: string, from = rows) => {
+    const row = from.find((each) => each.issuer.getName() === name);
+
+    if (!row) throw new Error(`no issuer named ${name} in the fixtures`);
+
+    return row;
+  };
+
+  it("shows each issuer's state as Ready, or the reason it is not", () => {
+    expect(issuerStatusOf(rowOf("demo-ca"))).toEqual({ label: "Ready", tone: "ok" });
+    expect(issuerStatusOf(rowOf("broken-ca"))).toEqual({
+      label: "ErrGetKeyPair",
+      tone: "critical",
+    });
+  });
+
+  it("says Not ready for an issuer cert-manager has not judged yet", () => {
+    const fresh = variantOf(rowOf("broken-ca").issuer, (raw) => {
+      delete raw.status;
+    });
+    const unjudged = getIssuerRows({ issuers: [fresh], clusterIssuers: [] }, []);
+
+    expect(issuerStatusOf(rowOf("broken-ca", unjudged))).toEqual({
+      label: "Not ready",
+      tone: "critical",
+    });
+  });
+
+  it("counts the broken and the missing out of every issuer listed", () => {
+    const failing = rows.filter((row) => !row.ready).length + missing.length;
+
+    expect(failing).toBeGreaterThan(0);
+    expect(issuersHeadline(rows, missing)).toBe(
+      `${failing} of ${rows.length + missing.length} issuers are not ready or missing`,
+    );
+  });
+
+  it("says so when every issuer is ready, and when there is none", () => {
+    const ready = rows.filter((row) => row.ready);
+
+    expect(issuersHeadline(ready, [])).toBe(`All ${ready.length} issuers are ready`);
+    expect(issuersHeadline(ready.slice(0, 1), [])).toBe("All 1 issuer is ready");
+    expect(issuersHeadline([], [])).toBe("No issuers");
+  });
+
+  it("reads one missing issuer out of one in the singular", () => {
+    expect(issuersHeadline([], missing.slice(0, 1))).toBe("1 of 1 issuer is not ready or missing");
   });
 });

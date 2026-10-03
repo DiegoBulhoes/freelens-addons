@@ -2,11 +2,6 @@ import { describe, expect, it } from "vitest";
 
 import { CRD_NAMES, isInstalled } from "../src/renderer/api/installed";
 
-/**
- * Whether the sidebar group shows. Wrong one way, the group sits on every
- * cluster with pages that can only say there is nothing there; wrong the other,
- * it vanishes from the one cluster it was installed for.
- */
 describe("whether cert-manager is installed", () => {
   it.each(CRD_NAMES)("counts it installed when %s is there, among others", (name) => {
     expect(isInstalled(["applications.argoproj.io", name, "widgets.example.test"])).toBe(true);

@@ -2,12 +2,6 @@ import { compareByUrgency, problemOf } from "./attention";
 import { EXPIRING_DAYS, expiresWithin, isReady, isRenewalOverdue } from "./expiry";
 import type { CertificateLike } from "./types";
 
-/**
- * The certificate picker's chips and search field, kept out of the page so a
- * test can say what an operator sees. A filter written inline in a page is the
- * one thing nothing can test.
- */
-
 export type CertificateFilter = "all" | "attention" | "expiring" | "failing" | "not-ready";
 
 export const FILTER_LABELS: Record<CertificateFilter, string> = {
@@ -16,6 +10,14 @@ export const FILTER_LABELS: Record<CertificateFilter, string> = {
   expiring: `Ends within ${EXPIRING_DAYS} days`,
   failing: "Renewal failing",
   "not-ready": "Not ready",
+};
+
+export const FILTER_TITLES: Record<CertificateFilter, string> = {
+  all: "Shows every certificate in the namespaces chosen",
+  attention: "Shows the certificates that are expired, not ready or failing to renew",
+  expiring: `Shows the certificates that end within ${EXPIRING_DAYS} days`,
+  failing: "Shows the certificates still valid whose renewal is failing",
+  "not-ready": "Shows the certificates with nothing ready to serve",
 };
 
 export function isCertificateFilter(value: string): value is CertificateFilter {
@@ -41,10 +43,6 @@ export function matchesFilter(
   }
 }
 
-/**
- * Name, namespace, the names it covers, the Secret it writes and the issuer it
- * names — the things someone arriving from an alert or a hostname would type.
- */
 export function matchesSearch(certificate: CertificateLike, text: string): boolean {
   const needle = text.trim().toLowerCase();
 
@@ -62,7 +60,6 @@ export function matchesSearch(certificate: CertificateLike, text: string): boole
   return haystack.some((value) => value.toLowerCase().includes(needle));
 }
 
-/** What the picker lists: filtered, searched, and in order of urgency. */
 export function selectCertificates(
   certificates: CertificateLike[],
   filter: CertificateFilter,

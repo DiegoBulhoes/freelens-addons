@@ -5,24 +5,17 @@ import { useState } from "react";
 import {
   type CertificateFilter,
   FILTER_LABELS,
+  FILTER_TITLES,
   isCertificateFilter,
   selectCertificates,
 } from "../api/certificate-filter";
 import type { ChainInputs } from "../api/chain";
 import { CertificateDetail } from "../certificate/certificate-detail";
 import { CertificateList, certificateKey } from "../certificate/certificate-list";
+import { NamespaceFilter } from "../components/namespace-filter";
 import { CertManagerStyles } from "../components/styles";
 import { useCertManagerStores } from "../hooks/use-cert-manager-stores";
 
-/**
- * Pick on the left, read on the right — one page rather than a list that
- * navigates to a detail, so the sidebar item stays lit and moving between
- * certificates is a click rather than a round trip.
- *
- * The selection and the chip live in the page params all the same, so a link
- * from the overview opens on the certificate it named, filtered the way the
- * card that was pressed implies.
- */
 export interface CertificatesRouteParams {
   namespace: { get(): string };
   name: { get(): string };
@@ -63,8 +56,6 @@ export const CertificatesRoute = observer(
     const fromRoute = stores.certificates.find(
       (each) => each.getNs() === namespace && each.getName() === name,
     );
-    // Falls back to the first row so the pane is never empty on arrival, but a
-    // deliberate selection always wins.
     const selected = fromRoute ?? shown[0];
     const inputs: ChainInputs = {
       index: { issuers: stores.issuers, clusterIssuers: stores.clusterIssuers },
@@ -78,18 +69,22 @@ export const CertificatesRoute = observer(
         <CertManagerStyles />
 
         <div className="CertManager-picker__side">
-          <div className="CertManager-filters">
-            {(Object.keys(FILTER_LABELS) as CertificateFilter[]).map((key) => (
-              <button
-                key={key}
-                type="button"
-                className="CertManager-filter"
-                aria-pressed={filter === key}
-                onClick={() => setFilter(key)}
-              >
-                {FILTER_LABELS[key]}
-              </button>
-            ))}
+          <div className="CertManager-section">
+            <NamespaceFilter />
+            <div className="CertManager-filters">
+              {(Object.keys(FILTER_LABELS) as CertificateFilter[]).map((key) => (
+                <button
+                  key={key}
+                  type="button"
+                  className="CertManager-filter"
+                  aria-pressed={filter === key}
+                  title={FILTER_TITLES[key]}
+                  onClick={() => setFilter(key)}
+                >
+                  {FILTER_LABELS[key]}
+                </button>
+              ))}
+            </div>
           </div>
 
           <input
@@ -97,6 +92,7 @@ export const CertificatesRoute = observer(
             type="search"
             value={search}
             placeholder={`Filter ${stores.certificates.length} certificates`}
+            aria-label="Search certificates"
             onChange={(event) => setSearch(event.target.value)}
           />
 
@@ -123,7 +119,11 @@ export const CertificatesRoute = observer(
               onOpenIssuers={() => void extension.navigate("issuers")}
             />
           ) : (
-            <p className="CertManager-picker__empty">Nothing matches that filter.</p>
+            <p className="CertManager-picker__empty">
+              {stores.certificates.length === 0
+                ? "There is no Certificate in the namespaces chosen in the selector."
+                : "Nothing matches that filter."}
+            </p>
           )}
         </div>
       </div>

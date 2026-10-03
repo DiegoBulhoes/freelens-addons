@@ -17,12 +17,6 @@ import {
   orders,
 } from "./fixtures";
 
-/**
- * The one write the extension makes. Wrong in one direction it is a button that
- * silently does nothing; wrong in the other it overwrites a status cert-manager
- * has just written. These check both ends against the real certificates.
- */
-
 const inputs: ChainInputs = {
   index: issuerIndex(),
   requests: certificateRequests(),

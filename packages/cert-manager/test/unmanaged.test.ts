@@ -3,17 +3,15 @@ import { describe, expect, it } from "vitest";
 import {
   getServedTls,
   getUnmanagedSecrets,
+  isGap,
   managingCertificateOf,
+  SERVED_STATES,
+  secretSearchTexts,
+  servedSearchTexts,
 } from "../src/renderer/api/unmanaged";
 import { certificateNamed, certificates, ingresses, tlsSecrets, variantOf } from "./fixtures";
 
-/**
- * The absence: TLS that nothing renews. The seed made one of each case — an
- * Ingress serving a hand-made Secret, one naming a Secret that does not exist,
- * a managed one for contrast, and a TLS Secret nothing references — and the
- * cluster added two of its own: cert-manager's HTTP-01 solver Ingress, which
- * serves no TLS, and k3s's serving certificate, which another controller keeps.
- */
+// Besides the seed: the HTTP-01 solver Ingress (no TLS) and k3s's own serving certificate.
 
 const secretNamed = (name: string) => {
   const found = tlsSecrets().find((each) => each.getName() === name);
@@ -147,5 +145,42 @@ describe("TLS Secrets no Certificate writes", () => {
     });
 
     expect(getUnmanagedSecrets([opaque], certificates())).toEqual([]);
+  });
+});
+
+describe("how the served list reads", () => {
+  const served = getServedTls(ingresses(), tlsSecrets(), certificates());
+
+  it("counts as a gap what nothing renews and what nothing will create", () => {
+    expect(served.filter(isGap).map((each) => each.ingress)).toEqual([
+      "unmanaged",
+      "missing-secret",
+    ]);
+  });
+
+  it("tones a gap critical, one being issued a warning, a managed one fine", () => {
+    expect(SERVED_STATES.unmanaged.tone).toBe("critical");
+    expect(SERVED_STATES.missing.tone).toBe("critical");
+    expect(SERVED_STATES.pending.tone).toBe("warning");
+    expect(SERVED_STATES.managed.tone).toBe("ok");
+  });
+
+  it("searches everything a row shows", () => {
+    const managed = served.find((each) => each.state === "managed");
+
+    expect(managed && servedSearchTexts(managed)).toEqual([
+      "Managed",
+      "managed",
+      "demo",
+      "managed-tls",
+      "managed-tls",
+      "managed.demo.test",
+    ]);
+  });
+
+  it("searches a Secret by its name and namespace", () => {
+    const [first] = getUnmanagedSecrets(tlsSecrets(), certificates());
+
+    expect(first && secretSearchTexts(first)).toEqual([first?.getName(), first?.getNs()]);
   });
 });

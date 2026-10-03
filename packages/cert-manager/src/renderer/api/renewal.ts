@@ -2,14 +2,7 @@ import type { ChainLink } from "./chain";
 import { isIssuing } from "./expiry";
 import type { CertificateLike, Condition } from "./types";
 
-/**
- * Forcing a renewal, decided here and sent from `actions.ts`.
- *
- * It is what `cmctl renew` does: set the Certificate's Issuing condition to true,
- * and cert-manager's trigger controller issues the next revision. Nothing else is
- * touched — not the Secret, not the key — so the certificate being served keeps
- * being served until the new one is ready.
- */
+// What `cmctl renew` does: set Issuing true. The Secret and key are untouched.
 
 export const MANUAL_TRIGGER = {
   reason: "ManuallyTriggered",
@@ -18,15 +11,7 @@ export const MANUAL_TRIGGER = {
 
 export type RenewalVerdict = { offer: true; warning?: string } | { offer: false; reason: string };
 
-/**
- * Whether the button should do anything.
- *
- * Not while cert-manager is already issuing: the condition is already true, a
- * second trigger changes nothing, and `cmctl renew` skips such a certificate for
- * the same reason. What the operator needs then is the object holding it up,
- * which is named. And not blindly while the issuer is broken — offered, since a
- * renewal is harmless, but saying it will fail until the issuer is fixed.
- */
+// Not while already issuing: a second trigger changes nothing.
 export function renewalVerdict(
   certificate: CertificateLike,
   explanation: ChainLink | undefined,
@@ -60,12 +45,8 @@ export interface RenewalPatch {
   status: { conditions: Condition[] };
 }
 
-/**
- * The merge patch for the status subresource. A merge patch replaces a list
- * whole, so it carries every condition the certificate has with Issuing set, and
- * the resourceVersion it was computed from: if cert-manager wrote the status in
- * the meantime, the API server refuses with 409 rather than this overwriting it.
- */
+// A merge patch replaces the list whole, so every condition is sent, with the
+// resourceVersion so a concurrent status write is refused with 409.
 export function renewalPatch(certificate: CertificateLike, now: number): RenewalPatch {
   const others = (certificate.status?.conditions ?? []).filter((each) => each.type !== "Issuing");
   const issuing: Condition & { observedGeneration?: number } = {
@@ -86,12 +67,10 @@ export function renewalPatch(certificate: CertificateLike, now: number): Renewal
   };
 }
 
-/** Where the patch goes: the status subresource, which is the only place conditions can be written. */
 export function statusPath(certificate: CertificateLike): string {
   return `/apis/cert-manager.io/v1/namespaces/${certificate.getNs()}/certificates/${certificate.getName()}/status`;
 }
 
-/** What to tell the operator when the API server refuses. */
 export function describeRefusal(status: number, message: string | undefined): string {
   if (status === 403) {
     return "Not allowed: renewing needs permission to patch certificates/status.";

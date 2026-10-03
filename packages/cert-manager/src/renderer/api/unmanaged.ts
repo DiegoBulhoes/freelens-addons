@@ -1,15 +1,5 @@
 import type { CertificateLike, IngressLike, SecretLike } from "./types";
 
-/**
- * TLS that cert-manager does not know about.
- *
- * The rest of this extension reads what cert-manager manages, and an absence
- * renders as nothing at all: a certificate no Certificate object stands behind
- * never appears in any of its lists, and nobody renews it. This is the one place
- * that looks from the other side — from what is served, and from what is stored
- * — and asks whether anything is behind it.
- */
-
 export const TLS_SECRET_TYPE = "kubernetes.io/tls";
 
 const CERTIFICATE_NAME = "cert-manager.io/certificate-name";
@@ -18,12 +8,7 @@ function isTlsSecret(secret: SecretLike): boolean {
   return secret.type === TLS_SECRET_TYPE;
 }
 
-/**
- * The Certificate that writes this Secret. Read from the Certificate's own
- * `secretName` first, because that is the fact; the annotation cert-manager puts
- * on the Secret is the fallback for a Certificate that has since been deleted —
- * and then there is no Certificate, which is the point.
- */
+// secretName first; the Secret's annotation is the fallback for a deleted Certificate.
 export function managingCertificateOf(
   secret: SecretLike,
   certificates: CertificateLike[],
@@ -44,13 +29,36 @@ export function managingCertificateOf(
     : undefined;
 }
 
-/**
- * - `managed`: the Secret exists and a Certificate writes it.
- * - `pending`: it does not exist yet, but a Certificate will write it.
- * - `unmanaged`: it exists, and nothing will renew it.
- * - `missing`: it does not exist, and nothing will create it.
- */
 export type ServedState = "managed" | "pending" | "unmanaged" | "missing";
+
+export const SERVED_STATES: Record<
+  ServedState,
+  { label: string; tone: "critical" | "warning" | "ok"; rank: number }
+> = {
+  unmanaged: { label: "No Certificate", tone: "critical", rank: 0 },
+  missing: { label: "Secret missing", tone: "critical", rank: 1 },
+  pending: { label: "Being issued", tone: "warning", rank: 2 },
+  managed: { label: "Managed", tone: "ok", rank: 3 },
+};
+
+export function isGap(served: ServedTls): boolean {
+  return served.state === "unmanaged" || served.state === "missing";
+}
+
+export function servedSearchTexts(served: ServedTls): string[] {
+  return [
+    SERVED_STATES[served.state].label,
+    served.ingress,
+    served.namespace,
+    served.secretName,
+    served.certificate ?? "",
+    ...served.hosts,
+  ];
+}
+
+export function secretSearchTexts(secret: SecretLike): string[] {
+  return [secret.getName(), secret.getNs() ?? ""];
+}
 
 export interface ServedTls {
   ingress: string;
@@ -61,7 +69,6 @@ export interface ServedTls {
   certificate?: string;
 }
 
-/** Every TLS Secret an Ingress serves, and what stands behind it. */
 export function getServedTls(
   ingresses: IngressLike[],
   secrets: SecretLike[],
@@ -73,14 +80,12 @@ export function getServedTls(
     const namespace = ingress.getNs() ?? "";
 
     for (const entry of ingress.spec?.tls ?? []) {
-      // A TLS entry without a secret is the controller's default certificate —
-      // not something any Secret in the namespace could answer for.
+      // No secretName: the controller's default certificate.
       if (!entry.secretName) continue;
 
       const secret = secrets.find(
         (each) => each.getNs() === namespace && each.getName() === entry.secretName,
       );
-      // A Certificate that will write it counts even before the Secret exists.
       const writer = certificates.find(
         (certificate) =>
           certificate.getNs() === namespace && certificate.spec.secretName === entry.secretName,
@@ -103,21 +108,14 @@ export function getServedTls(
     }
   }
 
-  const order: Record<ServedState, number> = { unmanaged: 0, missing: 1, pending: 2, managed: 3 };
-
   return served.sort(
     (first, second) =>
-      order[first.state] - order[second.state] ||
+      SERVED_STATES[first.state].rank - SERVED_STATES[second.state].rank ||
       `${first.namespace}/${first.ingress}`.localeCompare(`${second.namespace}/${second.ingress}`),
   );
 }
 
-/**
- * TLS Secrets that no Certificate writes, served or not. Informational rather
- * than a gap: other controllers keep TLS Secrets of their own — the API server
- * its serving certificate, admission webhooks theirs — and those are not
- * anyone's oversight. The served ones are what counts; this is the full list.
- */
+// Not a gap: other controllers (API server, webhooks) keep TLS Secrets of their own.
 export function getUnmanagedSecrets(
   secrets: SecretLike[],
   certificates: CertificateLike[],

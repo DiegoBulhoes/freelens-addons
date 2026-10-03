@@ -1,7 +1,6 @@
 import type React from "react";
 
-// A certificate with a seal, drawn here — deliberately not cert-manager's logo,
-// and not a shield, which is what the Trivy group in the same sidebar uses.
+// Deliberately not cert-manager's logo, nor a shield (Trivy's, in the same sidebar).
 export function CertManagerIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" role="img" {...props}>

@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import type { Session } from "../../../build/e2e/cdp";
+import { dialogColourViolations } from "../../../build/e2e/design";
 import {
   clickByText,
   clickSidebar,
@@ -13,17 +14,9 @@ import {
   waitFor,
 } from "../../../build/e2e/freelens";
 
-/**
- * Every control the extension renders, pressed. A chip that lights and filters
- * nothing, a search field whose keystrokes never reach the rule, a copy button
- * that copies nothing: all of them render perfectly and all of them are useless.
- *
- * The one control that writes, the renewal, is pressed as far as its confirmation
- * and cancelled there: this suite stays read-only, and what the renewal sends is
- * covered by renewal.test.ts. That nothing was written is checked against the API.
- *
- * Needs a running workbench with remote debugging on. `make e2e` starts one.
- */
+// Read-only: the renewal is opened and cancelled at its confirmation.
+
+const SERVED_ROWS = '[data-section="served"] tbody tr';
 
 describe("the controls on the cert-manager pages", () => {
   let session: Session;
@@ -100,7 +93,7 @@ describe("the controls on the cert-manager pages", () => {
       );
 
       expect(marks.length).toBeGreaterThan(0);
-      for (const mark of marks) expect(mark).toMatch(/not ready|expired/);
+      for (const mark of marks) expect(mark).toMatch(/not ready|expired/i);
 
       await clickByText(session, frame, ".CertManager-filter", "All");
     }, 90_000);
@@ -234,9 +227,9 @@ describe("the controls on the cert-manager pages", () => {
     };
 
     it("is offered for a healthy certificate, asks first, and writes nothing when cancelled", async () => {
-      // No problem marked in the list, and time left: nothing is issuing it.
+      // A healthy row nothing is issuing, so the button is enabled.
       const name = await select(
-        `!each.querySelector('[class*="CertManager-text--"]') && /left$/.test(each.querySelector('.CertManager-picker__aside')?.textContent ?? '')`,
+        `each.querySelector('.CertManager-status--ok') && !each.querySelector('[class*="CertManager-text--"]') && /left$/.test(each.querySelector('.CertManager-picker__aside')?.textContent ?? '')`,
       );
 
       expect(
@@ -245,6 +238,12 @@ describe("the controls on the cert-manager pages", () => {
           frame,
         ),
       ).toBe(false);
+      expect(
+        await session.evaluate<string>(
+          "document.querySelector('.CertManager-page__actions .CertManager-button').title",
+          frame,
+        ),
+      ).toMatch(/new certificate/);
 
       const before = await issuingOf(name);
 
@@ -264,6 +263,23 @@ describe("the controls on the cert-manager pages", () => {
 
       expect(question).toMatch(/stays in use/);
 
+      const dialog = await session.evaluate<{ buttons: string[]; root: boolean; typed: number }>(
+        `(() => {
+          const dialog = document.querySelector('.ConfirmDialog');
+          return {
+            buttons: [...dialog.querySelectorAll('button')].map((each) => each.textContent.trim()),
+            root: Boolean(dialog.querySelector('.CertManager.CertManager-dialog')),
+            typed: dialog.querySelectorAll('input').length,
+          };
+        })()`,
+        frame,
+      );
+
+      expect(dialog.buttons).toContain("Renew");
+      expect(dialog.root).toBe(true);
+      expect(dialog.typed).toBe(0);
+
+      expect(await dialogColourViolations(session, frame, "CertManager")).toEqual([]);
       await clickByText(session, frame, ".ConfirmDialog button", "Cancel");
       await waitFor("the confirmation to close", async () =>
         (await countOf(".ConfirmDialog")) === 0 ? true : undefined,
@@ -274,7 +290,7 @@ describe("the controls on the cert-manager pages", () => {
 
     it("is not offered while cert-manager is already issuing, and says what holds it up", async () => {
       await select(
-        `/not ready/.test(each.querySelector('.CertManager-picker__meta')?.textContent ?? '')`,
+        `/Not ready/.test(each.querySelector('.CertManager-picker__meta')?.textContent ?? '')`,
       );
 
       expect(
@@ -292,7 +308,6 @@ describe("the controls on the cert-manager pages", () => {
   describe("the validity bar", () => {
     it("tells the renewal time on hover", async () => {
       await openPicker();
-      // A certificate with a validity window: anything the list says has time left.
       await session.evaluate(
         `[...document.querySelectorAll('.CertManager-picker__item')]
            .find((each) => /left$/.test(each.querySelector('.CertManager-picker__aside')?.textContent ?? ''))?.click()`,
@@ -326,7 +341,6 @@ describe("the controls on the cert-manager pages", () => {
         expect(relative).toMatch(/^(in \d+ \w+|\d+ \w+ ago|now)$/);
       }
 
-      // Issued is behind us, and the certificate picked has time left.
       expect(moments[0]?.[2]).toMatch(/ago$/);
       expect(moments[2]?.[2]).toMatch(/^in /);
     }, 90_000);
@@ -423,6 +437,141 @@ describe("the controls on the cert-manager pages", () => {
       const tooltip = await hoverForTooltip(session, frame, ".TableRow [id^='tooltip_target_']");
 
       expect(tooltip.length, "hovering a cell revealed no tooltip").toBeGreaterThan(0);
+    }, 90_000);
+  });
+
+  describe("the labels", () => {
+    it.each([
+      ["cert-manager-overview", ".CertManager-card"],
+      ["cert-manager-certificates", ".CertManager-picker__item"],
+      ["cert-manager-issuers", ".CertManager-chip"],
+      ["cert-manager-unmanaged", '[data-section="served"] tbody tr'],
+    ])(
+      "give every button on %s a tooltip, and none ends with dots",
+      async (id, ready) => {
+        await clickSidebar(session, frame, id, "cert-manager");
+        await waitFor(`${id} to render`, async () => (await countOf(ready)) > 0 || undefined);
+
+        const buttons = await session.evaluate<{ text: string; title: string }[]>(
+          `[...document.querySelectorAll('.CertManager button')]
+             .map((each) => ({ text: each.textContent.trim(), title: each.title }))`,
+          frame,
+        );
+
+        expect(buttons.length).toBeGreaterThan(0);
+        expect(buttons.filter((each) => !each.title)).toEqual([]);
+        expect(buttons.filter((each) => /(\.\.\.|…)$/.test(each.text))).toEqual([]);
+      },
+      90_000,
+    );
+  });
+
+  describe("the unmanaged TLS page", () => {
+    const openUnmanaged = async () => {
+      await clickSidebar(session, frame, "cert-manager-unmanaged", "cert-manager");
+      await waitFor("the served table", async () => (await countOf(SERVED_ROWS)) > 0 || undefined);
+    };
+
+    it("narrows both tables from its search, says so when nothing matches, and comes back", async () => {
+      await openUnmanaged();
+      const all = await countOf(SERVED_ROWS);
+      const ingress = await textOf(session, frame, `${SERVED_ROWS} td:nth-child(2)`);
+
+      await typeInto(session, frame, ".CertManager-page__actions .CertManager-search", ingress);
+
+      const narrowed = await waitFor("the served table to narrow", async () => {
+        const names = await session.evaluate<string[]>(
+          `[...document.querySelectorAll(${JSON.stringify(`${SERVED_ROWS} td:nth-child(2)`)})]
+             .map((each) => each.textContent.trim())`,
+          frame,
+        );
+
+        return names.length > 0 && names.every((each) => each.includes(ingress))
+          ? names
+          : undefined;
+      });
+
+      expect(narrowed.length).toBeLessThanOrEqual(all);
+      expect(
+        await textOf(session, frame, '[data-section="served"] .CertManager-section__note'),
+      ).toMatch(/\d+ (of \d+ )?items?$/);
+
+      await typeInto(
+        session,
+        frame,
+        ".CertManager-page__actions .CertManager-search",
+        "nothing-is-called-this",
+      );
+      expect(
+        await waitFor("the empty note", async () => {
+          const notes = await session.evaluate<string[]>(
+            `[...document.querySelectorAll('.CertManager-section__note')].map((each) => each.textContent)`,
+            frame,
+          );
+
+          return notes.filter((each) => each.includes("Nothing matches the search.")).length === 2
+            ? true
+            : undefined;
+        }),
+      ).toBe(true);
+
+      await typeInto(session, frame, ".CertManager-page__actions .CertManager-search", "");
+      expect(
+        await waitFor("the table back", async () =>
+          (await countOf(SERVED_ROWS)) === all ? all : undefined,
+        ),
+      ).toBe(all);
+    }, 90_000);
+
+    it("sorts by a header, and cycles back to the page's own order", async () => {
+      await openUnmanaged();
+
+      const order = () =>
+        session.evaluate<string[]>(
+          `[...document.querySelectorAll(${JSON.stringify(`${SERVED_ROWS} td:nth-child(2)`)})]
+             .map((each) => each.textContent.trim())`,
+          frame,
+        );
+      const sortOf = () =>
+        session.evaluate<string>(
+          `[...document.querySelectorAll('[data-section="served"] th')]
+             .find((each) => each.textContent.trim() === "Ingress")?.getAttribute("aria-sort") ?? ""`,
+          frame,
+        );
+      const press = () =>
+        clickByText(session, frame, '[data-section="served"] th .CertManager-sort', "Ingress");
+
+      const own = await order();
+
+      await press();
+      expect(await sortOf()).toBe("ascending");
+      expect(await order()).toEqual([...own].sort((a, b) => a.localeCompare(b)));
+
+      await press();
+      expect(await sortOf()).toBe("descending");
+      expect(await order()).toEqual([...own].sort((a, b) => b.localeCompare(a)));
+
+      await press();
+      expect(await sortOf()).toBe("none");
+      expect(await order()).toEqual(own);
+    }, 90_000);
+
+    it("opens a served row's Ingress in the host's list, narrowed to it", async () => {
+      await openUnmanaged();
+      const ingress = await textOf(session, frame, `${SERVED_ROWS} td:nth-child(2)`);
+
+      await session.evaluate(
+        `document.querySelector(${JSON.stringify(SERVED_ROWS)}).click()`,
+        frame,
+      );
+
+      const landed = await waitFor("the host's Ingresses list", async () => {
+        const path = await session.evaluate<string>("location.pathname + location.search", frame);
+
+        return path.startsWith("/ingresses") ? path : undefined;
+      });
+
+      expect(decodeURIComponent(landed)).toContain(`search=${ingress}`);
     }, 90_000);
   });
 });

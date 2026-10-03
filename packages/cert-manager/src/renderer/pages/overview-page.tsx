@@ -13,7 +13,8 @@ import {
   isRenewalOverdue,
 } from "../api/expiry";
 import { getIssuerRows, getMissingIssuers, type IssuerIndex } from "../api/issuers";
-import { getServedTls } from "../api/unmanaged";
+import { getServedTls, isGap } from "../api/unmanaged";
+import { NamespaceFilter } from "../components/namespace-filter";
 import { StatCard } from "../components/stat-card";
 import { CertManagerStyles } from "../components/styles";
 import { useCertManagerStores } from "../hooks/use-cert-manager-stores";
@@ -23,11 +24,6 @@ const {
   Component: { Spinner },
 } = Renderer;
 
-/**
- * What needs a person, first. The headline counts it; the cards give the
- * windows and the causes; the list below says, per certificate, what is wrong
- * and which object explains it.
- */
 export const OverviewPage = observer(
   ({ extension }: { extension: RendererTypes.LensExtension }) => {
     const stores = useCertManagerStores();
@@ -71,9 +67,8 @@ export const OverviewPage = observer(
     const attention = getAttentionItems(certificates, now);
     const brokenIssuers = getIssuerRows(index, certificates).filter((row) => !row.ready);
     const missingIssuers = getMissingIssuers(index, certificates);
-    const gaps = getServedTls(tls.ingresses, tls.secrets, certificates).filter(
-      (served) => served.state === "unmanaged" || served.state === "missing",
-    );
+    const gaps = getServedTls(tls.ingresses, tls.secrets, certificates).filter(isGap);
+    const issuerTrouble = brokenIssuers.length + missingIssuers.length;
 
     const openCertificates = (params: Record<string, string>) =>
       void extension.navigate("certificates", params);
@@ -88,15 +83,18 @@ export const OverviewPage = observer(
             </h1>
             <p
               className={`CertManager-page__subline${
-                brokenIssuers.length + missingIssuers.length > 0
-                  ? " CertManager-page__subline--alarm"
-                  : ""
+                issuerTrouble > 0 ? " CertManager-page__subline--alarm" : ""
               }`}
             >
-              {brokenIssuers.length + missingIssuers.length > 0
-                ? `${brokenIssuers.length} ${brokenIssuers.length === 1 ? "issuer is" : "issuers are"} not ready, and ${missingIssuers.length} named ${missingIssuers.length === 1 ? "issuer does" : "issuers do"} not exist.`
-                : "Every issuer in use exists and is ready."}
+              {certificates.length === 0
+                ? "There is no Certificate in the namespaces chosen in the selector. Choose more to see theirs."
+                : issuerTrouble > 0
+                  ? `${brokenIssuers.length} ${brokenIssuers.length === 1 ? "issuer is" : "issuers are"} not ready, and ${missingIssuers.length} named ${missingIssuers.length === 1 ? "issuer does" : "issuers do"} not exist.`
+                  : "Every issuer in use exists and is ready."}
             </p>
+          </div>
+          <div className="CertManager-page__actions">
+            <NamespaceFilter />
           </div>
         </div>
 
@@ -104,22 +102,24 @@ export const OverviewPage = observer(
           <StatCard
             value={certificates.length}
             label="Certificates"
+            title="Opens every certificate in the certificates page"
             onOpen={() => openCertificates({ filter: "all" })}
           />
           <StatCard
             value={certificates.filter((each) => !isReady(each)).length}
             label="Not ready"
             tone="critical"
+            title="Opens the certificates that are not ready"
             onOpen={() => openCertificates({ filter: "not-ready" })}
           />
           <StatCard
             value={certificates.filter((each) => isRenewalOverdue(each, now)).length}
             label="Renewal failing"
             tone="warning"
+            title="Opens the certificates whose renewal is failing"
             onOpen={() => openCertificates({ filter: "failing" })}
           />
-          {/* Not pressable: the picker's window is the month, and a card that opened a
-              list longer than its own number would be saying two things at once. */}
+          {/* Not pressable: the picker's window is the month, which this card does not count. */}
           <StatCard
             value={certificates.filter((each) => expiresWithin(each, now, ALARM_DAYS)).length}
             label={`Ending within ${ALARM_DAYS} days`}
@@ -128,18 +128,21 @@ export const OverviewPage = observer(
           <StatCard
             value={certificates.filter((each) => expiresWithin(each, now, EXPIRING_DAYS)).length}
             label={`Ending within ${EXPIRING_DAYS} days`}
+            title={`Opens the certificates that end within ${EXPIRING_DAYS} days`}
             onOpen={() => openCertificates({ filter: "expiring" })}
           />
           <StatCard
-            value={brokenIssuers.length + missingIssuers.length}
+            value={issuerTrouble}
             label="Issuers not ready or missing"
             tone="critical"
+            title="Opens the issuers page"
             onOpen={() => void extension.navigate("issuers")}
           />
           <StatCard
             value={gaps.length}
             label="Served TLS with no Certificate"
             tone="critical"
+            title="Opens the unmanaged TLS page"
             onOpen={() => void extension.navigate("unmanaged")}
           />
         </div>
@@ -147,7 +150,11 @@ export const OverviewPage = observer(
         <section className="CertManager-section">
           <h2 className="CertManager-section__title">Needs attention</h2>
 
-          {attention.length === 0 ? (
+          {certificates.length === 0 ? (
+            <p className="CertManager-section__note">
+              Nothing needs attention: no certificate is in the namespaces chosen.
+            </p>
+          ) : attention.length === 0 ? (
             <p className="CertManager-section__note">
               Nothing needs attention. Certificates that end soon will renew on schedule, and none
               is late.
@@ -162,6 +169,7 @@ export const OverviewPage = observer(
                     type="button"
                     key={`${item.certificate.getNs()}/${item.certificate.getName()}`}
                     className={`CertManager-row CertManager-row--${item.severity}`}
+                    title={`Opens ${item.certificate.getName()} in the certificates page`}
                     onClick={() =>
                       openCertificates({
                         namespace: item.certificate.getNs() ?? "",

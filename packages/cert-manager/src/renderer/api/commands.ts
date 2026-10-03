@@ -2,15 +2,6 @@ import type { Problem } from "./attention";
 import type { ChainLink } from "./chain";
 import type { CertificateLike } from "./types";
 
-/**
- * The command that would help, as text to copy. The one write the extension
- * makes — a renewal — is a button of its own (`renewal.ts`); the renew command is
- * still listed, for whoever would rather run it.
- *
- * `cmctl` is cert-manager's own CLI. Where kubectl can say the same thing, the
- * kubectl line is given, because kubectl is already installed everywhere.
- */
-
 export interface Command {
   label: string;
   command: string;
@@ -29,12 +20,7 @@ function describeLink(link: ChainLink): Command {
   };
 }
 
-/**
- * Always the status of the certificate. Then, when something is wrong, the
- * object that explains it; and for a certificate that is expired or failing to
- * renew, the manual renewal — which only helps once that object is fixed, and
- * is listed after it for that reason.
- */
+// Renewal last: it only helps once the object that explains the failure is fixed.
 export function commandsFor(
   certificate: CertificateLike,
   problem: Problem | undefined,

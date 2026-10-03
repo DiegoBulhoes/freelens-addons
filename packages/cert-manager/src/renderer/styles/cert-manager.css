@@ -1,11 +1,6 @@
-/*
- * What only the cert-manager extension has: the validity bar and the commands
- * to copy. The chain from issuer to challenge is the standard's list of rows. Every page, card, row, box,
- * filter and banner comes from design.css, the shared standard; nothing here
- * restyles one, and every colour is a host token or a tone.
- */
+/* Domain only. Every shared component comes from design.css; nothing here restyles one. */
 
-/* ─── Validity: issued, renewal due, now, expires ──────────────────────── */
+/* Validity bar */
 
 .CertManager-validity {
   display: grid;
@@ -29,7 +24,6 @@
   background: var(--cert-manager-tone-warning);
 }
 
-/* The mark and the now-line sit on the track, centred on their position. */
 .CertManager-validity__renewal,
 .CertManager-validity__now {
   position: absolute;
@@ -51,7 +45,6 @@
   background: var(--textColorPrimary);
 }
 
-/* Issued on the left, renewal due in the middle, expires on the right. */
 .CertManager-validity__ends {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -78,7 +71,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ─── Commands: what to run, and a button to copy it ───────────────────── */
+/* Commands */
 
 .CertManager-commands {
   display: grid;

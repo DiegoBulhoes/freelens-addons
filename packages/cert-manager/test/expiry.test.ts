@@ -18,13 +18,6 @@ import {
 } from "../src/renderer/api/expiry";
 import { certificateNamed, fixtureNow, variantOf } from "./fixtures";
 
-/**
- * Every question about a certificate's time, asked at the moment the fixtures
- * were exported. Moving `now` is how the tests reach the states the cluster only
- * passes through — expired, still inside the renewal grace — without inventing
- * an object for them.
- */
-
 const DAY = 24 * 60 * 60 * 1000;
 const now = fixtureNow();
 

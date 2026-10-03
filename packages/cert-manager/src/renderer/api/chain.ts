@@ -9,16 +9,6 @@ import type {
   OrderLike,
 } from "./types";
 
-/**
- * Why a certificate is not issued, found by walking what it made.
- *
- * A Certificate creates a CertificateRequest per revision; an ACME request
- * creates an Order; an Order creates a Challenge per name. The reason a
- * certificate is stuck is usually on the deepest of those, three kinds and three
- * lists away from the Certificate that shows the symptom. This puts them in one
- * line and picks out the link that explains the rest.
- */
-
 export type LinkState = "ok" | "pending" | "failed" | "missing";
 
 export type LinkKind =
@@ -53,11 +43,7 @@ function revisionOf(request: CertificateRequestLike): number {
   return Number.isFinite(value) ? value : 0;
 }
 
-/**
- * The request for the revision being issued now. cert-manager keeps few of the
- * old ones — the first request of a renewed certificate is usually gone — so
- * this reads the revision annotation rather than assuming the history exists.
- */
+// Old requests are often collected, so the revision annotation is read, not the history.
 export function latestRequestOf(
   certificate: CertificateLike,
   requests: CertificateRequestLike[],
@@ -139,12 +125,6 @@ export interface ChainInputs {
   challenges: ChallengeLike[];
 }
 
-/**
- * Issuer, Certificate, its current request, and — for ACME — the order and the
- * challenges under it. Links that do not exist yet are simply absent; the one
- * absence that is itself a finding is an issuer the certificate names and that
- * is not there.
- */
 export function chainOf(certificate: CertificateLike, inputs: ChainInputs): ChainLink[] {
   const ref = certificate.spec.issuerRef;
   const kind = issuerKindOf(ref);
@@ -210,12 +190,8 @@ export function chainOf(certificate: CertificateLike, inputs: ChainInputs): Chai
   return chain;
 }
 
-/**
- * The link that explains the rest. An issuer that is broken or missing is the
- * root cause even when the request's message only echoes it; otherwise the
- * deepest link that is not fine, because a pending Order is pending *because*
- * of its Challenge. A link that says nothing is passed over for one that does.
- */
+// A broken or missing issuer wins even when the request only echoes it;
+// otherwise the deepest link that is not fine and says something.
 export function explanationOf(chain: ChainLink[]): ChainLink | undefined {
   const issuer = chain.find(
     (link) => (link.kind === "Issuer" || link.kind === "ClusterIssuer") && link.state !== "ok",

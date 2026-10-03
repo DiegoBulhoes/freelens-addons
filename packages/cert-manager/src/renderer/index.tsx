@@ -8,12 +8,7 @@ import { OverviewPage } from "./pages/overview-page";
 import { RequestsPage } from "./pages/requests-page";
 import { UnmanagedPage } from "./pages/unmanaged-page";
 
-/**
- * Page ids are scoped to this extension by Freelens, so they stay short. The
- * sidebar item ids are not: Freelens builds each item's `data-testid` from the
- * extension name and the item id, and the e2e harness drives the sidebar by the
- * suffix of that id — so every item id here starts with `cert-manager-`.
- */
+// Item ids start with `cert-manager-`: the e2e harness drives the sidebar by data-testid suffix.
 const PAGES = {
   overview: "overview",
   certificates: "certificates",
@@ -23,11 +18,6 @@ const PAGES = {
 } as const;
 
 // Registration fields are read right after construction; computing them in onActivate is too late.
-/**
- * The sidebar's own CRD list: the host keeps it loaded and watched while the
- * cluster is open, so the group appears and disappears with the operator,
- * without a reload. Until the list first arrives the group stays hidden.
- */
 const installed = computed(() =>
   isInstalled(Renderer.K8sApi.crdStore.items.map((crd) => crd.getName())),
 );
@@ -41,8 +31,7 @@ export default class CertManagerRenderer extends Renderer.LensExtension {
       },
     },
     {
-      // The list and one certificate share this page, so the sidebar keeps the
-      // Certificates item lit whichever is showing.
+      // List and detail share this page, so the item stays lit for either.
       id: PAGES.certificates,
       params: { namespace: "", name: "", filter: "" },
       components: {
@@ -66,7 +55,7 @@ export default class CertManagerRenderer extends Renderer.LensExtension {
     {
       id: PAGES.unmanaged,
       components: {
-        Page: () => <UnmanagedPage />,
+        Page: () => <UnmanagedPage extension={this} />,
       },
     },
   ];
@@ -76,8 +65,6 @@ export default class CertManagerRenderer extends Renderer.LensExtension {
       id: "cert-manager",
       visible: installed,
       title: "cert-manager",
-      // Freelens numbers its own sidebar items in tens (Favourites 0, Cluster 10, to Custom
-      // Resources 110); an extension without a number lands after all of them.
       orderNumber: 6,
       components: {
         Icon: CertManagerIcon,
