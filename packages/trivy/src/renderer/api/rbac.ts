@@ -1,4 +1,4 @@
-import { rankOf } from "./severity";
+import { countOf, rankOf } from "./severity";
 import { type SubjectBearing, subjectKey, subjectOf } from "./subjects";
 import type {
   ConfigAuditCheck,
@@ -7,18 +7,8 @@ import type {
   SeveritySummary,
 } from "./types";
 
-/**
- * What a role is allowed to do that it probably should not be.
- *
- * The operator writes one report per Role and ClusterRole, most of them with
- * nothing to say. What matters is the few that grant something dangerous, and
- * the check's own message names which permission it is — so the rows here are
- * findings rather than roles.
- */
-
 export interface RoleFinding {
   subject: ReportSubject;
-  /** A ClusterRole has no namespace; the empty label is what says so. */
   clusterScoped: boolean;
   check: ConfigAuditCheck;
 }
@@ -45,7 +35,6 @@ export function getRoleFindings(reports: RbacReport[]): RoleFinding[] {
   return sortFindings(findings);
 }
 
-/** Worst first, then cluster-scoped ahead of namespaced: a ClusterRole reaches further. */
 function sortFindings(findings: RoleFinding[]): RoleFinding[] {
   return findings.sort((first, second) => {
     const bySeverity = rankOf(first.check.severity) - rankOf(second.check.severity);
@@ -60,7 +49,6 @@ function sortFindings(findings: RoleFinding[]): RoleFinding[] {
   });
 }
 
-/** Distinct roles in a set of findings, which is smaller than the row count. */
 export function rolesAffected(findings: RoleFinding[]): number {
   return new Set(findings.map((finding) => subjectKey(finding.subject))).size;
 }
@@ -73,11 +61,6 @@ export interface CheckGroup {
   findings: RoleFinding[];
 }
 
-/**
- * Grouped by the check rather than by the role. One misconfiguration usually
- * lands on many roles at once, and the fix is the same sentence for all of
- * them, so the group is the unit of work.
- */
 export function groupByCheck(findings: RoleFinding[]): CheckGroup[] {
   const groups = new Map<string, CheckGroup>();
 
@@ -127,4 +110,57 @@ export function summariseRbac(findings: RoleFinding[]): SeveritySummary {
   }
 
   return summary;
+}
+
+export function roleCounts(group: CheckGroup): { roles: number; clusterRoles: number } {
+  const clusterRoles = group.findings.filter((finding) => finding.clusterScoped).length;
+
+  return { roles: group.findings.length - clusterRoles, clusterRoles };
+}
+
+export type CheckColumn = "Severity" | "Check" | "ID" | "Roles" | "ClusterRoles";
+
+// Severity sorts by rank: ascending is worst first.
+export function checkSortValue(group: CheckGroup, column: string): string | number | undefined {
+  const counts = roleCounts(group);
+
+  switch (column as CheckColumn) {
+    case "Severity":
+      return rankOf(group.severity);
+    case "Check":
+      return group.title;
+    case "ID":
+      return group.checkID || undefined;
+    case "Roles":
+      return counts.roles;
+    case "ClusterRoles":
+      return counts.clusterRoles;
+    default:
+      return undefined;
+  }
+}
+
+export function checkSearchTexts(group: CheckGroup): string[] {
+  return [
+    group.checkID,
+    group.title,
+    group.severity ?? "UNKNOWN",
+    ...group.findings.flatMap((finding) => [finding.subject.name, finding.subject.namespace]),
+  ];
+}
+
+export function describeRbac(findings: RoleFinding[]): string | undefined {
+  if (findings.length === 0) return undefined;
+
+  const criticals = countOf(summariseRbac(findings), "CRITICAL");
+  const roles = rolesAffected(findings);
+
+  return `${criticals} critical ${criticals === 1 ? "grant" : "grants"} across ${roles} ${roles === 1 ? "role" : "roles"}. ClusterRoles reach every namespace, so they are listed whichever namespaces are selected.`;
+}
+
+// A page of ours cannot open the host's drawer; host lists read ?search=.
+export function hostListOf(finding: RoleFinding): string {
+  const list = finding.clusterScoped ? "/cluster-roles" : "/roles";
+
+  return `${list}?search=${encodeURIComponent(finding.subject.name)}`;
 }

@@ -3,8 +3,15 @@ import type { Vulnerability } from "../api/types";
 
 const MAX_SHOWN = 100;
 
-/** The raw findings, for when the packages view is not what is wanted. */
-export function FindingTable({ vulnerabilities }: { vulnerabilities: Vulnerability[] }) {
+export function FindingTable({
+  vulnerabilities,
+  empty,
+}: {
+  vulnerabilities: Vulnerability[];
+  empty: string;
+}) {
+  if (vulnerabilities.length === 0) return <p className="Trivy-section__note">{empty}</p>;
+
   const shown = sortBySeverity(vulnerabilities).slice(0, MAX_SHOWN);
 
   return (
@@ -28,7 +35,13 @@ export function FindingTable({ vulnerabilities }: { vulnerabilities: Vulnerabili
               </td>
               <td className="Trivy-table__shrink">
                 {finding.primaryLink ? (
-                  <a href={finding.primaryLink} target="_blank" rel="noreferrer">
+                  <a
+                    className="Trivy-link"
+                    href={finding.primaryLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    title="Opens the advisory for this CVE"
+                  >
                     {finding.vulnerabilityID}
                   </a>
                 ) : (

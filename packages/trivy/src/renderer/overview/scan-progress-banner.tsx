@@ -8,11 +8,6 @@ const TONE: Record<ScanProgress["state"], string> = {
   stale: " Trivy-banner--critical",
 };
 
-/**
- * Whether to wait or to investigate. A cluster working through a rescan and
- * one whose operator died look identical in any list of reports; the times are
- * what tell them apart, so the times are what this says.
- */
 export function ScanProgressBanner({ progress }: { progress: ScanProgress }) {
   if (progress.state === "complete" || progress.state === "nothing-known") return null;
 

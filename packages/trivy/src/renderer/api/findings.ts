@@ -1,27 +1,12 @@
 import { rankOf } from "./severity";
 import type { Severity, Vulnerability } from "./types";
 
-/**
- * What can actually be done about what was found.
- *
- * A vulnerability with no published fix and one with a fix waiting are the same
- * row in every list Trivy produces, and they are not the same work: one is a
- * version bump, the other is a decision about whether to keep running the
- * image. The split is the whole value of this module.
- */
-
 export function hasFix(vulnerability: Vulnerability): boolean {
   // The operator writes an empty string, not an absent field, when no fix exists.
   return (vulnerability.fixedVersion ?? "") !== "";
 }
 
-/**
- * What makes two rows the same finding. The operator emits one row per Go
- * binary embedding a module, with an empty `target`, so an image can carry the
- * same CVE for the same package version many times over — 140 of one image's
- * rows on the cluster this was built against. Counting those separately
- * overstates the work without naming anything new.
- */
+// The operator emits one row per Go binary embedding a module, with an empty `target`.
 export function identityOf(vulnerability: Vulnerability): string {
   return [
     vulnerability.vulnerabilityID ?? "",
@@ -31,7 +16,6 @@ export function identityOf(vulnerability: Vulnerability): string {
   ].join("\u0000");
 }
 
-/** Keeps the first of each identity, so the order it was given in survives. */
 export function deduplicate(vulnerabilities: Vulnerability[]): Vulnerability[] {
   const seen = new Set<string>();
 
@@ -55,7 +39,6 @@ export interface FixableTally {
   unfixable: number;
 }
 
-/** Counts at or above `floor`, split by whether a fix has been published. */
 export function tallyFixable(vulnerabilities: Vulnerability[], floor: Severity): FixableTally {
   const counts = { fixable: 0, unfixable: 0 };
 
@@ -69,7 +52,6 @@ export function tallyFixable(vulnerabilities: Vulnerability[], floor: Severity):
   return counts;
 }
 
-/** Worst first, then by score, then by id so the order does not wander between renders. */
 export function sortBySeverity(vulnerabilities: Vulnerability[]): Vulnerability[] {
   return [...vulnerabilities].sort((first, second) => {
     const bySeverity = rankOf(first.severity) - rankOf(second.severity);
@@ -84,10 +66,6 @@ export function sortBySeverity(vulnerabilities: Vulnerability[]): Vulnerability[
   });
 }
 
-/**
- * One line per distinct package, because a base image drags in the same fix
- * dozens of times and a list that repeats it hides how few actions there are.
- */
 export interface PackageUpgrade {
   resource: string;
   installedVersion: string;

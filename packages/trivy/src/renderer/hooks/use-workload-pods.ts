@@ -8,15 +8,9 @@ const {
   K8sApi: { podsStore },
 } = Renderer;
 
-/**
- * The cluster's own pods, which the reports cannot name. Pure store access:
- * which pods belong to a subject is decided in `workload-pods.ts`.
- */
 export function useWorkloadPods(subject: ReportSubject): RunningPod[] {
   useEffect(() => {
-    // onLoadFailure keeps a refused namespace from emptying a store the rest of
-    // Freelens shares: without it the host's loadAll calls resetOnError, which
-    // also sets isLoaded false and leaves every open view's watch deaf.
+    // Without onLoadFailure the host's resetOnError empties the shared store and deafens its watches.
     void podsStore.loadAll({
       namespaces: [subject.namespace],
       onLoadFailure: (error: unknown) =>

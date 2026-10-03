@@ -1,21 +1,19 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  describeRbac,
   getRoleFindings,
   groupByCheck,
+  hostListOf,
   type RbacReport,
+  roleCounts,
   rolesAffected,
   summariseRbac,
 } from "../src/renderer/api/rbac";
-import { countOf } from "../src/renderer/api/severity";
+import { countOf, toneOf } from "../src/renderer/api/severity";
 import { allRbacReports, clusterRbacReports } from "./fixtures";
 
-/**
- * A ClusterRole with no namespace is the case this had to be taught: the
- * operator writes the namespace label empty rather than leaving it out, and a
- * parser that treated empty as absent dropped every cluster-scoped role on the
- * floor — silently, which is the only way it could have gone unnoticed.
- */
+// The operator writes a ClusterRole's namespace label empty; empty must not read as absent.
 
 const labelled = (
   name: string,
@@ -140,7 +138,7 @@ describe("reading roles with nothing to report", () => {
   it("keeps a check whose success field is missing rather than guessing it passed", () => {
     const findings = getRoleFindings([labelled("r", "argocd", "Role", [{ checkID: "A" }])]);
 
-    // `success !== false` covers undefined: an unstated result is not a failure.
+    // An unstated result is not a failure.
     expect(findings).toEqual([]);
   });
 });
@@ -173,5 +171,63 @@ describe("summarising role findings", () => {
     ]);
 
     expect(summariseRbac(findings)).toEqual({ lowCount: 1 });
+  });
+});
+
+describe("what the RBAC list says about each check", () => {
+  it("splits a check's roles into Roles and ClusterRoles, adding up to all of them", () => {
+    const groups = groupByCheck(getRoleFindings(allRbacReports()));
+
+    expect(groups.some((group) => roleCounts(group).clusterRoles > 0)).toBe(true);
+    expect(groups.some((group) => roleCounts(group).roles > 0)).toBe(true);
+    for (const group of groups) {
+      const counts = roleCounts(group);
+
+      expect(counts.roles + counts.clusterRoles).toBe(group.findings.length);
+    }
+  });
+
+  it("counts the criticals and the roles in its subline", () => {
+    const findings = getRoleFindings(allRbacReports());
+    const criticals = countOf(summariseRbac(findings), "CRITICAL");
+
+    expect(describeRbac(findings)).toBe(
+      `${criticals} critical grants across ${rolesAffected(findings)} roles. ClusterRoles reach every namespace, so they are listed whichever namespaces are selected.`,
+    );
+  });
+
+  it("says one grant and one role in the singular", () => {
+    const [one] = getRoleFindings(clusterRbacReports()).filter(
+      (finding) => finding.check.severity === "CRITICAL",
+    );
+
+    expect(one).toBeDefined();
+    expect(describeRbac([one as NonNullable<typeof one>])).toMatch(
+      /^1 critical grant across 1 role\./,
+    );
+  });
+
+  it("says nothing under the title when no role fails a check; the empty list says why", () => {
+    expect(describeRbac([])).toBeUndefined();
+  });
+
+  it("opens a role in the host's list of its kind, narrowed to its name", () => {
+    const findings = getRoleFindings(allRbacReports());
+    const clusterRole = findings.find((finding) => finding.clusterScoped);
+    const role = findings.find((finding) => !finding.clusterScoped);
+
+    expect(hostListOf(clusterRole as NonNullable<typeof clusterRole>)).toBe(
+      `/cluster-roles?search=${encodeURIComponent(clusterRole?.subject.name ?? "")}`,
+    );
+    expect(hostListOf(role as NonNullable<typeof role>)).toBe(
+      `/roles?search=${encodeURIComponent(role?.subject.name ?? "")}`,
+    );
+  });
+
+  it("gives a drawer the tone of its severity: critical and high are acted on", () => {
+    expect(toneOf("CRITICAL")).toBe("critical");
+    expect(toneOf("HIGH")).toBe("warning");
+    expect(toneOf("MEDIUM")).toBe("info");
+    expect(toneOf(undefined)).toBe("info");
   });
 });

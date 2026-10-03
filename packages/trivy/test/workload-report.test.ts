@@ -15,12 +15,6 @@ import {
   vulnerabilityReports,
 } from "./fixtures";
 
-/**
- * The page this feeds opens with what to do, not with how much is wrong: three
- * upgrades clearing nine criticals is work someone can start; 408 findings is
- * not. These hold that the counting behind that sentence is real.
- */
-
 function clusterReports(): WorkloadReports {
   return {
     vulnerability: vulnerabilityReports(),
@@ -29,7 +23,6 @@ function clusterReports(): WorkloadReports {
   };
 }
 
-/** A real workload, nginx on an old Debian, with findings at every severity. Used throughout. */
 function web(): ReportSubject {
   const subject = subjectOf(reportNamed("replicaset-web-5774f6f6c7-web"));
 
@@ -53,7 +46,6 @@ describe("gathering what Trivy knows about one workload", () => {
 
     expect(report.vulnerabilities.length).toBeGreaterThan(400);
     expect(report.upgrades.length).toBeLessThan(50);
-    // The headline: a handful of bumps answers every critical.
     expect(upgradesClearing(report, "CRITICAL")).toHaveLength(7);
   });
 
@@ -90,7 +82,6 @@ describe("gathering what Trivy knows about one workload", () => {
 
     const report = getWorkloadReport(dex, clusterReports());
 
-    // Dex runs two containers, each with its own report and its own image.
     expect(report.containers).toHaveLength(2);
     for (const container of report.containers) expect(container.image).toBeDefined();
   });
@@ -176,8 +167,7 @@ describe("gathering from reports shaped oddly", () => {
   });
 
   it("counts a finding the operator emitted twice as one", () => {
-    // The operator writes one row per Go binary embedding a module, with no
-    // target to tell them apart, so identical rows are one finding.
+    // Go binaries yield identical rows with no target.
     const twice = { vulnerabilityID: "CVE-1", resource: "otel", installedVersion: "v1.43.0" };
     const report = getWorkloadReport(subject, {
       vulnerability: [labelled({ vulnerabilities: [twice, { ...twice }, { ...twice }] })],
@@ -212,7 +202,7 @@ describe("gathering from reports shaped oddly", () => {
       exposedSecret: [labelled(undefined)],
     });
 
-    // The report exists, so it is not "never scanned" — it just says nothing.
+    // The report exists, so it is not "never scanned".
     expect(report.hasVulnerabilityReport).toBe(true);
     expect(report.summary).toEqual({});
     expect(report.exposedSecretCount).toBe(0);

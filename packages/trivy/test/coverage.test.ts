@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   bearsAnImage,
+  COVERAGE_STATUS,
   type CoverageInput,
   describeCoverage,
   getCoverage,
@@ -12,13 +13,6 @@ import { subjectKey, subjectOf } from "../src/renderer/api/subjects";
 import type { ReportSubject } from "../src/renderer/api/types";
 import { configAuditReports, sbomReports, vulnerabilityReports } from "./fixtures";
 
-/**
- * The question this extension exists to answer. A workload with no
- * VulnerabilityReport looks, in any list of reports, exactly like a workload
- * with nothing wrong — and on the cluster these fixtures came from those are
- * overwhelmingly not the same thing.
- */
-
 function keysOf(reports: { getLabels(): string[]; getOwnerRefs(): { name: string }[] }[]) {
   return new Set(
     reports
@@ -28,7 +22,6 @@ function keysOf(reports: { getLabels(): string[]; getOwnerRefs(): { name: string
   );
 }
 
-/** Built the way the page builds it: every report kind contributes what it knows. */
 function clusterCoverage(): CoverageInput {
   const known = [...configAuditReports(), ...sbomReports(), ...vulnerabilityReports()]
     .map(subjectOf)
@@ -47,7 +40,7 @@ describe("deciding what the scanner actually covered", () => {
   it("finds workloads whose image was read but never judged", () => {
     const counts = tally(getCoverage(clusterCoverage()));
 
-    // The state these fixtures were taken in, and the reason for this module.
+    // Fixtures were taken while scans were failing.
     expect(counts.readButNoVerdict).toBeGreaterThan(0);
     expect(counts.scanned).toBeLessThan(counts.total);
   });
@@ -166,5 +159,16 @@ describe("describing coverage that nobody would want to read about", () => {
   it("does not treat a Pod as imageless just because it is not a controller", () => {
     expect(bearsAnImage({ namespace: "a", kind: "Pod", name: "one-off" })).toBe(true);
     expect(bearsAnImage({ namespace: "a", kind: "ConfigMap", name: "settings" })).toBe(false);
+  });
+});
+
+describe("showing a coverage state", () => {
+  it("gives each state a word and a tone, worst in the critical tone", () => {
+    expect(COVERAGE_STATUS.scanned).toEqual({ label: "scanned", tone: "ok" });
+    expect(COVERAGE_STATUS["read-but-no-verdict"]).toEqual({
+      label: "no verdict",
+      tone: "warning",
+    });
+    expect(COVERAGE_STATUS["never-looked"]).toEqual({ label: "not looked at", tone: "critical" });
   });
 });

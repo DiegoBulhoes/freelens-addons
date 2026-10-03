@@ -10,13 +10,6 @@ import {
   vulnerabilityReports,
 } from "./fixtures";
 
-/**
- * The list that shows workloads with no report at all — the ones a list of
- * reports cannot show, because there is nothing there to render. Built in one
- * pass per report kind: asking per row is quadratic in the fleet, which only
- * hurts on a cluster larger than the one this was written against.
- */
-
 function clusterInput() {
   return {
     vulnerabilityReports: vulnerabilityReports(),
@@ -108,7 +101,6 @@ describe("listing when nothing reported at all", () => {
       exposedSecretReports: [anonymous],
     });
 
-    // It joins to no workload, so it cannot become a row of its own.
     expect(rows).toEqual([]);
   });
 

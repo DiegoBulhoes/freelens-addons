@@ -1,43 +1,26 @@
 import type { WorkloadRow } from "./workload-rows";
 
-/**
- * Whether to wait or to investigate.
- *
- * The obvious question about a half-scanned cluster is "why did it fail", and
- * it is the wrong one: the operator's scan jobs are deleted as they finish, so
- * by the time anyone looks there is nothing to read. What can be read is when
- * each verdict was reached, and that answers the question people actually
- * have — a cluster steadily working through a rescan needs patience, one that
- * has not produced a verdict in an hour needs a look at the operator.
- */
-
-/** A verdict this recent means the operator is working right now. */
 const WORKING_WITHIN_MS = 15 * 60 * 1000;
-/** The operator's own default rescan interval, so a verdict older than this is overdue. */
+// The operator's default rescan interval.
 const STALE_AFTER_MS = 24 * 60 * 60 * 1000;
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 
 export type ScanState =
-  /** No workload is known: the operator is absent, or has not started. */
   | "nothing-known"
-  /** Every known workload has a verdict, and none of them is overdue. */
   | "complete"
-  /** Verdicts are still arriving and some workloads have none yet. */
   | "working"
-  /** Workloads are missing a verdict and nothing has arrived recently. */
+  // Verdicts missing and none arrived recently.
   | "stalled"
-  /** Everything has a verdict, but some are older than the operator's own rescan interval. */
+  // All judged, some older than the rescan interval.
   | "stale";
 
 export interface ScanProgress {
   state: ScanState;
   judged: number;
   total: number;
-  /** Verdicts reached in the last hour; the basis of the estimate. */
   recentRate: number;
   newestAgeMs?: number;
   oldestAgeMs?: number;
-  /** How long the remaining workloads would take at the observed rate. */
   estimatedRemainingMs?: number;
   staleCount: number;
 }
@@ -69,8 +52,7 @@ export function getScanProgress(rows: WorkloadRow[], now: number): ScanProgress 
     recentRate,
     newestAgeMs,
     oldestAgeMs,
-    // Only offered while verdicts are actually arriving; extrapolating from a
-    // rate of zero would print an infinity.
+    // Undefined at a zero rate, which would print infinity.
     estimatedRemainingMs:
       outstanding > 0 && recentRate > 0 ? (outstanding / recentRate) * RATE_WINDOW_MS : undefined,
     staleCount,
@@ -97,10 +79,8 @@ function stateOf({
   return staleCount > 0 ? "stale" : "complete";
 }
 
-/** Rounded to the unit a person would say out loud, never to a false precision. */
 export function describeDuration(milliseconds: number): string {
-  // Tested before rounding: 30 seconds rounds up to a minute, and saying "1
-  // minute" for half of one is a small lie the rest of this module avoids.
+  // Checked before rounding: 30 seconds would round up to "1 minute".
   if (milliseconds < 60_000) return "less than a minute";
 
   const minutes = Math.round(milliseconds / 60_000);
@@ -116,7 +96,6 @@ export function describeDuration(milliseconds: number): string {
   return `${days} day${days === 1 ? "" : "s"}`;
 }
 
-/** The sentence the overview shows: what is happening, and whether to act. */
 export function describeProgress(progress: ScanProgress): string {
   const { state, judged, total } = progress;
 

@@ -1,14 +1,7 @@
 import type { Session } from "../../../build/e2e/cdp";
 import { clickSidebar, waitFor } from "../../../build/e2e/freelens";
 
-/**
- * Opens Workloads on a workload the scanner judged and found something in.
- *
- * The picker lists what was never looked at first, and the development cluster
- * keeps one such workload on purpose, so its first row has no report, no table
- * and no views. A test about the detail's views picks a scanned row instead of
- * relying on what sorts first.
- */
+// Picks a scanned row: the first row is kept unscanned on purpose.
 export async function openScannedWorkload(session: Session, frame: number): Promise<string> {
   await clickSidebar(session, frame, "trivy-workloads", "trivy");
   await waitFor(

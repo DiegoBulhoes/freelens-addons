@@ -2,10 +2,6 @@ import type { PackageUpgrade } from "../api/findings";
 
 const MAX_SHOWN = 12;
 
-/**
- * Packages, not findings. One bump of openssl answers thirty-two rows, and a
- * list of the thirty-two hides how little work there is.
- */
 export function PackageTable({ upgrades }: { upgrades: PackageUpgrade[] }) {
   if (upgrades.length === 0) {
     return <p className="Trivy-section__note">No package here has a published fix.</p>;

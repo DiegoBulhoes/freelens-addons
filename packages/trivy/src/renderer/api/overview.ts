@@ -10,14 +10,6 @@ import type {
   VulnerabilityReportBody,
 } from "./types";
 
-/**
- * Everything the overview shows, decided from plain arrays.
- *
- * The one rule the whole page is built around: a count of findings is a count
- * of what was looked at, never of what exists. Every headline here is paired
- * with how much of the cluster it was drawn from.
- */
-
 export interface ReportLike<Body> extends SubjectBearing {
   report?: Body;
 }
@@ -32,7 +24,6 @@ export interface OverviewInput {
 export interface Overview {
   coverage: CoverageEntry[];
   counts: ReturnType<typeof tally>;
-  /** Severity totals across the reports that exist — not across the cluster. */
   vulnerabilitySummary: SeveritySummary;
   configAuditSummary: SeveritySummary;
   criticalFixable: number;
@@ -49,11 +40,7 @@ function keysOf(reports: SubjectBearing[]): Set<string> {
   return new Set(subjectsOf(reports).map(subjectKey));
 }
 
-/**
- * Every report kind contributes to the list of known workloads. Taking one kind
- * as the list would drop workloads the others know about: a ReplicaSet scaled
- * away keeps its SBOM after its config audit has been collected.
- */
+// Every kind counts: a scaled-away ReplicaSet keeps its SBOM after its config audit is gone.
 export function coverageInputOf(input: OverviewInput): CoverageInput {
   return {
     known: [
@@ -94,7 +81,6 @@ export function getOverview(input: OverviewInput): Overview {
   };
 }
 
-/** The workloads an operator would chase first: unjudged, worst state first. */
 export function unjudgedWorkloads(coverage: CoverageEntry[]): CoverageEntry[] {
   return coverage
     .filter((entry) => entry.state !== "scanned")
@@ -103,4 +89,32 @@ export function unjudgedWorkloads(coverage: CoverageEntry[]): CoverageEntry[] {
 
       return subjectKey(first.subject).localeCompare(subjectKey(second.subject));
     });
+}
+
+export function describeOverview(overview: Overview): {
+  headline: string;
+  subline: string;
+  alarm: boolean;
+} {
+  if (overview.counts.total === 0) {
+    return {
+      headline: "No workload in the selected namespaces has a Trivy report",
+      subline:
+        "The Trivy operator writes a report for each workload it scans. Select more namespaces, or check that the operator is running.",
+      alarm: false,
+    };
+  }
+
+  const criticals = countOf(overview.vulnerabilitySummary, "CRITICAL");
+  const scanned = overview.counts.scanned;
+  const unjudged = overview.counts.readButNoVerdict + overview.counts.neverLooked;
+
+  return {
+    headline: `${criticals} critical ${criticals === 1 ? "finding" : "findings"} in ${scanned} scanned ${scanned === 1 ? "workload" : "workloads"}`,
+    subline:
+      unjudged > 0
+        ? "These counts are a minimum: the workloads listed below have no verdict yet."
+        : "Every workload the operator knows about has a verdict.",
+    alarm: unjudged > 0,
+  };
 }

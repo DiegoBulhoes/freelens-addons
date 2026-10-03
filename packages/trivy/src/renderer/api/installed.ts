@@ -1,9 +1,4 @@
-/**
- * Whether the cluster has the Trivy operator, judged from the names of its
- * CustomResourceDefinitions. The sidebar group is shown only when it does: on
- * a cluster without the Trivy operator, every page could only say there is nothing to show. Any one of them is enough: the operator can be installed with some
- * report kinds turned off.
- */
+// Any one CRD is enough: report kinds can be turned off.
 export const CRD_NAMES: readonly string[] = [
   "vulnerabilityreports.aquasecurity.github.io",
   "configauditreports.aquasecurity.github.io",

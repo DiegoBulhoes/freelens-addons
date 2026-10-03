@@ -15,13 +15,6 @@ import {
   vulnerabilityReports,
 } from "./fixtures";
 
-/**
- * "Wait or investigate" is the question, and the two answers look identical in
- * a list of reports. A cluster steadily working through a rescan and one whose
- * operator died both show some workloads judged and some not; only the times
- * tell them apart.
- */
-
 const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
 const NOW = fixtureNow();
@@ -35,7 +28,6 @@ function clusterRows(): WorkloadRow[] {
   });
 }
 
-/** Rows built to a shape, for the states the cluster is not in right now. */
 function rows(specs: { judged: boolean; agoMs?: number }[]): WorkloadRow[] {
   return specs.map((spec, index) => ({
     subject: { namespace: "argocd", kind: "ReplicaSet", name: `web-${index}` },
@@ -52,7 +44,7 @@ describe("telling a rescan in progress from a dead operator", () => {
   it("calls the cluster's own half-scanned state working, not stalled", () => {
     const progress = getScanProgress(clusterRows(), NOW);
 
-    // These fixtures were taken mid-rescan: verdicts were still arriving.
+    // Fixtures were taken mid-rescan.
     expect(progress.state).toBe("working");
     expect(progress.judged).toBeLessThan(progress.total);
     expect(progress.recentRate).toBeGreaterThan(0);

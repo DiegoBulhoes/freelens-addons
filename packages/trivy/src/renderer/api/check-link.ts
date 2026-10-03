@@ -1,13 +1,4 @@
-/**
- * Where a check is explained: Aqua's vulnerability database, the site a CVE's
- * `primaryLink` already points into. A config audit or RBAC report names the
- * check by id and carries no URL, so the address is built from the id, in the
- * form that redirects to the check's own page (`AVD-KSV-0021` →
- * `…/misconfig/avd-ksv-0021`).
- *
- * An id not in that form gets no link at all: a link that lands on the
- * database's 404 page is worse than none.
- */
+// Only AVD-style ids get a link: anything else lands on a 404.
 
 const AVD_ID = /^AVD-[A-Z]+-\d+$/;
 

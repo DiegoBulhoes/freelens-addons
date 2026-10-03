@@ -12,28 +12,10 @@ import {
   waitFor,
 } from "../../../build/e2e/freelens";
 
-/**
- * What this extension's pages show after the namespace scope changes under them.
- *
- * The host's list pages reload when the selection moves. Ours load their stores
- * themselves, from a hook, and a store is shared with the rest of Freelens — so
- * `isLoaded` says a list arrived once, not that it was listed under the scope
- * that is current now. A hook that skips loading because the store is already
- * loaded leaves the page showing whatever scope some other page's first mount
- * happened to fetch, with no way back short of restarting the app.
- *
- * That was a real defect here, and the same one sat in the ArgoCD extension's
- * hook — `packages/argocd/e2e/namespace-scope.e2e.ts` is its twin, and a change
- * to how either loads should be tried against both.
- *
- * This is the one file that does not use `openWorkbench`: widening the scope
- * before our pages ever mount is exactly what hides the defect. The order here is
- * the order a person produces — narrow, look, widen, look again.
- *
- * Needs a running workbench with remote debugging on. `make e2e` starts one.
- */
+// Narrows before our pages mount: openWorkbench widens first, which hides the defect.
+// Twin of packages/argocd/e2e/namespace-scope.e2e.ts.
 
-/** Holds no scanned workload, so the overview must report emptiness. */
+// Holds no scanned workload and no Role.
 const EMPTY_NAMESPACE = "default";
 
 describe("changing the namespace scope under the Trivy pages", () => {
@@ -45,7 +27,7 @@ describe("changing the namespace scope under the Trivy pages", () => {
     await openCluster(session);
     frame = await clusterFrame(session);
 
-    // The namespace control lives on the host's list pages, not on ours.
+    // The namespace control lives on the host's list pages.
     await clickSidebar(session, frame, "pods", "workloads");
   }, 180_000);
 
@@ -62,12 +44,11 @@ describe("changing the namespace scope under the Trivy pages", () => {
       return text.length > 0 ? text : undefined;
     });
 
-    expect(headline).toMatch(/0 critical findings in 0/);
+    expect(headline).toMatch(/No workload in the selected namespaces/);
   }, 120_000);
 
   it("catches up once the scope widens", async () => {
-    // Back to a page that carries the control, widen, then return to ours. The
-    // stores are already loaded at this point, which is the whole trap.
+    // The stores are already loaded here, which is the trap.
     await clickSidebar(session, frame, "pods", "workloads");
     await selectAllNamespaces(session, frame);
 
@@ -76,9 +57,147 @@ describe("changing the namespace scope under the Trivy pages", () => {
     const headline = await waitFor("the Trivy headline to count something", async () => {
       const text = await textOf(session, frame, ".Trivy-page__headline");
 
-      return /0 critical findings in 0/.test(text) || text.length === 0 ? undefined : text;
+      return /No workload in the selected namespaces/.test(text) || text.length === 0
+        ? undefined
+        : text;
     });
 
-    expect(headline).toMatch(/critical findings in [1-9]\d* scanned workloads/);
+    expect(headline).toMatch(/critical findings? in [1-9]\d* scanned workloads?/);
+  }, 120_000);
+});
+
+// The Vulnerabilities list is the host's own.
+const OWN_SCREENS = ["trivy-dashboard", "trivy-workloads", "trivy-rbac"];
+
+const COUNTING = /critical findings? in [1-9]\d* scanned workloads?/;
+const EMPTY = /No workload in the selected namespaces/;
+
+describe("the namespace selector on the Trivy screens", () => {
+  let session: Session;
+  let frame: number;
+
+  beforeAll(async () => {
+    session = await connect();
+    await openCluster(session);
+    frame = await clusterFrame(session);
+  }, 180_000);
+
+  afterAll(() => session?.close());
+
+  const countOf = (selector: string) =>
+    session.evaluate<number>(
+      `document.querySelectorAll(${JSON.stringify(selector)}).length`,
+      frame,
+    );
+
+  const headline = (matching: RegExp) =>
+    waitFor(`a headline matching ${matching}`, async () => {
+      const text = await textOf(session, frame, ".Trivy-page__headline");
+
+      return matching.test(text) ? text : undefined;
+    });
+
+  const columnTotal = (title: string) =>
+    session.evaluate<number>(
+      `(() => {
+        const headers = [...document.querySelectorAll('.Trivy-table thead th')]
+          .map((each) => each.textContent.trim());
+        const at = headers.indexOf(${JSON.stringify(title)});
+        if (at === -1) return -1;
+        return [...document.querySelectorAll('.Trivy-table tbody tr')]
+          .reduce((sum, row) => sum + Number.parseInt(row.children[at]?.textContent ?? "0", 10), 0);
+      })()`,
+      frame,
+    );
+
+  it.each(OWN_SCREENS)(
+    "offers it on %s",
+    async (id) => {
+      await clickSidebar(session, frame, id, "trivy");
+
+      const selectors = await waitFor(`${id}'s namespace selector`, async () => {
+        const count = await countOf('.Trivy-namespaces [class*="Select__control"]');
+
+        return count > 0 ? count : undefined;
+      });
+
+      expect(selectors).toBe(1);
+    },
+    60_000,
+  );
+
+  it("narrows the overview from its own selector, with the page open", async () => {
+    await clickSidebar(session, frame, "trivy-dashboard", "trivy");
+    await selectAllNamespaces(session, frame);
+    await headline(COUNTING);
+
+    await selectNamespace(session, frame, EMPTY_NAMESPACE);
+
+    expect(await headline(EMPTY)).toMatch(EMPTY);
+  }, 120_000);
+
+  it("widens it again from the same selector", async () => {
+    await selectAllNamespaces(session, frame);
+
+    expect(await headline(COUNTING)).toMatch(COUNTING);
+  }, 120_000);
+
+  it("empties the workload picker and says why, then fills it again", async () => {
+    await clickSidebar(session, frame, "trivy-workloads", "trivy");
+    await waitFor(
+      "the picker",
+      async () => (await countOf(".Trivy-picker__item")) > 0 || undefined,
+    );
+
+    await selectNamespace(session, frame, EMPTY_NAMESPACE);
+
+    const note = await waitFor("the empty picker", async () => {
+      if ((await countOf(".Trivy-picker__item")) > 0) return undefined;
+
+      const text = await textOf(session, frame, ".Trivy-picker__empty");
+
+      return text.length > 0 ? text : undefined;
+    });
+
+    expect(note).toMatch(/selected namespaces/);
+
+    await selectAllNamespaces(session, frame);
+
+    expect(
+      await waitFor("the picker to fill", async () => {
+        const rows = await countOf(".Trivy-picker__item");
+
+        return rows > 0 ? rows : undefined;
+      }),
+    ).toBeGreaterThan(0);
+  }, 120_000);
+
+  it("drops the Roles from the RBAC list and keeps the ClusterRoles, then brings them back", async () => {
+    await clickSidebar(session, frame, "trivy-rbac", "trivy");
+    await selectAllNamespaces(session, frame);
+
+    const wide = await waitFor("Roles in the list", async () => {
+      const roles = await columnTotal("Roles");
+
+      return roles > 0 ? roles : undefined;
+    });
+
+    await selectNamespace(session, frame, EMPTY_NAMESPACE);
+
+    expect(
+      await waitFor("the Roles to go", async () =>
+        (await columnTotal("Roles")) === 0 ? 0 : undefined,
+      ),
+    ).toBe(0);
+    // A ClusterRole reaches every namespace.
+    expect(await columnTotal("ClusterRoles")).toBeGreaterThan(0);
+
+    await selectAllNamespaces(session, frame);
+
+    expect(
+      await waitFor("the Roles to return", async () =>
+        (await columnTotal("Roles")) === wide ? wide : undefined,
+      ),
+    ).toBe(wide);
   }, 120_000);
 });

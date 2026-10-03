@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import { subjectKey } from "../src/renderer/api/subjects";
 import {
+  chooseSelected,
+  describeEmpty,
   FILTER_LABELS,
+  FILTER_TITLES,
   isWorkloadFilter,
   matchesFilter,
   matchesSearch,
@@ -16,12 +19,6 @@ import {
   sbomReports,
   vulnerabilityReports,
 } from "./fixtures";
-
-/**
- * What an operator is shown. A filter that silently matches nothing looks
- * exactly like a cluster with nothing in it, so every case here asserts what
- * survived as well as what did not.
- */
 
 function clusterRows(): WorkloadRow[] {
   return sortRows(
@@ -143,7 +140,6 @@ describe("filtering on input nobody expects", () => {
     expect(isWorkloadFilter("unjudged")).toBe(true);
     expect(isWorkloadFilter("a-filter-that-was-renamed")).toBe(false);
     expect(isWorkloadFilter(undefined)).toBe(false);
-    // A key of Object.prototype is not a filter, however `in` behaves.
     expect(isWorkloadFilter("toString")).toBe(false);
   });
 
@@ -151,5 +147,61 @@ describe("filtering on input nobody expects", () => {
     expect(matchesFilter(row({ name: "web", summary: { highCount: 3 } }), "withFindings")).toBe(
       true,
     );
+  });
+});
+
+describe("choosing the workload the detail shows", () => {
+  it("shows the one the route names while it is in the list", () => {
+    const rows = clusterRows();
+    const named = (rows.at(-1) as WorkloadRow).subject;
+
+    expect(chooseSelected(rows, rows, named)).toBe(named);
+  });
+
+  it("keeps the route's choice when a filter hides it, since it is still in scope", () => {
+    const rows = clusterRows();
+    const named = (rows.at(-1) as WorkloadRow).subject;
+
+    expect(chooseSelected(rows, [], named)).toBe(named);
+  });
+
+  it("falls back to the first row shown once the namespace selector leaves it out", () => {
+    const rows = clusterRows();
+    const elsewhere = { namespace: "default", kind: "ReplicaSet", name: "gone" };
+
+    expect(chooseSelected(rows, rows, elsewhere)).toBe(rows[0]?.subject);
+    expect(chooseSelected([], [], elsewhere)).toBeUndefined();
+  });
+
+  it("opens on the first row shown when the route names nothing", () => {
+    const shown = selectWorkloads(clusterRows(), "withFindings", "");
+
+    expect(chooseSelected(clusterRows(), shown, undefined)).toBe(shown[0]?.subject);
+  });
+});
+
+describe("saying why the list is empty", () => {
+  it("blames the namespaces selected when nothing in them has a report", () => {
+    expect(describeEmpty(0, "all", "web")).toMatch(/selected namespaces/);
+  });
+
+  it("blames the search before the filter", () => {
+    expect(describeEmpty(3, "unjudged", "web")).toBe("Nothing matches the search.");
+  });
+
+  it("says what each filter found none of", () => {
+    expect(describeEmpty(3, "unjudged", "")).toBe(
+      "Every workload here has a vulnerability verdict.",
+    );
+    expect(describeEmpty(3, "withFindings", " ")).toBe(
+      "No workload here has a critical or high finding.",
+    );
+    expect(describeEmpty(3, "all", "")).toBe("Nothing matches that filter.");
+  });
+
+  it("gives every filter a tooltip saying what it leaves", () => {
+    for (const key of Object.keys(FILTER_LABELS) as WorkloadFilter[]) {
+      expect(FILTER_TITLES[key]).toMatch(/^Shows /);
+    }
   });
 });

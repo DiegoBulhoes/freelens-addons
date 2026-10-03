@@ -7,28 +7,12 @@ import {
   notificationText,
   openWorkbench,
   textOf,
+  typeInto,
   waitFor,
 } from "../../../build/e2e/freelens";
 import { openScannedWorkload } from "./picker";
 
-/**
- * Every control this extension renders, clicked.
- *
- * A chip that looks active and filters nothing, a tab that highlights and leaves
- * the table alone, a copy button that copies an empty string: all three render
- * perfectly and all three are useless. Nothing else in either suite presses them.
- *
- * Two controls are deliberately not here:
- *
- *   - The dashboard has none. Its cards are plain elements, unlike the ArgoCD
- *     ones, so there is nothing on it to press.
- *   - The coverage section's rows open a workload that has no verdict yet, and
- *     they exist only while the operator has one. On a cluster the scanner has
- *     finished with there are none to click, so a test for them would pass by
- *     finding nothing. `getCoverage` and `scan-progress.ts` cover the rule.
- *
- * Needs a running workbench with remote debugging on. `make e2e` starts one.
- */
+// Coverage rows are not clicked: they exist only while a scan is pending.
 
 describe("the controls on the Trivy pages", () => {
   let session: Session;
@@ -77,8 +61,7 @@ describe("the controls on the Trivy pages", () => {
 
         expect(await activeChip(SIDE), `${chip} did not become the active chip`).toBe(chip);
 
-        // A narrower chip cannot show more than All did. Asserting a number
-        // instead would be asserting this cluster's contents.
+        // Compared with All, not a number: a number would be this cluster's contents.
         expect(
           await countOf(".Trivy-picker__item"),
           `${chip} showed more than All`,
@@ -101,9 +84,7 @@ describe("the controls on the Trivy pages", () => {
       await clickByText(session, frame, `${SIDE} button`, "All");
       const expected = await unjudged();
 
-      // The chip's promise: nothing the scanner has already judged, and nothing
-      // it has not left out. Compared with the list rather than asserted
-      // non-empty, since a cluster whose scans have all finished has none.
+      // Compared with the list, not non-empty: a fully scanned cluster has none.
       await clickByText(session, frame, `${SIDE} button`, "No verdict");
 
       try {
@@ -120,8 +101,7 @@ describe("the controls on the Trivy pages", () => {
       await clickSidebar(session, frame, "trivy-dashboard", "trivy");
       await waitFor("the list", async () => (await countOf(".Trivy-row")) > 0 || undefined);
 
-      // Only the counts: while something waits on a verdict, the coverage rows
-      // above are critical too, and their state is words.
+      // Counts only: coverage rows are critical too, and their state is words.
       const criticals = await session.evaluate<number[]>(
         `[...document.querySelectorAll('.Trivy-row__state')]
            .map((each) => each.textContent.trim())
@@ -183,8 +163,7 @@ describe("the controls on the Trivy pages", () => {
 
       expect(title).toBe("Findings");
 
-      // The findings table names the CVE; the package table does not, so this is
-      // the column that says which of the two is rendered.
+      // Only the findings table has a CVE column.
       const columns = await session.evaluate<string[]>(
         `[...document.querySelectorAll('.Trivy-picker__detail .Trivy-table thead th')]
            .map((each) => each.textContent.trim())`,
@@ -215,127 +194,159 @@ describe("the controls on the Trivy pages", () => {
     it("copies a ticket and says that it did", async () => {
       await clickByText(session, frame, ".Trivy-picker__detail .Trivy-button", "Copy for a ticket");
 
-      // The clipboard itself needs a permission this frame has not been granted,
-      // so what is checked is the promise the button makes to the operator.
+      // The clipboard needs a permission this frame lacks, so check the notification.
       expect(await notificationText(session, frame)).toMatch(/copied/i);
     }, 90_000);
   });
 
-  describe("the RBAC page's check groups", () => {
-    beforeAll(async () => {
-      await clickSidebar(session, frame, "trivy-rbac", "trivy");
-      await waitFor("the checks", async () => (await countOf(".Trivy-box")) > 0 || undefined);
+  describe("the overview's cards", () => {
+    const openFromCard = async (label: string) => {
+      await clickSidebar(session, frame, "trivy-dashboard", "trivy");
+      await waitFor("the cards", async () => (await countOf("button.Trivy-card")) > 0 || undefined);
+      await clickByText(session, frame, "button.Trivy-card", label);
+      await waitFor(
+        "the picker",
+        async () => (await countOf(".Trivy-picker__item")) > 0 || undefined,
+      );
+    };
+
+    it("opens Workloads on every workload from the count of them", async () => {
+      await openFromCard("Workloads known");
+
+      expect(await activeChip(".Trivy-picker__side .Trivy-filters")).toBe("All");
     }, 90_000);
 
-    /** The index of the first group holding more roles than it shows. */
-    const groupWithMore = () =>
-      session.evaluate<number>(
-        `[...document.querySelectorAll('.Trivy-box')]
-           .findIndex((each) => each.querySelector('button.Trivy-chip'))`,
-        frame,
-      );
+    it("opens Workloads on those with findings from a count of findings", async () => {
+      await openFromCard("Critical, fix published");
 
-    const rolesIn = (index: number) =>
-      session.evaluate<number>(
-        `document.querySelectorAll('.Trivy-box')[${index}]?.querySelectorAll('span.Trivy-chip').length ?? -1`,
-        frame,
-      );
-
-    it("opens a group to name every role it found, and closes it again", async () => {
-      // A group short enough to list in full has nothing to reveal, so this picks
-      // one that is holding roles back.
-      const index = await groupWithMore();
-
-      expect(index, "no check group has more roles than it shows").toBeGreaterThanOrEqual(0);
-
-      const shown = await rolesIn(index);
-
-      await session.evaluate(
-        `document.querySelectorAll('.Trivy-box')[${index}].querySelector('.Trivy-box__head').click()`,
-        frame,
-      );
-
-      const opened = await waitFor("the rest of the roles", async () => {
-        const roles = await rolesIn(index);
-
-        return roles > shown ? roles : undefined;
-      });
-
-      expect(opened).toBeGreaterThan(shown);
-
-      // The count in the head is the promise: opening shows exactly that many.
-      const promised = await session.evaluate<number>(
-        `Number.parseInt(document.querySelectorAll('.Trivy-box')[${index}]
-           .querySelector('.Trivy-box__count').textContent, 10)`,
-        frame,
-      );
-
-      expect(opened).toBe(promised);
-
-      await session.evaluate(
-        `document.querySelectorAll('.Trivy-box')[${index}].querySelector('.Trivy-box__head').click()`,
-        frame,
-      );
-
-      const closed = await waitFor("the group to close", async () => {
-        const roles = await rolesIn(index);
-
-        return roles === shown ? roles : undefined;
-      });
-
-      expect(closed).toBe(shown);
-    }, 120_000);
-
-    it("keeps one group open at a time", async () => {
-      const index = await groupWithMore();
-      const head = (at: number) =>
-        session.evaluate(
-          `document.querySelectorAll('.Trivy-box')[${at}].querySelector('.Trivy-box__head').click()`,
-          frame,
-        );
-
-      await head(index);
-      const opened = await rolesIn(index);
-
-      // Opening another one has to close this one, or the page grows without
-      // bound as an operator reads down it.
-      const other = index === 0 ? 1 : 0;
-
-      await head(other);
-
-      const collapsed = await waitFor("the first group to close", async () => {
-        const roles = await rolesIn(index);
-
-        return roles < opened ? roles : undefined;
-      });
-
-      expect(collapsed).toBeLessThan(opened);
-    }, 120_000);
-
-    it("reaches the same state from the 'and more' button", async () => {
-      const index = await groupWithMore();
-
-      expect(index).toBeGreaterThanOrEqual(0);
-
-      const shown = await rolesIn(index);
-
-      await session.evaluate(
-        `document.querySelectorAll('.Trivy-box')[${index}].querySelector('button.Trivy-chip').click()`,
-        frame,
-      );
-
-      const opened = await waitFor("the group to open from the count", async () => {
-        const roles = await rolesIn(index);
-
-        return roles > shown ? roles : undefined;
-      });
-
-      expect(opened).toBeGreaterThan(shown);
-    }, 120_000);
+      try {
+        expect(await activeChip(".Trivy-picker__side .Trivy-filters")).toBe("Findings");
+      } finally {
+        // The page may stay mounted with its filter set.
+        await clickByText(session, frame, ".Trivy-picker__side .Trivy-filters button", "All");
+      }
+    }, 90_000);
   });
 
-  // Not followed: it leaves the app. What is checked is that each link names
-  // the check it sits beside and points at that check's page in the database.
+  describe("the RBAC list", () => {
+    const ROW = ".Trivy-table tbody tr";
+    const DRAWER = ".TrivyObjectDrawer";
+
+    beforeAll(async () => {
+      await clickSidebar(session, frame, "trivy-rbac", "trivy");
+      await waitFor("the checks", async () => (await countOf(ROW)) > 0 || undefined);
+    }, 90_000);
+
+    const column = (title: string) =>
+      session.evaluate<string[]>(
+        `(() => {
+          const at = [...document.querySelectorAll('.Trivy-table thead th')]
+            .map((each) => each.textContent.trim().replace(/[▲▼]/g, "").trim())
+            .indexOf(${JSON.stringify(title)});
+          return [...document.querySelectorAll(${JSON.stringify(ROW)})]
+            .map((row) => row.children[at]?.textContent.trim() ?? "");
+        })()`,
+        frame,
+      );
+
+    const count = () => textOf(session, frame, ".Trivy-page__count");
+
+    it("narrows to a check by its id, counts what is left, and comes back", async () => {
+      const all = await countOf(ROW);
+      const [id] = await column("ID");
+
+      expect(id, "no check id to search for").toBeTruthy();
+
+      await typeInto(session, frame, ".Trivy-page__actions .Trivy-search", id as string);
+
+      expect(
+        await waitFor("the list to narrow", async () => {
+          const rows = await countOf(ROW);
+
+          return rows > 0 && rows < all ? rows : undefined;
+        }),
+      ).toBe(1);
+      expect(await count()).toBe(`1 of ${all} items`);
+
+      await typeInto(
+        session,
+        frame,
+        ".Trivy-page__actions .Trivy-search",
+        "no-check-is-called-this",
+      );
+      expect(
+        await waitFor("the empty note", async () => {
+          const text = await textOf(session, frame, ".Trivy-section__note");
+
+          return text.length > 0 ? text : undefined;
+        }),
+      ).toMatch(/Nothing matches/);
+
+      await typeInto(session, frame, ".Trivy-page__actions .Trivy-search", "");
+      expect(
+        await waitFor("the list to return", async () => {
+          const rows = await countOf(ROW);
+
+          return rows === all ? rows : undefined;
+        }),
+      ).toBe(all);
+    }, 90_000);
+
+    it("sorts by a column, both ways, then back to its own order", async () => {
+      const original = await column("Check");
+      const sortBy = () => clickByText(session, frame, ".Trivy-table thead .Trivy-sort", "Roles");
+      const numbers = async () => (await column("Roles")).map((each) => Number(each));
+
+      await sortBy();
+      const ascending = await numbers();
+
+      expect(ascending).toEqual([...ascending].sort((first, second) => first - second));
+
+      await sortBy();
+      const descending = await numbers();
+
+      expect(descending).toEqual([...descending].sort((first, second) => second - first));
+
+      await sortBy();
+      expect(await column("Check")).toEqual(original);
+    }, 90_000);
+
+    it("opens a check's drawer naming exactly the roles its row counts", async () => {
+      const roles = (await column("Roles")).map(Number);
+      const clusterRoles = (await column("ClusterRoles")).map(Number);
+      const [title] = await column("Check");
+
+      await session.evaluate(`document.querySelector(${JSON.stringify(ROW)})?.click()`, frame);
+
+      const listed = await waitFor("the drawer's roles", async () => {
+        const rows = await countOf(`${DRAWER} .Trivy-table tbody tr`);
+
+        return rows > 0 ? rows : undefined;
+      });
+
+      expect(listed).toBe((roles[0] ?? 0) + (clusterRoles[0] ?? 0));
+      expect(await textOf(session, frame, DRAWER)).toContain(title as string);
+    }, 90_000);
+
+    it("switches the drawer to another check from its row, without closing it", async () => {
+      const titles = await column("Check");
+
+      expect(titles.length, "only one check to switch to").toBeGreaterThan(1);
+
+      await session.evaluate(
+        `document.querySelectorAll(${JSON.stringify(ROW)})[1]?.click()`,
+        frame,
+      );
+
+      expect(
+        await waitFor("the second check's drawer", async () =>
+          (await textOf(session, frame, DRAWER)).includes(titles[1] as string) ? true : undefined,
+        ),
+      ).toBe(true);
+    }, 90_000);
+  });
+
+  // Not followed: it leaves the app.
   describe("the links to where a check is explained", () => {
     const links = (container: string) =>
       session.evaluate<{ text: string; href: string; target: string }[]>(
@@ -354,12 +365,22 @@ describe("the controls on the Trivy pages", () => {
       }
     };
 
-    it("links every RBAC check", async () => {
+    it("links an RBAC check from its drawer", async () => {
       await clickSidebar(session, frame, "trivy-rbac", "trivy");
-      await waitFor("the checks", async () => (await countOf(".Trivy-box")) > 0 || undefined);
+      await waitFor(
+        "the checks",
+        async () => (await countOf(".Trivy-table tbody tr")) > 0 || undefined,
+      );
+      await session.evaluate("document.querySelector('.Trivy-table tbody tr')?.click()", frame);
 
-      expectEachToName(await links(".Trivy-box"));
-      expect(await countOf(".Trivy-box a")).toBe(await countOf(".Trivy-box"));
+      const found = await waitFor("the check's link", async () => {
+        const here = await links(".TrivyObjectDrawer");
+
+        return here.length > 0 ? here : undefined;
+      });
+
+      expectEachToName(found);
+      expect(found).toHaveLength(1);
     }, 90_000);
 
     it("links the failed config checks of a workload", async () => {

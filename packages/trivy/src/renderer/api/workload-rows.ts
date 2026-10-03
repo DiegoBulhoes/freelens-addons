@@ -6,14 +6,7 @@ import { countOf } from "./severity";
 import { subjectKey, subjectOf } from "./subjects";
 import type { ReportSubject, SeveritySummary } from "./types";
 
-/**
- * One row per workload the operator knows about, scanned or not.
- *
- * Built in one pass over each report kind rather than by asking per row: the
- * question "what does this workload have" is asked once per rendered line, and
- * answering it by scanning the fleet each time is quadratic in a way that only
- * shows up on someone else's larger cluster.
- */
+// One pass per report kind: a lookup per row is quadratic.
 
 export interface WorkloadRow {
   subject: ReportSubject;
@@ -22,7 +15,6 @@ export interface WorkloadRow {
   fixableCount: number;
   failedCheckCount: number;
   secretCount: number;
-  /** When the verdict was reached, for judging whether it is still worth anything. */
   scannedAt?: string;
 }
 
@@ -51,7 +43,7 @@ export function getWorkloadRows(input: OverviewInput): WorkloadRow[] {
       continue;
     }
 
-    // A workload with several containers gets one report each; the row is the workload.
+    // One report per container; the row is the workload.
     existing.summary = addInto(existing.summary, report.report?.summary);
     existing.fixable += fixable;
     if (at && (!existing.at || at > existing.at)) existing.at = at;
@@ -103,7 +95,6 @@ function addInto(into: SeveritySummary, more: SeveritySummary | undefined): Seve
   };
 }
 
-/** Worst first: never looked at, then unjudged, then by severity. */
 export function sortRows(rows: WorkloadRow[]): WorkloadRow[] {
   const stateRank = { "never-looked": 0, "read-but-no-verdict": 1, scanned: 2 } as const;
 
@@ -122,12 +113,7 @@ export function sortRows(rows: WorkloadRow[]): WorkloadRow[] {
   });
 }
 
-/**
- * Where the work is, once the scanner has looked: the scanned workloads with
- * the most critical findings, then the most high, in the picker's own order.
- * One with neither is not listed — "nothing critical or high" is not exposure —
- * and one without a verdict is the coverage section's business, not this one's.
- */
+// Scanned only: unjudged workloads are the coverage section's.
 export function mostExposed(rows: WorkloadRow[], limit: number): WorkloadRow[] {
   return sortRows(rows)
     .filter(

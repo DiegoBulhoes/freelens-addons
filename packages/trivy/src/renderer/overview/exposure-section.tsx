@@ -3,11 +3,6 @@ import { subjectKey } from "../api/subjects";
 import type { ReportSubject } from "../api/types";
 import type { WorkloadRow } from "../api/workload-rows";
 
-/**
- * Where the work is once the scanner has looked: the workloads with the most
- * critical findings, then high. Each opens on its detail, which leads with the
- * upgrades that clear them. The whole list, in the same order, is Workloads.
- */
 export function ExposureSection({
   rows,
   total,
@@ -25,7 +20,12 @@ export function ExposureSection({
     <section className="Trivy-section">
       <div className="Trivy-section__bar">
         <h2 className="Trivy-section__title">Most exposed</h2>
-        <button type="button" className="Trivy-link" onClick={onOpenAll}>
+        <button
+          type="button"
+          className="Trivy-link"
+          title="Opens Workloads with every workload listed"
+          onClick={onOpenAll}
+        >
           All {total} workloads
         </button>
       </div>
@@ -40,6 +40,7 @@ export function ExposureSection({
               type="button"
               key={subjectKey(row.subject)}
               className={`Trivy-row Trivy-row--${criticals > 0 ? "critical" : "warning"}`}
+              title="Opens this workload in Workloads, with the upgrades that clear its findings"
               onClick={() => onOpenWorkload(row.subject)}
             >
               <span className="Trivy-row__state">

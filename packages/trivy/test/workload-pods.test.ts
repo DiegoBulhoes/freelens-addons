@@ -10,12 +10,6 @@ import {
 } from "../src/renderer/api/workload-pods";
 import { pods } from "./fixtures";
 
-/**
- * A Trivy report names the controller, because that is what it scans the spec
- * of. The pod is what is running and what someone would go and look at, and
- * only the cluster knows which pods belong to which controller.
- */
-
 const pod = (
   over: Partial<PodLike> & { name: string; owners?: { kind: string; name: string }[] },
 ) =>
@@ -29,7 +23,6 @@ const pod = (
     status: over.status,
   }) satisfies PodLike;
 
-/** A ReplicaSet the cluster really runs pods for. */
 function aRealOwner(): ReportSubject | undefined {
   for (const each of pods()) {
     const owner = each.getOwnerRefs().find((ref) => ref.kind === "ReplicaSet" && ref.name);
@@ -89,8 +82,6 @@ describe("finding the pods a report's subject runs", () => {
   it("builds the API path itself when the cluster sent no selfLink", () => {
     const bare = { ...pod({ name: "web-1" }), selfLink: undefined };
 
-    // Kubernetes stopped sending metadata.selfLink in 1.20; the drawer still
-    // needs a path, and an unclickable row would be a dead end.
     expect(describePod(bare).selfLink).toBe("/api/v1/namespaces/argocd/pods/web-1");
   });
 

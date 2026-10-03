@@ -16,11 +16,6 @@ const PAGES = {
 } as const;
 
 // Registration fields are read right after construction; computing them in onActivate is too late.
-/**
- * The sidebar's own CRD list: the host keeps it loaded and watched while the
- * cluster is open, so the group appears and disappears with the operator,
- * without a reload. Until the list first arrives the group stays hidden.
- */
 const installed = computed(() =>
   isInstalled(Renderer.K8sApi.crdStore.items.map((crd) => crd.getName())),
 );
@@ -34,10 +29,9 @@ export default class TrivyRenderer extends Renderer.LensExtension {
       },
     },
     {
-      // The list and one workload share this page, so the sidebar keeps the
-      // Workloads item lit whichever is showing.
+      // List and detail share this page, so the sidebar item stays lit.
       id: PAGES.workloads,
-      params: { namespace: "", kind: "", name: "" },
+      params: { namespace: "", kind: "", name: "", filter: "" },
       components: {
         Page: (props: { params?: WorkloadsRouteParams }) => (
           <WorkloadsRoute params={props.params} extension={this} />
@@ -63,8 +57,7 @@ export default class TrivyRenderer extends Renderer.LensExtension {
       id: "trivy",
       visible: installed,
       title: "Trivy",
-      // Freelens numbers its own sidebar items in tens (Favourites 0, Cluster 10, to Custom
-      // Resources 110); an extension without a number lands after all of them.
+      // Host items are numbered in tens; an extension without a number lands after all of them.
       orderNumber: 7,
       components: {
         Icon: TrivyIcon,

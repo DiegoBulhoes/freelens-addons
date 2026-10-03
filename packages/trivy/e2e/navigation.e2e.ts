@@ -3,20 +3,6 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Session } from "../../../build/e2e/cdp";
 import { clickSidebar, openWorkbench, textOf, waitFor } from "../../../build/e2e/freelens";
 
-/**
- * Where a click on a row actually lands.
- *
- * This is the one behaviour in either extension that is guaranteed to fail
- * silently. `Navigation.showDetails` merges a query parameter into the current
- * route, and the details drawer is rendered only by pages that mount it — the
- * host's own, and ours built on `KubeObjectListLayout`. Called from a plain
- * `clusterPage` it does nothing at all: no error, no navigation, a dead row. So
- * both extensions navigate to a host list narrowed by `?search=` instead, and
- * nothing until now checked that the navigation happens.
- *
- * Needs a running workbench with remote debugging on. `make e2e` starts one.
- */
-
 describe("a row click goes somewhere", () => {
   let session: Session;
   let frame: number;
@@ -49,9 +35,7 @@ describe("a row click goes somewhere", () => {
   it("takes a pod row to the host's Pods list, narrowed to that pod", async () => {
     await clickSidebar(session, frame, "trivy-workloads", "trivy");
 
-    // The detail pane lists the pods of whichever workload is selected, and a
-    // workload whose pods are gone is a normal thing to be looking at — so this
-    // walks the list until it finds one that has any.
+    // Pods of a workload can be gone, so walk until one has any.
     const podName = await waitFor(
       "a workload with a running pod",
       async () => {
@@ -86,8 +70,7 @@ describe("a row click goes somewhere", () => {
       return where.startsWith("/pods") ? where : undefined;
     });
 
-    // The whole point of the workaround: the host reads ?search= on every list
-    // it renders, so the operator arrives with the pod already singled out.
+    // The host reads ?search= on every list.
     expect(landed).toContain("search=");
     expect(decodeURIComponent(landed)).toContain(podName);
   }, 150_000);
@@ -103,13 +86,9 @@ describe("a row click goes somewhere", () => {
 
     expect(reports).toBeGreaterThan(0);
 
-    // The host's list, but the row leads to our workload page rather than to
-    // the object's drawer: the report is the evidence, the workload the subject.
     expect(await clickFirst(".TrivyVulnerabilityReports .TableRow")).toBe(true);
 
-    // Not the details drawer. The workloads page declares `params`, which Lens
-    // carries in the query string rather than the path, so the subject travels
-    // as namespace/kind/name and the link is one a person can keep.
+    // Lens carries page params in the query string.
     const landed = await waitFor("the workloads page", async () => {
       const where = await location();
 
@@ -129,5 +108,42 @@ describe("a row click goes somewhere", () => {
     });
 
     expect(decodeURIComponent(landed)).toContain(selected);
+  }, 150_000);
+
+  it("takes a role in a check's drawer to the host's list of its kind, narrowed to it", async () => {
+    await clickSidebar(session, frame, "trivy-rbac", "trivy");
+    await waitFor(
+      "a check to open",
+      async () => (await countOf(".Trivy-table tbody tr")) > 0 || undefined,
+    );
+
+    expect(await clickFirst(".Trivy-table tbody tr")).toBe(true);
+
+    const role = await waitFor("a role in the drawer", async () => {
+      const found = await session.evaluate<{ name: string; kind: string } | null>(
+        `(() => {
+          const row = document.querySelector('.TrivyObjectDrawer .Trivy-table tbody tr');
+          if (!row) return null;
+          return {
+            name: row.querySelector('.Trivy-link').textContent.trim(),
+            kind: row.children[1].textContent.trim(),
+          };
+        })()`,
+        frame,
+      );
+
+      return found ?? undefined;
+    });
+
+    expect(await clickFirst(".TrivyObjectDrawer .Trivy-table tbody tr .Trivy-link")).toBe(true);
+
+    const list = role.kind === "ClusterRole" ? "/cluster-roles" : "/roles";
+    const landed = await waitFor(`the ${list} list`, async () => {
+      const where = await location();
+
+      return where.startsWith(list) ? where : undefined;
+    });
+
+    expect(decodeURIComponent(landed)).toContain(`search=${role.name}`);
   }, 150_000);
 });

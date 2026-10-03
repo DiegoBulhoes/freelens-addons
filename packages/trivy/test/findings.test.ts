@@ -13,13 +13,6 @@ import { addSummaries, countOf, rankOf, totalOf } from "../src/renderer/api/seve
 import type { Vulnerability } from "../src/renderer/api/types";
 import { allVulnerabilities, vulnerabilityReports } from "./fixtures";
 
-/**
- * A vulnerability with a published fix and one without are the same row in
- * everything Trivy produces, and they are not the same work: one is a version
- * bump, the other a decision about whether to keep running the image. Every
- * rule here exists to keep those apart.
- */
-
 const found = (over: Partial<Vulnerability> = {}): Vulnerability => ({
   vulnerabilityID: "CVE-2024-0001",
   resource: "openssl",
@@ -35,7 +28,6 @@ describe("telling apart what can be fixed", () => {
     const counts = tallyFixable(allVulnerabilities(), "CRITICAL");
 
     expect(counts.fixable + counts.unfixable).toBeGreaterThan(0);
-    // Both sides are represented in these fixtures, which is the point of them.
     expect(counts.fixable).toBeGreaterThan(0);
     expect(counts.unfixable).toBeGreaterThan(0);
   });
@@ -64,7 +56,6 @@ describe("telling apart what can be fixed", () => {
 
     expect(upgrades).toHaveLength(1);
     expect(upgrades[0]?.vulnerabilityCount).toBe(3);
-    // The worst is what decides how urgent the bump is.
     expect(upgrades[0]?.worstSeverity).toBe("CRITICAL");
   });
 
@@ -139,8 +130,7 @@ describe("findings shaped in ways the operator should not produce", () => {
       { fixedVersion: "1.2.3", severity: "CRITICAL" },
     ]);
 
-    // Nameless and versionless, so both land under the same empty key. Dropping
-    // them would understate the work; a report this shape is malformed, not absent.
+    // Malformed rows still count: dropping them would understate the work.
     expect(upgrades).toHaveLength(1);
     expect(upgrades[0]?.resource).toBe("");
     expect(upgrades[0]?.worstSeverity).toBe("CRITICAL");
@@ -153,7 +143,6 @@ describe("findings shaped in ways the operator should not produce", () => {
     ]);
 
     expect(upgrades[0]?.worstSeverity).toBe("CRITICAL");
-    // The fixed version quoted is the one that clears the worst of them.
     expect(upgrades[0]?.fixedVersion).toBe("9.9");
   });
 

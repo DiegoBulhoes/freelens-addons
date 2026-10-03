@@ -9,22 +9,6 @@ import {
   waitFor,
 } from "../../../build/e2e/freelens";
 
-/**
- * Whether what the pages show agrees with the cluster, and with itself.
- *
- * Every other file here checks that something rendered. This one checks that what
- * rendered is true. Where the truth is a count the cluster can be asked for, it
- * is asked — of the host's own proxy, from inside the frame — so nothing about
- * the development cluster is written down here.
- *
- * Where it cannot be asked for without re-implementing the rule under test, an
- * invariant is used instead: two pages reading one store must agree, a report
- * cannot describe more workloads than there are reports, and a list said to be
- * ordered has to be ordered.
- *
- * Needs a running workbench with remote debugging on. `make e2e` starts one.
- */
-
 const VULNERABILITY_REPORTS = "/apis/aquasecurity.github.io/v1alpha1/vulnerabilityreports";
 const SBOM_REPORTS = "/apis/aquasecurity.github.io/v1alpha1/sbomreports";
 const CONFIG_AUDIT_REPORTS = "/apis/aquasecurity.github.io/v1alpha1/configauditreports";
@@ -47,7 +31,6 @@ describe("what the Trivy pages say", () => {
       frame,
     );
 
-  /** The number a dashboard card shows above its label, or -1 when absent. */
   const cardValue = (label: string) =>
     session.evaluate<number>(
       `(() => {
@@ -92,13 +75,9 @@ describe("what the Trivy pages say", () => {
       return rows > 0 ? rows : undefined;
     });
 
-    // Two pages, one store: the overview's count and the picker's list are the
-    // same set seen twice, and a disagreement means one of them is stale.
     expect(listed, "the picker lists a different number than the overview counts").toBe(known);
 
-    // Every workload with a verdict is known, and nothing is known that no
-    // report of any kind names. Both hold however far the scanner has got, which
-    // is what survives re-seeding.
+    // Bounds, not equality: they hold however far the scanner has got.
     expect(known, "a judged workload is missing").toBeGreaterThanOrEqual(judged.size);
     expect(known, "a workload no report names").toBeLessThanOrEqual(reported.size);
   }, 150_000);
@@ -123,10 +102,6 @@ describe("what the Trivy pages say", () => {
 
     expect(rows.length).toBeGreaterThan(1);
 
-    // `sortRows` puts what the scanner has not judged first, then sorts by
-    // criticals and highs descending. The rule is unit tested; what this checks
-    // is that the page renders the order the rule returned rather than the order
-    // the store happened to hold.
     const rank = { "never-looked": 0, "read-but-no-verdict": 1, scanned: 2 } as const;
 
     for (let index = 1; index < rows.length; index++) {
@@ -159,49 +134,51 @@ describe("what the Trivy pages say", () => {
     }
   }, 150_000);
 
-  it("groups the RBAC findings by check rather than by role", async () => {
+  it("lists the RBAC findings once per check rather than once per role", async () => {
     await clickSidebar(session, frame, "trivy-rbac", "trivy");
-    await waitFor("the checks", async () => (await countOf(".Trivy-box")) > 0 || undefined);
+    await waitFor(
+      "the checks",
+      async () => (await countOf(".Trivy-table tbody tr")) > 0 || undefined,
+    );
 
-    const titles = await session.evaluate<string[]>(
-      `[...document.querySelectorAll('.Trivy-box__title')].map((each) => each.textContent.trim())`,
+    const rows = await session.evaluate<{ id: string; roles: number }[]>(
+      `(() => {
+        const headers = [...document.querySelectorAll('.Trivy-table thead th')]
+          .map((each) => each.textContent.trim());
+        const at = (title) => headers.indexOf(title);
+        return [...document.querySelectorAll('.Trivy-table tbody tr')].map((row) => ({
+          id: row.children[at("ID")].textContent.trim(),
+          roles: Number(row.children[at("Roles")].textContent) +
+            Number(row.children[at("ClusterRoles")].textContent),
+        }));
+      })()`,
       frame,
     );
 
-    // One section per check, each check appearing once. Grouped by role instead,
-    // the same check would appear under every role that fails it — which is what
-    // the page is for: a reader wants "who can read secrets", not one section per
-    // role repeating the same sentence.
-    expect(titles.length).toBe(await countOf(".Trivy-box"));
-    expect(new Set(titles).size, "a check is listed more than once").toBe(titles.length);
-
-    const withSeveralRoles = await session.evaluate<number>(
-      `[...document.querySelectorAll('.Trivy-box')]
-         .filter((each) => each.querySelectorAll('span.Trivy-chip').length > 1).length`,
-      frame,
+    expect(new Set(rows.map((row) => row.id)).size, "a check is listed more than once").toBe(
+      rows.length,
     );
-
     expect(
-      withSeveralRoles,
+      rows.filter((row) => row.roles > 1).length,
       "no check gathers more than one role, so nothing is grouped",
     ).toBeGreaterThan(0);
   }, 150_000);
 
-  it("counts no more roles in its headline than the cluster has", async () => {
+  it("counts no more roles under its title than the cluster has", async () => {
     const roles = await clusterItems(session, frame, ROLES);
     const clusterRoles = await clusterItems(session, frame, CLUSTER_ROLES);
 
     await clickSidebar(session, frame, "trivy-rbac", "trivy");
 
-    const headline = await waitFor("the RBAC headline", async () => {
-      const text = await textOf(session, frame, ".Trivy-page__headline");
+    const subline = await waitFor("the RBAC subline", async () => {
+      const text = await textOf(session, frame, ".Trivy-page__subline");
 
       return text.length > 0 ? text : undefined;
     });
 
-    const match = /(\d+) critical grants across (\d+) roles/.exec(headline);
+    const match = /(\d+) critical grants? across (\d+) roles?/.exec(subline);
 
-    expect(match, `the headline does not count: ${headline}`).not.toBeNull();
+    expect(match, `the subline does not count: ${subline}`).not.toBeNull();
     expect(Number(match?.[2]), "more roles than the cluster has").toBeLessThanOrEqual(
       roles.length + clusterRoles.length,
     );

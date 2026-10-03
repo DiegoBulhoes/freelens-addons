@@ -12,11 +12,7 @@ import type {
 const GROUP = "aquasecurity.github.io";
 const API_VERSION = `${GROUP}/v1alpha1`;
 
-/**
- * The report body hangs off `report`, a sibling of `metadata` rather than a
- * `status`, so it does not fit KubeObject's status/spec slots. Each class below
- * declares it as its own field.
- */
+// The body is `report`, beside `metadata`, so it fits neither status nor spec.
 interface Reporting<Body> {
   report?: Body;
 }

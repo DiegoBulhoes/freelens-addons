@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { coverageInputOf, getOverview, unjudgedWorkloads } from "../src/renderer/api/overview";
+import {
+  coverageInputOf,
+  describeOverview,
+  getOverview,
+  unjudgedWorkloads,
+} from "../src/renderer/api/overview";
 import { countOf } from "../src/renderer/api/severity";
 import {
   configAuditReports,
@@ -8,13 +13,6 @@ import {
   sbomReports,
   vulnerabilityReports,
 } from "./fixtures";
-
-/**
- * What the overview claims. The rule it exists to keep is that a count of
- * findings is a count of what was looked at: every headline number here is
- * meaningless without the coverage it was drawn from, and these tests hold the
- * two together.
- */
 
 function clusterInput() {
   return {
@@ -52,8 +50,7 @@ describe("summarising what the operator reported", () => {
   it("does not count criticals twice when reporting highs", () => {
     const overview = getOverview(clusterInput());
 
-    // highFixable is the band between HIGH and CRITICAL, so adding the two
-    // gives everything at or above HIGH exactly once.
+    // highFixable excludes CRITICAL.
     expect(overview.highFixable).toBeGreaterThan(0);
     expect(overview.highFixable).not.toBe(overview.criticalFixable + overview.highFixable);
   });
@@ -103,7 +100,6 @@ describe("summarising a cluster with no operator in it", () => {
 
     expect(overview.criticalFixable).toBe(0);
     expect(overview.vulnerabilitySummary).toEqual({});
-    // The subjects are still known, so they still count as covered workloads.
     expect(overview.counts.total).toBeGreaterThan(0);
   });
 
@@ -122,8 +118,7 @@ describe("summarising input that should not exist", () => {
 
     const overview = getOverview({ ...EMPTY, vulnerabilityReports: [anonymous] });
 
-    // Its findings still count — they were reported — but it joins to no
-    // workload, so it cannot inflate the coverage denominator.
+    // Joins to no workload, so it does not inflate the coverage total.
     expect(countOf(overview.vulnerabilitySummary, "CRITICAL")).toBe(99);
     expect(overview.counts.total).toBe(0);
   });
@@ -164,7 +159,43 @@ describe("summarising input that should not exist", () => {
     const overview = getOverview({ ...EMPTY, configAuditReports: [service] });
 
     expect(overview.counts.total).toBe(0);
-    // The config finding is still reported; it just is not a scanning subject.
     expect(countOf(overview.configAuditSummary, "HIGH")).toBe(3);
+  });
+});
+
+describe("the overview's head", () => {
+  it("counts criticals against the workloads scanned, and warns while some wait", () => {
+    const overview = getOverview(clusterInput());
+    const head = describeOverview(overview);
+    const criticals = countOf(overview.vulnerabilitySummary, "CRITICAL");
+
+    expect(head.headline).toBe(
+      `${criticals} critical findings in ${overview.counts.scanned} scanned workloads`,
+    );
+    expect(head.alarm).toBe(true);
+    expect(head.subline).toMatch(/minimum/);
+  });
+
+  it("says an empty scope is empty, not clean", () => {
+    const head = describeOverview(getOverview(EMPTY));
+
+    expect(head.headline).toBe("No workload in the selected namespaces has a Trivy report");
+    expect(head.alarm).toBe(false);
+  });
+
+  it("says every workload has a verdict, in the singular for one", () => {
+    const [report] = vulnerabilityReports().filter(
+      (each) => countOf(each.report?.summary, "CRITICAL") === 1,
+    );
+
+    expect(report).toBeDefined();
+
+    const head = describeOverview(
+      getOverview({ ...EMPTY, vulnerabilityReports: [report as NonNullable<typeof report>] }),
+    );
+
+    expect(head.headline).toBe("1 critical finding in 1 scanned workload");
+    expect(head.subline).toBe("Every workload the operator knows about has a verdict.");
+    expect(head.alarm).toBe(false);
   });
 });

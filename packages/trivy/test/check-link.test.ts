@@ -3,12 +3,6 @@ import { describe, expect, it } from "vitest";
 import { AVD_MISCONFIG, checkLink } from "../src/renderer/api/check-link";
 import { allRbacReports, configAuditReports } from "./fixtures";
 
-/**
- * The link beside a failed check. Every check the cluster reported has to get
- * one, and anything that is not a check id has to get none, since a wrong
- * address lands on the database's 404 page.
- */
-
 const idsOf = (reports: { report?: { checks?: { checkID?: string }[] } }[]) =>
   reports.flatMap((each) => (each.report?.checks ?? []).map((check) => check.checkID));
 

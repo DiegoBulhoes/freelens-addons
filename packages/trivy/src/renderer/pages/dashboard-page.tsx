@@ -1,23 +1,50 @@
 import type { Renderer as RendererTypes } from "@freelensapp/extensions";
 import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
-import { getOverview, unjudgedWorkloads } from "../api/overview";
+import type { ReactNode } from "react";
+
+import { describeOverview, getOverview, unjudgedWorkloads } from "../api/overview";
 import { getScanProgress } from "../api/scan-progress";
 import { countOf } from "../api/severity";
+import type { WorkloadFilter } from "../api/workload-filter";
 import { getWorkloadRows, mostExposed } from "../api/workload-rows";
+import { NamespaceFilter } from "../components/namespace-filter";
+import { StatCard } from "../components/stat-card";
 import { TrivyStyles } from "../components/styles";
 import { useTrivyStores } from "../hooks/use-trivy-stores";
 import { CoverageSection } from "../overview/coverage-section";
 import { ExposureSection } from "../overview/exposure-section";
 import { ScanProgressBanner } from "../overview/scan-progress-banner";
-import { StatCard } from "../overview/stat-card";
 
-/** Enough to show where the work is; the whole list is one click away. */
 const MOST_EXPOSED = 5;
 
 const {
   Component: { Spinner },
 } = Renderer;
+
+function Head({
+  headline,
+  subline,
+  alarm = false,
+}: {
+  headline: ReactNode;
+  subline: ReactNode;
+  alarm?: boolean;
+}) {
+  return (
+    <div className="Trivy-page__head">
+      <div>
+        <h1 className="Trivy-page__headline">{headline}</h1>
+        <p className={`Trivy-page__subline${alarm ? " Trivy-page__subline--alarm" : ""}`}>
+          {subline}
+        </p>
+      </div>
+      <div className="Trivy-page__actions">
+        <NamespaceFilter />
+      </div>
+    </div>
+  );
+}
 
 export const DashboardPage = observer(
   ({ extension }: { extension: RendererTypes.LensExtension }) => {
@@ -27,15 +54,10 @@ export const DashboardPage = observer(
       return (
         <div className="Trivy Trivy-page">
           <TrivyStyles />
-          <div className="Trivy-page__head">
-            <div>
-              <h1 className="Trivy-page__headline">Trivy</h1>
-              <p className="Trivy-page__subline">
-                Waiting for the Trivy operator's report CRDs. If the operator is not installed in
-                this cluster, there is nothing here to show.
-              </p>
-            </div>
-          </div>
+          <Head
+            headline="Trivy"
+            subline="Waiting for the Trivy operator's report CRDs. If the operator is not installed in this cluster, there is nothing here to show."
+          />
         </div>
       );
     }
@@ -44,60 +66,75 @@ export const DashboardPage = observer(
       return (
         <div className="Trivy Trivy-page">
           <TrivyStyles />
-          <Spinner center />
+          {stores.gaveUp ? (
+            <Head
+              headline="Trivy"
+              subline="The Trivy operator's reports could not be read. Check the connection to the cluster and the permission to list them."
+              alarm
+            />
+          ) : (
+            <Spinner center />
+          )}
         </div>
       );
     }
 
     const overview = getOverview(stores);
+    const head = describeOverview(overview);
     const unjudged = unjudgedWorkloads(overview.coverage);
     const rows = getWorkloadRows(stores);
     const progress = getScanProgress(rows, Date.now());
-    const criticals = countOf(overview.vulnerabilitySummary, "CRITICAL");
     const auditCriticals = countOf(overview.configAuditSummary, "CRITICAL");
     const auditHighs = countOf(overview.configAuditSummary, "HIGH");
+
+    const openWorkloads = (filter: WorkloadFilter) =>
+      void extension.navigate("workloads", { filter });
 
     return (
       <div className="Trivy Trivy-page">
         <TrivyStyles />
-        <div className="Trivy-page__head">
-          <div>
-            <h1 className="Trivy-page__headline">
-              {criticals} critical {criticals === 1 ? "finding" : "findings"} in{" "}
-              {overview.counts.scanned} scanned{" "}
-              {overview.counts.scanned === 1 ? "workload" : "workloads"}
-            </h1>
-            <p
-              className={`Trivy-page__subline${
-                unjudged.length > 0 ? " Trivy-page__subline--alarm" : ""
-              }`}
-            >
-              {/* Never a bare count: a number of findings is a number of things looked at. */}
-              {unjudged.length > 0
-                ? "These counts are a minimum: the workloads listed below have no verdict yet."
-                : "Every workload the operator knows about has a verdict."}
-            </p>
-          </div>
-        </div>
+        <Head headline={head.headline} subline={head.subline} alarm={head.alarm} />
 
-        <ScanProgressBanner progress={progress} />
+        {overview.counts.total > 0 && (
+          <>
+            <ScanProgressBanner progress={progress} />
 
-        <div className="Trivy-cards">
-          <StatCard
-            value={overview.criticalFixable}
-            label="Critical, fix published"
-            tone="critical"
-          />
-          <StatCard
-            value={overview.criticalUnfixable}
-            label="Critical, no fix yet"
-            tone="critical"
-          />
-          <StatCard value={overview.highFixable} label="High, fix published" tone="warning" />
-          <StatCard value={overview.counts.total} label="Workloads known" />
-          <StatCard value={auditCriticals + auditHighs} label="Config issues, critical or high" />
-          <StatCard value={overview.exposedSecrets} label="Exposed secrets" />
-        </div>
+            <div className="Trivy-cards">
+              <StatCard
+                value={overview.criticalFixable}
+                label="Critical, fix published"
+                tone="critical"
+                title="Opens Workloads with only those that have a critical or high finding"
+                onOpen={() => openWorkloads("withFindings")}
+              />
+              <StatCard
+                value={overview.criticalUnfixable}
+                label="Critical, no fix yet"
+                tone="critical"
+                title="Opens Workloads with only those that have a critical or high finding"
+                onOpen={() => openWorkloads("withFindings")}
+              />
+              <StatCard
+                value={overview.highFixable}
+                label="High, fix published"
+                tone="warning"
+                title="Opens Workloads with only those that have a critical or high finding"
+                onOpen={() => openWorkloads("withFindings")}
+              />
+              <StatCard
+                value={overview.counts.total}
+                label="Workloads known"
+                title="Opens Workloads with every workload listed"
+                onOpen={() => openWorkloads("all")}
+              />
+              <StatCard
+                value={auditCriticals + auditHighs}
+                label="Config issues, critical or high"
+              />
+              <StatCard value={overview.exposedSecrets} label="Exposed secrets" />
+            </div>
+          </>
+        )}
 
         <CoverageSection
           counts={overview.counts}

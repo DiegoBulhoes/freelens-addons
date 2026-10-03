@@ -18,15 +18,6 @@ import type {
   VulnerabilityReportBody,
 } from "./types";
 
-/**
- * Everything Trivy knows about one workload, gathered from the four report
- * kinds that each cover part of it.
- *
- * The page built on this opens with what to do rather than with how much is
- * wrong: three upgrades clearing nine criticals is work someone can start, and
- * a count of 408 findings is not.
- */
-
 export interface Reporting<Body> extends SubjectBearing {
   report?: Body;
 }
@@ -37,7 +28,6 @@ export interface WorkloadReports {
   exposedSecret: Reporting<ExposedSecretReportBody>[];
 }
 
-/** What one container of the workload runs, and what judged it. */
 export interface ScannedContainer {
   name?: string;
   image?: string;
@@ -50,14 +40,12 @@ export interface ScannedContainer {
 
 export interface WorkloadReport {
   subject: ReportSubject;
-  /** One entry per container: the operator writes a report for each, with its own image. */
   containers: ScannedContainer[];
   image?: string;
   operatingSystem?: string;
   scannedAt?: string;
   summary: SeveritySummary;
   vulnerabilities: Vulnerability[];
-  /** Ordered worst-severity first, then by how many findings each upgrade clears. */
   upgrades: PackageUpgrade[];
   failedChecks: ConfigAuditCheck[];
   configSummary: SeveritySummary;
@@ -112,9 +100,7 @@ export function getWorkloadReport(
   const configAudit = reportsFor(reports.configAudit, subject);
   const exposedSecret = reportsFor(reports.exposedSecret, subject);
 
-  // A workload with several containers gets one report per container, so every
-  // field here is gathered across them rather than taken from the first.
-  // Deduplicated here, once, so every count downstream is of distinct findings.
+  // One report per container: gathered across all, deduplicated once.
   const vulnerabilities = deduplicate(
     vulnerability.flatMap((report) => report.report?.vulnerabilities ?? []),
   );
@@ -143,7 +129,6 @@ export function getWorkloadReport(
   };
 }
 
-/** How many upgrades it takes to clear everything at or above `floor`. */
 export function upgradesClearing(report: WorkloadReport, floor: Severity): PackageUpgrade[] {
   return report.upgrades.filter((upgrade) => rankOf(upgrade.worstSeverity) <= rankOf(floor));
 }
@@ -154,11 +139,6 @@ export interface ActionSummary {
   unfixableCount: number;
 }
 
-/**
- * The sentence at the top of the page. It counts upgrades, not findings,
- * because an upgrade is the unit of work — one bump of openssl answers
- * thirty-two rows.
- */
 export function summariseAction(report: WorkloadReport, floor: Severity = "HIGH"): ActionSummary {
   const relevant = report.vulnerabilities.filter((each) => isAtLeast(each, floor));
 

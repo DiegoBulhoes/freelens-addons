@@ -9,22 +9,7 @@ import {
   waitFor,
 } from "../../../build/e2e/freelens";
 
-/**
- * The filter field written into the workload picker.
- *
- * Its rules are covered by unit tests and covered well: `selectWorkloads` has
- * fourteen cases. What no unit test can say is whether a keystroke in the
- * rendered page reaches them — the field can be a controlled input whose value
- * never moves, or wired to a state the list does not read — and that half has
- * been broken here before without any suite noticing.
- *
- * The needle is read out of the page rather than written here. A name from the
- * development cluster would be a fixture with an expiry date, and the property
- * under test is "typing a name that is on screen narrows the list to it", which
- * holds whatever the cluster contains.
- *
- * Needs a running workbench with remote debugging on. `make e2e` starts one.
- */
+// The needle is read from the page: a cluster name would be a fixture that expires.
 
 const ROW = ".Trivy-picker__item";
 
@@ -69,8 +54,6 @@ describe("the Trivy workload picker filters", () => {
       frame,
     );
 
-    // Every row left names the workload typed, which is the filter having run
-    // rather than the list happening to be short.
     for (const row of shown) expect(row).toContain(name);
   });
 

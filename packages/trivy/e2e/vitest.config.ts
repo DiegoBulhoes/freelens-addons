@@ -1,15 +1,7 @@
 import { resolve } from "node:path";
 import { defineConfig } from "vitest/config";
 
-/**
- * Separate from this package's unit config on purpose. These need a running
- * Freelens with remote debugging on, they take tens of seconds, and they are not
- * part of `make check` — `make e2e` runs them.
- *
- * The harness they import lives in `build/e2e`, outside this package, so the
- * repository root has to be reachable: vite refuses to serve a file above its
- * root unless it is allowed.
- */
+// The harness lives in build/e2e, above vite's root.
 const repositoryRoot = resolve(__dirname, "../../..");
 
 export default defineConfig({

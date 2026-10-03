@@ -1,18 +1,6 @@
 import { subjectKey } from "./subjects";
-import type { ReportSubject } from "./types";
+import type { ReportSubject, Tone } from "./types";
 
-/**
- * Whether the operator actually reached a verdict on each workload.
- *
- * This exists because an absent VulnerabilityReport is indistinguishable, in
- * any list of them, from a workload with nothing wrong. It is not the same
- * thing: on the cluster this was written against, 74 workloads had their image
- * read and 8 had a verdict, because the scan job died decoding the SBOM it had
- * just written. Reading that list of 8 as "the cluster has 17 critical issues"
- * understates it by an unknown amount, and nothing on screen said so.
- */
-
-/** Kinds the operator scans images for. A Service or a NetworkPolicy has no image. */
 const IMAGE_BEARING_KINDS = new Set([
   "ReplicaSet",
   "StatefulSet",
@@ -28,12 +16,16 @@ export function bearsAnImage(subject: ReportSubject): boolean {
 }
 
 export type CoverageState =
-  /** A verdict was reached. Its findings can be trusted to be about this workload. */
   | "scanned"
-  /** The image was read — an SBOM exists — but no verdict followed. */
+  // An SBOM exists, but no vulnerability report.
   | "read-but-no-verdict"
-  /** The operator knows the workload and has neither read its image nor judged it. */
   | "never-looked";
+
+export const COVERAGE_STATUS: Record<CoverageState, { label: string; tone: Tone }> = {
+  scanned: { label: "scanned", tone: "ok" },
+  "read-but-no-verdict": { label: "no verdict", tone: "warning" },
+  "never-looked": { label: "not looked at", tone: "critical" },
+};
 
 export interface CoverageEntry {
   subject: ReportSubject;
@@ -48,11 +40,8 @@ export interface CoverageTally {
 }
 
 export interface CoverageInput {
-  /** Every subject the operator has claimed, from whichever report kind names it. */
   known: ReportSubject[];
-  /** Subjects with an SBOM: the image was pulled and read. */
   withSbom: Set<string>;
-  /** Subjects with a vulnerability report: a verdict exists. */
   withVerdict: Set<string>;
 }
 
@@ -65,7 +54,7 @@ export function stateOf(subject: ReportSubject, input: CoverageInput): CoverageS
   return "never-looked";
 }
 
-/** One entry per image-bearing workload, deduplicated: the operator writes several report kinds per subject. */
+// Deduplicated: the operator writes several report kinds per subject.
 export function getCoverage(input: CoverageInput): CoverageEntry[] {
   const seen = new Set<string>();
   const entries: CoverageEntry[] = [];
@@ -96,10 +85,6 @@ export function tally(entries: CoverageEntry[]): CoverageTally {
   return counts;
 }
 
-/**
- * The sentence the overview opens with. It never claims a clean cluster on the
- * strength of reports that do not exist.
- */
 export function describeCoverage(counts: CoverageTally): string {
   if (counts.total === 0) return "The Trivy operator has not claimed any workload yet.";
 

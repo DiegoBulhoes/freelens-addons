@@ -3,27 +3,28 @@ import { observer } from "mobx-react";
 import { useState } from "react";
 
 import type { ReportSubject } from "../api/types";
-import { FILTER_LABELS, selectWorkloads, type WorkloadFilter } from "../api/workload-filter";
+import {
+  chooseSelected,
+  describeEmpty,
+  FILTER_LABELS,
+  FILTER_TITLES,
+  isWorkloadFilter,
+  selectWorkloads,
+  type WorkloadFilter,
+} from "../api/workload-filter";
 import { getWorkloadRows, sortRows } from "../api/workload-rows";
+import { NamespaceFilter } from "../components/namespace-filter";
 import { TrivyStyles } from "../components/styles";
 import { useTrivyStores } from "../hooks/use-trivy-stores";
 import { WorkloadDetail } from "../workload/workload-detail";
 import { WorkloadList } from "../workload/workload-list";
 
-/**
- * Pick on the left, read on the right.
- *
- * One page rather than a list that navigates to a detail: the sidebar item
- * stays lit because there is only ever one page, and moving between workloads
- * costs a click instead of a round trip through the list.
- *
- * The selection lives in the route params all the same, so a link to one
- * workload still opens on it.
- */
+// Selection and filter live in the route params, so a link opens on them.
 export interface WorkloadsRouteParams {
   namespace: { get(): string };
   kind: { get(): string };
   name: { get(): string };
+  filter?: { get(): string };
 }
 
 export function subjectFrom(params?: WorkloadsRouteParams): ReportSubject | undefined {
@@ -45,16 +46,18 @@ export const WorkloadsRoute = observer(
     extension: RendererTypes.LensExtension;
   }) => {
     const stores = useTrivyStores();
-    const [filter, setFilter] = useState<WorkloadFilter>("all");
+    const [filter, setFilter] = useState<WorkloadFilter>(() => {
+      const fromRoute = params?.filter?.get();
+
+      return isWorkloadFilter(fromRoute) ? fromRoute : "all";
+    });
     const [search, setSearch] = useState("");
 
     const fromRoute = subjectFrom(params);
     const rows = sortRows(getWorkloadRows(stores));
     const shown = selectWorkloads(rows, filter, search);
 
-    // Falls back to the first row so the pane is never empty on arrival, but a
-    // deliberate selection always wins.
-    const selected = fromRoute ?? shown[0]?.subject;
+    const selected = chooseSelected(rows, shown, fromRoute);
 
     const select = (subject: ReportSubject) =>
       void extension.navigate("workloads", {
@@ -67,10 +70,18 @@ export const WorkloadsRoute = observer(
       return (
         <div className="Trivy Trivy-page">
           <TrivyStyles />
-          <p className="Trivy-section__note">
-            Waiting for the Trivy operator's report CRDs. If the operator is not installed here,
-            there is nothing to list.
-          </p>
+          <div className="Trivy-page__head">
+            <div>
+              <h1 className="Trivy-page__headline">Workloads</h1>
+              <p className="Trivy-page__subline">
+                Waiting for the Trivy operator's report CRDs. If the operator is not installed here,
+                there is nothing to list.
+              </p>
+            </div>
+            <div className="Trivy-page__actions">
+              <NamespaceFilter />
+            </div>
+          </div>
         </div>
       );
     }
@@ -80,18 +91,22 @@ export const WorkloadsRoute = observer(
         <TrivyStyles />
 
         <div className="Trivy-picker__side">
-          <div className="Trivy-filters">
-            {(Object.keys(FILTER_LABELS) as WorkloadFilter[]).map((key) => (
-              <button
-                key={key}
-                type="button"
-                className="Trivy-filter"
-                aria-pressed={filter === key}
-                onClick={() => setFilter(key)}
-              >
-                {FILTER_LABELS[key]}
-              </button>
-            ))}
+          <div className="Trivy-section">
+            <NamespaceFilter />
+            <div className="Trivy-filters">
+              {(Object.keys(FILTER_LABELS) as WorkloadFilter[]).map((key) => (
+                <button
+                  key={key}
+                  type="button"
+                  className="Trivy-filter"
+                  aria-pressed={filter === key}
+                  title={FILTER_TITLES[key]}
+                  onClick={() => setFilter(key)}
+                >
+                  {FILTER_LABELS[key]}
+                </button>
+              ))}
+            </div>
           </div>
 
           <input
@@ -99,6 +114,7 @@ export const WorkloadsRoute = observer(
             type="search"
             value={search}
             placeholder={`Filter ${rows.length} workloads`}
+            aria-label="Search the workloads by namespace, kind or name"
             onChange={(event) => setSearch(event.target.value)}
           />
 
@@ -107,9 +123,9 @@ export const WorkloadsRoute = observer(
 
         <div className="Trivy-picker__detail">
           {selected ? (
-            <WorkloadDetail subject={selected} />
+            <WorkloadDetail subject={selected} stores={stores} />
           ) : (
-            <p className="Trivy-picker__empty">Nothing matches that filter.</p>
+            <p className="Trivy-picker__empty">{describeEmpty(rows.length, filter, search)}</p>
           )}
         </div>
       </div>

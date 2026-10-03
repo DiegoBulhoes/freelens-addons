@@ -1,32 +1,8 @@
 import { KubeApi } from "@freelensapp/kube-api";
 import { KubeObject, type KubeObjectMetadata } from "@freelensapp/kube-object";
 
-/**
- * What `@freelensapp/extensions` resolves to under test.
- *
- * In the built extension that module is not bundled at all: `global-externals`
- * rewrites it to `globalThis.LensExtensions`, which the Freelens process
- * supplies. This file is the same substitution pointed somewhere else — the
- * standalone packages the host itself is built from — so the code under test
- * runs against the real `KubeObject` and the real `KubeApi`, with real
- * accessors, real `selfLink` validation, and real label parsing.
- *
- * That matters more than it sounds. A hand-written stand-in for `KubeObject`
- * would accept fixtures the real constructor rejects, and `getAnnotations()`
- * returning `"key=value"` strings rather than an object is exactly the kind of
- * detail a stand-in gets wrong and the code depends on.
- *
- * Two things here are not the host's own implementations, and neither is
- * exercised by any test:
- *
- * - `LensExtensionKubeObject.getApi` / `.getStore` throw. That is what the
- *   real ones do before the extension is registered, which is the state any
- *   test is in; the difference is the message.
- * - `KubeObjectStore` is a bare class. It lives in `@freelensapp/core`, which
- *   cannot load outside Electron, and the only thing the extension does with
- *   it is `class ApplicationStore extends …` — a type-level extension point
- *   that nothing calls.
- */
+// `@freelensapp/extensions` under test: the real KubeObject and KubeApi from the standalone packages.
+// getApi/getStore throw as before registration; KubeObjectStore is bare, since @freelensapp/core needs Electron.
 
 class LensExtensionKubeObject<
   Metadata extends KubeObjectMetadata = KubeObjectMetadata,
@@ -46,12 +22,7 @@ class LensExtensionKubeObject<
 
 class KubeObjectStore {}
 
-/**
- * Only the corner of the surface the api/ modules reference. A module that
- * reaches for something absent fails loudly at import, which is the honest
- * outcome: it means the module touches the host and belongs behind a split
- * like `coverage.ts` rather than in a unit test.
- */
+// Only what api/ references; anything else fails at import.
 export const Renderer = {
   K8sApi: {
     KubeApi,

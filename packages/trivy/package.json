@@ -10,7 +10,7 @@
     "out"
   ],
   "engines": {
-    "freelens": "^1.10.0",
+    "freelens": "^1.10.3",
     "node": ">=22"
   },
   "scripts": {

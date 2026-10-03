@@ -13,42 +13,18 @@ import {
 } from "../../../build/e2e/freelens";
 import { openScannedWorkload } from "./picker";
 
-/**
- * How the pages are laid out, which nothing else here looks at.
- *
- * Every other file reads text and counts elements, and all of that passes on a
- * page whose table runs off the side, whose clickable names are centred, or whose
- * colours are painted in rather than taken from the host. Those are the
- * regressions a person notices immediately and a suite never does.
- *
- * Each of these guards something that has actually gone wrong here:
- *
- *   - A row built as a `<button>` inherits `text-align: center` from the browser,
- *     so a list of names came out centred and looked like a mistake.
- *   - A wide findings table pushed the page sideways, leaving the operator
- *     scrolling to read a severity.
- *   - Colours come from the host's theme variables, so the pages follow a theme
- *     change. A value written in only shows up when someone switches theme.
- *
- * Needs a running workbench with remote debugging on. `make e2e` starts one.
- */
-
-/** Every page of this extension, and the element that should contain its width. */
 const PAGES: [id: string, container: string][] = [
   ["trivy-dashboard", ".Trivy-page"],
   ["trivy-workloads", ".Trivy-picker"],
   ["trivy-rbac", ".Trivy-page"],
 ];
 
-/** Clickable rows, which is where the centred-text default bites. */
 const CLICKABLE_ROWS = [".Trivy-picker__item", ".Trivy-picker__detail button.Trivy-row"];
 
-/** Every page, and something each renders only once its data has arrived. */
 const DESIGN: [id: string, ready: string][] = [
   ["trivy-dashboard", ".Trivy-card"],
-  // Opened on a scanned workload, so the detail has its tables to check.
   ["trivy-workloads", ".Trivy-picker__detail .Trivy-table"],
-  ["trivy-rbac", ".Trivy-box"],
+  ["trivy-rbac", ".Trivy-table tbody tr"],
   ["trivy-vulnerabilities", ".TrivyVulnerabilityReports .TableRow"],
 ];
 
@@ -62,9 +38,6 @@ describe("how the Trivy pages are laid out", () => {
 
   afterAll(() => session?.close());
 
-  // The standard's promises, read off every page once it has something on it:
-  // the surface grey, left-aligned buttons, the pressed filter's accent, and no
-  // class of ours that no stylesheet defines. See build/e2e/design.ts.
   it.each(DESIGN)(
     "builds %s from the design standard",
     async (id, ready) => {
@@ -84,6 +57,30 @@ describe("how the Trivy pages are laid out", () => {
     90_000,
   );
 
+  it("builds the RBAC check drawer from the design standard", async () => {
+    await clickSidebar(session, frame, "trivy-rbac", "trivy");
+    await waitFor(
+      "the checks",
+      async () =>
+        (await session.evaluate<number>(
+          "document.querySelectorAll('.Trivy-table tbody tr').length",
+          frame,
+        )) > 0 || undefined,
+    );
+
+    await session.evaluate("document.querySelector('.Trivy-table tbody tr')?.click()", frame);
+    await waitFor(
+      "the drawer's roles",
+      async () =>
+        (await session.evaluate<number>(
+          "document.querySelectorAll('.TrivyObjectDrawer .Trivy-table tbody tr').length",
+          frame,
+        )) > 0 || undefined,
+    );
+
+    expect(await designViolations(session, frame, "Trivy")).toEqual([]);
+  }, 90_000);
+
   it.each(PAGES)(
     "keeps %s within its width",
     async (id, container) => {
@@ -97,9 +94,7 @@ describe("how the Trivy pages are laid out", () => {
         }
       });
 
-      // A pixel or two is rounding; a scrollbar's worth is a layout that does not
-      // fit. Anything that has to scroll sideways should scroll inside its own
-      // panel, not take the page with it.
+      // A few pixels are rounding; more means the page scrolls sideways.
       expect(overflow, `${id} scrolls sideways by ${overflow}px`).toBeLessThan(8);
     },
     90_000,
@@ -119,8 +114,7 @@ describe("how the Trivy pages are laid out", () => {
     for (const row of CLICKABLE_ROWS) {
       const alignment = await computedStyle(session, frame, row, "text-align");
 
-      // Not "not center": the value has to be the one that was chosen, because
-      // the browser's default for a button is center and inheriting it is the bug.
+      // Must be the chosen value: center is a button's browser default.
       expect(alignment, `${row} is aligned ${alignment}`).toMatch(/^(left|start)$/);
     }
   }, 90_000);
@@ -134,9 +128,7 @@ describe("how the Trivy pages are laid out", () => {
       return colour.length > 0 ? colour : undefined;
     });
 
-    // If this ever fails it is because a colour was written into the stylesheet:
-    // the page will look right in the theme it was written for and wrong in the
-    // other one, which is the half nobody checks.
+    // Fails when a colour is hard-coded in the stylesheet.
     expect(headline).toBe(await resolvedThemeColor(session, frame, "--textColorPrimary"));
   }, 90_000);
 
@@ -149,10 +141,7 @@ describe("how the Trivy pages are laid out", () => {
           0 || undefined,
     );
 
-    // The columns wrap their contents in the host's tooltip component so a name
-    // too long for its column is still readable. The tooltip renders into a
-    // portal and only on a pointer sequence, so nothing short of a real hover
-    // shows whether it was wired up.
+    // The tooltip renders in a portal, only on a real pointer sequence.
     const tooltip = await hoverForTooltip(session, frame, ".TableRow [id^='tooltip_target_']");
 
     expect(tooltip.length, "hovering a cell revealed no tooltip").toBeGreaterThan(0);

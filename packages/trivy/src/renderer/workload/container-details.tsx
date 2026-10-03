@@ -3,11 +3,6 @@ import type { ScannedContainer } from "../api/workload-report";
 
 const SHORT_DIGEST = 19;
 
-/**
- * What was actually scanned, per container. A workload of several containers
- * gets one report each, with its own image and its own scan time, and naming
- * only the first hides which of them the findings belong to.
- */
 export function ContainerDetails({
   containers,
   now,

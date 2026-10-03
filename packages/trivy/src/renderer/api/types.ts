@@ -1,9 +1,4 @@
-/**
- * Shapes as the Trivy operator writes them, read off a live cluster rather than
- * off the upstream schema. Everything under `report` is optional in practice:
- * an object exists from the moment the operator claims the subject, and the
- * fields arrive when a scan finishes — which for a scan that fails is never.
- */
+// Everything under `report` may be absent: a failed scan never fills it.
 
 export interface TrivyKubeObjectCRD {
   apiVersions: string[];
@@ -13,7 +8,9 @@ export interface TrivyKubeObjectCRD {
   title: string;
 }
 
-/** The operator's own severity ladder. `UNKNOWN` is a real value, not a fallback. */
+export type Tone = "critical" | "warning" | "info" | "ok";
+
+// `UNKNOWN` is a real value, not a fallback.
 export type Severity = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "UNKNOWN" | "NONE";
 
 export interface SeveritySummary {
@@ -45,7 +42,7 @@ export interface Vulnerability {
   vulnerabilityID?: string;
   resource?: string;
   installedVersion?: string;
-  /** Empty string when no fix has been published, which is the difference between actionable and not. */
+  // Empty string when no fix is published.
   fixedVersion?: string;
   severity?: Severity;
   score?: number;
@@ -53,7 +50,7 @@ export interface Vulnerability {
   primaryLink?: string;
   publishedDate?: string;
   lastModifiedDate?: string;
-  /** Which artefact inside the image carried it. Empty for Go modules, which is why rows repeat. */
+  // Empty for Go modules, which is why rows repeat.
   target?: string;
 }
 
@@ -85,7 +82,6 @@ export interface ConfigAuditReportBody {
   checks?: ConfigAuditCheck[];
 }
 
-/** Same shape as a config audit: the operator uses one plugin for both. */
 export interface RbacAssessmentReportBody {
   scanner?: Scanner;
   summary?: SeveritySummary;
@@ -110,11 +106,6 @@ export interface ExposedSecretReportBody {
   secrets?: { ruleID?: string; title?: string; severity?: Severity; target?: string }[];
 }
 
-/**
- * Which cluster object a report is about. The operator puts this in labels
- * rather than in ownerReferences, so it survives the subject being deleted —
- * and it is how every report kind is joined to every other.
- */
 export interface ReportSubject {
   namespace: string;
   kind: string;

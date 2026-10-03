@@ -1,24 +1,7 @@
-import type { CoverageEntry, CoverageTally } from "../api/coverage";
+import { COVERAGE_STATUS, type CoverageEntry, type CoverageTally } from "../api/coverage";
 
 const MAX_LISTED = 8;
 
-const STATE_LABEL = {
-  scanned: "scanned",
-  "read-but-no-verdict": "no verdict",
-  "never-looked": "not looked at",
-} as const;
-
-const TONE = {
-  scanned: "ok",
-  "read-but-no-verdict": "warning",
-  "never-looked": "critical",
-} as const;
-
-/**
- * The part of the page that exists because the Lens list of reports cannot show
- * it: workloads with no VulnerabilityReport, which that list renders as nothing
- * at all.
- */
 export function CoverageSection({
   counts,
   unjudged,
@@ -28,8 +11,7 @@ export function CoverageSection({
   unjudged: CoverageEntry[];
   onOpenWorkload: (entry: CoverageEntry) => void;
 }) {
-  // Nothing waiting is already the headline's subline; an empty title here read as a
-  // section that failed to load.
+  // An empty section here read as one that failed to load.
   if (counts.total === 0 || unjudged.length === 0) return null;
 
   const listed = unjudged.slice(0, MAX_LISTED);
@@ -43,10 +25,11 @@ export function CoverageSection({
           <button
             type="button"
             key={`${entry.subject.namespace}/${entry.subject.kind}/${entry.subject.name}`}
-            className={`Trivy-row Trivy-row--${TONE[entry.state]}`}
+            className={`Trivy-row Trivy-row--${COVERAGE_STATUS[entry.state].tone}`}
+            title="Opens this workload in Workloads"
             onClick={() => onOpenWorkload(entry)}
           >
-            <span className="Trivy-row__state">{STATE_LABEL[entry.state]}</span>
+            <span className="Trivy-row__state">{COVERAGE_STATUS[entry.state].label}</span>
             <span className="Trivy-row__main">
               <span className="Trivy-row__name">
                 <b>{entry.subject.name}</b>

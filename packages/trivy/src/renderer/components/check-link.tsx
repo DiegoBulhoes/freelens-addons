@@ -1,9 +1,5 @@
 import { checkLink } from "../api/check-link";
 
-/**
- * A check's id, as a link to where Trivy's database explains it and how to fix
- * it. Nothing when the id cannot be turned into an address that exists.
- */
 export function CheckLink({ checkID }: { checkID: string | undefined }) {
   const href = checkLink(checkID);
 

@@ -3,13 +3,6 @@ import { describe, expect, it } from "vitest";
 import { subjectFromLabels, subjectKey, subjectOf } from "../src/renderer/api/subjects";
 import { configAuditReports, sbomReports, vulnerabilityReports } from "./fixtures";
 
-/**
- * Every join this extension makes runs through here. A subject read wrongly
- * does not throw — it silently fails to match, and a workload that was scanned
- * is then reported as unscanned, which is the one thing the extension must not
- * get wrong.
- */
-
 const LABELS = [
   "trivy-operator.resource.namespace=argocd",
   "trivy-operator.resource.kind=ReplicaSet",
@@ -48,8 +41,6 @@ describe("reading the subject a report is about", () => {
     const auditKeys = keysOf(configAuditReports());
     const shared = [...sbomKeys].filter((key) => auditKeys.has(key));
 
-    // The join is what the coverage numbers rest on, so it has to actually
-    // match: most of what has an SBOM also has a config audit.
     expect(shared.length).toBeGreaterThan(sbomKeys.size / 2);
   });
 
@@ -66,9 +57,7 @@ describe("reading the subject a report is about", () => {
       (key) => !keysOf(configAuditReports()).has(key),
     );
 
-    // Real cluster contents: a ReplicaSet scaled away keeps its SBOM after its
-    // config audit is collected. Taking one report kind as the list of known
-    // workloads would silently drop these, so getCoverage unions every kind.
+    // A scaled-away ReplicaSet keeps its SBOM after its config audit is collected.
     expect(onlyInSbom.length).toBeGreaterThan(0);
   });
 });

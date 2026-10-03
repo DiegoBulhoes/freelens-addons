@@ -15,13 +15,7 @@ import rbacJson from "./fixtures/rbac-reports.json";
 import sbomJson from "./fixtures/sbom-reports.json";
 import vulnerabilityJson from "./fixtures/vulnerability-reports.json";
 
-/**
- * Real contents of a cluster running the Trivy operator, exported by
- * `scripts/export-fixtures.sh` and sanitised. They are deliberately the awkward
- * state rather than a tidy one: most workloads have an SBOM and no vulnerability
- * verdict, because the scan job was failing when these were taken. That is the
- * case the extension exists for, so it is the case the tests run against.
- */
+// Taken while the scan job was failing: most workloads have an SBOM and no verdict.
 
 type Raw = { items: unknown[] };
 
@@ -53,17 +47,11 @@ export function clusterRbacReports(): ClusterRbacAssessmentReport[] {
   return build(ClusterRbacAssessmentReport, clusterRbacJson);
 }
 
-/** Both kinds together, which is how the page reads them. */
 export function allRbacReports() {
   return [...rbacReports(), ...clusterRbacReports()];
 }
 
-/**
- * The cluster's own pods, as `PodLike`. Built by hand rather than through
- * KubeObject: the accessors this needs are the three the join uses, and the
- * host's Pod class brings a constructor that rejects half of these for fields
- * nothing here reads.
- */
+// Built by hand: the host's Pod constructor rejects fields nothing here reads.
 export function pods(): PodLike[] {
   return (podsJson as Raw).items.map((raw) => {
     const item = raw as RawPod;
@@ -93,15 +81,10 @@ interface RawPod {
   status?: { phase?: string; startTime?: string };
 }
 
-/** Every vulnerability across every report, which is what the finding rules take. */
 export function allVulnerabilities() {
   return vulnerabilityReports().flatMap((report) => report.report?.vulnerabilities ?? []);
 }
 
-/**
- * The moment these fixtures were taken, so "recently" keeps meaning what it
- * meant then rather than decaying into failure as the file ages.
- */
 export function fixtureNow(): number {
   let newest = 0;
 

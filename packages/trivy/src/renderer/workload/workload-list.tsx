@@ -1,21 +1,10 @@
+import { COVERAGE_STATUS } from "../api/coverage";
 import { countOf } from "../api/severity";
 import { subjectKey } from "../api/subjects";
 import type { ReportSubject } from "../api/types";
 import type { WorkloadRow } from "../api/workload-rows";
+import { Status } from "../components/status";
 
-const STATE_LABEL = {
-  scanned: "scanned",
-  "read-but-no-verdict": "no verdict",
-  "never-looked": "not looked at",
-} as const;
-
-const TONE = {
-  scanned: "Trivy-muted",
-  "read-but-no-verdict": "Trivy-text--warning",
-  "never-looked": "Trivy-text--critical",
-} as const;
-
-/** The selectable column. Narrow on purpose: the detail beside it is the content. */
 export function WorkloadList({
   rows,
   selected,
@@ -39,12 +28,16 @@ export function WorkloadList({
             type="button"
             key={key}
             className={`Trivy-picker__item${key === selectedKey ? " Trivy-picker__item--selected" : ""}`}
+            title="Shows this workload's findings beside the list"
             onClick={() => onSelect(row.subject)}
           >
             <span className="Trivy-picker__name">{row.subject.name}</span>
             <span className="Trivy-picker__meta">
-              {row.subject.namespace}
-              <span className={TONE[row.state]}> · {STATE_LABEL[row.state]}</span>
+              {row.subject.namespace} ·{" "}
+              <Status
+                tone={COVERAGE_STATUS[row.state].tone}
+                label={COVERAGE_STATUS[row.state].label}
+              />
             </span>
             {(criticals > 0 || highs > 0) && (
               <span
