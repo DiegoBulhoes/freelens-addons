@@ -1,13 +1,9 @@
 ---
 title: "Security"
-description: "Supply-chain controls, what CI enforces, and how assessed findings are excepted"
+description: "Supply-chain controls, what CI enforces, and how vulnerabilities are handled"
 ---
 
 # Security
-
-This workbench downloads a desktop application, a Node toolchain and ~570 npm packages, then
-points the result at a production cluster. The controls below exist because each of those is a way
-in.
 
 ## Contents
 
@@ -23,9 +19,8 @@ in.
 
 ## Dependency age floor
 
-**No version published less than 15 days ago is ever installed.** Compromised releases of popular
-packages are typically found and yanked within days, so waiting removes most of that exposure at
-almost no cost.
+No version published less than 15 days ago is installed, since compromised releases are usually
+found and yanked within days.
 
 ```yaml
 minimumReleaseAge: 21600            # minutes
@@ -33,24 +28,20 @@ minimumReleaseAgeStrict: true       # fail, rather than resolve something younge
 minimumReleaseAgeIgnoreMissingTime: false
 ```
 
-**Declare dependencies as ranges, not exact pins,** so the floor does the choosing. pnpm takes the
-newest version that clears it and the lockfile records the result.
-
-**An install that fails because nothing in range clears the floor is the policy working.** Wait, or
-widen the range. Never lower the floor, and never add `minimumReleaseAgeExclude`; CI fails if
-either happens.
-
-**It is enforced on every run, not just when a dependency is added.**
-`pnpm install --frozen-lockfile` re-checks every lockfile entry.
+| Rule | Detail |
+|------|--------|
+| Declare ranges, not exact pins | pnpm picks the newest version that clears the floor and the lockfile records it |
+| Nothing in range clears the floor | Wait, or widen the range |
+| Never lower the floor or add `minimumReleaseAgeExclude` | CI fails if either happens |
+| Checked on every install | `pnpm install --frozen-lockfile` re-checks every lockfile entry |
 
 ## Lifecycle scripts
 
-pnpm blocks dependency lifecycle scripts unless named in `allowBuilds`, as `true` or `false`, and
-refuses to stay quiet about an unlisted one. A new native dependency is therefore a decision
-someone records, not a warning in a log.
+pnpm runs a dependency's lifecycle scripts only when `allowBuilds` names it as `true`, and reports
+any package not listed there.
 
-| Package | Allowed | Why |
-|---------|---------|-----|
+| Package | Allowed | Reason |
+|---------|---------|--------|
 | `esbuild` | yes | Resolves the platform binary Vite transpiles with |
 | `electron` | no | Arrives transitively through `@freelensapp/core`; the Electron that runs is the one inside the Freelens container |
 | `node-pty` | no | Same route, and nothing here uses a terminal |
@@ -59,84 +50,77 @@ someone records, not a warning in a log.
 
 | What | How |
 |------|-----|
-| Container base images | By `sha256` digest, not by tag |
+| Container base images | By `sha256` digest |
 | Freelens `.deb` | `sha256sum -c` against a checksum committed to this repo |
 | pnpm | `packageManager` with corepack's integrity hash |
-| GitHub Actions | By commit SHA, never by tag |
+| GitHub Actions | By commit SHA |
 | Scanner images | By `sha256` digest |
 
-Nothing pipes a downloaded script into a shell: Node is copied out of the official image rather
-than installed by a vendor script.
+No downloaded script is piped into a shell. Node is copied out of the official image.
 
-Bumping `FREELENS_VERSION` requires bumping `FREELENS_SHA256` with it. The published checksum sits
-next to the release asset as `<asset>.sha256`; the image build fails on a mismatch.
+Bump `FREELENS_SHA256` together with `FREELENS_VERSION`. The published checksum sits next to the
+release asset as `<asset>.sha256`, and the image build fails on a mismatch.
 
 ## Third-party code in CI
 
-The scanners run as digest-pinned containers rather than as third-party GitHub Actions.
+No third-party GitHub Actions are used, so no outside code runs with the workflow's context and
+token. Scanners run as digest-pinned containers with a read-only mount.
 
-| | What it gets |
-|---|---|
-| A third-party action | Someone else's code inside the workflow, with its context and token |
-| A digest-pinned image | Exactly the reviewed bytes, with a read-only mount |
-
-The only actions used are GitHub's own, `actions/checkout` and `actions/setup-node`, both pinned to
-commit SHAs and both with `persist-credentials: false`. Workflow permissions default to
-`contents: read`. When adding a check, add an image, not an action.
+The only actions are GitHub's `actions/checkout` and `actions/setup-node`, pinned to commit SHAs
+with `persist-credentials: false`. Workflow permissions default to `contents: read`. To add a check,
+add an image.
 
 ## What CI enforces
 
-| Check | Blocks? | Why |
-|-------|---------|-----|
-| Supply-chain policy (`scripts/verify-supply-chain.sh`) | yes | Guards the controls themselves, so weakening one is a red build rather than a quiet YAML edit |
-| Secret scan (gitleaks, full history) | yes | A leaked kubeconfig or token is ours to prevent |
-| Dependency CVEs (OSV against the lockfile) | yes | These are dependencies we chose and can move |
-| Dockerfile lint (hadolint) | yes | Our Dockerfiles, our fix |
-| Bundle contract (`scripts/verify-bundles.sh`) | yes | Every way of breaking the loader fails silently at runtime |
-| Image CVEs (Trivy) | **no** | The image carries Electron and Chromium, whose CVEs only a Freelens release can fix; failing on them would leave CI permanently red and train people to ignore it |
+| Check | Blocks |
+|-------|--------|
+| Supply-chain policy (`scripts/verify-supply-chain.sh`), which guards the controls on this page | yes |
+| Secret scan (gitleaks, full history) | yes |
+| Dependency CVEs (OSV against the lockfile) | yes |
+| Dockerfile lint (hadolint) | yes |
+| Bundle contract (`scripts/verify-bundles.sh`) | yes |
+| Image CVEs (Trivy) | no |
 
-`hadolint`'s DL3008 ("pin apt versions") is waived with `--ignore DL3008`, in both the workflow and
-`scripts/scan.sh`, with the reason in a comment beside it. Debian's archive keeps only the current
-version of a package, so a pinned version stops resolving as soon as the distribution moves. The
-package set is pinned by the base image digest instead, which actually holds.
+Trivy on the image reports without blocking because its CVEs are in Electron and Chromium, which
+only a Freelens release can fix.
+
+hadolint's DL3008 ("pin apt versions") is waived with `--ignore DL3008` in the workflow and in
+`scripts/scan.sh`, with the reason in a comment. Debian's archive keeps only the current version of
+a package, so the base image digest pins the package set instead.
 
 ## Dependency updates
 
-There is no bot proposing them. Updates are made by hand, which means the age floor is enforced at
-install rather than negotiated in a pull request: `pnpm update` resolves to the newest version
-clearing 15 days, and anything younger fails outright.
+Updates are made by hand, with no bot. `pnpm update` resolves to the newest version older than 15
+days.
 
-Two dependencies are held back by a constraint no waiting period fixes: `vite` cannot go to 8 while
-electron-vite 5 declares `^5 || ^6 || ^7`, and `@types/node` has to track the Node in the
-containers. `react` stays on 17 because the host supplies it as a global.
+| Held back | Reason |
+|-----------|--------|
+| `vite` on 7 | electron-vite 5 declares `^5 \|\| ^6 \|\| ^7` |
+| `@types/node` | Tracks the Node in the containers |
+| `react` on 17 | The host supplies it as a global |
 
 ## Vulnerabilities
 
-**There is no exception list.** The OSV scan blocks on anything it finds, and nothing is configured
-to look away.
-
-A transitive package carrying an advisory is pinned forward to the fixed version in
-`pnpm-workspace.yaml` instead:
+There is no exception list, and the OSV scan blocks on any finding. A transitive package with an
+advisory is pinned forward to the fixed version in `overrides` in `pnpm-workspace.yaml`:
 
 | Override | Arrived under | Fixes |
 |----------|---------------|-------|
-| `dompurify: 3.4.14` | `monaco-editor` pulled in 3.1.7 | 20 advisories. `@freelensapp/core` already depended on 3.4.14 directly, so this deduplicates onto a version already in the tree. |
+| `dompurify: 3.4.14` | `monaco-editor` pulled in 3.1.7 | 20 advisories. `@freelensapp/core` already depends on 3.4.14, so this deduplicates onto it |
 | `decode-uri-component: 0.5.0` | `query-string` pulled in 0.2.2 | GHSA-vcc3-ghjq-m6fr |
 
-Neither ever executes here: `@freelensapp/extensions` is a devDependency so `tsc` can read the
-host's types, and the built extensions declare no runtime dependencies at all. Pinning them
-forward, rather than excepting them, keeps the scan something to read rather than something to
-configure around.
+Neither runs here: `@freelensapp/extensions` is a devDependency for its types, and the built
+extensions declare no runtime dependencies.
 
-If a finding ever cannot be fixed this way, record it with a reason and an expiry rather than a
-blanket ignore. `scripts/verify-supply-chain.sh` checks that every exception carries both, and
-fails once an expiry passes.
+A finding that cannot be fixed this way is recorded with a reason and an expiry.
+`scripts/verify-supply-chain.sh` checks that every exception has both and fails once an expiry
+passes.
 
 ## Credentials
 
-- The kubeconfig is mounted **read-only**, and its path lives in `.env`, which is git-ignored.
-- `.env.example` holds placeholders only, never a real path.
-- `FIXTURE_REDACT_DOMAINS` in the same file keeps private hostnames out of exported test fixtures.
+- The kubeconfig is mounted read-only. Its path lives in `.env`, which is git-ignored.
+- `.env.example` holds placeholders only.
+- `FIXTURE_REDACT_DOMAINS` in `.env` keeps private hostnames out of exported test fixtures.
 - Nothing in the repository refers to a location on a developer's machine.
 
 ## Running the checks locally
@@ -146,5 +130,4 @@ make check              # lint, typecheck, test, build, bundle contract, supply-
 bash scripts/scan.sh    # gitleaks, OSV, hadolint: the same digest-pinned images CI uses
 ```
 
-Keep the digests in `scripts/scan.sh` in step with `.github/workflows/security.yaml`, or a clean
-local run stops meaning a green CI.
+Keep the digests in `scripts/scan.sh` in step with `.github/workflows/security.yaml`.

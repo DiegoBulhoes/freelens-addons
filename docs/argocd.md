@@ -1,28 +1,21 @@
 ---
-title: "ArgoCD Extension"
-description: "What the ArgoCD extension is for, what it shows, and what it can change"
+title: "ArgoCD extension"
+description: "The idea behind the ArgoCD extension and its features"
 ---
 
-# ArgoCD Extension
+# ArgoCD extension
 
-**What it is for:** answering what you should look at first, then letting you act on it without
-leaving Freelens.
-
-ArgoCD's own web UI is a good place to inspect one Application. It is a poor place to scan a fleet
-of them, because everything is one card per Application and a fleet only fits on screen as a grid
-of colours. This extension gives the other view. It lists what is wrong in order of how bad it is,
-puts the reason on the row, and puts the actions on the same row.
-
-Nothing here needs an ArgoCD login. Every read and every write goes through the Kubernetes API
-with the kubeconfig Freelens already holds.
+Shows which ArgoCD Applications need attention, worst first, with the reason and the action on the
+same row. Everything goes through the Kubernetes API with the kubeconfig Freelens already holds, so
+no ArgoCD login is needed.
 
 ## Contents
 
 - [Pages](#pages)
-- [What it shows](#what-it-shows)
-- [What it can change](#what-it-can-change)
-- [What it keeps](#what-it-keeps)
-- [Design rules](#design-rules)
+- [Overview](#overview)
+- [Applications and Projects](#applications-and-projects)
+- [Image Updater](#image-updater)
+- [Actions](#actions)
 
 ## Pages
 
@@ -31,67 +24,75 @@ flowchart LR
   O["Overview<br/><i>what to look at</i>"]
   A["Applications<br/><i>the fleet, filtered</i>"]
   P["Projects<br/><i>constraints, windows</i>"]
+  I["Image Updater<br/><i>rules, last updates</i>"]
   D["Details drawer<br/><i>one Application</i>"]
 
   O -->|click a row| A
   O -->|click a node| N["Nodes<br/><i>the host's page</i>"]
   A --> D
   P -->|its Applications| A
+  I -->|a watched image| A
 ```
 
-## What it shows
+Every page has the host's namespace selector.
 
-The overview opens with a sentence saying how many Applications need attention, and then five
-sections.
+## Overview
 
-| Section | The question it answers |
-|---------|-------------------------|
-| Needs attention | What is degraded, stuck, failed to sync or cannot be compared with git (a branch or path that does not exist leaves health green and sync Unknown), ordered by severity and then by sync wave, with the drifting resources listed by name |
-| Cluster pressure | What the cluster itself is saying, from node conditions and recent kubelet warnings. An Application that will not go Healthy is often waiting on a node |
-| Syncing repeatedly | Which Applications sync over and over, which never surfaces as a failure |
-| Recent rollouts | Deploys grouped by revision, so one commit landing on twelve Applications reads as one event |
-| What the next commit can move | Which repositories and references the estate follows |
+| Feature | What it shows |
+|---------|---------------|
+| Headline | How many Applications need attention |
+| Cards | Counts by sync and health, each opening the filtered list |
+| Needs attention | Degraded, stuck, failed or not comparable with git, worst first, with the drifting resources by name |
+| Pins | Applications pinned to the top, kept per cluster |
+| Cluster pressure | Node conditions and recent kubelet warnings |
+| Syncing repeatedly | Applications that sync over and over |
+| Recent rollouts | Deploys grouped by revision |
+| What the next commit can move | The repositories and references the Applications follow |
+| Component logs | ArgoCD's own pods, from the headline menu |
 
-Applications and Projects are list pages with the actions on each row.
+## Applications and Projects
 
-A row on the overview opens that Application in the list. A node under pressure opens the host's
-Nodes page. Neither opens the details drawer directly, for the reason in
-[Linking to a Kubernetes object](development.md#linking-to-a-kubernetes-object).
+| Feature | Where |
+|---------|-------|
+| Sync and health badges, resource drift, revision, destination | Applications list |
+| Bulk Refresh, Hard refresh and Sync on ticked rows | Applications list |
+| Sources, last sync, conditions, managed resources, images, deploy history | Application details drawer |
+| Image Updater rules that watch the Application's images | Application details drawer |
+| Allowed sources, destinations, roles, sync windows | Projects list |
+| Refresh all, Sync all, Freeze, Resume | Project menu |
 
-## What it can change
+## Image Updater
 
-Every action is a patch through the Kubernetes API, and the same patch is available as a `kubectl`
-command to copy.
+For [Argo CD Image Updater](https://argocd-image-updater.readthedocs.io/) v1.0 or later. The group
+appears only where the `ImageUpdater` CRD exists.
 
-| Action | What it writes |
-|--------|----------------|
-| Refresh, hard refresh | An annotation asking ArgoCD to re-compare against git |
-| Sync | An `operation` field, with prune off unless ticked |
-| Terminate | Clears `operation` on a sync in flight |
-| Roll back | Syncs a revision from history, turning automated sync off with it |
-| Freeze a project | A deny sync window on the AppProject |
-| Refresh all, sync all | The same, across a project or a filtered set, four at a time |
+| Screen | Features |
+|--------|----------|
+| Overview | Rules that are failing, erroring behind `Ready=True`, not checking, or matching nothing; counts; Check now |
+| Rules | Every rule with its state, Applications, images, last check and last update; a row opens the rule |
+| Images | Each watched image: how it picks a tag, the Applications it reaches and the tag each runs, where updates are written; a row opens its rule; Edit |
+| Updates | Each rule's last update, from which tag to which; a row opens its rule; Undo |
+| Rule drawer | Controller log and Delete in the title bar; last update with Undo, images with Edit, commands to copy |
 
-Destructive actions confirm first, and the confirmation names what will happen.
+Rules, Images and Updates each count their rows, search them, and sort by any column.
 
-## What it keeps
+## Actions
 
-Pins and the remembered filter go in one JSON file per cluster, in the folder Freelens hands the
-extension. Everything else is read from the cluster and never cached.
+Every write asks first. A write that deletes, or that reaches several Applications at once, also
+asks for a typed word. A write that has a simple reverse offers Undo in the notification that
+reports it.
 
-Pins surviving a restart took work. Freelens serves each cluster frame from an origin carrying the
-proxy's port, that port changes on every launch, and browser storage is therefore wiped each time.
-The file is per cluster because a pin names one Application in one cluster, and a shared file
-would pin it everywhere.
-
-## Design rules
-
-The page never states a count it cannot stand behind. An unreachable cluster leaves an empty store
-that would otherwise read as a healthy one, so the headline says it could not read rather than
-reporting zero.
-
-A first attempt failing is not a failure. The retry budget exists because early loads fail while
-the cluster connects, so only a spent budget with nothing to show is called unreachable.
-
-Logs open on the Application's own pods, resolved through its managed resources. The host's own
-helper matches direct owners only and reports "no pods" for a Deployment.
+| Action | Note |
+|--------|------|
+| Refresh, Hard refresh | Re-compares with git; changes nothing in the cluster, so no typed word |
+| Sync | Prune and Force are off unless ticked. Force deletes and recreates each resource. With either ticked, asks for the Application's name |
+| Sync several | From the ticked rows, the overview or a project's Sync all. Asks for the word `confirm` |
+| Terminate | Stops a sync in flight |
+| Roll back | Syncs a revision from history and turns automated sync off |
+| Freeze, Resume | Adds or removes a deny sync window on the project. Undo does the other |
+| Pin, Unpin | Keeps an Application at the top of the overview, per cluster. Undo does the other |
+| Copy commands | `argocd`, `kubectl` and a status summary |
+| Check now | Restarts the Image Updater controller. Refused while a rule is failing, since the controller would not start |
+| Edit an image | Constraint, strategy, allowed tags. Undo puts the previous settings back, refused if the image changed since |
+| Undo an update | Puts the previous tag back. Pin keeps it there; Skip only ignores the undone tag. Not offered for rules that write to git. Undo puts the newer tag and the rule's settings back |
+| Delete a rule | After typing its name |

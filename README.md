@@ -1,49 +1,42 @@
 # freelens-addons
 
-Extensions for [Freelens](https://freelens.app). Each one answers a question the tool leaves open.
-
-Freelens shows a cluster's objects well. It does not rank them, join them across kinds, or tell
-you when it failed to read one. These extensions are built around that missing judgement: what to
-look at first, and what an absence means.
-
-Everything is developed and tested inside Docker against a real cluster. The machine needs Docker
-and nothing else.
+Extensions for [Freelens](https://freelens.app). Each one is packed as its own `.tgz` and installs
+independently of the others.
 
 ## Extensions
 
-| Extension | What it answers | Status | Docs |
-|-----------|-----------------|--------|------|
-| ArgoCD | What should I look at first, and can I fix it here? | Working, reads and writes | [docs/argocd.md](docs/argocd.md) |
-| Trivy | Did the scanner actually look, and what should I upgrade? | Working, read-only | [docs/trivy.md](docs/trivy.md) |
-| cert-manager | Which certificates will not be there when they are needed, and why? | Working, reads and renews | [docs/cert-manager.md](docs/cert-manager.md) |
+| Extension | What it shows | Status | Docs |
+|-----------|---------------|--------|------|
+| ArgoCD | Applications ordered by what is wrong, with actions on each row | Working, reads and writes | [docs/argocd.md](docs/argocd.md) |
+| Trivy | Scan coverage first, then findings and upgrades | Working, read-only | [docs/trivy.md](docs/trivy.md) |
+| cert-manager | Certificates that will fail to renew, and why | Working, reads and renews | [docs/cert-manager.md](docs/cert-manager.md) |
 
-Each extension packs into its own `.tgz` and installs on its own. None needs the others.
+## Compatibility
+
+Tested on **Freelens 1.10.3**, the version the dev container runs and the e2e suites drive.
+
+| | Tested | Declared |
+|-|--------|----------|
+| Freelens | 1.10.3 | `engines.freelens: ^1.10.3`. Freelens keeps only `MAJOR.MINOR`, so any 1.x from 1.10 installs; 2.x is refused |
+| Kubernetes | k3s v1.36.4 | — |
+| ArgoCD | v3.5.2 | — |
+| Argo CD Image Updater | v1.3.0 | v1.0 or later (needs the `ImageUpdater` CRD) |
+| Trivy operator | v0.34.0 | — |
+| cert-manager | v1.21.2 | — |
 
 ## Installing
 
-Download the `.tgz` from a release. In Freelens, open File → Extensions and give it the path to
-the file, or drag the file onto the window.
+1. Download the `.tgz` from a release.
+2. In Freelens, open File → Extensions and give it the path to the file, or drag the file onto the window.
+3. The extension starts disabled. Find `@freelens-addons/<name>`, open its `⋮` menu and choose Enable.
+4. Open a cluster and pick "All Namespaces" in any list.
 
-A newly installed extension arrives disabled:
-
-1. File → Extensions, find `@freelens-addons/<name>`, open its `⋮` menu and choose **Enable**.
-2. Open a cluster and pick "All Namespaces" in any list.
-
-The group appears in the sidebar only on clusters that run the tool (ArgoCD, cert-manager or the
-Trivy operator). When it does not appear, [Enabling an extension](docs/distribution.md#enabling-an-extension)
-has a table of causes.
+The sidebar group appears only on clusters that run the tool (ArgoCD, cert-manager or the Trivy
+operator). If it does not appear, see [docs/distribution.md](docs/distribution.md).
 
 ## Developing
 
-You need Docker and a kubeconfig. Node, pnpm and Freelens all run inside the container.
-
-```bash
-make up
-```
-
-The first run writes `.env` and stops. Set `KUBECONFIG_PATH` in it and run again. The second run
-builds the extensions, starts Freelens in a container, and prints a URL. Freelens runs on a
-virtual screen, reachable in a browser, with the extensions already installed and enabled.
+You need Docker and a kubeconfig. Node, pnpm and Freelens run inside the container.
 
 ```mermaid
 flowchart LR
@@ -53,8 +46,13 @@ flowchart LR
   F -->|kubeconfig| C["your cluster"]
 ```
 
-Run `make up` after every change. Freelens caches an extension's bundle for the life of the
-process, so rebuilding without restarting shows you the previous build.
+```bash
+make up
+```
+
+The first run writes `.env` and stops. Set `KUBECONFIG_PATH` in it and run again. The second run
+builds the extensions, starts Freelens on a virtual screen and prints a URL to open it in a browser.
+Run `make up` again after every change.
 
 | Command | What it does |
 |---------|--------------|
@@ -63,23 +61,21 @@ process, so rebuilding without restarting shows you the previous build.
 | `make test` | The test suites, with their coverage thresholds |
 | `make check` | What CI runs, minus the scanners |
 
-More in [docs/development.md](docs/development.md).
+For a disposable cluster to develop against, see [dev/cluster/README.md](dev/cluster/README.md).
+The rest is in [docs/development.md](docs/development.md).
 
 ## Documentation
 
-| Document | What is in it |
-|----------|---------------|
-| [argocd.md](docs/argocd.md) | The ArgoCD extension: what it shows, what it changes |
-| [trivy.md](docs/trivy.md) | The Trivy extension: coverage before findings |
-| [cert-manager.md](docs/cert-manager.md) | The cert-manager extension: the renewal that fails while everything reads as fine |
-| [development.md](docs/development.md) | The loop, adding an extension, why one does not appear |
-| [architecture.md](docs/architecture.md) | How the workbench runs, and what the extension loader demands |
-| [testing.md](docs/testing.md) | Why there are no mocks, and where the fixtures come from |
-| [distribution.md](docs/distribution.md) | How a release is cut and installed |
-| [security.md](docs/security.md) | The supply-chain rules and what CI enforces |
-
-Every extension gets its own page there, in the same shape: what it is for, what it shows, what it
-will not do.
+| Document | Contents |
+|----------|----------|
+| [argocd.md](docs/argocd.md) | The ArgoCD extension |
+| [trivy.md](docs/trivy.md) | The Trivy extension |
+| [cert-manager.md](docs/cert-manager.md) | The cert-manager extension |
+| [development.md](docs/development.md) | The development loop and adding an extension |
+| [architecture.md](docs/architecture.md) | How the workbench runs and what the extension loader requires |
+| [testing.md](docs/testing.md) | Test approach and where the fixtures come from |
+| [distribution.md](docs/distribution.md) | Cutting and installing a release |
+| [security.md](docs/security.md) | Supply-chain rules and what CI enforces |
 
 ## Licence
 
