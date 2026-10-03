@@ -59,7 +59,7 @@ jobs:
         with:
           persist-credentials: false
 
-      # No exception list: pin a fixed version in pnpm-workspace.yaml overrides.
+      # Fix with overrides in pnpm-workspace.yaml; osv-scanner.toml only for what cannot be fixed yet.
       - name: OSV scan
         run: |
           docker run --rm -v "${PWD}:/repo:ro" -w /repo "${OSV_SCANNER}" \

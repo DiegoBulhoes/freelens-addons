@@ -101,20 +101,24 @@ days.
 
 ## Vulnerabilities
 
-There is no exception list, and the OSV scan blocks on any finding. A transitive package with an
-advisory is pinned forward to the fixed version in `overrides` in `pnpm-workspace.yaml`:
+The OSV scan blocks on any finding. A transitive package with an advisory is pinned forward to the
+fixed version in `overrides` in `pnpm-workspace.yaml`:
 
-| Override | Arrived under | Fixes |
-|----------|---------------|-------|
-| `dompurify: 3.4.14` | `monaco-editor` pulled in 3.1.7 | 20 advisories. `@freelensapp/core` already depends on 3.4.14, so this deduplicates onto it |
-| `decode-uri-component: 0.5.0` | `query-string` pulled in 0.2.2 | GHSA-vcc3-ghjq-m6fr |
+| Override | Arrived under |
+|----------|---------------|
+| `dompurify: 3.4.14` | `monaco-editor` pulled in 3.1.7 |
+| `decode-uri-component: 0.5.0` | `query-string` pulled in 0.2.2 |
+| `brace-expansion: 1.1.21` | `minimatch` pulled in 1.1.18 |
+| `fast-uri: 3.1.8` | `ajv` pulled in 3.1.7 |
+| `ip-address: 10.7.1` | `socks` pulled in 10.7.0 |
+| `moment: 2.31.0` | `@freelensapp/*` and `chart.js` pulled in 2.30.1 |
 
-Neither runs here: `@freelensapp/extensions` is a devDependency for its types, and the built
+None runs here: `@freelensapp/extensions` is a devDependency for its types, and the built
 extensions declare no runtime dependencies.
 
-A finding that cannot be fixed this way is recorded with a reason and an expiry.
-`scripts/verify-supply-chain.sh` checks that every exception has both and fails once an expiry
-passes.
+When no fixed release exists, or none clears the age floor yet, the finding goes in
+`osv-scanner.toml` with a reason and an `effectiveUntil`. `scripts/verify-supply-chain.sh` fails
+on an exception missing either, and once an expiry passes.
 
 ## Credentials
 
