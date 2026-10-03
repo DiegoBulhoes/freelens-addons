@@ -1,50 +1,23 @@
 packages:
-  # Every directory matched here becomes a workspace package. `build` is the
-  # shared electron-vite configuration and deliberately sits outside packages/,
-  # which Freelens reads as its extensions folder and where a non-extension
-  # would break discovery.
+  # Not under packages/: anything there must be a valid extension.
   - "build"
   - "packages/*"
 
-# Supply-chain policy: never resolve a version published less than 15 days ago.
-# The unit is minutes, so 21600 = 15 days. Dependencies are declared as ranges
-# rather than exact pins precisely so this floor does the choosing: pnpm picks
-# the newest version that clears it, which is what the lockfile then records.
+# 15 days, in minutes. Declare ranges, not pins, so this floor chooses the version.
 minimumReleaseAge: 21600
 
-# When nothing in range clears the floor, fail the install instead of quietly
-# resolving to something younger.
 minimumReleaseAgeStrict: true
 
-# Do not waive the check for packages whose registry metadata omits a publish
-# date — everything here comes from the public npm registry, which always has one.
 minimumReleaseAgeIgnoreMissingTime: false
 
-# Two transitive packages carry known vulnerabilities and are pinned forward to
-# the fixed versions, rather than excepted in a scanner config. Neither ever
-# executes here: @freelensapp/extensions is a devDependency so tsc can read the
-# host's types, and the built extensions declare no runtime dependencies at all.
-# Pinning them keeps the scan honest instead of teaching it to look away.
-#
-#   dompurify            — 3.1.7 arrives under monaco-editor and carries 20
-#                          advisories. @freelensapp/core already depends on
-#                          3.4.14 directly, so this deduplicates onto a version
-#                          already in the tree.
-#   decode-uri-component — 0.2.2 arrives under query-string and is fixed in
-#                          0.5.0.
+# Transitive packages with advisories, pinned forward rather than excepted:
+# dompurify 3.1.7 (via monaco-editor), decode-uri-component 0.2.2 (via query-string).
 overrides:
   dompurify: "3.4.14"
   decode-uri-component: "0.5.0"
 
-# Dependency lifecycle scripts are blocked unless listed here, and pnpm refuses
-# to stay quiet about an unlisted one. That makes a new native dependency a
-# review event rather than a warning to skim past.
-#
-#   esbuild  — needed: resolves the platform binary Vite transpiles with.
-#   electron — not needed: a ~100 MB binary download. It arrives transitively
-#              through @freelensapp/core, but the Electron actually in play is
-#              the one inside the Freelens container.
-#   node-pty — not needed: a native terminal binding, pulled in for its types.
+# Lifecycle scripts are opt-in. electron and node-pty arrive only for their types;
+# the Electron in use is the one inside the Freelens container.
 allowBuilds:
   esbuild: true
   electron: false

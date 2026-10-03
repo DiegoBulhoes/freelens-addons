@@ -1,9 +1,8 @@
-# Everything runs in Docker. The host needs Docker and a kubeconfig, nothing else.
+# Everything runs in Docker.
 
 SHELL := /bin/bash
 
-# The compose file lives in dev/ with the rest of the workbench; --project-directory
-# keeps relative paths and .env resolving from the repository root.
+# --project-directory keeps `.` and .env meaning the repository root.
 COMPOSE := docker compose -f dev/docker-compose.yml --project-directory .
 DEV     := $(COMPOSE) run --rm --no-deps --entrypoint sh -w /workspace freelens -lc
 
@@ -13,8 +12,7 @@ NOVNC_URL  := http://localhost:$(NOVNC_PORT)/vnc.html?autoconnect=1&resize=scale
 
 .DEFAULT_GOAL := up
 
-# Builds first, then restarts: Freelens caches the loaded bundle and only reads
-# it again at startup, so starting without restarting shows the previous build.
+# Restart, not just rebuild: Freelens caches the loaded bundle.
 .PHONY: up
 up: .env
 	$(DEV) "pnpm install && pnpm run -r build"
@@ -27,14 +25,11 @@ up: .env
 down:
 	$(COMPOSE) down
 
-# The coverage thresholds are part of the run, so a pass here is a pass in CI.
 .PHONY: test
 test:
 	$(DEV) "pnpm run -r test:coverage"
 
-# A cluster of its own, so developing an extension never points at something
-# that matters. The kubeconfig goes to /tmp: it cannot be committed and does
-# not survive a reboot.
+# Outside the repository, so the kubeconfig cannot be committed.
 DEV_KUBECONFIG_DIR ?= /tmp/freelens-addons-k3s
 
 .PHONY: cluster
@@ -45,10 +40,7 @@ cluster:
 	@until [ -r "$(DEV_KUBECONFIG_DIR)/kubeconfig.yaml" ]; do sleep 2; done
 	@until KUBECONFIG=$(DEV_KUBECONFIG_DIR)/kubeconfig.yaml kubectl get --raw=/readyz >/dev/null 2>&1; \
 	  do sleep 2; done
-	@# A ready API server says nothing about the node: if the CNI cannot come up,
-	@# every pod stays in ContainerCreating. Fail here rather than in a rollout
-	@# five minutes later. The node registers a moment after the API answers, and
-	@# `kubectl wait` on nothing is an error, so wait for it to exist first.
+	@# A ready API server says nothing about the CNI. `kubectl wait` on no node is an error.
 	@until KUBECONFIG=$(DEV_KUBECONFIG_DIR)/kubeconfig.yaml \
 	  kubectl get nodes -o name 2>/dev/null | grep -q .; do sleep 2; done
 	KUBECONFIG=$(DEV_KUBECONFIG_DIR)/kubeconfig.yaml \
@@ -57,11 +49,7 @@ cluster:
 	@echo
 	@echo "Set KUBECONFIG_PATH in .env to $(DEV_KUBECONFIG_DIR)/kubeconfig.yaml, then 'make up'."
 
-# Takes the volume with it: being disposable is the point of this cluster.
-#
-# k3s writes the kubeconfig as root, so the container clears it before the
-# container is gone. Removing it from here would depend on who happens to own
-# the directory, and /tmp is sticky.
+# The kubeconfig is root-owned in sticky /tmp, so the container removes it.
 .PHONY: cluster-down
 cluster-down:
 	-DEV_KUBECONFIG_DIR=$(DEV_KUBECONFIG_DIR) $(COMPOSE) \
@@ -69,22 +57,18 @@ cluster-down:
 	DEV_KUBECONFIG_DIR=$(DEV_KUBECONFIG_DIR) $(COMPOSE) --profile cluster down -v k3s
 	-rmdir $(DEV_KUBECONFIG_DIR)
 
-# End-to-end: drives the real Freelens through the Chrome DevTools Protocol.
-# Not part of `check` — it needs a cluster and a window, and takes far longer
-# than the unit suites. The debugging port only listens on loopback.
 .PHONY: e2e
 e2e: .env
 	$(DEV) "pnpm install && pnpm run -r build"
 	FREELENS_EXTRA_ARGS=--remote-debugging-port=9222 $(COMPOSE) up -d --build --force-recreate freelens
 	@echo "waiting for the debugging port"
 	@until curl -sf --max-time 2 http://localhost:9222/json/version >/dev/null; do sleep 2; done
-	@# One window and one cluster, so the packages run one after another rather
-	@# than both driving the same UI at once.
+	@# One window: two suites at once would fight over it.
 	$(DEV) "pnpm -r --workspace-concurrency=1 run test:e2e"
 	@echo
 	@echo "Freelens still has its debugging port open. 'make up' puts it back."
 
-# What CI runs, minus the scanners, which need to pull their images.
+# What CI runs, minus the scanners.
 .PHONY: check
 check:
 	$(DEV) "pnpm run lint && pnpm run -r type:check && pnpm run -r test:coverage && pnpm run -r build"

@@ -1,16 +1,5 @@
-# Pebble, Let's Encrypt's own test ACME server, so cert-manager has a real ACME
-# endpoint to register against and open Orders on.
-#
-# Without it the cert-manager extension would have no Order and no Challenge to
-# read — an ACME issuer pointed at nothing never gets past registration — and
-# the chain from a failing Certificate down to the Challenge that explains it
-# could only be developed against half of itself.
-#
-# Its TLS certificate is for `localhost`, so the ClusterIssuer that uses it
-# skips verification. That is acceptable for a test server inside a disposable
-# cluster and nowhere else.
-#
-# Pinned by digest like every image here. 2.10.1 was published 2026-04-20.
+# Test ACME server, so Orders and Challenges exist. Its certificate is for localhost,
+# so the issuer skips verification: acceptable only here.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -32,12 +21,10 @@ spec:
         - name: pebble
           image: ghcr.io/letsencrypt/pebble:2.10.1@sha256:ddf230642b1a584f519f32e347de1b05a6e4c1f6c35c1863b33effeab5f78199
           env:
-            # Answer immediately rather than sleeping a random few seconds
-            # before each validation, which is only there to mimic production.
+            # No random validation delay.
             - name: PEBBLE_VA_NOSLEEP
               value: "1"
-            # Pebble rejects a share of nonces on purpose, to exercise clients'
-            # retry paths. Here it would only make the seed's outcome random.
+            # No deliberate nonce rejection: it would make the seed's outcome random.
             - name: PEBBLE_WFE_NONCEREJECT
               value: "0"
           ports:

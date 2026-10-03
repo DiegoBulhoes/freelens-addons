@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-# Runs the same scanners CI runs, against the working tree.
-#
-# The images are pinned by digest, matching .github/workflows/security.yaml —
-# keep the two in step, or a clean local run will not mean a green CI.
+# Runs CI's scanners locally. Keep these digests in step with .github/workflows/security.yaml.
 set -uo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."

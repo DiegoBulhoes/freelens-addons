@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
-# Packs each extension into an installable tarball under dist/.
-#
-# The tarball is what a user installs: Freelens' Extensions page accepts a file
-# path to a .tgz, or the file dragged onto the window. It is also the artifact
-# attached to a GitHub release.
+# Packs each extension into an installable .tgz under dist/.
 set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
@@ -29,7 +25,6 @@ if [[ ${packed} -eq 0 ]]; then
   exit 1
 fi
 
-# Lets whoever downloads a release check what they got before installing it.
 ( cd "${OUT_DIR}" && sha256sum ./*.tgz > SHA256SUMS )
 
 echo

@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
-# Asserts the things the Freelens loader requires of a built extension.
-#
-# Every check here corresponds to a failure that is silent at runtime: the
-# extension is skipped, or loads and then breaks somewhere unrelated. Catching
-# them in CI is the difference between a red build and an afternoon in the
-# Freelens console.
+# Checks what the Freelens loader requires of a built extension; each failure is silent at runtime.
 set -uo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
@@ -13,9 +8,7 @@ FAIL=0
 ok()  { printf '  \033[32m✓\033[0m %s\n' "$*"; }
 bad() { printf '  \033[31m✗\033[0m %s\n' "$*"; FAIL=1; }
 
-# Modules the host supplies as globals. A `require` for any of them in the
-# output means a second copy of React or MobX would be loaded, breaking the
-# singletons Freelens shares with extensions.
+# Host-provided globals; requiring one loads a second React or MobX.
 HOST_MODULES='@freelensapp/extensions|react|react-dom|react/jsx-runtime|mobx|mobx-react|react-router|react-router-dom'
 
 shopt -s nullglob
@@ -31,8 +24,7 @@ for manifest in "${manifests[@]}"; do
   name=$(node -p "require('./${manifest}').name" 2>/dev/null || echo "?")
   printf '\n\033[1m%s\033[0m (%s)\n' "${name}" "${dir}"
 
-  # Freelens calls .match() on engines.freelens without checking it exists, so
-  # a missing field throws during discovery and takes out every extension.
+  # Freelens calls .match() on it unchecked; a missing one breaks discovery of every extension.
   engine=$(node -p "require('./${manifest}').engines?.freelens ?? ''" 2>/dev/null)
   if [[ -z "${engine}" ]]; then
     bad "engines.freelens is missing"
@@ -42,17 +34,13 @@ for manifest in "${manifests[@]}"; do
     ok "engines.freelens ${engine}"
   fi
 
-  # Distribution is release tarballs only. private:true is what makes
-  # an accidental `npm publish` fail; it does not affect `pnpm pack`.
   if [[ "$(node -p "require('./${manifest}').private === true" 2>/dev/null)" == "true" ]]; then
     ok "private: true — cannot be published to a registry by accident"
   else
     bad "package.json is missing \"private\": true; this repo does not publish to a registry"
   fi
 
-  # npm automatically includes whatever "main" points at, but knows nothing
-  # about "renderer". With out/ in .gitignore and no "files" field, a packed
-  # tarball ships the main half and silently omits the entire UI.
+  # npm includes "main" but not "renderer"; without "files" the tarball has no UI.
   files=$(node -p "JSON.stringify(require('./${manifest}').files ?? [])" 2>/dev/null)
   if [[ "${files}" == *'"out"'* ]]; then
     ok "files includes out/ — the packed tarball will carry both entrypoints"
@@ -74,9 +62,6 @@ for manifest in "${manifests[@]}"; do
       continue
     fi
 
-    # The loader does require(path).default and calls new on it. Rollup's
-    # "auto" export mode emits `module.exports = Class`, leaving .default
-    # undefined — and an undefined class is skipped without an error.
     if grep -q '^exports\.default' "${file}"; then
       ok "${slot}: exports.default present"
     else

@@ -1,14 +1,10 @@
 #!/usr/bin/env bash
-# Asserts that this repo's supply-chain controls are still in place.
-#
-# pnpm enforces the policy at install time, but only while the policy is
-# configured. This guards the configuration itself, so weakening it is a visible
-# change that fails CI rather than a quiet edit to a YAML file.
+# Fails when a supply-chain control is weakened or removed. Do not edit it to make a build pass.
 set -uo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
-# 15 days, in minutes — the floor agreed for this repo.
+# 15 days, in minutes.
 readonly REQUIRED_RELEASE_AGE=21600
 
 FAIL=0
@@ -98,8 +94,6 @@ printf '\n\033[1mAssessed exceptions\033[0m\n'
 if [[ ! -f osv-scanner.toml ]]; then
   ok "no vulnerability findings are excepted"
 else
-  # An exception without an expiry is permanent by accident. An expired one has
-  # already had its review date pass.
   overrides=$(grep -c '^\[\[PackageOverrides\]\]' osv-scanner.toml || true)
   expiries=$(grep -cE '^effectiveUntil\s*=' osv-scanner.toml || true)
   reasons=$(grep -cE '^reason\s*=' osv-scanner.toml || true)

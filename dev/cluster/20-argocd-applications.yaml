@@ -1,9 +1,4 @@
-# Applications for the ArgoCD extension to describe.
-#
-# They point at a public repository so nothing here needs credentials, and
-# they are deliberately a mixed set: one that syncs cleanly, one that will not
-# resolve, and one held back from automated sync. An overview with everything
-# green shows nothing about how it ranks.
+# Deliberately mixed: healthy, failing and held back, so the overview has something to rank.
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -56,8 +51,7 @@ spec:
     server: https://kubernetes.default.svc
     namespace: demo
 ---
-# Points at a path that does not exist, so it stays degraded and the overview
-# has something to put at the top.
+# Path does not exist, on purpose: stays degraded.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -75,9 +69,7 @@ spec:
   syncPolicy:
     automated: {}
 ---
-# Fails at comparison: the revision does not exist, so ArgoCD cannot work out
-# what it should be applying. The attention rule reads that as critical, which
-# is what gives the overview more than one severity to sort.
+# Revision does not exist, on purpose: fails at comparison (critical).
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -95,9 +87,7 @@ spec:
   syncPolicy:
     automated: {}
 ---
-# Fails at apply rather than at comparison: the namespace does not exist and
-# nothing here asks ArgoCD to create it. A second failure mode, because an
-# overview that ranks them should be developed against more than one.
+# Namespace does not exist, on purpose: fails at apply.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -115,9 +105,7 @@ spec:
   syncPolicy:
     automated: {}
 ---
-# An app-of-apps: the example repository's own `apps` chart, told to render two
-# children instead of its full list, several of which need plugins this cluster
-# does not run. The children land in the `default` project.
+# Two children only: the rest of the chart needs plugins this cluster lacks.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -147,8 +135,7 @@ spec:
       prune: true
       selfHeal: true
 ---
-# Two sources in one Application: a Helm chart from its repository at a version
-# range, and plain manifests from git. Reading `spec.source` alone sees neither.
+# Two sources: reading `spec.source` alone sees neither.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -174,7 +161,6 @@ spec:
     syncOptions:
       - CreateNamespace=true
 ---
-# Pinned to a commit: the one kind of reference the next push cannot move.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

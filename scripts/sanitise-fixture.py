@@ -1,32 +1,6 @@
-"""Turn `kubectl get -o json` output into a fixture that is safe to commit.
-
-Four things happen here, in order of how much they matter:
-
-1. **Identifiers that belong to the machine are replaced.** Node IP addresses,
-   machine and system UUIDs, and the boot ID say nothing about how the code
-   behaves and everything about the host. The shape is kept — an IPv4 address
-   stays an IPv4 address — so anything parsing them still sees what it expects.
-
-2. **`metadata.selfLink` is filled in.** The API server stopped sending it in
-   Kubernetes 1.20, but Freelens' client derives it before constructing a
-   `KubeObject`, and that constructor throws without it. A fixture missing it
-   would not be a smaller version of reality, it would be one the application
-   never sees.
-
-3. **Secret values are removed.** A Secret keeps its type, its labels and its
-   cert-manager annotations; its `data`, its `stringData` and every other
-   annotation are dropped, whatever the Secret holds. CSRs and issued
-   certificates go too: public, but base64 hides their DNS names from step 1.
-   So do ACME's credentials — challenge tokens, wherever the challenge URL
-   carries one, key authorisations, the account's key hash and email — and, on every kind, the annotation
-   `kubectl apply` leaves, which repeats the manifest after the rest is gone.
-
-4. **Fields no code reads are dropped.** `managedFields`,
-   `status.operationState.syncResult` and an SbomReport's component list are
-   most of the bytes and are never consulted — the SBOM's 154 reports go from
-   58 MB to 182 KB without it. Everything that is read is kept exactly as the
-   cluster reported it.
-"""
+"""Turns `kubectl get -o json` into a fixture safe to commit: host identifiers
+replaced in shape, secrets and credentials removed, unread bulk dropped, and
+`selfLink` filled in because the KubeObject constructor throws without it."""
 
 import ipaddress
 import json
@@ -34,15 +8,12 @@ import os
 import re
 import sys
 
-# Documentation-only ranges (RFC 5737 / RFC 3849), so a leak is inert.
+# Documentation-only range (RFC 5737), so a leak is inert.
 IPV4_REPLACEMENT = "198.51.100."
-# RFC 2606 reserves this, so a redacted hostname resolves nowhere by design.
 DOMAIN_REPLACEMENT = "example.test"
 DROPPED_METADATA = ("managedFields",)
 LAST_APPLIED = "kubectl.kubernetes.io/last-applied-configuration"
-# An HTTP-01 token travels in the URL the CA fetches, so it turns up wherever
-# that URL does: the solver Ingress cert-manager creates, the Challenge's
-# self-check message. Replaced in every string, not only in the token fields.
+# The HTTP-01 token is in the challenge URL, which appears in many strings.
 ACME_CHALLENGE_PATH = re.compile(r"(/\.well-known/acme-challenge/)[A-Za-z0-9_-]+")
 ACME_TOKEN_REPLACEMENT = r"\1redacted-by-fixture-export"
 CREDENTIAL_FLAG = re.compile(
@@ -68,8 +39,7 @@ RESOURCE_PLURAL = {
     "RbacAssessmentReport": "rbacassessmentreports",
     "ClusterComplianceReport": "clustercompliancereports",
     "ClusterRbacAssessmentReport": "clusterrbacassessmentreports",
-    # Not every plural is the kind plus an "s", and a wrong one is a selfLink the
-    # KubeObject constructor rejects.
+    # A wrong plural is a selfLink the KubeObject constructor rejects.
     "Ingress": "ingresses",
 }
 
@@ -94,8 +64,6 @@ def replace_addresses(value: str, seen: dict[str, str]) -> str:
         except ValueError:
             return original
 
-        # Loopback and the in-cluster service address are not identifying and
-        # are load-bearing in the code that reads them.
         if address.is_loopback:
             return original
 
@@ -108,13 +76,7 @@ def replace_addresses(value: str, seen: dict[str, str]) -> str:
 
 
 def redact_domains(value: str) -> str:
-    """Replace the operator's own domains, which say nothing about behaviour.
-
-    The list comes from `.env`, not from this file: a real domain committed
-    into the repository is exactly the leak this is meant to prevent. Only
-    hostnames are touched — API group names like `argoproj.io` are the subject
-    matter of these fixtures and are left alone.
-    """
+    # The list comes from `.env`: a real domain written here would be the leak.
     for domain in REDACTED_DOMAINS:
         value = value.replace(domain, DOMAIN_REPLACEMENT)
 
@@ -122,10 +84,7 @@ def redact_domains(value: str) -> str:
 
 
 def walk(node, seen: dict[str, str]):
-    # Keys as well as values. An annotation can carry an address in its name —
-    # k3s writes `listener.cattle.io/cn-<ip>` for every address its API server
-    # answers on — and a walk over values alone replaced the value and left the
-    # key, and the address, exactly where it was.
+    # Keys too: k3s writes annotations named `listener.cattle.io/cn-<ip>`.
     if isinstance(node, dict):
         return {walk(key, seen): walk(value, seen) for key, value in node.items()}
 
@@ -148,9 +107,7 @@ def sanitise(item: dict, seen: dict[str, str]) -> dict:
 
     metadata.setdefault("selfLink", self_link_for(item))
 
-    # `kubectl apply` records the manifest it applied in an annotation, so every
-    # field removed below would survive there — an ACME issuer's email, a
-    # Secret's values. Nothing reads it, on any kind.
+    # It repeats the applied manifest, so every field removed below would survive there.
     annotations = metadata.get("annotations")
 
     if isinstance(annotations, dict):
@@ -161,10 +118,7 @@ def sanitise(item: dict, seen: dict[str, str]) -> dict:
     if isinstance(operation_state, dict):
         operation_state.pop("syncResult", None)
 
-    # A Pod's environment is the most likely place for a credential to be
-    # sitting in plain text — this cluster has 401 literal values across its
-    # pods. Nothing here reads them: a pod is shown by name, phase and owner.
-    # The variable names are kept so the shape stays real; only values go.
+    # Env values are where plain-text credentials sit; names stay, values go.
     if item.get("kind") == "Pod":
         spec = item.get("spec")
 
@@ -178,10 +132,7 @@ def sanitise(item: dict, seen: dict[str, str]) -> dict:
                         if isinstance(variable, dict) and "value" in variable:
                             variable["value"] = "redacted-by-fixture-export"
 
-                    # A credential passed as a flag rather than through the
-                    # environment: cert-manager's ACME solver takes its challenge
-                    # token and key authorisation this way. The flag stays, so the
-                    # shape does; the value goes.
+                    # cert-manager's ACME solver takes its token and key as flags.
                     for field in ("args", "command"):
                         values = container.get(field)
                         if isinstance(values, list):
@@ -194,19 +145,10 @@ def sanitise(item: dict, seen: dict[str, str]) -> dict:
 
                     container.pop("envFrom", None)
 
-    # A Secret is the one kind whose values are the secret. `data` and
-    # `stringData` go outright — not redacted, removed: nothing reads them, and
-    # a TLS Secret's `tls.key` is a private key. So does the annotation
-    # `kubectl apply` leaves behind, because it is the whole applied manifest,
-    # values included. Type, labels and the remaining annotations are kept:
-    # they are what says which Certificate, if any, manages the Secret.
     if item.get("kind") == "Secret":
         item.pop("data", None)
         item.pop("stringData", None)
-        # Of its annotations, only cert-manager's are read — they say which
-        # Certificate, if any, manages the Secret. The rest go: the last-applied
-        # one repeats the values, and the ones other tools write describe the
-        # machine — k3s lists every hostname and address its API server serves.
+        # Only cert-manager's annotations are read; k3s's list the host's names and addresses.
         annotations = metadata.get("annotations")
 
         if isinstance(annotations, dict):
@@ -216,17 +158,11 @@ def sanitise(item: dict, seen: dict[str, str]) -> dict:
                 if key.startswith("cert-manager.io/")
             }
 
-    # A certificate signing request, and the certificate and CA it produced,
-    # are public — but base64 hides the DNS names inside them from the domain
-    # redaction below, which only reads plain text. Nothing here parses them:
-    # expiry comes from the Certificate's status.
+    # Base64 hides their DNS names from the domain redaction.
     if item.get("kind") == "CertificateRequest":
         item.get("spec", {}).pop("request", None)
 
-        # Who asked for it: the requester's username, groups, uid and the extra
-        # attributes the API server attaches — the node it ran on, the pod, the
-        # token's id. For cert-manager's own requests that is a service account;
-        # for one made by hand it is a person. Nothing here reads either.
+        # The requester's identity: a person, for a request made by hand.
         for key in ("username", "groups", "uid", "extra"):
             item.get("spec", {}).pop(key, None)
 
@@ -237,12 +173,7 @@ def sanitise(item: dict, seen: dict[str, str]) -> dict:
         item.get("spec", {}).pop("request", None)
         item.get("status", {}).pop("certificate", None)
 
-    # ACME is a conversation with the CA, and cert-manager keeps its side of it
-    # in the objects: each challenge's token and key authorisation, and on the
-    # issuer the hash of the account's private key and the email it registered
-    # with — a person's, on a real cluster. Gitleaks reads the tokens as API
-    # keys, rightly. Nothing here reads any of them: a challenge is shown by its
-    # state and reason, an issuer by whether it is ready.
+    # ACME credentials: challenge tokens and keys, the account's key hash and email.
     if item.get("kind") == "Order":
         for authorization in item.get("status", {}).get("authorizations") or []:
             for challenge in authorization.get("challenges") or []:
@@ -265,17 +196,13 @@ def sanitise(item: dict, seen: dict[str, str]) -> dict:
             for key in ("lastPrivateKeyHash", "lastRegisteredEmail"):
                 account.pop(key, None)
 
-    # An ExposedSecretReport names the matched text. This cluster reports none,
-    # but a fixture refreshed against one that does would commit the secret
-    # itself. The finding's rule, target and severity are what gets read.
+    # `match` is the exposed secret itself.
     if item.get("kind") in ("ExposedSecretReport", "ClusterExposedSecretReport"):
         for secret in (item.get("report") or {}).get("secrets") or []:
             if isinstance(secret, dict):
                 secret.pop("match", None)
 
-    # An SbomReport carries the whole component tree — 590 entries for one
-    # image, 58 MB across the cluster. Coverage is decided from the report's
-    # labels and summary; nothing reads the inventory itself.
+    # Unread, and most of the bytes.
     if item.get("kind") == "SbomReport":
         report = item.get("report")
 

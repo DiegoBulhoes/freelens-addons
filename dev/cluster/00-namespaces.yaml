@@ -8,16 +8,11 @@ kind: Namespace
 metadata:
   name: trivy-system
 ---
-# Somewhere for the sample workloads, so they are not mixed in with the
-# operators that watch them.
 apiVersion: v1
 kind: Namespace
 metadata:
   name: demo
 ---
-# A test ACME server, so cert-manager has somewhere to register an account and
-# open Orders. Without one there are no Order or Challenge objects at all, and
-# the cert-manager extension's chain would be developed against half of itself.
 apiVersion: v1
 kind: Namespace
 metadata:

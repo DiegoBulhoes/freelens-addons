@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Boots an X server, a window manager, a VNC server and the noVNC bridge, then
-# hands the foreground to Freelens so the container's lifetime tracks the app's.
+# Xvfb, openbox, x11vnc and noVNC, then Freelens in the foreground.
 set -euo pipefail
 
 log() { printf '[entrypoint] %s\n' "$*" >&2; }
@@ -21,8 +20,7 @@ log "starting Xvfb on ${DISPLAY} at ${SCREEN_GEOMETRY}"
 Xvfb "${DISPLAY}" -screen 0 "${SCREEN_GEOMETRY}" -nolisten tcp -ac &
 BG_PIDS+=($!)
 
-# Electron fails in confusing ways against a half-initialised X server, so wait
-# for it to actually answer before going further.
+# Electron fails obscurely against a half-initialised X server.
 for _ in $(seq 1 100); do
   if xdpyinfo -display "${DISPLAY}" >/dev/null 2>&1; then
     break
@@ -35,8 +33,6 @@ if ! xdpyinfo -display "${DISPLAY}" >/dev/null 2>&1; then
 fi
 log "Xvfb is up"
 
-# Without a window manager Electron's window has no frame and dialogs stack
-# badly under VNC.
 openbox &
 BG_PIDS+=($!)
 
@@ -48,7 +44,7 @@ log "starting noVNC on :${NOVNC_PORT}"
 websockify --web=/usr/share/novnc "${NOVNC_PORT}" "localhost:${VNC_PORT}" &
 BG_PIDS+=($!)
 
-# Must run before Freelens starts: it reads the state file once, at boot.
+# Before Freelens: it reads the state file once, at boot.
 node /usr/local/bin/seed-extensions.mjs || true
 
 if [[ -r "${KUBECONFIG}" ]]; then
@@ -59,13 +55,7 @@ fi
 
 log "noVNC ready at http://localhost:${NOVNC_PORT}/vnc.html?autoconnect=1&resize=remote"
 
-# dbus-run-session gives Electron a private session bus. Without one it retries
-# the system bus, fails, and logs an error on every start.
-#
-# --no-sandbox: the Chromium sandbox needs privileges the container does not get.
-# --disable-gpu: there is no GPU behind Xvfb; without this Electron retries and logs noise.
-# FREELENS_EXTRA_ARGS is how the e2e suite asks for --remote-debugging-port
-# without a second image or a compose override. Empty in normal use.
+# The Chromium sandbox needs privileges the container lacks. FREELENS_EXTRA_ARGS is word-split.
 # shellcheck disable=SC2086
 exec dbus-run-session -- freelens \
   --no-sandbox \

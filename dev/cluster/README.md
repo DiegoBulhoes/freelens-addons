@@ -1,12 +1,7 @@
 # Development cluster
 
-A k3s cluster of its own, so developing an extension does not point at
-something that matters. It is disposable: `make cluster-down` takes its volume
-with it.
-
-The kubeconfig is written to `/tmp/freelens-addons-k3s/kubeconfig.yaml` rather
-than into the repository, so it cannot be committed and does not survive a
-reboot.
+A disposable k3s cluster to develop the extensions against. The kubeconfig is written to
+`/tmp/freelens-addons-k3s/kubeconfig.yaml`, outside the repository.
 
 | Command | What it does |
 |---------|--------------|
@@ -15,11 +10,21 @@ reboot.
 
 ## What gets installed
 
-| | Why |
-|---|---|
-| ArgoCD | The ArgoCD extension has nothing to show without it |
-| Trivy operator | Writes the reports the Trivy extension reads |
-| A few sample Applications | So the overview has rows, including ones that fail |
+`scripts/seed-cluster.sh` installs these at pinned release tags, then applies the manifests below in order.
 
-Everything here is a manifest, applied in order by `scripts/seed-cluster.sh`.
-Upstream installs are pinned to a release tag rather than tracking a branch.
+| Component | Why |
+|-----------|-----|
+| ArgoCD | Read by the ArgoCD extension |
+| Trivy operator | Writes the reports the Trivy extension reads |
+| cert-manager | Read by the cert-manager extension |
+| Argo CD Image Updater | Its rules feed the Image Updater page |
+
+| Manifest | Contents |
+|----------|----------|
+| `00-namespaces.yaml` | Namespaces |
+| `10-workloads.yaml` | Sample workloads, running as root with no limits, for Trivy to flag |
+| `20-argocd-applications.yaml` | Sample Applications: one synced, one unresolvable, one with automated sync off |
+| `25-pebble.yaml` | Pebble, a test ACME server for cert-manager |
+| `30-cert-manager.yaml` | Issuers and Certificates in each state the pages render |
+| `40-image-updater.yaml` | Image Updater rules in each state the page ranks, against public registries |
+| `41-image-updater-refused.yaml` | A rule the controller refuses (Ready=False). Not seeded, since it makes the controller crash-loop; applied by hand only to export that fixture (steps in its header) |

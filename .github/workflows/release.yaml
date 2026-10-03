@@ -19,7 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
-      # Only this job writes, and only to create the release.
       contents: write
 
     steps:
@@ -41,16 +40,13 @@ jobs:
       - name: Build
         run: pnpm run -r build
 
-      # A release that cannot load is worse than no release. This is the same
-      # gate CI runs, repeated here because a tag can be pushed from anywhere.
+      # Repeated from CI: a tag can be pushed from anywhere.
       - name: Verify the bundles
         run: bash scripts/verify-bundles.sh
 
       - name: Pack
         run: bash scripts/pack.sh
 
-      # Install each tarball the way Freelens does — unpack it and check both
-      # entrypoints are present — so a packaging mistake cannot ship.
       - name: Verify the tarballs
         run: |
           status=0

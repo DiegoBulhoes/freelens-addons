@@ -1,16 +1,6 @@
-# What the cert-manager extension reads, deliberately imperfect.
-#
-# An overview where every certificate is fine shows nothing about how it ranks,
-# and a list with one row cannot demonstrate an order. So each object below is
-# here for one state the pages have to render, and the comment above it says
-# which.
-#
-# Names use `.test`, which RFC 2606 reserves: nothing here resolves, and nothing
-# here is anyone's domain.
+# Deliberately imperfect: each object below is one state the pages must render.
+# Names use `.test` (RFC 2606): nothing resolves.
 
-# ---------------------------------------------------------------- issuers
-
-# The root everything offline is signed from.
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -18,8 +8,7 @@ metadata:
 spec:
   selfSigned: {}
 ---
-# A CA certificate for the demo-ca issuer below. A ClusterIssuer reads its CA
-# from the cluster resource namespace, which is cert-manager's own.
+# A ClusterIssuer reads its CA from cert-manager's own namespace.
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -37,7 +26,6 @@ spec:
     kind: ClusterIssuer
     name: selfsigned
 ---
-# A working CA issuer: the healthy case, and what most certificates here use.
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -46,8 +34,7 @@ spec:
   ca:
     secretName: demo-ca-root
 ---
-# Never ready: the Secret it names does not exist. A namespaced Issuer, so the
-# overview has both kinds, and so "issuer not ready" has a dependent below.
+# Never ready: its Secret does not exist.
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
@@ -57,10 +44,7 @@ spec:
   ca:
     secretName: no-such-secret
 ---
-# Ready at first, then broken by the seed script once `renewal-stalls` has been
-# issued: the script deletes `flaky-ca-root` and its Secret. That is the only way
-# to reach the state the extension exists for — a certificate that is still
-# valid, whose renewal is already failing.
+# seed-cluster.sh deletes this CA once renewal-stalls is issued: valid but failing to renew.
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
@@ -86,10 +70,7 @@ spec:
     kind: ClusterIssuer
     name: selfsigned
 ---
-# ACME against Pebble. Registration works, so Orders and Challenges exist. The
-# HTTP-01 solver names an ingress class no controller serves, so cert-manager's
-# own self-check can never fetch the token and the Challenge stays pending with
-# a reason — the most common way ACME fails in practice.
+# The solver's ingress class has no controller, so the Challenge stays pending.
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -107,10 +88,6 @@ spec:
             ingressClassName: nothing-serves-this
 ---
 
-# ----------------------------------------------------------- certificates
-
-# Healthy: ninety days, renewing fifteen before the end. The row that should not
-# be in the attention list.
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -125,7 +102,7 @@ spec:
     kind: ClusterIssuer
     name: demo-ca
 ---
-# Valid, and ends within the month: "expiring", not yet "alarm".
+# Ends within the month: expiring.
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -140,7 +117,7 @@ spec:
     kind: ClusterIssuer
     name: demo-ca
 ---
-# Valid, and ends within the week: the alarm colour.
+# Ends within the week: alarm.
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -155,9 +132,7 @@ spec:
     kind: ClusterIssuer
     name: demo-ca
 ---
-# Issued while flaky-ca worked, due for renewal three minutes later, and by then
-# flaky-ca is gone. Ready stays true for a day while every renewal fails: the
-# quiet failure a list of certificates cannot show.
+# Its issuer is broken by the seed after issue, so every renewal fails while it stays Ready.
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -166,17 +141,14 @@ metadata:
 spec:
   secretName: renewal-stalls
   dnsNames: [stalls.demo.test]
-  # Renewal falls due three minutes after issue, and the certificate stays valid
-  # for ninety days: long enough that the state lasts as long as the cluster
-  # does. A day-long certificate expired overnight, and "renewal failing" became
-  # "expired" before the next e2e run.
+  # Ninety days, so "renewal failing" does not turn into "expired" between runs.
   duration: 2160h
   renewBefore: 2159h57m
   issuerRef:
     kind: Issuer
     name: flaky-ca
 ---
-# Names an issuer that does not exist. Never issued.
+# Its issuer does not exist.
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -189,8 +161,7 @@ spec:
     kind: ClusterIssuer
     name: does-not-exist
 ---
-# Depends on an issuer that is never ready: the two-hop link the overview draws
-# between one broken issuer and the certificates waiting on it.
+# Its issuer is never ready.
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -203,8 +174,7 @@ spec:
     kind: Issuer
     name: broken-ca
 ---
-# ACME, stuck at the Challenge. Certificate → CertificateRequest → Order →
-# Challenge, each link real, the deepest one holding the reason.
+# Stuck at the Challenge.
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -218,10 +188,7 @@ spec:
     name: pebble
 ---
 
-# --------------------------------------------------- ingresses and secrets
-
-# The managed case: cert-manager's ingress-shim reads the annotation and creates
-# the Certificate itself. Nothing serves this Ingress; it only has to exist.
+# Managed: ingress-shim creates the Certificate.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -245,8 +212,7 @@ spec:
                 port:
                   number: 80
 ---
-# Serves a TLS Secret that no Certificate manages: the absence the extension's
-# coverage page is for. Nothing will renew it.
+# Unmanaged TLS Secret, on purpose.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -268,8 +234,7 @@ spec:
                 port:
                   number: 80
 ---
-# Names a TLS Secret that does not exist at all — missing, which is a different
-# thing from unmanaged, and the page has to say which.
+# Its TLS Secret does not exist: missing, not unmanaged.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -291,11 +256,8 @@ spec:
                 port:
                   number: 80
 ---
-# The API server requires both keys of a kubernetes.io/tls Secret to be present
-# and does not parse them. So the values are placeholders rather than a key pair:
-# no key material is committed, even a throwaway one, and nothing here needs it
-# to be valid — the extension never reads Secret data. Applying them prints
-# "Warning: tls: failed to find any PEM data": expected, and only a warning.
+# Placeholder values, never key material; the API server does not parse them.
+# "failed to find any PEM data" on apply is expected.
 apiVersion: v1
 kind: Secret
 metadata:
@@ -306,7 +268,7 @@ stringData:
   tls.crt: placeholder, not a certificate
   tls.key: placeholder, not a key
 ---
-# A TLS Secret nothing references and nothing manages: the other kind of gap.
+# Referenced by nothing, managed by nothing.
 apiVersion: v1
 kind: Secret
 metadata:
