@@ -7,13 +7,9 @@ description: "What the __TITLE__ extension is for, what it shows, and what it le
 
 **What it is for:** <the question it answers, in one sentence>.
 
-<!--
-Two or three short paragraphs. What Freelens already shows about this, and what it
-cannot show — the gap this extension fills. Say what the thing does; do not sell it.
-No figures from a cluster: "105 workloads" describes someone's estate and dates instantly.
--->
+<!-- The gap in what Freelens shows, in a few short paragraphs. No figures from a cluster. -->
 
-The extension writes nothing. Where an action would help, it gives you the command.
+<!-- What it writes to the cluster, if anything, and how each write is confirmed. -->
 
 ## Contents
 
@@ -26,17 +22,10 @@ The extension writes nothing. Where an action would help, it gives you the comma
 |------|---------------|
 | Overview | <the one thing an operator should look at first> |
 
-<!--
-One row per page. A Mermaid diagram of how the pages relate, if there is more than one;
-never a screenshot — a screenshot of a real cluster is the owner's namespaces and workloads,
-and blurring it leaves nothing worth showing.
--->
+<!-- One row per page. A Mermaid diagram if there are several; never a screenshot. -->
 
 ## What it will not do
 
-<!--
-Every deliberate absence, each with its reason. A reader who knows what is out of scope
-trusts what is in it.
--->
+<!-- Every deliberate absence, with its reason. -->
 
 - <what it deliberately does not do, and why>

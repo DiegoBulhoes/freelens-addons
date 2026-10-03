@@ -3,12 +3,7 @@ import { Renderer } from "@freelensapp/extensions";
 import { __Name__Icon } from "./icons/__NAME__";
 import { OverviewPage } from "./pages/overview-page";
 
-/**
- * Page ids are scoped to this extension by Freelens, so they stay short. The
- * sidebar item ids are not: Freelens builds each item's `data-testid` from the
- * extension name and the item id, and the e2e harness drives the sidebar by the
- * suffix of that id — so every item id here starts with `__NAME__-`.
- */
+// Item ids start with `__NAME__-`: the e2e harness drives the sidebar by data-testid suffix.
 const PAGES = {
   overview: "overview",
 } as const;
@@ -28,8 +23,7 @@ export default class __Name__Renderer extends Renderer.LensExtension {
     {
       id: "__NAME__",
       title: "__TITLE__",
-      // Freelens numbers its own sidebar items in tens (Favourites 0, Cluster 10, to Custom
-      // Resources 110); an extension without a number lands after all of them.
+      // Host items are numbered in tens (0 to 110); without a number this lands last.
       orderNumber: 6,
       components: {
         Icon: __Name__Icon,

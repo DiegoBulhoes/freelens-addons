@@ -1,24 +1,15 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  // If the repository has a base tsconfig, extend it instead of using this file
-  // whole — and make sure it carries the two options below, which are about
-  // Freelens rather than about taste.
+  // Extend the repository's base tsconfig if it has one, keeping the two options below.
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
 
-    // node10, not bundler. @freelensapp/core ships its type entrypoints through
-    // the legacy `typesVersions` field, while its `exports` map points ./renderer
-    // at a .js with no `types` condition. Bundler resolution honours `exports`
-    // and ignores `typesVersions`, so `Renderer` silently resolves to `any` and
-    // every check against the host API stops meaning anything.
+    // Not bundler: @freelensapp/core types only through `typesVersions`, so `Renderer` would be `any`.
     "moduleResolution": "node10",
 
-    // The automatic runtime, so JSX compiles to react/jsx-runtime imports that
-    // the build maps onto the host's global.ReactJsxRuntime. The classic runtime
-    // needs React itself in scope as a value, which a type-only import silently
-    // removes — and the JSX then fails at runtime, not at build.
+    // Not classic: a type-only React import would drop React and fail at runtime.
     "jsx": "react-jsx",
 
     "strict": true,

@@ -1,30 +1,9 @@
 /*
- * The design standard: every component an extension page is built from, in one
- * file that is the same in every extension but for the prefix. `design.md` in
- * the freelens-extension skill says when to use each one; this says how it
- * looks. Change it there and copy it out, never in a package: the copies are
- * checked against it, and a page that differs from its neighbours is the
- * defect this file exists to prevent.
+ * The design standard. Edit it here and run the skill's scripts/sync-design.sh; never edit a copy.
  *
- * Three rules hold throughout.
- *
- * - Colour comes from the host's theme. A value written in here looks right in
- *   the theme it was written for and wrong in the other. The one literal is
- *   the white on a pressed filter, which is what the host's own filled buttons
- *   carry in both themes.
- * - Everything that holds content sits on one grey: the host's sidebar surface,
- *   a clear step from the page in either theme. Hover is the host's own hover
- *   for that surface. Neither `--contentColor` (the page itself) nor
- *   `--layoutBackground` (identical to the surface in the light theme) will do.
- * - Anything pressable is a <button>, for the keyboard and the screen reader,
- *   and a button's browser default is `text-align: center`. Every component that
- *   can be a button resets it; removing a reset centres a list of names.
- *
- * Tones — critical, warning, info, ok — are the host's in every extension, so a
- * critical row reads the same wherever it is. A domain with colours its users
- * already know (a scanner's severities, a CD tool's statuses) keeps them for
- * its own marks, in its own stylesheet: a tag's text, a status dot. Nothing
- * here is overridden in a package stylesheet.
+ * - Colours come from the host's theme; the one literal is a pressed filter's white.
+ * - Content sits on --sidebarBackground: --layoutBackground equals it in the light theme.
+ * - Every component that can be a <button> resets `text-align: center`.
  */
 
 .__Name__ {
@@ -53,6 +32,33 @@
   outline-offset: 1px;
 }
 
+/* The host's ConfirmDialog is white in every theme; ours follows the theme. */
+.ConfirmDialog:has(.__Name__-dialog) > .box {
+  border: 1px solid var(--borderColor);
+  background-color: var(--contentColor);
+  color: var(--textColorPrimary);
+}
+
+.ConfirmDialog:has(.__Name__-dialog) .confirm-buttons {
+  background: var(--layoutBackground);
+}
+
+/* One text colour in our dialogs; the two root classes outrank the host's control rules. */
+.__Name__.__Name__-dialog,
+.__Name__.__Name__-dialog
+  :is(
+    .__Name__-muted,
+    .__Name__-hint,
+    .__Name__-filter:not([aria-pressed="true"]),
+    .Checkbox,
+    .Checkbox label,
+    .Input,
+    .Input label,
+    input
+  ) {
+  color: inherit;
+}
+
 /* ─── Page ──────────────────────────────────────────────────────────────── */
 
 .__Name__-page {
@@ -66,7 +72,21 @@
   min-width: 0;
 }
 
-/* The headline and its sublines on the left, the page's one action on the right. */
+/* Laid out as the host's `.ItemListLayout`. */
+.__Name__-page--list {
+  padding: 0;
+  gap: 0;
+  background: var(--contentColor);
+}
+
+.__Name__-page--list > .__Name__-page__head {
+  padding: var(--__NAME__-gap-md);
+}
+
+.__Name__-page--list > .__Name__-section > .__Name__-section__note {
+  padding: 0 var(--__NAME__-gap-md) var(--__NAME__-gap-md);
+}
+
 .__Name__-page__head {
   display: flex;
   align-items: flex-start;
@@ -96,6 +116,11 @@
   color: var(--textColorSecondary);
 }
 
+.__Name__-page__count {
+  font-size: var(--font-size-small, 12px);
+  color: var(--textColorSecondary);
+}
+
 .__Name__-page__subline--alarm {
   color: var(--__NAME__-tone-critical);
 }
@@ -116,7 +141,6 @@
   min-width: 0;
 }
 
-/* Title first; whatever comes last is pushed to the right edge. */
 .__Name__-section__bar {
   display: flex;
   align-items: center;
@@ -139,9 +163,9 @@
   color: var(--textColorSecondary);
 }
 
-/* ─── Cards: one number and what it counts ──────────────────────────────── */
+/* ─── Cards ─────────────────────────────────────────────────────────────── */
 
-/* auto-fill, not auto-fit: a card is the same width on every page, however few. */
+/* auto-fill, not auto-fit: a card keeps its width however few there are. */
 .__Name__-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
@@ -197,9 +221,8 @@ button.__Name__-card:hover {
   color: var(--__NAME__-tone-ok);
 }
 
-/* ─── Lists and rows: one object per line ───────────────────────────────── */
+/* ─── Rows ──────────────────────────────────────────────────────────────── */
 
-/* A <div>, or an <ol> when the order is the point, as in a chain of objects. */
 .__Name__-list {
   display: grid;
   gap: var(--__NAME__-gap-xs);
@@ -209,11 +232,6 @@ button.__Name__-card:hover {
   list-style: none;
 }
 
-/*
- * State, then the object, then a figure, then its menu — each optional but
- * the object. The tone is the left edge and the colour of the state; the state
- * column is fixed so states line up down the list.
- */
 .__Name__-row {
   display: flex;
   align-items: baseline;
@@ -234,7 +252,6 @@ button.__Name__-row {
   cursor: pointer;
 }
 
-/* A row that also carries a menu is a <div> whose main part is the button. */
 button.__Name__-row:hover,
 .__Name__-row:has(> button.__Name__-row__main:hover) {
   background: var(--__NAME__-surface-hover);
@@ -298,7 +315,6 @@ button.__Name__-row__main {
   cursor: pointer;
 }
 
-/* The name in bold, then what locates it, on one line that wraps. */
 .__Name__-row__name {
   display: flex;
   align-items: baseline;
@@ -331,7 +347,7 @@ button.__Name__-row__main {
   align-self: center;
 }
 
-/* ─── Boxes: one object and what belongs to it ──────────────────────────── */
+/* ─── Boxes ─────────────────────────────────────────────────────────────── */
 
 .__Name__-box {
   display: grid;
@@ -372,7 +388,6 @@ button.__Name__-box:hover {
   border-left-color: var(--__NAME__-tone-ok);
 }
 
-/* Tag, what it is, a count. A head that toggles the box open is the button. */
 .__Name__-box__head {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr) max-content;
@@ -418,7 +433,7 @@ button.__Name__-box__head {
   overflow-wrap: anywhere;
 }
 
-/* ─── Chips: an object named inside another ─────────────────────────────── */
+/* ─── Chips ─────────────────────────────────────────────────────────────── */
 
 .__Name__-chips {
   display: flex;
@@ -426,7 +441,7 @@ button.__Name__-box__head {
   gap: var(--__NAME__-gap-xs);
 }
 
-/* A chip sits on the grey, so it takes the page's colour to stand out from it. */
+/* On the surface grey, so it takes the page's colour to stand out. */
 .__Name__-chip {
   display: inline-flex;
   align-items: baseline;
@@ -454,9 +469,9 @@ button.__Name__-chip:hover {
   color: var(--textColorSecondary);
 }
 
-/* ─── Tags: a state, in words ───────────────────────────────────────────── */
+/* ─── Tags ──────────────────────────────────────────────────────────────── */
 
-/* The colour is the text's, so a domain class that sets `color` tones it too. */
+/* Toned through `color`, so a domain class that sets it tones the tag too. */
 .__Name__-tag {
   display: inline-block;
   padding: 0 var(--__NAME__-gap-xs);
@@ -487,45 +502,43 @@ button.__Name__-chip:hover {
   color: var(--textColorSecondary);
 }
 
-/* ─── Tables: many objects, compared column by column ───────────────────── */
+/* ─── Tables ────────────────────────────────────────────────────────────── */
 
-/*
- * Read like the host's own lists — the Vulnerabilities list, the Pods list:
- * the same header in the same case and colour, rows of the same height — so a
- * table here does not look foreign beside one of those. It sits on the surface
- * like every other box, and between its rows the page's colour shows through,
- * as it does between the rows of a list; the host's faint line is the same grey
- * as the surface and would vanish.
- */
+/* Value for value as the host's lists (Freelens 1.10.3 `.ItemListLayout`, `.TableCell`). */
 .__Name__-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  border: 1px solid var(--__NAME__-line);
-  border-radius: var(--__NAME__-radius);
-  background: var(--__NAME__-surface);
+  border-collapse: collapse;
+  background: var(--contentColor);
 }
 
 .__Name__-table th {
-  padding: var(--__NAME__-gap-sm) var(--__NAME__-gap-md);
-  border-bottom: 1px solid var(--__NAME__-line-strong);
+  box-sizing: border-box;
+  height: 33px;
+  padding: var(--__NAME__-gap-sm);
+  border-top: 1px solid var(--borderFaintColor);
+  border-bottom: 1px solid var(--borderFaintColor);
+  background: var(--tableHeaderBackground);
   font-weight: var(--font-weight-normal, 400);
-  line-height: 1.25;
+  line-height: 1.1;
   text-align: left;
   color: var(--tableHeaderColor, var(--textColorPrimary));
   white-space: nowrap;
 }
 
-.__Name__-table td {
-  padding: var(--__NAME__-gap-sm) var(--__NAME__-gap-md);
-  border-bottom: 1px solid var(--contentColor, var(--__NAME__-line));
-  line-height: 1.25;
-  vertical-align: baseline;
-  overflow-wrap: anywhere;
+.__Name__-table th:first-child,
+.__Name__-table td:first-child {
+  padding-left: var(--__NAME__-gap-md);
 }
 
-.__Name__-table tbody tr:last-child td {
-  border-bottom: none;
+/* 33px: the pitch at which the host's virtual list places its rows. */
+.__Name__-table td {
+  box-sizing: border-box;
+  height: 33px;
+  /* No vertical padding, so a 23px ⋮ or a tag fits. */
+  padding: 0 var(--__NAME__-gap-sm);
+  line-height: 1.1;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
 }
 
 .__Name__-table__number {
@@ -534,12 +547,7 @@ button.__Name__-chip:hover {
   font-variant-numeric: tabular-nums;
 }
 
-/*
- * The one column that takes the width left over, and trails off when short.
- * Beside it, every column that must not break — a name, a date, a revision —
- * is __shrink: a cell may break anywhere, and the fill column would squeeze an
- * unmarked neighbour down to a letter per line.
- */
+/* Every column that must not break needs __shrink, or this one squeezes it to a letter per line. */
 .__Name__-table__fill {
   width: 100%;
   max-width: 0;
@@ -548,10 +556,16 @@ button.__Name__-chip:hover {
   white-space: nowrap;
 }
 
-/* A column as narrow as its content: a date, a revision, an icon. */
 .__Name__-table__shrink {
   width: 1%;
   white-space: nowrap;
+}
+
+.__Name__-table__actions {
+  width: 1%;
+  line-height: 0;
+  white-space: nowrap;
+  text-align: right;
 }
 
 .__Name__-table__row--clickable {
@@ -559,10 +573,28 @@ button.__Name__-chip:hover {
 }
 
 .__Name__-table__row--clickable:hover td {
-  background: var(--__NAME__-surface-hover);
+  background: var(--tableBgcSelected, var(--__NAME__-surface-hover));
 }
 
-/* ─── Facts: one object's attributes, name and value ────────────────────── */
+.__Name__-table th[aria-sort] > .__Name__-sort {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.__Name__-table th[aria-sort="ascending"] > .__Name__-sort::after {
+  content: " ▲";
+}
+
+.__Name__-table th[aria-sort="descending"] > .__Name__-sort::after {
+  content: " ▼";
+}
+
+/* ─── Facts ─────────────────────────────────────────────────────────────── */
 
 .__Name__-facts {
   display: grid;
@@ -584,7 +616,7 @@ button.__Name__-chip:hover {
   overflow-wrap: anywhere;
 }
 
-/* ─── Banner: what the whole page needs said first ──────────────────────── */
+/* ─── Banner ────────────────────────────────────────────────────────────── */
 
 .__Name__-banner {
   display: grid;
@@ -617,7 +649,6 @@ button.__Name__-chip:hover {
 
 /* ─── Controls ──────────────────────────────────────────────────────────── */
 
-/* A filter narrows what is shown and says so with `aria-pressed`. */
 .__Name__-filters {
   display: flex;
   flex-wrap: wrap;
@@ -653,10 +684,6 @@ button.__Name__-chip:hover {
   font-variant-numeric: tabular-nums;
 }
 
-/*
- * A button does something. Primary is what the view exists for; caution is a
- * write that reaches more than the object in front of the reader.
- */
 .__Name__-button {
   padding: var(--__NAME__-gap-xs) var(--__NAME__-gap-md);
   border: 1px solid var(--__NAME__-line-strong);
@@ -687,7 +714,6 @@ button.__Name__-chip:hover {
   cursor: not-allowed;
 }
 
-/* Buttons side by side: a toolbar, a pager. */
 .__Name__-actions {
   display: flex;
   align-items: center;
@@ -732,7 +758,6 @@ button.__Name__-chip:hover {
   flex: 1 1 20rem;
 }
 
-/* A button that reads as a link: it navigates, it does not act. */
 .__Name__-link {
   padding: 0;
   border: none;
@@ -753,7 +778,7 @@ button.__Name__-chip:hover {
   text-decoration: none;
 }
 
-/* ─── Picker: choose on the left, read on the right ─────────────────────── */
+/* ─── Picker ────────────────────────────────────────────────────────────── */
 
 .__Name__-picker {
   height: 100%;
@@ -821,7 +846,6 @@ button.__Name__-chip:hover {
   color: var(--textColorSecondary);
 }
 
-/* Figures, each with its unit in words: "18 critical", "5 days left". */
 .__Name__-picker__aside {
   grid-area: aside;
   display: flex;
@@ -850,19 +874,100 @@ button.__Name__-chip:hover {
   text-align: center;
 }
 
+/* ─── Status ────────────────────────────────────────────────────────────── */
+
+.__Name__-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--__NAME__-gap-xs);
+  white-space: nowrap;
+}
+
+.__Name__-status::before {
+  content: "";
+  width: 0.6em;
+  height: 0.6em;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--textColorSecondary);
+}
+
+.__Name__-status--critical::before {
+  background: var(--__NAME__-tone-critical);
+}
+
+.__Name__-status--warning::before {
+  background: var(--__NAME__-tone-warning);
+}
+
+.__Name__-status--info::before {
+  background: var(--__NAME__-tone-info);
+}
+
+.__Name__-status--ok::before {
+  background: var(--__NAME__-tone-ok);
+}
+
+/* ─── Namespace selector ────────────────────────────────────────────────── */
+
+.__Name__-namespaces {
+  min-width: 16em;
+}
+
+/* ─── Drawer ────────────────────────────────────────────────────────────── */
+
+.__Name__-drawer {
+  display: grid;
+  gap: var(--__NAME__-gap-lg);
+  min-width: 0;
+  padding-block: var(--__NAME__-gap-sm);
+}
+
+/* ─── Form ──────────────────────────────────────────────────────────────── */
+
+.__Name__-form {
+  display: grid;
+  gap: var(--__NAME__-gap-md);
+}
+
+.__Name__-form__field {
+  display: grid;
+  gap: var(--__NAME__-gap-xs);
+}
+
+/* ─── Selection ─────────────────────────────────────────────────────────── */
+
+.__Name__-selection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--__NAME__-gap-md);
+  padding: var(--__NAME__-gap-sm) var(--__NAME__-gap-md);
+  border-top: 1px solid var(--__NAME__-line);
+  background: var(--__NAME__-surface);
+}
+
+.__Name__-selection__what {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.__Name__-selection__count {
+  color: var(--textColorSecondary);
+}
+
 /* ─── Text ──────────────────────────────────────────────────────────────── */
 
 .__Name__-muted {
   color: var(--textColorSecondary);
 }
 
-/* Small and secondary: the sentence beside a control that explains it. */
 .__Name__-hint {
   font-size: var(--__NAME__-small);
   color: var(--textColorSecondary);
 }
 
-/* One monospace: a <code> and a mono span look the same, wherever they are. */
 .__Name__ code,
 .__Name__-mono {
   font-family: var(--font-monospace, monospace);

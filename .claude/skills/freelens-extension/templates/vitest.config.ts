@@ -1,14 +1,7 @@
 import { resolve } from "node:path";
 import { defineConfig } from "vitest/config";
 
-/**
- * `@freelensapp/extensions` is not a module that can be imported outside
- * Electron — in the built extension it is rewritten to a host global, and here
- * it is rewritten to `test/freelens-host.ts`, which hands back the same classes
- * from the standalone packages. Same mechanism as production, pointed somewhere
- * a test process can reach. That is what lets the tests run against the real
- * `KubeObject` and `KubeApi` instead of a mock of them.
- */
+// `@freelensapp/extensions` cannot load outside Electron; the real classes stand in, not a mock.
 export default defineConfig({
   resolve: {
     alias: {
@@ -22,19 +15,13 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text-summary", "html", "lcov"],
-      // The decision-making layer. Pages and hooks are excluded because reaching
-      // them means standing up the host's component library and stores — the
-      // mocks that would take are larger than the code they cover. Those are
-      // verified by loading the extension into a real Freelens.
+      // Decisions only; pages and hooks are checked in a real Freelens.
       include: ["src/renderer/api/**/*.ts"],
       exclude: [
-        // Declarations only: no runtime code, and nought per cent says something
-        // untrue about the tests.
+        // Declarations only.
         "src/renderer/api/types.ts",
-        // Add every module here that reads a store or sends a patch, each with a
-        // comment naming the covered module it delegates its decisions to.
+        // Add each module that reads a store or sends a patch, naming the module that decides for it.
       ],
-      // The repository's rule wins over these numbers if it has one.
       thresholds: {
         statements: 95,
         branches: 95,

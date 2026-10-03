@@ -1,11 +1,1 @@
-/*
- * What only this extension has. Every page, card, row, box, table, filter and
- * banner comes from design.css, the shared standard, which this file must not
- * restyle; design.md in the freelens-extension skill says which to use when.
- *
- * What belongs here is the domain's own: a drawing no other extension needs
- * (a timeline, a bar), or a palette its users already know, for its own marks
- * only. Colours are host tokens or the standard's tones
- * (`var(--__NAME__-tone-critical)`); spacing is the standard's
- * (`var(--__NAME__-gap-sm)`).
- */
+/* Domain only. Every shared component comes from design.css; nothing here restyles one. */

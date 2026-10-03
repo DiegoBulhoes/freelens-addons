@@ -1,14 +1,5 @@
 import { type ExecutionContext, listTargets, Session } from "./cdp";
 
-/**
- * Driving Freelens rather than a browser.
- *
- * Two things here are not ordinary page automation. The cluster's pages live in
- * an iframe of a different origin, reachable only through its execution
- * context, and that context is replaced whenever the frame reloads — so it is
- * looked up again rather than held.
- */
-
 export const DEBUG_PORT = Number(process.env.FREELENS_DEBUG_PORT ?? 9222);
 
 const CLUSTER_ORIGIN = /^https:\/\/[0-9a-f]+\.renderer\.freelens\.app/;
@@ -41,14 +32,6 @@ export interface ConsoleError {
   text: string;
 }
 
-/**
- * Errors the window reports while a test drives it.
- *
- * Borrowed from how Freelens tests its own example extension: it fails a run
- * when anything errors in the console, which catches a runtime fault no
- * assertion would have thought to look for. A page can render, answer every
- * query, and still be throwing on each keystroke.
- */
 export function collectErrors(session: Session): { drain: () => ConsoleError[] } {
   const seen: ConsoleError[] = [];
 
@@ -96,15 +79,8 @@ export async function connect(): Promise<Session> {
   return session;
 }
 
-/**
- * Every live context the page has now, looked up rather than cached.
- *
- * A frame's context is replaced when it navigates or reloads, and the replaced
- * one stops answering: evaluating in it fails with "Cannot find context with
- * specified id". Re-enabling replays a creation event for each live context,
- * which is the only way to enumerate them — the protocol has no "list contexts"
- * call — and the destroyed listener covers one going away mid-lookup.
- */
+// Contexts are replaced on reload, so never cached. Re-enabling Runtime replays one creation
+// event per live context; CDP has no call that lists them.
 async function contexts(session: Session): Promise<ExecutionContext[]> {
   const found = new Map<number, ExecutionContext>();
 
@@ -122,14 +98,8 @@ async function contexts(session: Session): Promise<ExecutionContext[]> {
   return [...found.values()];
 }
 
-/**
- * The context of the cluster frame, where an extension's pages render.
- *
- * Newest first, and only returned once it has answered. A reload creates the new
- * context before the old one is reported destroyed, so the obvious choice — the
- * first match — is the one about to stop working, and every later call in the
- * test fails somewhere unrelated to what it was checking.
- */
+// Newest first and only once it answers: a reload creates the new context before the old one
+// is reported destroyed.
 export async function clusterFrame(session: Session): Promise<number> {
   return waitFor("the cluster frame", async () => {
     const candidates = (await contexts(session))
@@ -140,7 +110,7 @@ export async function clusterFrame(session: Session): Promise<number> {
       try {
         if (await session.evaluate<boolean>("!!document.body", candidate.id)) return candidate.id;
       } catch {
-        // Replaced between being listed and being used. Try the next one.
+        // replaced since it was listed
       }
     }
 
@@ -165,7 +135,6 @@ export async function openCluster(session: Session): Promise<void> {
   );
 }
 
-/** Every sidebar item the frame currently shows, by id, for error messages. */
 export async function sidebarItems(session: Session, contextId: number): Promise<string[]> {
   return session.evaluate<string[]>(
     `[...document.querySelectorAll('[data-testid^="sidebar-item-"]')]` +
@@ -174,19 +143,11 @@ export async function sidebarItems(session: Session, contextId: number): Promise
   );
 }
 
-/** A selector matching one sidebar element by the id its page registered. */
 function sidebarSelector(prefix: string, id: string): string {
   return JSON.stringify(`[data-testid^="${prefix}-for-sidebar-item-"][data-testid$="-${id}"]`);
 }
 
-/**
- * Opens a sidebar group, and does nothing if it is open already.
- *
- * The expand icon toggles, so clicking it unconditionally closes a group that
- * was expanded — and Freelens remembers which groups are open, in the state
- * volume, across restarts. The icon names its own state: `keyboard_arrow_down`
- * while collapsed, `keyboard_arrow_up` once open.
- */
+// The icon toggles and Freelens persists open groups, so click only while collapsed.
 async function expandGroup(session: Session, contextId: number, groupId: string): Promise<void> {
   await session.evaluate(
     `(() => {
@@ -197,28 +158,13 @@ async function expandGroup(session: Session, contextId: number, groupId: string)
   );
 }
 
-/**
- * Clicks a sidebar entry by the page id the extension registered for it.
- *
- * Freelens gives every sidebar item a `data-testid` built from the extension's
- * name and the item's own id. Driving by that rather than by the visible text
- * matters twice over: a group's text carries its icon's ligature name, so
- * "Trivy" reads as `TrivyTrivykeyboard_arrow_down`, and an entry's label is
- * prose — one page is registered as `cert-manager-unmanaged` and labelled
- * "Unmanaged TLS".
- * The id is matched by suffix, so nothing here needs to know how Freelens turns
- * `@freelens-addons/trivy` into `freelens-addons--trivy`.
- *
- * Expanding is attempted on every pass rather than once up front. The frame's
- * execution context exists before the sidebar is rendered into it, so a single
- * early attempt clicks nothing and the entry never appears — which is a test
- * that passes only while some earlier run happens to have left the group open.
- */
+// Groups are listed outermost first. Expanding runs on every pass: the context exists before
+// the sidebar renders into it.
 export async function clickSidebar(
   session: Session,
   contextId: number,
   pageId: string,
-  groupId?: string,
+  groupId?: string | string[],
 ): Promise<void> {
   const clickPage = () =>
     session.evaluate<boolean>(
@@ -236,7 +182,7 @@ export async function clickSidebar(
     async () => {
       if (await clickPage()) return true;
 
-      if (groupId) await expandGroup(session, contextId, groupId);
+      for (const group of [groupId ?? []].flat()) await expandGroup(session, contextId, group);
 
       return undefined;
     },
@@ -250,20 +196,8 @@ export async function clickSidebar(
   await new Promise((resolve) => setTimeout(resolve, 1200));
 }
 
-/**
- * Widens the cluster view to every namespace, and says so if it could not.
- *
- * The suite must not inherit this. Freelens starts scoped to one namespace, and
- * the selection lives in localStorage on an origin whose port is chosen fresh on
- * every launch — so it is wiped each start and cannot be set up once. Scoped to
- * one namespace, every page in both extensions renders its empty state and a
- * test asserting on rows passes or fails by accident.
- *
- * Only a page built on `KubeObjectListLayout` carries the control, so this is
- * called from such a page. It drives react-select, which opens on a pointer
- * sequence rather than a click and renders its menu into a portal — hence one
- * page-side routine: the menu closes as soon as the protocol round-trips.
- */
+// Needs a `KubeObjectListLayout` page. react-select opens on a pointer sequence and its menu
+// closes on a protocol round-trip, so it all runs in one page-side routine.
 export async function selectAllNamespaces(session: Session, contextId: number): Promise<void> {
   const outcome = await session.evaluate<string>(
     `(async () => {
@@ -298,14 +232,7 @@ export async function selectAllNamespaces(session: Session, contextId: number): 
   await new Promise((resolve) => setTimeout(resolve, 2500));
 }
 
-/**
- * Narrows the cluster view to one namespace, for a test about scope itself.
- *
- * Shares its awkwardness with {@link selectAllNamespaces}: react-select, a
- * portal, and one page-side routine. An option's text carries its icon's
- * ligature name and a tick when selected, so `layers`, `check` and the
- * whitespace around them come off before the name is compared.
- */
+// As selectAllNamespaces. An option's text includes the `layers` and `check` icon ligatures.
 export async function selectNamespace(
   session: Session,
   contextId: number,
@@ -348,10 +275,6 @@ export async function selectNamespace(
   await new Promise((resolve) => setTimeout(resolve, 2500));
 }
 
-/**
- * One cluster, every namespace, and a frame to drive — what every file needs
- * before its first assertion.
- */
 export async function openWorkbench(): Promise<{
   session: Session;
   frame: number;
@@ -364,7 +287,7 @@ export async function openWorkbench(): Promise<{
 
   let frame = await clusterFrame(session);
 
-  // A host list page, because that is where the namespace control lives.
+  // A host list page: the namespace control lives there.
   await clickSidebar(session, frame, "pods", "workloads");
   await selectAllNamespaces(session, frame);
 
@@ -373,14 +296,7 @@ export async function openWorkbench(): Promise<{
   return { session, frame, errors };
 }
 
-/**
- * Hovers an element and hands back whatever tooltip became visible.
- *
- * Freelens renders a tooltip into a portal, keyed to an id on the element it
- * describes, and it opens on a pointer sequence rather than on a bare
- * `mouseover`. The empty string means nothing appeared, which is a result rather
- * than an error: most elements have no tooltip.
- */
+// Tooltips open on a pointer sequence, not a bare `mouseover`. "" means none appeared.
 export async function hoverForTooltip(
   session: Session,
   contextId: number,
@@ -406,7 +322,6 @@ export async function hoverForTooltip(
   );
 }
 
-/** One computed property of the first element matching `selector`. */
 export async function computedStyle(
   session: Session,
   contextId: number,
@@ -423,14 +338,7 @@ export async function computedStyle(
   );
 }
 
-/**
- * What a host theme variable resolves to, in the same form a computed style
- * reports.
- *
- * Read directly, `--textColorPrimary` comes back as it was written — `#8e9297` —
- * while a computed `color` is `rgb(142, 146, 151)`. So the value is put on a
- * throwaway element and read back, which is the only way to compare the two.
- */
+// Resolved through a probe element, so it compares with a computed `rgb(...)`.
 export async function resolvedThemeColor(
   session: Session,
   contextId: number,
@@ -449,7 +357,6 @@ export async function resolvedThemeColor(
   );
 }
 
-/** Whether an element's content is wider than the element, i.e. it scrolls sideways. */
 export async function overflowsSideways(
   session: Session,
   contextId: number,
@@ -465,15 +372,6 @@ export async function overflowsSideways(
   );
 }
 
-/**
- * How many objects the cluster has of one kind, asked of the cluster rather than
- * of the page.
- *
- * The frame can reach the host's own Kubernetes proxy on its origin, which makes
- * the cluster the source of truth for a count the page renders — instead of a
- * number written into a test, which is the development cluster's contents on the
- * day it was written.
- */
 export async function clusterItems<Item = Record<string, unknown>>(
   session: Session,
   contextId: number,
@@ -493,7 +391,6 @@ export async function clusterItems<Item = Record<string, unknown>>(
   return parsed.items;
 }
 
-/** Clicks the first element matching `selector` whose text contains `text`. */
 export async function clickByText(
   session: Session,
   contextId: number,
@@ -516,13 +413,7 @@ export async function clickByText(
   await new Promise((resolve) => setTimeout(resolve, 900));
 }
 
-/**
- * Waits for a notification that says `text`, among however many are showing.
- *
- * Freelens stacks them and each stays a few seconds, so a test that copies twice
- * in a row sees the first one still on top when the second arrives. Reading "the
- * notification" then reads the previous one; this reads all of them.
- */
+// Notifications stack, so the first one may be a previous action's.
 export async function notificationSaying(
   session: Session,
   contextId: number,
@@ -540,7 +431,6 @@ export async function notificationSaying(
   });
 }
 
-/** The text of the notification Freelens is showing, waited for. */
 export async function notificationText(session: Session, contextId: number): Promise<string> {
   return waitFor("a notification", async () => {
     const text = await session.evaluate<string>(
@@ -555,11 +445,7 @@ export async function notificationText(session: Session, contextId: number): Pro
   });
 }
 
-/**
- * Types into a field the way the renderer expects. Setting `.value` does not
- * move a React controlled input, so the native setter is called and an input
- * event dispatched, which is what React listens for.
- */
+// Setting `.value` does not reach a React controlled input; the native setter does.
 export async function typeInto(
   session: Session,
   contextId: number,

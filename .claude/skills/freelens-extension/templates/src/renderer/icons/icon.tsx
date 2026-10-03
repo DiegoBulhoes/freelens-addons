@@ -1,7 +1,6 @@
 import type React from "react";
 
-// A plain glyph of our own. Not the project's logo: a trademark in a sidebar is
-// someone else's mark on our work, and the shape only has to be recognisable.
+// Our own glyph, never the project's logo: that is someone else's trademark.
 export function __Name__Icon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" role="img" {...props}>

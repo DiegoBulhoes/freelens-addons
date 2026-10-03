@@ -1,11 +1,5 @@
 export type Tone = "critical" | "warning" | "info" | "ok";
 
-/**
- * One number and what it counts. A card that can be pressed is a `<button>` —
- * for the keyboard and the screen reader — and opens the list the number
- * summarises; one that cannot is a plain block. A count of problems is only
- * alarming when there is one, so the tone applies above zero.
- */
 export function StatCard({
   value,
   label,

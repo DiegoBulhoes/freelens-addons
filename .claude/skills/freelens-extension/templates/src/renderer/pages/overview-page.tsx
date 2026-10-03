@@ -1,16 +1,7 @@
 import { StatCard } from "../components/stat-card";
 import { __Name__Styles } from "../components/styles";
 
-/**
- * The scaffold's only page. It exists so `make up` has something to show in the
- * sidebar and `pages-render.e2e.ts` has a headline to read; the first store hook
- * and the first decision module replace its contents.
- *
- * Built from the design standard (design.md in the skill): the root class for
- * the tokens, a page, its head, a row of cards. Keep the page and headline class
- * names: the e2e layout suite reads the headline's colour and the page's width
- * by them.
- */
+// Keep the page and headline class names: the e2e layout suite reads them.
 export function OverviewPage() {
   return (
     <div className="__Name__ __Name__-page">
