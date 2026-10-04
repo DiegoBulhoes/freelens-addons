@@ -235,6 +235,7 @@ The Makefile already does this.
 | `make check` | Everything CI runs except the scanners |
 | `make cluster` | Bring up the k3s cluster and seed it |
 | `make cluster-down` | Destroy it, volume included |
+| `make kubectl ARGS="..."` | kubectl on the dev k3s, refused on any other cluster |
 | `make e2e` | The end-to-end suite, against a running Freelens |
 | `bash scripts/scan.sh` | Secret, dependency and Dockerfile scanners |
 | `dc logs -f freelens` | Follow the container logs |

@@ -49,6 +49,11 @@ cluster:
 	@echo
 	@echo "Set KUBECONFIG_PATH in .env to $(DEV_KUBECONFIG_DIR)/kubeconfig.yaml, then 'make up'."
 
+# kubectl on the dev k3s only; refuses any other cluster. make kubectl ARGS="-n mongodb get pods"
+.PHONY: kubectl
+kubectl:
+	@DEV_KUBECONFIG_DIR=$(DEV_KUBECONFIG_DIR) bash scripts/dev-kubectl.sh $(ARGS)
+
 # The kubeconfig is root-owned in sticky /tmp, so the container removes it.
 .PHONY: cluster-down
 cluster-down:

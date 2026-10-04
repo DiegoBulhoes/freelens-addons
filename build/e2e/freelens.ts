@@ -275,6 +275,22 @@ export async function selectNamespace(
   await new Promise((resolve) => setTimeout(resolve, 2500));
 }
 
+export const DEV_NODE = "freelens-addons-dev";
+
+/** The suites click buttons that write: they must never drive a window opened on another cluster. */
+export async function assertDevCluster(session: Session, contextId: number): Promise<void> {
+  const nodes = await session.evaluate<string[]>(
+    `fetch("/api-kube/api/v1/nodes").then((response) => response.json()).then((list) => (list.items ?? []).map((node) => node.metadata.name))`,
+    contextId,
+  );
+
+  if (nodes.length !== 1 || nodes[0] !== DEV_NODE) {
+    throw new Error(
+      `refusing: Freelens has a cluster open that is not the dev k3s (its only node is ${DEV_NODE}; found: ${nodes.join(", ") || "none"})`,
+    );
+  }
+}
+
 export async function openWorkbench(): Promise<{
   session: Session;
   frame: number;
@@ -286,6 +302,8 @@ export async function openWorkbench(): Promise<{
   await openCluster(session);
 
   let frame = await clusterFrame(session);
+
+  await assertDevCluster(session, frame);
 
   // A host list page: the namespace control lives there.
   await clickSidebar(session, frame, "pods", "workloads");
