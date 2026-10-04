@@ -1,0 +1,824 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T04:13:49Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "catalog-rs-svc"
+        },
+        "name": "data-volume-catalog-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "518987",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/data-volume-catalog-rs-0",
+        "uid": "87722b87-312f-4f07-89d7-3e6f3a6444c2"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "10G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-87722b87-312f-4f07-89d7-3e6f3a6444c2"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "10G"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T04:14:55Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "catalog-rs-svc"
+        },
+        "name": "data-volume-catalog-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "519714",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/data-volume-catalog-rs-1",
+        "uid": "98fa0ee7-2eca-49ad-8cc1-c95a69cc7258"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "10G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-98fa0ee7-2eca-49ad-8cc1-c95a69cc7258"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "10G"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T04:15:46Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "catalog-rs-svc"
+        },
+        "name": "data-volume-catalog-rs-2",
+        "namespace": "mongodb",
+        "resourceVersion": "520220",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/data-volume-catalog-rs-2",
+        "uid": "70807212-3981-48fb-b546-02f73908c727"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "10G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-70807212-3981-48fb-b546-02f73908c727"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "10G"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T04:11:05Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "legacy-rs-svc"
+        },
+        "name": "data-volume-legacy-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "517105",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/data-volume-legacy-rs-0",
+        "uid": "64fe9d8d-9ec6-4124-8bf4-a211feb18115"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        },
+        "storageClassName": "no-such-class",
+        "volumeMode": "Filesystem"
+      },
+      "status": {
+        "phase": "Pending"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T13:25:55Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "secure-rs-svc"
+        },
+        "name": "data-volume-secure-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "583161",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/data-volume-secure-rs-0",
+        "uid": "cd239c1a-a0ca-4178-9051-2248787fd415"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "10G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-cd239c1a-a0ca-4178-9051-2248787fd415"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "10G"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T04:11:05Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "sessions-rs-svc"
+        },
+        "name": "data-volume-sessions-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "517471",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/data-volume-sessions-rs-0",
+        "uid": "a54cd6d5-2a30-4c82-a2c9-8dfbbaeb8cb3"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "10G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-a54cd6d5-2a30-4c82-a2c9-8dfbbaeb8cb3"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "10G"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T04:13:05Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "sessions-rs-svc"
+        },
+        "name": "data-volume-sessions-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "518508",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/data-volume-sessions-rs-1",
+        "uid": "da645a0c-e758-4497-85a4-780b01dd796b"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "10G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-da645a0c-e758-4497-85a4-780b01dd796b"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "10G"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T04:11:05Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "sessions-rs-svc"
+        },
+        "name": "data-volume-sessions-rs-arb-0",
+        "namespace": "mongodb",
+        "resourceVersion": "517483",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/data-volume-sessions-rs-arb-0",
+        "uid": "bdea42d7-0295-4982-8a88-1331cc0f422c"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "10G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-bdea42d7-0295-4982-8a88-1331cc0f422c"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "10G"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T04:11:05Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "upgrade-rs-svc"
+        },
+        "name": "data-volume-upgrade-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "517523",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/data-volume-upgrade-rs-0",
+        "uid": "0f9039b4-b879-46b6-9510-3a491c9b50e6"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "10G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-0f9039b4-b879-46b6-9510-3a491c9b50e6"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "10G"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T04:13:49Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "catalog-rs-svc"
+        },
+        "name": "logs-volume-catalog-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "518980",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/logs-volume-catalog-rs-0",
+        "uid": "73e3ab7e-2707-4a1c-b3de-25fc182f3734"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "2G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-73e3ab7e-2707-4a1c-b3de-25fc182f3734"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "2G"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T04:14:55Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "catalog-rs-svc"
+        },
+        "name": "logs-volume-catalog-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "519709",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/logs-volume-catalog-rs-1",
+        "uid": "0e670f64-5c5b-4580-bbc9-afbd0e523ded"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "2G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-0e670f64-5c5b-4580-bbc9-afbd0e523ded"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "2G"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T04:15:46Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "catalog-rs-svc"
+        },
+        "name": "logs-volume-catalog-rs-2",
+        "namespace": "mongodb",
+        "resourceVersion": "520216",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/logs-volume-catalog-rs-2",
+        "uid": "3fe3b1e2-8470-41cc-80aa-c84bd9661d91"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "2G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-3fe3b1e2-8470-41cc-80aa-c84bd9661d91"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "2G"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T04:11:05Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "legacy-rs-svc"
+        },
+        "name": "logs-volume-legacy-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "517109",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/logs-volume-legacy-rs-0",
+        "uid": "5428a71c-c34d-4811-92e9-de7b362db513"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "2G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem"
+      },
+      "status": {
+        "phase": "Pending"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T13:25:55Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "secure-rs-svc"
+        },
+        "name": "logs-volume-secure-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "583164",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/logs-volume-secure-rs-0",
+        "uid": "6c6aad6e-2319-4f75-96e2-53e706039724"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "2G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-6c6aad6e-2319-4f75-96e2-53e706039724"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "2G"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T04:11:05Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "sessions-rs-svc"
+        },
+        "name": "logs-volume-sessions-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "517415",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/logs-volume-sessions-rs-0",
+        "uid": "27fdb294-6c52-45c0-87b4-faba312bc4cf"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "2G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-27fdb294-6c52-45c0-87b4-faba312bc4cf"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "2G"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T04:13:05Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "sessions-rs-svc"
+        },
+        "name": "logs-volume-sessions-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "518504",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/logs-volume-sessions-rs-1",
+        "uid": "a3d63764-b264-4f3c-a7f6-d1ab32d55777"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "2G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-a3d63764-b264-4f3c-a7f6-d1ab32d55777"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "2G"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T04:11:05Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "sessions-rs-svc"
+        },
+        "name": "logs-volume-sessions-rs-arb-0",
+        "namespace": "mongodb",
+        "resourceVersion": "517463",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/logs-volume-sessions-rs-arb-0",
+        "uid": "36d1740f-1de9-4717-a7af-240cb821b953"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "2G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-36d1740f-1de9-4717-a7af-240cb821b953"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "2G"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T04:11:05Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "upgrade-rs-svc"
+        },
+        "name": "logs-volume-upgrade-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "517542",
+        "selfLink": "/api/v1/namespaces/mongodb/persistentvolumeclaims/logs-volume-upgrade-rs-0",
+        "uid": "cc434f21-d896-4a95-8d02-a74c42463d4b"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "2G"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-cc434f21-d896-4a95-8d02-a74c42463d4b"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "2G"
+        },
+        "phase": "Bound"
+      }
+    }
+  ],
+  "kind": "List"
+}

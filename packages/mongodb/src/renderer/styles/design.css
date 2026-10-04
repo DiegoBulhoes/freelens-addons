@@ -1,0 +1,1029 @@
+/*
+ * The design standard. Edit it here and run the skill's scripts/sync-design.sh; never edit a copy.
+ *
+ * - Colours come from the host's theme; the one literal is a pressed filter's white.
+ * - Content sits on --sidebarBackground: --layoutBackground equals it in the light theme.
+ * - Every component that can be a <button> resets `text-align: center`.
+ */
+
+.MongoDB {
+  --mongodb-gap-xs: calc(var(--unit, 8px) * 0.5);
+  --mongodb-gap-sm: var(--unit, 8px);
+  --mongodb-gap-md: calc(var(--unit, 8px) * 2);
+  --mongodb-gap-lg: calc(var(--unit, 8px) * 3);
+
+  --mongodb-small: var(--font-size-small, 12px);
+  --mongodb-radius: var(--border-radius, 3px);
+  --mongodb-line: var(--borderFaintColor, rgba(127, 127, 127, 0.25));
+  --mongodb-line-strong: var(--borderColor, rgba(127, 127, 127, 0.5));
+  --mongodb-surface: var(--sidebarBackground, rgba(127, 127, 127, 0.15));
+  --mongodb-surface-hover: var(--sidebarItemHoverBackground, rgba(127, 127, 127, 0.25));
+
+  --mongodb-tone-critical: var(--colorError);
+  --mongodb-tone-warning: var(--colorWarning);
+  --mongodb-tone-ok: var(--colorSuccess);
+  --mongodb-tone-info: var(--colorInfo);
+
+  color: var(--textColorPrimary);
+}
+
+.MongoDB :is(button, a, input):focus-visible {
+  outline: 2px solid var(--colorInfo);
+  outline-offset: 1px;
+}
+
+/* The host's ConfirmDialog is white in every theme; ours follows the theme. */
+.ConfirmDialog:has(.MongoDB-dialog) > .box {
+  border: 1px solid var(--borderColor);
+  background-color: var(--contentColor);
+  color: var(--textColorPrimary);
+}
+
+.ConfirmDialog:has(.MongoDB-dialog) .confirm-buttons {
+  background: var(--layoutBackground);
+}
+
+/* One text colour in our dialogs; the two root classes outrank the host's control rules. */
+.MongoDB.MongoDB-dialog,
+.MongoDB.MongoDB-dialog
+  :is(
+    .MongoDB-muted,
+    .MongoDB-hint,
+    .MongoDB-filter:not([aria-pressed="true"]),
+    .Checkbox,
+    .Checkbox label,
+    .Input,
+    .Input label,
+    input
+  ) {
+  color: inherit;
+}
+
+/* ─── Page ──────────────────────────────────────────────────────────────── */
+
+.MongoDB-page {
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding: var(--mongodb-gap-lg);
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: var(--mongodb-gap-lg);
+  min-width: 0;
+}
+
+/* Laid out as the host's `.ItemListLayout`. */
+.MongoDB-page--list {
+  padding: 0;
+  gap: 0;
+  background: var(--contentColor);
+}
+
+.MongoDB-page--list > .MongoDB-page__head {
+  padding: var(--mongodb-gap-md);
+}
+
+.MongoDB-page--list > .MongoDB-filters {
+  padding: 0 var(--mongodb-gap-md) var(--mongodb-gap-md);
+}
+
+.MongoDB-page--list > .MongoDB-section > .MongoDB-section__note {
+  padding: 0 var(--mongodb-gap-md) var(--mongodb-gap-md);
+}
+
+.MongoDB-page__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--mongodb-gap-md);
+  flex-wrap: wrap;
+}
+
+.MongoDB-page__head > :first-child {
+  flex: 1 1 20em;
+  min-width: 0;
+}
+
+.MongoDB-page__headline {
+  display: flex;
+  align-items: baseline;
+  gap: var(--mongodb-gap-sm);
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: calc(var(--unit, 8px) * 3);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: 1.25;
+}
+
+.MongoDB-page__subline {
+  margin: var(--mongodb-gap-xs) 0 0;
+  color: var(--textColorSecondary);
+}
+
+.MongoDB-page__count {
+  font-size: var(--font-size-small, 12px);
+  color: var(--textColorSecondary);
+}
+
+.MongoDB-page__subline--alarm {
+  color: var(--mongodb-tone-critical);
+}
+
+.MongoDB-page__actions {
+  display: grid;
+  justify-items: end;
+  gap: var(--mongodb-gap-xs);
+  max-width: 28em;
+  text-align: right;
+}
+
+/* ─── Section ───────────────────────────────────────────────────────────── */
+
+.MongoDB-section {
+  display: grid;
+  gap: var(--mongodb-gap-sm);
+  min-width: 0;
+}
+
+.MongoDB-section__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--mongodb-gap-sm);
+  flex-wrap: wrap;
+}
+
+.MongoDB-section__bar > :last-child:not(:first-child) {
+  margin-left: auto;
+}
+
+.MongoDB-section__title {
+  margin: 0;
+  font-size: var(--font-size-big, 16px);
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+.MongoDB-section__note {
+  margin: 0;
+  color: var(--textColorSecondary);
+}
+
+/* ─── Cards ─────────────────────────────────────────────────────────────── */
+
+/* auto-fill, not auto-fit: a card keeps its width however few there are. */
+.MongoDB-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: var(--mongodb-gap-sm);
+}
+
+.MongoDB-card {
+  display: grid;
+  align-content: start;
+  gap: var(--mongodb-gap-xs);
+  padding: var(--mongodb-gap-md);
+  border: 1px solid var(--mongodb-line);
+  border-radius: var(--mongodb-radius);
+  background: var(--mongodb-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.MongoDB-card {
+  cursor: pointer;
+}
+
+button.MongoDB-card:hover {
+  background: var(--mongodb-surface-hover);
+  border-color: var(--mongodb-line-strong);
+}
+
+.MongoDB-card__value {
+  font-size: calc(var(--unit, 8px) * 3.5);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.MongoDB-card__label {
+  font-size: var(--mongodb-small);
+  color: var(--textColorSecondary);
+}
+
+.MongoDB-card--critical .MongoDB-card__value {
+  color: var(--mongodb-tone-critical);
+}
+
+.MongoDB-card--warning .MongoDB-card__value {
+  color: var(--mongodb-tone-warning);
+}
+
+.MongoDB-card--info .MongoDB-card__value {
+  color: var(--mongodb-tone-info);
+}
+
+.MongoDB-card--ok .MongoDB-card__value {
+  color: var(--mongodb-tone-ok);
+}
+
+/* ─── Rows ──────────────────────────────────────────────────────────────── */
+
+.MongoDB-list {
+  display: grid;
+  gap: var(--mongodb-gap-xs);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.MongoDB-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--mongodb-gap-md);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--mongodb-gap-sm) var(--mongodb-gap-md);
+  border: 1px solid var(--mongodb-line);
+  border-left: 3px solid var(--mongodb-line);
+  border-radius: var(--mongodb-radius);
+  background: var(--mongodb-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.MongoDB-row {
+  cursor: pointer;
+}
+
+button.MongoDB-row:hover,
+.MongoDB-row:has(> button.MongoDB-row__main:hover) {
+  background: var(--mongodb-surface-hover);
+}
+
+.MongoDB-row--critical {
+  border-left-color: var(--mongodb-tone-critical);
+}
+
+.MongoDB-row--warning {
+  border-left-color: var(--mongodb-tone-warning);
+}
+
+.MongoDB-row--info {
+  border-left-color: var(--mongodb-tone-info);
+}
+
+.MongoDB-row--ok {
+  border-left-color: var(--mongodb-tone-ok);
+}
+
+.MongoDB-row__state {
+  flex: 0 0 9em;
+  font-size: var(--mongodb-small);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+.MongoDB-row--critical .MongoDB-row__state {
+  color: var(--mongodb-tone-critical);
+}
+
+.MongoDB-row--warning .MongoDB-row__state {
+  color: var(--mongodb-tone-warning);
+}
+
+.MongoDB-row--info .MongoDB-row__state {
+  color: var(--mongodb-tone-info);
+}
+
+.MongoDB-row--ok .MongoDB-row__state {
+  color: var(--mongodb-tone-ok);
+}
+
+.MongoDB-row__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+button.MongoDB-row__main {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.MongoDB-row__name {
+  display: flex;
+  align-items: baseline;
+  gap: var(--mongodb-gap-xs) var(--mongodb-gap-sm);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.MongoDB-row__meta {
+  font-size: var(--mongodb-small);
+  color: var(--textColorSecondary);
+}
+
+.MongoDB-row__reason {
+  font-size: var(--mongodb-small);
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+.MongoDB-row__aside {
+  flex: none;
+  font-size: var(--mongodb-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.MongoDB-row__actions {
+  flex: none;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: var(--mongodb-gap-xs);
+}
+
+/* A value to copy beside its button: the value wraps anywhere, so the button stays in view. */
+.MongoDB-copyable {
+  display: flex;
+  align-items: center;
+  gap: var(--mongodb-gap-sm);
+}
+
+.MongoDB-copyable > code {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ─── Boxes ─────────────────────────────────────────────────────────────── */
+
+.MongoDB-box {
+  display: grid;
+  gap: var(--mongodb-gap-xs);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--mongodb-gap-sm) var(--mongodb-gap-md);
+  border: 1px solid var(--mongodb-line);
+  border-left: 3px solid var(--mongodb-line);
+  border-radius: var(--mongodb-radius);
+  background: var(--mongodb-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.MongoDB-box {
+  cursor: pointer;
+}
+
+button.MongoDB-box:hover {
+  background: var(--mongodb-surface-hover);
+}
+
+.MongoDB-box--critical {
+  border-left-color: var(--mongodb-tone-critical);
+}
+
+.MongoDB-box--warning {
+  border-left-color: var(--mongodb-tone-warning);
+}
+
+.MongoDB-box--info {
+  border-left-color: var(--mongodb-tone-info);
+}
+
+.MongoDB-box--ok {
+  border-left-color: var(--mongodb-tone-ok);
+}
+
+.MongoDB-box__head {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  align-items: baseline;
+  gap: var(--mongodb-gap-sm);
+  width: 100%;
+}
+
+button.MongoDB-box__head {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.MongoDB-box__title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--mongodb-gap-xs) var(--mongodb-gap-sm);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.MongoDB-box__meta {
+  font-size: var(--mongodb-small);
+  color: var(--textColorSecondary);
+}
+
+.MongoDB-box__count {
+  font-size: var(--mongodb-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.MongoDB-box__reason {
+  margin: 0;
+  font-size: var(--mongodb-small);
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+/* ─── Chips ─────────────────────────────────────────────────────────────── */
+
+.MongoDB-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mongodb-gap-xs);
+}
+
+/* On the surface grey, so it takes the page's colour to stand out. */
+.MongoDB-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--mongodb-gap-xs);
+  padding: 1px var(--mongodb-gap-sm);
+  border: 1px solid transparent;
+  border-radius: var(--mongodb-radius);
+  background: var(--contentColor, rgba(127, 127, 127, 0.1));
+  font: inherit;
+  font-size: var(--mongodb-small);
+  color: inherit;
+  text-align: left;
+}
+
+button.MongoDB-chip {
+  color: var(--colorInfo);
+  cursor: pointer;
+}
+
+button.MongoDB-chip:hover {
+  border-color: var(--colorInfo);
+}
+
+.MongoDB-chip__meta {
+  color: var(--textColorSecondary);
+}
+
+/* ─── Tags ──────────────────────────────────────────────────────────────── */
+
+/* Toned through `color`, so a domain class that sets it tones the tag too. */
+.MongoDB-tag {
+  display: inline-block;
+  padding: 0 var(--mongodb-gap-xs);
+  border: 1px solid currentColor;
+  border-radius: var(--mongodb-radius);
+  font-size: var(--mongodb-small);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.MongoDB-tag--critical {
+  color: var(--mongodb-tone-critical);
+}
+
+.MongoDB-tag--warning {
+  color: var(--mongodb-tone-warning);
+}
+
+.MongoDB-tag--info {
+  color: var(--mongodb-tone-info);
+}
+
+.MongoDB-tag--ok {
+  color: var(--mongodb-tone-ok);
+}
+
+.MongoDB-tag--neutral {
+  color: var(--textColorSecondary);
+}
+
+/* ─── Tables ────────────────────────────────────────────────────────────── */
+
+/* Value for value as the host's lists (Freelens 1.10.3 `.ItemListLayout`, `.TableCell`). */
+.MongoDB-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--contentColor);
+}
+
+.MongoDB-table th {
+  box-sizing: border-box;
+  height: 33px;
+  padding: var(--mongodb-gap-sm);
+  border-top: 1px solid var(--borderFaintColor);
+  border-bottom: 1px solid var(--borderFaintColor);
+  background: var(--tableHeaderBackground);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: 1.1;
+  text-align: left;
+  color: var(--tableHeaderColor, var(--textColorPrimary));
+  white-space: nowrap;
+}
+
+.MongoDB-table th:first-child,
+.MongoDB-table td:first-child {
+  padding-left: var(--mongodb-gap-md);
+}
+
+/* 33px: the pitch at which the host's virtual list places its rows. */
+.MongoDB-table td {
+  box-sizing: border-box;
+  height: 33px;
+  /* No vertical padding, so a 23px ⋮ or a tag fits. */
+  padding: 0 var(--mongodb-gap-sm);
+  line-height: 1.1;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+.MongoDB-table__number {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Every column that must not break needs __shrink, or this one squeezes it to a letter per line. */
+.MongoDB-table__fill {
+  width: 100%;
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.MongoDB-table__shrink {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.MongoDB-table__actions {
+  width: 1%;
+  line-height: 0;
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* The first cell of a selectable row, holding the host's own Checkbox, as its lists do. */
+.MongoDB-table__check {
+  width: 1%;
+  padding-right: 0;
+  line-height: 0;
+}
+
+.MongoDB-table__row--selected td {
+  background: var(--tableBgcSelected, var(--mongodb-surface-hover));
+}
+
+.MongoDB-table__row--clickable {
+  cursor: pointer;
+}
+
+.MongoDB-table__row--clickable:hover td {
+  background: var(--tableBgcSelected, var(--mongodb-surface-hover));
+}
+
+.MongoDB-table th[aria-sort] > .MongoDB-sort {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.MongoDB-table th[aria-sort="ascending"] > .MongoDB-sort::after {
+  content: " ▲";
+}
+
+.MongoDB-table th[aria-sort="descending"] > .MongoDB-sort::after {
+  content: " ▼";
+}
+
+/* ─── Facts ─────────────────────────────────────────────────────────────── */
+
+.MongoDB-facts {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--mongodb-gap-xs) var(--mongodb-gap-md);
+  margin: 0;
+  padding: var(--mongodb-gap-sm) var(--mongodb-gap-md);
+  border: 1px solid var(--mongodb-line);
+  border-radius: var(--mongodb-radius);
+  background: var(--mongodb-surface);
+}
+
+.MongoDB-facts dt {
+  color: var(--textColorSecondary);
+}
+
+.MongoDB-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ─── Banner ────────────────────────────────────────────────────────────── */
+
+.MongoDB-banner {
+  display: grid;
+  gap: var(--mongodb-gap-xs);
+  padding: var(--mongodb-gap-sm) var(--mongodb-gap-md);
+  border: 1px solid var(--mongodb-tone-warning);
+  border-radius: var(--mongodb-radius);
+  background: var(--mongodb-surface);
+}
+
+.MongoDB-banner__title {
+  display: flex;
+  align-items: center;
+  gap: var(--mongodb-gap-sm);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--mongodb-tone-warning);
+}
+
+.MongoDB-banner__body {
+  overflow-wrap: anywhere;
+}
+
+.MongoDB-banner--critical {
+  border-color: var(--mongodb-tone-critical);
+}
+
+.MongoDB-banner--critical .MongoDB-banner__title {
+  color: var(--mongodb-tone-critical);
+}
+
+/* ─── Controls ──────────────────────────────────────────────────────────── */
+
+.MongoDB-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mongodb-gap-xs);
+}
+
+.MongoDB-filter {
+  padding: 2px var(--mongodb-gap-sm);
+  border: 1px solid var(--mongodb-line);
+  border-radius: var(--mongodb-radius);
+  background: transparent;
+  font: inherit;
+  font-size: var(--mongodb-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.MongoDB-filter:hover {
+  border-color: var(--mongodb-line-strong);
+  color: var(--textColorPrimary);
+}
+
+.MongoDB-filter[aria-pressed="true"] {
+  border-color: var(--colorInfo);
+  background: var(--colorInfo);
+  color: #fff;
+}
+
+.MongoDB-filter__count {
+  margin-left: var(--mongodb-gap-xs);
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+.MongoDB-button {
+  padding: var(--mongodb-gap-xs) var(--mongodb-gap-md);
+  border: 1px solid var(--mongodb-line-strong);
+  border-radius: var(--mongodb-radius);
+  background: var(--mongodb-surface);
+  font: inherit;
+  color: var(--textColorPrimary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.MongoDB-button:hover:not(:disabled) {
+  background: var(--mongodb-surface-hover);
+}
+
+.MongoDB-button--primary {
+  border-color: var(--colorInfo);
+}
+
+.MongoDB-button--caution {
+  border-color: var(--mongodb-tone-warning);
+  color: var(--mongodb-tone-warning);
+}
+
+.MongoDB-button:disabled {
+  border-color: var(--mongodb-line);
+  color: var(--textColorSecondary);
+  cursor: not-allowed;
+}
+
+.MongoDB-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--mongodb-gap-xs);
+  flex-wrap: wrap;
+}
+
+.MongoDB-icon-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--textColorSecondary);
+  cursor: pointer;
+}
+
+.MongoDB-icon-button:hover {
+  color: var(--textColorPrimary);
+}
+
+.MongoDB-search {
+  min-width: 0;
+  padding: var(--mongodb-gap-xs) var(--mongodb-gap-sm);
+  border: 1px solid var(--inputControlBorder, var(--mongodb-line));
+  border-radius: var(--mongodb-radius);
+  background: var(--inputControlBackground, transparent);
+  font: inherit;
+  color: var(--textColorPrimary);
+}
+
+.MongoDB-search:hover {
+  border-color: var(--inputControlHoverBorder, var(--mongodb-line-strong));
+}
+
+.MongoDB-search:focus {
+  outline: none;
+  border-color: var(--colorInfo);
+}
+
+.MongoDB-search--wide {
+  flex: 1 1 20rem;
+}
+
+.MongoDB-link {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: var(--colorInfo);
+  text-align: left;
+  cursor: pointer;
+}
+
+.MongoDB-link:hover,
+.MongoDB a:hover {
+  text-decoration: underline;
+}
+
+.MongoDB a {
+  color: var(--colorInfo);
+  text-decoration: none;
+}
+
+/* ─── Picker ────────────────────────────────────────────────────────────── */
+
+.MongoDB-picker {
+  height: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.MongoDB-picker__side {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: var(--mongodb-gap-sm);
+  padding: var(--mongodb-gap-md);
+  border-right: 1px solid var(--mongodb-line);
+  min-height: 0;
+}
+
+.MongoDB-picker__list {
+  overflow-y: auto;
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 1px;
+  min-height: 0;
+}
+
+.MongoDB-picker__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "name aside" "meta aside";
+  align-items: center;
+  gap: 0 var(--mongodb-gap-sm);
+  padding: var(--mongodb-gap-sm);
+  border: none;
+  border-left: 2px solid transparent;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.MongoDB-picker__item:hover {
+  background: var(--mongodb-surface-hover);
+}
+
+.MongoDB-picker__item--selected {
+  border-left-color: var(--colorInfo);
+  background: var(--mongodb-surface);
+}
+
+.MongoDB-picker__name {
+  grid-area: name;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.MongoDB-picker__meta {
+  grid-area: meta;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--mongodb-small);
+  color: var(--textColorSecondary);
+}
+
+.MongoDB-picker__aside {
+  grid-area: aside;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: var(--mongodb-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.MongoDB-picker__detail {
+  overflow-y: auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+.MongoDB-picker__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+  padding: var(--mongodb-gap-lg);
+  color: var(--textColorSecondary);
+  text-align: center;
+}
+
+/* ─── Status ────────────────────────────────────────────────────────────── */
+
+.MongoDB-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mongodb-gap-xs);
+  white-space: nowrap;
+}
+
+.MongoDB-status::before {
+  content: "";
+  width: 0.6em;
+  height: 0.6em;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--textColorSecondary);
+}
+
+.MongoDB-status--critical::before {
+  background: var(--mongodb-tone-critical);
+}
+
+.MongoDB-status--warning::before {
+  background: var(--mongodb-tone-warning);
+}
+
+.MongoDB-status--info::before {
+  background: var(--mongodb-tone-info);
+}
+
+.MongoDB-status--ok::before {
+  background: var(--mongodb-tone-ok);
+}
+
+/* ─── Namespace selector ────────────────────────────────────────────────── */
+
+.MongoDB-namespaces {
+  min-width: 16em;
+}
+
+/* ─── Drawer ────────────────────────────────────────────────────────────── */
+
+.MongoDB-drawer {
+  display: grid;
+  gap: var(--mongodb-gap-lg);
+  min-width: 0;
+  padding-block: var(--mongodb-gap-sm);
+}
+
+/* ─── Form ──────────────────────────────────────────────────────────────── */
+
+.MongoDB-form {
+  display: grid;
+  gap: var(--mongodb-gap-md);
+}
+
+.MongoDB-form__field {
+  display: grid;
+  gap: var(--mongodb-gap-xs);
+}
+
+/* ─── Selection ─────────────────────────────────────────────────────────── */
+
+.MongoDB-selection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mongodb-gap-md);
+  padding: var(--mongodb-gap-sm) var(--mongodb-gap-md);
+  border-top: 1px solid var(--mongodb-line);
+  background: var(--mongodb-surface);
+}
+
+.MongoDB-selection__what {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.MongoDB-selection__count {
+  color: var(--textColorSecondary);
+}
+
+/* ─── Text ──────────────────────────────────────────────────────────────── */
+
+.MongoDB-muted {
+  color: var(--textColorSecondary);
+}
+
+.MongoDB-hint {
+  font-size: var(--mongodb-small);
+  color: var(--textColorSecondary);
+}
+
+.MongoDB code,
+.MongoDB-mono {
+  font-family: var(--font-monospace, monospace);
+  font-size: var(--mongodb-small);
+}
+
+.MongoDB-truncate {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.MongoDB-text--critical {
+  color: var(--mongodb-tone-critical);
+}
+
+.MongoDB-text--warning {
+  color: var(--mongodb-tone-warning);
+}
+
+.MongoDB-text--info {
+  color: var(--mongodb-tone-info);
+}
+
+.MongoDB-text--ok {
+  color: var(--mongodb-tone-ok);
+}

@@ -1,0 +1,191 @@
+# MongoDB Community replica sets, one per state the pages rank. The operator watches its own
+# namespace, so they live beside it. The passwords exist only inside this disposable cluster.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: catalog-admin-password
+  namespace: mongodb
+stringData:
+  password: dev-catalog-not-a-secret
+---
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: catalog-rs
+  namespace: mongodb
+spec:
+  type: ReplicaSet
+  members: 3
+  version: "8.0.12"
+  # catalog-rs-2 is the preferred primary.
+  memberConfig:
+    - votes: 1
+      priority: "1"
+    - votes: 1
+      priority: "1"
+    - votes: 1
+      priority: "2"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: catalog-admin
+      db: admin
+      passwordSecretRef:
+        name: catalog-admin-password
+      roles:
+        - name: clusterAdmin
+          db: admin
+        - name: userAdminAnyDatabase
+          db: admin
+        - name: readWriteAnyDatabase
+          db: admin
+      scramCredentialsSecretName: catalog-admin-scram
+---
+# Its only user's password Secret does not exist, so the operator stops before creating any pod.
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: reporting-rs
+  namespace: mongodb
+spec:
+  type: ReplicaSet
+  members: 1
+  version: "8.0.12"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: reporting
+      db: admin
+      passwordSecretRef:
+        name: reporting-password
+      roles:
+        - name: read
+          db: catalog
+      scramCredentialsSecretName: reporting-scram
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sessions-admin-password
+  namespace: mongodb
+stringData:
+  password: dev-sessions-not-a-secret
+---
+# Two data members and an arbiter, one version behind.
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: sessions-rs
+  namespace: mongodb
+spec:
+  type: ReplicaSet
+  members: 2
+  arbiters: 1
+  version: "7.0.21"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: sessions-admin
+      db: admin
+      passwordSecretRef:
+        name: sessions-admin-password
+      roles:
+        - name: clusterAdmin
+          db: admin
+        - name: userAdminAnyDatabase
+          db: admin
+      scramCredentialsSecretName: sessions-admin-scram
+---
+# Its volumes ask for a storage class that does not exist, so its pods stay Pending.
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: legacy-rs
+  namespace: mongodb
+spec:
+  type: ReplicaSet
+  members: 1
+  version: "8.0.12"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users: []
+  statefulSet:
+    spec:
+      volumeClaimTemplates:
+        - metadata:
+            name: data-volume
+          spec:
+            storageClassName: no-such-class
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 1Gi
+---
+# A version with no image: the upgrade never completes.
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: upgrade-rs
+  namespace: mongodb
+spec:
+  type: ReplicaSet
+  members: 1
+  version: "8.0.999"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users: []
+---
+# TLS from cert-manager: the demo CA issues it, and its Secret carries the CA too.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: secure-rs-tls
+  namespace: mongodb
+spec:
+  secretName: secure-rs-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: demo-ca
+  dnsNames:
+    - "*.secure-rs-svc.mongodb.svc.cluster.local"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: secure-admin-password
+  namespace: mongodb
+stringData:
+  password: dev-secure-not-a-secret
+---
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: secure-rs
+  namespace: mongodb
+spec:
+  type: ReplicaSet
+  members: 1
+  version: "8.0.12"
+  security:
+    tls:
+      enabled: true
+      certificateKeySecretRef:
+        name: secure-rs-tls
+      caCertificateSecretRef:
+        name: secure-rs-tls
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: secure-admin
+      db: admin
+      passwordSecretRef:
+        name: secure-admin-password
+      roles:
+        - name: clusterAdmin
+          db: admin
+      scramCredentialsSecretName: secure-admin-scram

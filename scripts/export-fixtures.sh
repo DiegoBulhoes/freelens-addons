@@ -71,6 +71,11 @@ cnpg() {
   emit publications.postgresql.cnpg.io publications.json -A
   emit subscriptions.postgresql.cnpg.io subscriptions.json -A
   emit poddisruptionbudgets pdbs.json -A -l cnpg.io/cluster
+  # Metadata only: names and cert-manager's annotations, never a value.
+  kubectl get secrets -n databases -o json \
+    | python3 -c 'import json, sys; print(json.dumps({"items": [{"metadata": {"name": s["metadata"]["name"], "namespace": s["metadata"]["namespace"], "annotations": {k: v for k, v in (s["metadata"].get("annotations") or {}).items() if k.startswith("cert-manager.io/")}}} for s in json.load(sys.stdin)["items"]]}, indent=2))' \
+    > "${out}/secret-names.json"
+  echo "  secret names → ${out}/secret-names.json"
   # What `kubectl cnpg status` reads from each instance: lag, slots, LSNs, archiving.
   {
     printf '{"items":['
@@ -102,8 +107,43 @@ cnpg() {
   echo "  exported at → ${out}/exported-at.json"
 }
 
+mongodb() {
+  emit mongodbcommunity.mongodbcommunity.mongodb.com replica-sets.json -A
+  emit events events.json -n mongodb --field-selector type=Warning
+  # Env values are redacted by the sanitiser.
+  emit pods pods.json -n mongodb
+  emit statefulsets statefulsets.json -n mongodb
+  emit persistentvolumeclaims pvcs.json -n mongodb
+  # Metadata only, in the shape the extension asks for: names and cert-manager's annotations, never a value.
+  kubectl get secrets -n mongodb -o json \
+    | python3 -c 'import json, sys; print(json.dumps({"items": [{"metadata": {"name": s["metadata"]["name"], "namespace": s["metadata"]["namespace"], "annotations": {k: v for k, v in (s["metadata"].get("annotations") or {}).items() if k.startswith("cert-manager.io/")}}} for s in json.load(sys.stdin)["items"]]}, indent=2))' \
+    > "${out}/secret-names.json"
+  echo "  secret names → ${out}/secret-names.json"
+  # What the automation agent says of each member: its replication state and its plan.
+  {
+    printf '{"items":['
+    first=1
+    # By the agent's container, not the pod's phase: a member whose mongod cannot start still has an agent.
+    for pod in $(kubectl get pods -n mongodb -o jsonpath='{range .items[*]}{.metadata.name}{" "}{end}'); do
+      [[ -n "$(kubectl get pod -n mongodb "${pod}" \
+        -o jsonpath='{.status.containerStatuses[?(@.name=="mongodb-agent")].state.running}')" ]] || continue
+      [[ ${first} -eq 1 ]] || printf ','
+      first=0
+      printf '{"namespace":"mongodb","pod":"%s","health":' "${pod}"
+      kubectl exec -n mongodb "${pod}" -c mongodb-agent -- \
+        cat /var/log/mongodb-mms-automation/healthstatus/agent-health-status.json
+      printf '}'
+    done
+    printf ']}\n'
+  } | python3 -m json.tool > "${out}/agent-health.json"
+  echo "  agent health → ${out}/agent-health.json"
+
+  printf '{ "exportedAt": "%s" }\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "${out}/exported-at.json"
+  echo "  exported at → ${out}/exported-at.json"
+}
+
 packages=("$@")
-[[ ${#packages[@]} -eq 0 ]] && packages=(argocd trivy cert-manager cnpg)
+[[ ${#packages[@]} -eq 0 ]] && packages=(argocd trivy cert-manager cnpg mongodb)
 
 # Public repository: only the dev k3s, recognised by its fixed node name.
 if [[ "$(kubectl get nodes -o jsonpath='{.items[*].metadata.name}')" != "freelens-addons-dev" ]]; then

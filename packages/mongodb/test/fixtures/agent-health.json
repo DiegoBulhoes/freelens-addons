@@ -1,0 +1,1109 @@
+{
+    "items": [
+        {
+            "namespace": "mongodb",
+            "pod": "catalog-rs-0",
+            "health": {
+                "statuses": {
+                    "catalog-rs-0": {
+                        "IsInGoalState": true,
+                        "LastMongoUpTime": 1791120440,
+                        "ExpectedToBeUp": true,
+                        "ReplicationStatus": 2
+                    }
+                },
+                "mmsStatus": {
+                    "catalog-rs-0": {
+                        "name": "catalog-rs-0",
+                        "lastGoalVersionAchieved": 8,
+                        "plans": [
+                            {
+                                "automationConfigVersion": 8,
+                                "started": "2026-10-04T13:22:10.688305561Z",
+                                "completed": "2026-10-04T13:22:30.243340293Z",
+                                "moves": [
+                                    {
+                                        "move": "Start",
+                                        "moveDoc": "Start the process",
+                                        "steps": [
+                                            {
+                                                "step": "StartFresh",
+                                                "stepDoc": "Start a mongo instance  (start fresh)",
+                                                "isWaitStep": false,
+                                                "started": "2026-10-04T13:22:10.688328667Z",
+                                                "completed": null,
+                                                "result": "error"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitAllRsMembersUp",
+                                        "moveDoc": "Wait until all members of this process' repl set are up",
+                                        "steps": [
+                                            {
+                                                "step": "WaitAllRsMembersUp",
+                                                "stepDoc": "Wait until all members of this process' repl set are up",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "RsInit",
+                                        "moveDoc": "Initialize a replica set including the current MongoDB process",
+                                        "steps": [
+                                            {
+                                                "step": "RsInit",
+                                                "stepDoc": "Initialize a replica set",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitPrimary",
+                                        "moveDoc": "Wait until this process is primary",
+                                        "steps": [
+                                            {
+                                                "step": "WaitPrimary",
+                                                "stepDoc": "Wait until this process is primary",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "UpdateFeatureCompatibilityVersion",
+                                        "moveDoc": "Update the featureCompatibilityVersion",
+                                        "steps": [
+                                            {
+                                                "step": "UpdateFeatureCompatibilityVersion",
+                                                "stepDoc": "Update the featureCompatibilityVersion",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "EnsureRolesAreCompatibleWithCurrentFcv",
+                                        "moveDoc": "Ensure all roles are compatible with the current feature compatibility version",
+                                        "steps": [
+                                            {
+                                                "step": "EnsureRolesAreCompatibleWithCurrentFcv",
+                                                "stepDoc": "Ensure the all cluster roles are compatible with the currently selected fcv. This is useful in the case of an fcv downgrade",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "automationConfigVersion": 8,
+                                "started": "2026-10-04T13:24:09.874529167Z",
+                                "completed": "2026-10-04T13:24:18.777169493Z",
+                                "moves": [
+                                    {
+                                        "move": "WaitHasCorrectAutomationCredentials",
+                                        "moveDoc": "Wait for the automation user to be added (if needed)",
+                                        "steps": [
+                                            {
+                                                "step": "WaitHasCorrectAutomationCredentials",
+                                                "stepDoc": "Wait for the automation user to be added (if needed)",
+                                                "isWaitStep": true,
+                                                "started": "2026-10-04T13:24:09.874570259Z",
+                                                "completed": null,
+                                                "result": "wait"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "errorCode": 0,
+                        "errorString": "",
+                        "waitDetails": {
+                            "WaitAllRsMembersUp": "[]",
+                            "WaitAuthSchemaCorrect": "auth schema will be updated by the primary",
+                            "WaitCanStartFresh": "process not up",
+                            "WaitCannotBecomePrimary": "Wait until the process is reconfigured with priority=0 by a different process",
+                            "WaitDefaultRWConcernCorrect": "waiting for the primary to update defaultRWConcern",
+                            "WaitForResyncPrimaryManualInterventionStep": "A resync was requested on a primary. This requires manual intervention",
+                            "WaitHealthyMajority": "[]",
+                            "WaitMultipleHealthyNonArbiters": "[]",
+                            "WaitNecessaryRsMembersUpForReconfig": "[]",
+                            "WaitPrimary": "This process is expected to be the primary member. Check that the replica set state allows a primary to be elected",
+                            "WaitProcessUp": "The process is running, but not yet responding to agent calls",
+                            "WaitResetPlacementHistory": "config servers  haven't seen the marker"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "namespace": "mongodb",
+            "pod": "catalog-rs-1",
+            "health": {
+                "statuses": {
+                    "catalog-rs-1": {
+                        "IsInGoalState": true,
+                        "LastMongoUpTime": 1791120439,
+                        "ExpectedToBeUp": true,
+                        "ReplicationStatus": 2
+                    }
+                },
+                "mmsStatus": {
+                    "catalog-rs-1": {
+                        "name": "catalog-rs-1",
+                        "lastGoalVersionAchieved": 8,
+                        "plans": [
+                            {
+                                "automationConfigVersion": 8,
+                                "started": "2026-10-04T13:23:00.248206928Z",
+                                "completed": "2026-10-04T13:23:20.282503935Z",
+                                "moves": [
+                                    {
+                                        "move": "Start",
+                                        "moveDoc": "Start the process",
+                                        "steps": [
+                                            {
+                                                "step": "StartFresh",
+                                                "stepDoc": "Start a mongo instance  (start fresh)",
+                                                "isWaitStep": false,
+                                                "started": "2026-10-04T13:23:00.248231918Z",
+                                                "completed": null,
+                                                "result": "error"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitPrimary",
+                                        "moveDoc": "Wait until this process is primary",
+                                        "steps": [
+                                            {
+                                                "step": "WaitPrimary",
+                                                "stepDoc": "Wait until this process is primary",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "UpdateFeatureCompatibilityVersion",
+                                        "moveDoc": "Update the featureCompatibilityVersion",
+                                        "steps": [
+                                            {
+                                                "step": "UpdateFeatureCompatibilityVersion",
+                                                "stepDoc": "Update the featureCompatibilityVersion",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "EnsureRolesAreCompatibleWithCurrentFcv",
+                                        "moveDoc": "Ensure all roles are compatible with the current feature compatibility version",
+                                        "steps": [
+                                            {
+                                                "step": "EnsureRolesAreCompatibleWithCurrentFcv",
+                                                "stepDoc": "Ensure the all cluster roles are compatible with the currently selected fcv. This is useful in the case of an fcv downgrade",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitRsInit",
+                                        "moveDoc": "Wait for the replica set to be initialized by another member",
+                                        "steps": [
+                                            {
+                                                "step": "WaitRsInit",
+                                                "stepDoc": "Wait for the replica set to be initialized by another member",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "automationConfigVersion": 8,
+                                "started": "2026-10-04T13:24:50.607546352Z",
+                                "completed": null,
+                                "moves": [
+                                    {
+                                        "move": "WaitHasCorrectAutomationCredentials",
+                                        "moveDoc": "Wait for the automation user to be added (if needed)",
+                                        "steps": [
+                                            {
+                                                "step": "WaitHasCorrectAutomationCredentials",
+                                                "stepDoc": "Wait for the automation user to be added (if needed)",
+                                                "isWaitStep": true,
+                                                "started": "2026-10-04T13:24:50.607596456Z",
+                                                "completed": null,
+                                                "result": "wait"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "errorCode": 0,
+                        "errorString": "",
+                        "waitDetails": {
+                            "WaitAllRsMembersUp": "[catalog-rs-2.catalog-rs-svc.mongodb.svc.cluster.local:27017: is not up]",
+                            "WaitAuthSchemaCorrect": "auth schema will be updated by the primary",
+                            "WaitCanStartFresh": "process not up",
+                            "WaitCannotBecomePrimary": "Wait until the process is reconfigured with priority=0 by a different process",
+                            "WaitDefaultRWConcernCorrect": "waiting for the primary to update defaultRWConcern",
+                            "WaitForResyncPrimaryManualInterventionStep": "A resync was requested on a primary. This requires manual intervention",
+                            "WaitHasCorrectAutomationAuthRestrictions": "got an error pinging the primary on catalog-rs-2.catalog-rs-svc.mongodb.svc.cluster.local:27017. check the agent logs for more details",
+                            "WaitHasCorrectAutomationCredentials": "got an error pinging the primary on catalog-rs-2.catalog-rs-svc.mongodb.svc.cluster.local:27017. check the agent logs for more details",
+                            "WaitHealthyMajority": "[catalog-rs-2.catalog-rs-svc.mongodb.svc.cluster.local:27017: is not up]",
+                            "WaitMultipleHealthyNonArbiters": "[catalog-rs-2.catalog-rs-svc.mongodb.svc.cluster.local:27017: is not up]",
+                            "WaitNecessaryRsMembersUpForReconfig": "[catalog-rs-2.catalog-rs-svc.mongodb.svc.cluster.local:27017: is not up]",
+                            "WaitPrimary": "This process is expected to be the primary member. Check that the replica set state allows a primary to be elected",
+                            "WaitProcessUp": "The process is running, but not yet responding to agent calls",
+                            "WaitResetPlacementHistory": "config servers  haven't seen the marker"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "namespace": "mongodb",
+            "pod": "catalog-rs-2",
+            "health": {
+                "statuses": {
+                    "catalog-rs-2": {
+                        "IsInGoalState": true,
+                        "LastMongoUpTime": 1791120439,
+                        "ExpectedToBeUp": true,
+                        "ReplicationStatus": 1
+                    }
+                },
+                "mmsStatus": {
+                    "catalog-rs-2": {
+                        "name": "catalog-rs-2",
+                        "lastGoalVersionAchieved": 8,
+                        "plans": [
+                            {
+                                "automationConfigVersion": 8,
+                                "started": "2026-10-04T13:24:00.061130177Z",
+                                "completed": "2026-10-04T13:24:20.13812945Z",
+                                "moves": [
+                                    {
+                                        "move": "Start",
+                                        "moveDoc": "Start the process",
+                                        "steps": [
+                                            {
+                                                "step": "StartFresh",
+                                                "stepDoc": "Start a mongo instance  (start fresh)",
+                                                "isWaitStep": false,
+                                                "started": "2026-10-04T13:24:00.061167521Z",
+                                                "completed": null,
+                                                "result": "error"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitPrimary",
+                                        "moveDoc": "Wait until this process is primary",
+                                        "steps": [
+                                            {
+                                                "step": "WaitPrimary",
+                                                "stepDoc": "Wait until this process is primary",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "UpdateFeatureCompatibilityVersion",
+                                        "moveDoc": "Update the featureCompatibilityVersion",
+                                        "steps": [
+                                            {
+                                                "step": "UpdateFeatureCompatibilityVersion",
+                                                "stepDoc": "Update the featureCompatibilityVersion",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "EnsureRolesAreCompatibleWithCurrentFcv",
+                                        "moveDoc": "Ensure all roles are compatible with the current feature compatibility version",
+                                        "steps": [
+                                            {
+                                                "step": "EnsureRolesAreCompatibleWithCurrentFcv",
+                                                "stepDoc": "Ensure the all cluster roles are compatible with the currently selected fcv. This is useful in the case of an fcv downgrade",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitRsInit",
+                                        "moveDoc": "Wait for the replica set to be initialized by another member",
+                                        "steps": [
+                                            {
+                                                "step": "WaitRsInit",
+                                                "stepDoc": "Wait for the replica set to be initialized by another member",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "errorCode": 0,
+                        "errorString": "",
+                        "waitDetails": {
+                            "WaitAllRsMembersUp": "[]",
+                            "WaitAuthSchemaCorrect": "auth schema will be updated by the primary",
+                            "WaitCanStartFresh": "process not up",
+                            "WaitCannotBecomePrimary": "Wait until the process is reconfigured with priority=0 by a different process",
+                            "WaitDefaultRWConcernCorrect": "waiting for the primary to update defaultRWConcern",
+                            "WaitForResyncPrimaryManualInterventionStep": "A resync was requested on a primary. This requires manual intervention",
+                            "WaitHealthyMajority": "[]",
+                            "WaitMultipleHealthyNonArbiters": "[]",
+                            "WaitNecessaryRsMembersUpForReconfig": "[]",
+                            "WaitPrimary": "This process is expected to be the primary member. Check that the replica set state allows a primary to be elected",
+                            "WaitProcessUp": "The process is running, but not yet responding to agent calls",
+                            "WaitResetPlacementHistory": "config servers  haven't seen the marker"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "namespace": "mongodb",
+            "pod": "secure-rs-0",
+            "health": {
+                "statuses": {
+                    "secure-rs-0": {
+                        "IsInGoalState": true,
+                        "LastMongoUpTime": 1791120440,
+                        "ExpectedToBeUp": true,
+                        "ReplicationStatus": 1
+                    }
+                },
+                "mmsStatus": {
+                    "secure-rs-0": {
+                        "name": "secure-rs-0",
+                        "lastGoalVersionAchieved": 1,
+                        "plans": [
+                            {
+                                "automationConfigVersion": 1,
+                                "started": "2026-10-04T13:26:10.729546538Z",
+                                "completed": null,
+                                "moves": [
+                                    {
+                                        "move": "Start",
+                                        "moveDoc": "Start the process",
+                                        "steps": [
+                                            {
+                                                "step": "StartFresh",
+                                                "stepDoc": "Start a mongo instance  (start fresh)",
+                                                "isWaitStep": false,
+                                                "started": "2026-10-04T13:26:10.729600083Z",
+                                                "completed": null,
+                                                "result": "error"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitAllRsMembersUp",
+                                        "moveDoc": "Wait until all members of this process' repl set are up",
+                                        "steps": [
+                                            {
+                                                "step": "WaitAllRsMembersUp",
+                                                "stepDoc": "Wait until all members of this process' repl set are up",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "RsInit",
+                                        "moveDoc": "Initialize a replica set including the current MongoDB process",
+                                        "steps": [
+                                            {
+                                                "step": "RsInit",
+                                                "stepDoc": "Initialize a replica set",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitPrimary",
+                                        "moveDoc": "Wait until this process is primary",
+                                        "steps": [
+                                            {
+                                                "step": "WaitPrimary",
+                                                "stepDoc": "Wait until this process is primary",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "UpdateFeatureCompatibilityVersion",
+                                        "moveDoc": "Update the featureCompatibilityVersion",
+                                        "steps": [
+                                            {
+                                                "step": "UpdateFeatureCompatibilityVersion",
+                                                "stepDoc": "Update the featureCompatibilityVersion",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "EnsureRolesAreCompatibleWithCurrentFcv",
+                                        "moveDoc": "Ensure all roles are compatible with the current feature compatibility version",
+                                        "steps": [
+                                            {
+                                                "step": "EnsureRolesAreCompatibleWithCurrentFcv",
+                                                "stepDoc": "Ensure the all cluster roles are compatible with the currently selected fcv. This is useful in the case of an fcv downgrade",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "automationConfigVersion": 1,
+                                "started": "2026-10-04T13:26:32.769139057Z",
+                                "completed": null,
+                                "moves": [
+                                    {
+                                        "move": "RsInit",
+                                        "moveDoc": "Initialize a replica set including the current MongoDB process",
+                                        "steps": [
+                                            {
+                                                "step": "RsInit",
+                                                "stepDoc": "Initialize a replica set",
+                                                "isWaitStep": false,
+                                                "started": "2026-10-04T13:26:32.769163645Z",
+                                                "completed": null,
+                                                "result": "error"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitHasCorrectAutomationCredentials",
+                                        "moveDoc": "Wait for the automation user to be added (if needed)",
+                                        "steps": [
+                                            {
+                                                "step": "WaitHasCorrectAutomationCredentials",
+                                                "stepDoc": "Wait for the automation user to be added (if needed)",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitFeatureCompatibilityVersionCorrect",
+                                        "moveDoc": "Wait for featureCompatibilityVersion to be right",
+                                        "steps": [
+                                            {
+                                                "step": "WaitFeatureCompatibilityVersionCorrect",
+                                                "stepDoc": "Wait for featureCompatibilityVersion to be right",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "automationConfigVersion": 1,
+                                "started": "2026-10-04T13:26:39.188960708Z",
+                                "completed": "2026-10-04T13:26:39.624429339Z",
+                                "moves": [
+                                    {
+                                        "move": "EnsureAutomationCredentials",
+                                        "moveDoc": "Ensure the automation user exists",
+                                        "steps": [
+                                            {
+                                                "step": "EnsureAutomationCredentials",
+                                                "stepDoc": "Ensure the automation user exists",
+                                                "isWaitStep": false,
+                                                "started": "2026-10-04T13:26:39.18904286Z",
+                                                "completed": "2026-10-04T13:26:39.462190482Z",
+                                                "result": "success"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "AdjustUsers",
+                                        "moveDoc": "Adjust Users",
+                                        "steps": [
+                                            {
+                                                "step": "AdjustUsers",
+                                                "stepDoc": "Adjust Users",
+                                                "isWaitStep": false,
+                                                "started": "2026-10-04T13:26:39.462260278Z",
+                                                "completed": "2026-10-04T13:26:39.624215927Z",
+                                                "result": "success"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "errorCode": 0,
+                        "errorString": "",
+                        "waitDetails": {
+                            "WaitAllRsMembersUp": "[]",
+                            "WaitAuthSchemaCorrect": "auth schema will be updated by the primary",
+                            "WaitCanStartFresh": "process not up",
+                            "WaitCannotBecomePrimary": "Wait until the process is reconfigured with priority=0 by a different process",
+                            "WaitDefaultRWConcernCorrect": "waiting for the primary to update defaultRWConcern",
+                            "WaitForResyncPrimaryManualInterventionStep": "A resync was requested on a primary. This requires manual intervention",
+                            "WaitHealthyMajority": "[]",
+                            "WaitMultipleHealthyNonArbiters": "[]",
+                            "WaitNecessaryRsMembersUpForReconfig": "[]",
+                            "WaitPrimary": "This process is expected to be the primary member. Check that the replica set state allows a primary to be elected",
+                            "WaitProcessUp": "The process is running, but not yet responding to agent calls",
+                            "WaitResetPlacementHistory": "config servers  haven't seen the marker"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "namespace": "mongodb",
+            "pod": "sessions-rs-0",
+            "health": {
+                "statuses": {
+                    "sessions-rs-0": {
+                        "IsInGoalState": true,
+                        "LastMongoUpTime": 1791120438,
+                        "ExpectedToBeUp": true,
+                        "ReplicationStatus": 2
+                    }
+                },
+                "mmsStatus": {
+                    "sessions-rs-0": {
+                        "name": "sessions-rs-0",
+                        "lastGoalVersionAchieved": 8,
+                        "plans": [
+                            {
+                                "automationConfigVersion": 8,
+                                "started": "2026-10-04T11:57:37.90475864Z",
+                                "completed": "2026-10-04T11:58:05.423560518Z",
+                                "moves": [
+                                    {
+                                        "move": "Start",
+                                        "moveDoc": "Start the process",
+                                        "steps": [
+                                            {
+                                                "step": "StartFresh",
+                                                "stepDoc": "Start a mongo instance  (start fresh)",
+                                                "isWaitStep": false,
+                                                "started": "2026-10-04T11:57:37.904774611Z",
+                                                "completed": null,
+                                                "result": "error"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitAllRsMembersUp",
+                                        "moveDoc": "Wait until all members of this process' repl set are up",
+                                        "steps": [
+                                            {
+                                                "step": "WaitAllRsMembersUp",
+                                                "stepDoc": "Wait until all members of this process' repl set are up",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "RsInit",
+                                        "moveDoc": "Initialize a replica set including the current MongoDB process",
+                                        "steps": [
+                                            {
+                                                "step": "RsInit",
+                                                "stepDoc": "Initialize a replica set",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitPrimary",
+                                        "moveDoc": "Wait until this process is primary",
+                                        "steps": [
+                                            {
+                                                "step": "WaitPrimary",
+                                                "stepDoc": "Wait until this process is primary",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "UpdateFeatureCompatibilityVersion",
+                                        "moveDoc": "Update the featureCompatibilityVersion",
+                                        "steps": [
+                                            {
+                                                "step": "UpdateFeatureCompatibilityVersion",
+                                                "stepDoc": "Update the featureCompatibilityVersion",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "EnsureRolesAreCompatibleWithCurrentFcv",
+                                        "moveDoc": "Ensure all roles are compatible with the current feature compatibility version",
+                                        "steps": [
+                                            {
+                                                "step": "EnsureRolesAreCompatibleWithCurrentFcv",
+                                                "stepDoc": "Ensure the all cluster roles are compatible with the currently selected fcv. This is useful in the case of an fcv downgrade",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "errorCode": 0,
+                        "errorString": "",
+                        "waitDetails": {
+                            "WaitAllRsMembersUp": "[]",
+                            "WaitAuthSchemaCorrect": "auth schema will be updated by the primary",
+                            "WaitCanStartFresh": "process not up",
+                            "WaitCannotBecomePrimary": "Wait until the process is reconfigured with priority=0 by a different process",
+                            "WaitDefaultRWConcernCorrect": "waiting for the primary to update defaultRWConcern",
+                            "WaitForResyncPrimaryManualInterventionStep": "A resync was requested on a primary. This requires manual intervention",
+                            "WaitHealthyMajority": "[]",
+                            "WaitMultipleHealthyNonArbiters": "[]",
+                            "WaitNecessaryRsMembersUpForReconfig": "[]",
+                            "WaitPrimary": "This process is expected to be the primary member. Check that the replica set state allows a primary to be elected",
+                            "WaitProcessUp": "The process is running, but not yet responding to agent calls",
+                            "WaitResetPlacementHistory": "config servers  haven't seen the marker"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "namespace": "mongodb",
+            "pod": "sessions-rs-1",
+            "health": {
+                "statuses": {
+                    "sessions-rs-1": {
+                        "IsInGoalState": true,
+                        "LastMongoUpTime": 1791120438,
+                        "ExpectedToBeUp": true,
+                        "ReplicationStatus": 1
+                    }
+                },
+                "mmsStatus": {
+                    "sessions-rs-1": {
+                        "name": "sessions-rs-1",
+                        "lastGoalVersionAchieved": 8,
+                        "plans": [
+                            {
+                                "automationConfigVersion": 8,
+                                "started": "2026-10-04T11:57:18.756379284Z",
+                                "completed": "2026-10-04T11:57:47.389360549Z",
+                                "moves": [
+                                    {
+                                        "move": "Start",
+                                        "moveDoc": "Start the process",
+                                        "steps": [
+                                            {
+                                                "step": "StartFresh",
+                                                "stepDoc": "Start a mongo instance  (start fresh)",
+                                                "isWaitStep": false,
+                                                "started": "2026-10-04T11:57:18.756432278Z",
+                                                "completed": null,
+                                                "result": "error"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitPrimary",
+                                        "moveDoc": "Wait until this process is primary",
+                                        "steps": [
+                                            {
+                                                "step": "WaitPrimary",
+                                                "stepDoc": "Wait until this process is primary",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "UpdateFeatureCompatibilityVersion",
+                                        "moveDoc": "Update the featureCompatibilityVersion",
+                                        "steps": [
+                                            {
+                                                "step": "UpdateFeatureCompatibilityVersion",
+                                                "stepDoc": "Update the featureCompatibilityVersion",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "EnsureRolesAreCompatibleWithCurrentFcv",
+                                        "moveDoc": "Ensure all roles are compatible with the current feature compatibility version",
+                                        "steps": [
+                                            {
+                                                "step": "EnsureRolesAreCompatibleWithCurrentFcv",
+                                                "stepDoc": "Ensure the all cluster roles are compatible with the currently selected fcv. This is useful in the case of an fcv downgrade",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitRsInit",
+                                        "moveDoc": "Wait for the replica set to be initialized by another member",
+                                        "steps": [
+                                            {
+                                                "step": "WaitRsInit",
+                                                "stepDoc": "Wait for the replica set to be initialized by another member",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "errorCode": 0,
+                        "errorString": "",
+                        "waitDetails": {
+                            "WaitAllRsMembersUp": "[]",
+                            "WaitAuthSchemaCorrect": "auth schema will be updated by the primary",
+                            "WaitCanStartFresh": "process not up",
+                            "WaitCannotBecomePrimary": "Wait until the process is reconfigured with priority=0 by a different process",
+                            "WaitDefaultRWConcernCorrect": "waiting for the primary to update defaultRWConcern",
+                            "WaitForResyncPrimaryManualInterventionStep": "A resync was requested on a primary. This requires manual intervention",
+                            "WaitHealthyMajority": "[]",
+                            "WaitMultipleHealthyNonArbiters": "[]",
+                            "WaitNecessaryRsMembersUpForReconfig": "[]",
+                            "WaitPrimary": "This process is expected to be the primary member. Check that the replica set state allows a primary to be elected",
+                            "WaitProcessUp": "The process is running, but not yet responding to agent calls",
+                            "WaitResetPlacementHistory": "config servers  haven't seen the marker"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "namespace": "mongodb",
+            "pod": "sessions-rs-arb-0",
+            "health": {
+                "statuses": {
+                    "sessions-rs-arb-0": {
+                        "IsInGoalState": true,
+                        "LastMongoUpTime": 1791120438,
+                        "ExpectedToBeUp": true,
+                        "ReplicationStatus": 7
+                    }
+                },
+                "mmsStatus": {
+                    "sessions-rs-arb-0": {
+                        "name": "sessions-rs-arb-0",
+                        "lastGoalVersionAchieved": 8,
+                        "plans": [
+                            {
+                                "automationConfigVersion": 8,
+                                "started": "2026-10-04T11:57:37.933833066Z",
+                                "completed": "2026-10-04T11:58:06.378135954Z",
+                                "moves": [
+                                    {
+                                        "move": "Start",
+                                        "moveDoc": "Start the process",
+                                        "steps": [
+                                            {
+                                                "step": "StartFresh",
+                                                "stepDoc": "Start a mongo instance  (start fresh)",
+                                                "isWaitStep": false,
+                                                "started": "2026-10-04T11:57:37.933849754Z",
+                                                "completed": null,
+                                                "result": "error"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitPrimary",
+                                        "moveDoc": "Wait until this process is primary",
+                                        "steps": [
+                                            {
+                                                "step": "WaitPrimary",
+                                                "stepDoc": "Wait until this process is primary",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "UpdateFeatureCompatibilityVersion",
+                                        "moveDoc": "Update the featureCompatibilityVersion",
+                                        "steps": [
+                                            {
+                                                "step": "UpdateFeatureCompatibilityVersion",
+                                                "stepDoc": "Update the featureCompatibilityVersion",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "EnsureRolesAreCompatibleWithCurrentFcv",
+                                        "moveDoc": "Ensure all roles are compatible with the current feature compatibility version",
+                                        "steps": [
+                                            {
+                                                "step": "EnsureRolesAreCompatibleWithCurrentFcv",
+                                                "stepDoc": "Ensure the all cluster roles are compatible with the currently selected fcv. This is useful in the case of an fcv downgrade",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitRsInit",
+                                        "moveDoc": "Wait for the replica set to be initialized by another member",
+                                        "steps": [
+                                            {
+                                                "step": "WaitRsInit",
+                                                "stepDoc": "Wait for the replica set to be initialized by another member",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "errorCode": 0,
+                        "errorString": "",
+                        "waitDetails": {
+                            "WaitAllRsMembersUp": "[]",
+                            "WaitAuthSchemaCorrect": "auth schema will be updated by the primary",
+                            "WaitCanStartFresh": "process not up",
+                            "WaitCannotBecomePrimary": "Wait until the process is reconfigured with priority=0 by a different process",
+                            "WaitDefaultRWConcernCorrect": "waiting for the primary to update defaultRWConcern",
+                            "WaitForResyncPrimaryManualInterventionStep": "A resync was requested on a primary. This requires manual intervention",
+                            "WaitHealthyMajority": "[]",
+                            "WaitMultipleHealthyNonArbiters": "[]",
+                            "WaitNecessaryRsMembersUpForReconfig": "[]",
+                            "WaitPrimary": "This process is expected to be the primary member. Check that the replica set state allows a primary to be elected",
+                            "WaitProcessUp": "The process is running, but not yet responding to agent calls",
+                            "WaitResetPlacementHistory": "config servers  haven't seen the marker"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "namespace": "mongodb",
+            "pod": "upgrade-rs-0",
+            "health": {
+                "statuses": {
+                    "upgrade-rs-0": {
+                        "IsInGoalState": false,
+                        "LastMongoUpTime": 0,
+                        "ExpectedToBeUp": true,
+                        "ReplicationStatus": -1
+                    }
+                },
+                "mmsStatus": {
+                    "upgrade-rs-0": {
+                        "name": "upgrade-rs-0",
+                        "lastGoalVersionAchieved": -1,
+                        "plans": [
+                            {
+                                "automationConfigVersion": 1,
+                                "started": "2026-10-04T11:57:37.938825378Z",
+                                "completed": null,
+                                "moves": [
+                                    {
+                                        "move": "Start",
+                                        "moveDoc": "Start the process",
+                                        "steps": [
+                                            {
+                                                "step": "StartFresh",
+                                                "stepDoc": "Start a mongo instance  (start fresh)",
+                                                "isWaitStep": false,
+                                                "started": "2026-10-04T11:57:37.938851603Z",
+                                                "completed": null,
+                                                "result": "error"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitAllRsMembersUp",
+                                        "moveDoc": "Wait until all members of this process' repl set are up",
+                                        "steps": [
+                                            {
+                                                "step": "WaitAllRsMembersUp",
+                                                "stepDoc": "Wait until all members of this process' repl set are up",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "RsInit",
+                                        "moveDoc": "Initialize a replica set including the current MongoDB process",
+                                        "steps": [
+                                            {
+                                                "step": "RsInit",
+                                                "stepDoc": "Initialize a replica set",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "WaitPrimary",
+                                        "moveDoc": "Wait until this process is primary",
+                                        "steps": [
+                                            {
+                                                "step": "WaitPrimary",
+                                                "stepDoc": "Wait until this process is primary",
+                                                "isWaitStep": true,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "UpdateFeatureCompatibilityVersion",
+                                        "moveDoc": "Update the featureCompatibilityVersion",
+                                        "steps": [
+                                            {
+                                                "step": "UpdateFeatureCompatibilityVersion",
+                                                "stepDoc": "Update the featureCompatibilityVersion",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "move": "EnsureRolesAreCompatibleWithCurrentFcv",
+                                        "moveDoc": "Ensure all roles are compatible with the current feature compatibility version",
+                                        "steps": [
+                                            {
+                                                "step": "EnsureRolesAreCompatibleWithCurrentFcv",
+                                                "stepDoc": "Ensure the all cluster roles are compatible with the currently selected fcv. This is useful in the case of an fcv downgrade",
+                                                "isWaitStep": false,
+                                                "started": null,
+                                                "completed": null,
+                                                "result": ""
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "errorCode": 0,
+                        "errorString": "<upgrade-rs-0> [13:27:04.332] Plan execution failed on step StartFresh as part of move Start : <upgrade-rs-0> [13:27:04.332] Failed to apply action. Result = <nil> : <upgrade-rs-0> [13:27:04.332] Error sleeping until process was up : <upgrade-rs-0> [13:27:04.332] Error checking if local mongo process has started : <upgrade-rs-0> [13:27:04.332] The process is no longer running. Stopping check.",
+                        "waitDetails": {
+                            "RunSetParameter": "process not up",
+                            "UpdateFeatureCompatibilityVersion": "process isn't up",
+                            "WaitAllRsMembersUp": "[]",
+                            "WaitCannotBecomePrimary": "Wait until the process is reconfigured with priority=0 by a different process",
+                            "WaitClusterReadyForFCVUpdate": "process isn't up",
+                            "WaitDefaultRWConcernCorrect": "waiting for the primary to update defaultRWConcern",
+                            "WaitForResyncPrimaryManualInterventionStep": "A resync was requested on a primary. This requires manual intervention",
+                            "WaitHealthyMajority": "[]",
+                            "WaitMultipleHealthyNonArbiters": "[]",
+                            "WaitNecessaryRsMembersUpForReconfig": "[]",
+                            "WaitPrimary": "This process is expected to be the primary member. Check that the replica set state allows a primary to be elected",
+                            "WaitProcessUp": "The process is running, but not yet responding to agent calls",
+                            "WaitResetPlacementHistory": "config servers  haven't seen the marker"
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

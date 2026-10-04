@@ -14,11 +14,14 @@ readonly CERT_MANAGER_VERSION="v1.21.2"
 readonly IMAGE_UPDATER_VERSION="v1.3.0"
 readonly CNPG_VERSION="1.30.0"
 readonly BARMAN_CLOUD_VERSION="v0.15.0"
+readonly MCK_VERSION="1.12.0"
 
 export KUBECONFIG="${KUBECONFIG_PATH}"
 
 command -v kubectl >/dev/null || { echo "kubectl is required" >&2; exit 1; }
 [[ -r "${KUBECONFIG_PATH}" ]] || { echo "no kubeconfig at ${KUBECONFIG_PATH} — run 'make cluster' first" >&2; exit 1; }
+[[ "$(kubectl get nodes -o jsonpath='{.items[*].metadata.name}')" == "freelens-addons-dev" ]] \
+  || { echo "refusing: ${KUBECONFIG_PATH} is not the dev k3s (its only node is freelens-addons-dev)" >&2; exit 1; }
 
 say() { printf '\n\033[1m%s\033[0m\n' "$1"; }
 
@@ -112,6 +115,20 @@ say "Pausing replay on orders-db-3, then writing on the primary"
 kubectl -n databases wait --for=condition=Ready cluster/orders-db --timeout=600s
 psql_on orders-db-3 postgres "select pg_wal_replay_pause()"
 psql_on orders-db-2 app "insert into orders select g, now(), g * 1.5 from generate_series(1, 20000) g on conflict do nothing"
+
+# Watches its own namespace, so the replica sets live beside it.
+say "MongoDB Controllers for Kubernetes ${MCK_VERSION}"
+for manifest in crds mongodb-kubernetes; do
+  kubectl apply --server-side --force-conflicts -f \
+    "https://raw.githubusercontent.com/mongodb/mongodb-kubernetes/${MCK_VERSION}/public/${manifest}.yaml"
+done
+kubectl -n mongodb rollout status deploy/mongodb-kubernetes-operator --timeout=300s
+
+say "MongoDB replica sets"
+kubectl apply -f dev/cluster/60-mongodb.yaml
+for replica_set in catalog-rs sessions-rs; do
+  kubectl -n mongodb wait --for=jsonpath='{.status.phase}'=Running "mongodbcommunity/${replica_set}" --timeout=600s
+done
 
 # Valid but failing to renew: issue renewal-stalls, then remove flaky-ca's key.
 say "Breaking flaky-ca once renewal-stalls has been issued"

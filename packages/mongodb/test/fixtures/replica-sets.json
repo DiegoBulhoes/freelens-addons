@@ -1,0 +1,363 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "mongodbcommunity.mongodb.com/v1",
+      "kind": "MongoDBCommunity",
+      "metadata": {
+        "annotations": {
+          "mongodb.com/v1.lastAppliedMongoDBVersion": "8.0.12",
+          "mongodb.com/v1.lastSuccessfulConfiguration": "{\"members\":3,\"type\":\"ReplicaSet\",\"version\":\"8.0.12\",\"arbiters\":0,\"security\":{\"authentication\":{\"modes\":[\"SCRAM\"],\"ignoreUnknownUsers\":true},\"tls\":{\"enabled\":false,\"optional\":false,\"certificateKeySecretRef\":{}}},\"users\":[{\"name\":\"catalog-admin\",\"db\":\"admin\",\"passwordSecretRef\":{\"name\":\"catalog-admin-password\",\"key\":\"\"},\"roles\":[{\"db\":\"admin\",\"name\":\"clusterAdmin\"},{\"db\":\"admin\",\"name\":\"userAdminAnyDatabase\"},{\"db\":\"admin\",\"name\":\"readWriteAnyDatabase\"}],\"scramCredentialsSecretName\":\"catalog-admin-scram\",\"additionalConnectionStringConfig\":null}],\"statefulSet\":{\"spec\":{},\"metadata\":{}},\"agent\":{\"logLevel\":\"\",\"logFile\":\"\",\"maxLogFileDurationHours\":0},\"additionalMongodConfig\":{},\"additionalConnectionStringConfig\":{},\"memberConfig\":[{\"votes\":1,\"priority\":\"1\"},{\"votes\":1,\"priority\":\"1\"},{\"votes\":1,\"priority\":\"2\"}]}"
+        },
+        "creationTimestamp": "2026-10-04T04:11:05Z",
+        "generation": 11,
+        "name": "catalog-rs",
+        "namespace": "mongodb",
+        "resourceVersion": "582677",
+        "selfLink": "/apis/mongodbcommunity.mongodb.com/v1/namespaces/mongodb/mongodbcommunitys/catalog-rs",
+        "uid": "ac1b67ad-61a8-413a-98f2-6549cc8fcdb4"
+      },
+      "spec": {
+        "memberConfig": [
+          {
+            "priority": "1",
+            "votes": 1
+          },
+          {
+            "priority": "1",
+            "votes": 1
+          },
+          {
+            "priority": "2",
+            "votes": 1
+          }
+        ],
+        "members": 3,
+        "security": {
+          "authentication": {
+            "ignoreUnknownUsers": true,
+            "modes": [
+              "SCRAM"
+            ]
+          }
+        },
+        "statefulSet": {
+          "spec": {
+            "template": {
+              "metadata": {
+                "annotations": {}
+              }
+            }
+          }
+        },
+        "type": "ReplicaSet",
+        "users": [
+          {
+            "db": "admin",
+            "name": "catalog-admin",
+            "passwordSecretRef": {
+              "name": "catalog-admin-password"
+            },
+            "roles": [
+              {
+                "db": "admin",
+                "name": "clusterAdmin"
+              },
+              {
+                "db": "admin",
+                "name": "userAdminAnyDatabase"
+              },
+              {
+                "db": "admin",
+                "name": "readWriteAnyDatabase"
+              }
+            ],
+            "scramCredentialsSecretName": "catalog-admin-scram"
+          }
+        ],
+        "version": "8.0.12"
+      },
+      "status": {
+        "currentMongoDBMembers": 3,
+        "currentStatefulSetReplicas": 3,
+        "mongoUri": "mongodb://catalog-rs-0.catalog-rs-svc.mongodb.svc.cluster.local:27017,catalog-rs-1.catalog-rs-svc.mongodb.svc.cluster.local:27017,catalog-rs-2.catalog-rs-svc.mongodb.svc.cluster.local:27017/?replicaSet=catalog-rs",
+        "phase": "Running",
+        "version": "8.0.12"
+      }
+    },
+    {
+      "apiVersion": "mongodbcommunity.mongodb.com/v1",
+      "kind": "MongoDBCommunity",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T04:11:05Z",
+        "generation": 1,
+        "name": "legacy-rs",
+        "namespace": "mongodb",
+        "resourceVersion": "517098",
+        "selfLink": "/apis/mongodbcommunity.mongodb.com/v1/namespaces/mongodb/mongodbcommunitys/legacy-rs",
+        "uid": "95523590-d8f3-4781-92ee-2b33daec4d0d"
+      },
+      "spec": {
+        "members": 1,
+        "security": {
+          "authentication": {
+            "ignoreUnknownUsers": true,
+            "modes": [
+              "SCRAM"
+            ]
+          }
+        },
+        "statefulSet": {
+          "spec": {
+            "volumeClaimTemplates": [
+              {
+                "metadata": {
+                  "name": "data-volume"
+                },
+                "spec": {
+                  "accessModes": [
+                    "ReadWriteOnce"
+                  ],
+                  "resources": {
+                    "requests": {
+                      "storage": "1Gi"
+                    }
+                  },
+                  "storageClassName": "no-such-class"
+                }
+              }
+            ]
+          }
+        },
+        "type": "ReplicaSet",
+        "users": [],
+        "version": "8.0.12"
+      },
+      "status": {
+        "currentMongoDBMembers": 0,
+        "currentStatefulSetReplicas": 0,
+        "message": "ReplicaSet is not yet ready, retrying in 10 seconds",
+        "mongoUri": "",
+        "phase": "Pending"
+      }
+    },
+    {
+      "apiVersion": "mongodbcommunity.mongodb.com/v1",
+      "kind": "MongoDBCommunity",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T06:19:58Z",
+        "generation": 1,
+        "name": "reporting-rs",
+        "namespace": "mongodb",
+        "resourceVersion": "554119",
+        "selfLink": "/apis/mongodbcommunity.mongodb.com/v1/namespaces/mongodb/mongodbcommunitys/reporting-rs",
+        "uid": "76143ade-5769-4976-b958-bc2ec8dfdf65"
+      },
+      "spec": {
+        "members": 1,
+        "security": {
+          "authentication": {
+            "ignoreUnknownUsers": true,
+            "modes": [
+              "SCRAM"
+            ]
+          }
+        },
+        "type": "ReplicaSet",
+        "users": [
+          {
+            "db": "admin",
+            "name": "reporting",
+            "passwordSecretRef": {
+              "name": "reporting-password"
+            },
+            "roles": [
+              {
+                "db": "catalog",
+                "name": "read"
+              }
+            ],
+            "scramCredentialsSecretName": "reporting-scram"
+          }
+        ],
+        "version": "8.0.12"
+      },
+      "status": {
+        "currentMongoDBMembers": 0,
+        "currentStatefulSetReplicas": 0,
+        "message": "Error ensuring User config: user password secret: mongodb/reporting-password and scram secret: mongodb/reporting-scram-scram-credentials not found",
+        "mongoUri": "",
+        "phase": "Failed"
+      }
+    },
+    {
+      "apiVersion": "mongodbcommunity.mongodb.com/v1",
+      "kind": "MongoDBCommunity",
+      "metadata": {
+        "annotations": {
+          "mongodb.com/v1.lastAppliedMongoDBVersion": "8.0.12",
+          "mongodb.com/v1.lastSuccessfulConfiguration": "{\"members\":1,\"type\":\"ReplicaSet\",\"version\":\"8.0.12\",\"arbiters\":0,\"security\":{\"authentication\":{\"modes\":[\"SCRAM\"],\"ignoreUnknownUsers\":true},\"tls\":{\"enabled\":true,\"optional\":false,\"certificateKeySecretRef\":{\"name\":\"secure-rs-tls\"},\"caCertificateSecretRef\":{\"name\":\"secure-rs-tls\"}}},\"users\":[{\"name\":\"secure-admin\",\"db\":\"admin\",\"passwordSecretRef\":{\"name\":\"secure-admin-password\",\"key\":\"\"},\"roles\":[{\"db\":\"admin\",\"name\":\"clusterAdmin\"}],\"scramCredentialsSecretName\":\"secure-admin-scram\",\"additionalConnectionStringConfig\":null}],\"statefulSet\":{\"spec\":{},\"metadata\":{}},\"agent\":{\"logLevel\":\"\",\"logFile\":\"\",\"maxLogFileDurationHours\":0},\"additionalMongodConfig\":{},\"additionalConnectionStringConfig\":{}}"
+        },
+        "creationTimestamp": "2026-10-04T13:25:45Z",
+        "generation": 1,
+        "name": "secure-rs",
+        "namespace": "mongodb",
+        "resourceVersion": "583436",
+        "selfLink": "/apis/mongodbcommunity.mongodb.com/v1/namespaces/mongodb/mongodbcommunitys/secure-rs",
+        "uid": "8ccf89d5-35ca-4d3b-9736-7526328857e0"
+      },
+      "spec": {
+        "members": 1,
+        "security": {
+          "authentication": {
+            "ignoreUnknownUsers": true,
+            "modes": [
+              "SCRAM"
+            ]
+          },
+          "tls": {
+            "caCertificateSecretRef": {
+              "name": "secure-rs-tls"
+            },
+            "certificateKeySecretRef": {
+              "name": "secure-rs-tls"
+            },
+            "enabled": true
+          }
+        },
+        "type": "ReplicaSet",
+        "users": [
+          {
+            "db": "admin",
+            "name": "secure-admin",
+            "passwordSecretRef": {
+              "name": "secure-admin-password"
+            },
+            "roles": [
+              {
+                "db": "admin",
+                "name": "clusterAdmin"
+              }
+            ],
+            "scramCredentialsSecretName": "secure-admin-scram"
+          }
+        ],
+        "version": "8.0.12"
+      },
+      "status": {
+        "currentMongoDBMembers": 1,
+        "currentStatefulSetReplicas": 1,
+        "mongoUri": "mongodb://secure-rs-0.secure-rs-svc.mongodb.svc.cluster.local:27017/?replicaSet=secure-rs",
+        "phase": "Running",
+        "version": "8.0.12"
+      }
+    },
+    {
+      "apiVersion": "mongodbcommunity.mongodb.com/v1",
+      "kind": "MongoDBCommunity",
+      "metadata": {
+        "annotations": {
+          "mongodb.com/v1.lastAppliedMongoDBVersion": "7.0.21",
+          "mongodb.com/v1.lastSuccessfulConfiguration": "{\"members\":2,\"type\":\"ReplicaSet\",\"version\":\"7.0.21\",\"arbiters\":1,\"security\":{\"authentication\":{\"modes\":[\"SCRAM\"],\"ignoreUnknownUsers\":true},\"tls\":{\"enabled\":false,\"optional\":false,\"certificateKeySecretRef\":{}}},\"users\":[{\"name\":\"sessions-admin\",\"db\":\"admin\",\"passwordSecretRef\":{\"name\":\"sessions-admin-password\",\"key\":\"\"},\"roles\":[{\"db\":\"admin\",\"name\":\"clusterAdmin\"},{\"db\":\"admin\",\"name\":\"userAdminAnyDatabase\"}],\"scramCredentialsSecretName\":\"sessions-admin-scram\",\"additionalConnectionStringConfig\":null}],\"statefulSet\":{\"spec\":{},\"metadata\":{}},\"agent\":{\"logLevel\":\"\",\"logFile\":\"\",\"maxLogFileDurationHours\":0},\"additionalMongodConfig\":{},\"additionalConnectionStringConfig\":{}}"
+        },
+        "creationTimestamp": "2026-10-04T04:11:05Z",
+        "generation": 11,
+        "name": "sessions-rs",
+        "namespace": "mongodb",
+        "resourceVersion": "558531",
+        "selfLink": "/apis/mongodbcommunity.mongodb.com/v1/namespaces/mongodb/mongodbcommunitys/sessions-rs",
+        "uid": "f14e5625-ede8-49fd-934e-84948b80fc4f"
+      },
+      "spec": {
+        "arbiters": 1,
+        "members": 2,
+        "security": {
+          "authentication": {
+            "ignoreUnknownUsers": true,
+            "modes": [
+              "SCRAM"
+            ]
+          }
+        },
+        "statefulSet": {
+          "spec": {
+            "template": {
+              "metadata": {
+                "annotations": {}
+              }
+            }
+          }
+        },
+        "type": "ReplicaSet",
+        "users": [
+          {
+            "db": "admin",
+            "name": "sessions-admin",
+            "passwordSecretRef": {
+              "name": "sessions-admin-password"
+            },
+            "roles": [
+              {
+                "db": "admin",
+                "name": "clusterAdmin"
+              },
+              {
+                "db": "admin",
+                "name": "userAdminAnyDatabase"
+              }
+            ],
+            "scramCredentialsSecretName": "sessions-admin-scram"
+          }
+        ],
+        "version": "7.0.21"
+      },
+      "status": {
+        "currentMongoDBArbiters": 1,
+        "currentMongoDBMembers": 2,
+        "currentStatefulSetArbitersReplicas": 1,
+        "currentStatefulSetReplicas": 2,
+        "mongoUri": "mongodb://sessions-rs-0.sessions-rs-svc.mongodb.svc.cluster.local:27017,sessions-rs-1.sessions-rs-svc.mongodb.svc.cluster.local:27017/?replicaSet=sessions-rs",
+        "phase": "Running",
+        "version": "7.0.21"
+      }
+    },
+    {
+      "apiVersion": "mongodbcommunity.mongodb.com/v1",
+      "kind": "MongoDBCommunity",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T04:11:05Z",
+        "generation": 1,
+        "name": "upgrade-rs",
+        "namespace": "mongodb",
+        "resourceVersion": "517166",
+        "selfLink": "/apis/mongodbcommunity.mongodb.com/v1/namespaces/mongodb/mongodbcommunitys/upgrade-rs",
+        "uid": "04177199-8528-4952-bb07-9c322663505a"
+      },
+      "spec": {
+        "members": 1,
+        "security": {
+          "authentication": {
+            "ignoreUnknownUsers": true,
+            "modes": [
+              "SCRAM"
+            ]
+          }
+        },
+        "type": "ReplicaSet",
+        "users": [],
+        "version": "8.0.999"
+      },
+      "status": {
+        "currentMongoDBMembers": 0,
+        "currentStatefulSetReplicas": 0,
+        "message": "ReplicaSet is not yet ready, retrying in 10 seconds",
+        "mongoUri": "",
+        "phase": "Pending"
+      }
+    }
+  ],
+  "kind": "List"
+}

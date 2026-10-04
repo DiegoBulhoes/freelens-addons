@@ -11,6 +11,7 @@ independently of the others.
 | Trivy | Scan coverage first, then findings and upgrades | Working, read-only | [docs/trivy.md](docs/trivy.md) |
 | cert-manager | Certificates that will fail to renew, and why | Working, reads and renews | [docs/cert-manager.md](docs/cert-manager.md) |
 | CloudNativePG | Postgres clusters that need attention, and whether each can be restored | Working, reads and writes | [docs/cnpg.md](docs/cnpg.md) |
+| MongoDB | MongoDB clusters that need attention, which member is primary, and why one is stuck | Working, reads and writes | [docs/mongodb.md](docs/mongodb.md) |
 
 ## Compatibility
 
@@ -25,6 +26,7 @@ Tested on **Freelens 1.10.3**, the version the dev container runs and the e2e su
 | Trivy operator | v0.34.0 | — |
 | cert-manager | v1.21.2 | — |
 | CloudNativePG | 1.30.0 | — |
+| MongoDB Controllers for Kubernetes (Community) | 1.12.0 | — |
 | Barman Cloud plugin | v0.15.0 | Optional; the in-tree object store and volume snapshots are read too |
 
 ## Installing
@@ -35,7 +37,7 @@ Tested on **Freelens 1.10.3**, the version the dev container runs and the e2e su
 4. Open a cluster and pick "All Namespaces" in any list.
 
 The sidebar group appears only on clusters that run the tool (ArgoCD, cert-manager, the Trivy
-operator or CloudNativePG). If it does not appear, see [docs/distribution.md](docs/distribution.md).
+operator, CloudNativePG or MongoDB Controllers for Kubernetes). If it does not appear, see [docs/distribution.md](docs/distribution.md).
 
 ## Developing
 
@@ -75,6 +77,7 @@ The rest is in [docs/development.md](docs/development.md).
 | [trivy.md](docs/trivy.md) | The Trivy extension |
 | [cert-manager.md](docs/cert-manager.md) | The cert-manager extension |
 | [cnpg.md](docs/cnpg.md) | The CloudNativePG extension |
+| [mongodb.md](docs/mongodb.md) | The MongoDB extension |
 | [development.md](docs/development.md) | The development loop and adding an extension |
 | [architecture.md](docs/architecture.md) | How the workbench runs and what the extension loader requires |
 | [testing.md](docs/testing.md) | Test approach and where the fixtures come from |
