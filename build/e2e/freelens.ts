@@ -476,3 +476,17 @@ export async function textOf(
     contextId,
   );
 }
+
+/** The drawer on screen: one closing stays in the DOM, without its body, until it animates out. */
+export function openDrawer(drawer: string): string {
+  return `[...document.querySelectorAll(${JSON.stringify(drawer)})].filter((each) => each.querySelector("[data-section]")).at(-1)`;
+}
+
+/** Without the copy icon the host puts in the title. */
+export function drawerTitle(session: Session, contextId: number, drawer: string): Promise<string> {
+  return session.evaluate<string>(
+    `[...(${openDrawer(drawer)}?.querySelector(".drawer-title-text")?.childNodes ?? [])]
+       .filter((each) => each.nodeType === Node.TEXT_NODE).map((each) => each.textContent).join("").trim()`,
+    contextId,
+  );
+}
