@@ -88,7 +88,7 @@
             "uid": "73436e03-3def-4551-841f-92a8afa162d3"
           }
         ],
-        "resourceVersion": "420780",
+        "resourceVersion": "558065",
         "selfLink": "/apis/policy/v1/namespaces/databases/poddisruptionbudgets/billing-db-primary",
         "uid": "74a723eb-b8f0-42a1-a36b-98bd9e65eefa"
       },
@@ -147,7 +147,7 @@
             "uid": "bcf798d5-77c5-4804-8f82-cab715671406"
           }
         ],
-        "resourceVersion": "420523",
+        "resourceVersion": "557964",
         "selfLink": "/apis/policy/v1/namespaces/databases/poddisruptionbudgets/inventory-db-primary",
         "uid": "ecf5de94-d9ca-479a-9b58-d10c540d3ab9"
       },
@@ -185,7 +185,7 @@
         "annotations": {
           "cnpg.io/operatorVersion": "1.30.0"
         },
-        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "creationTimestamp": "2026-10-04T01:09:03Z",
         "generation": 1,
         "labels": {
           "app.kubernetes.io/component": "database",
@@ -206,9 +206,9 @@
             "uid": "7f6fcbe1-916d-43d7-a961-d714aa102fcb"
           }
         ],
-        "resourceVersion": "443390",
+        "resourceVersion": "558019",
         "selfLink": "/apis/policy/v1/namespaces/databases/poddisruptionbudgets/orders-db",
-        "uid": "e635c691-6afa-4344-8712-89278224183e"
+        "uid": "721d61e4-c331-4da4-a4eb-d731b16d1f4f"
       },
       "spec": {
         "minAvailable": 1,
@@ -222,7 +222,7 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-10-03T23:10:36Z",
+            "lastTransitionTime": "2026-10-04T11:57:29Z",
             "message": "",
             "observedGeneration": 1,
             "reason": "SufficientPods",
@@ -265,7 +265,7 @@
             "uid": "7f6fcbe1-916d-43d7-a961-d714aa102fcb"
           }
         ],
-        "resourceVersion": "443633",
+        "resourceVersion": "557951",
         "selfLink": "/apis/policy/v1/namespaces/databases/poddisruptionbudgets/orders-db-primary",
         "uid": "65e13090-dcaa-45ee-8b1e-696f1069d327"
       },

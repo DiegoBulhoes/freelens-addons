@@ -10,7 +10,7 @@
         "generation": 1,
         "name": "billing-nightly",
         "namespace": "databases",
-        "resourceVersion": "419374",
+        "resourceVersion": "485825",
         "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/scheduledbackups/billing-nightly",
         "uid": "723638a0-63fb-4f91-855c-342072af4f0f"
       },
@@ -27,9 +27,9 @@
         "schedule": "0 0 2 * * *"
       },
       "status": {
-        "lastCheckTime": "2026-10-03T21:42:01Z",
-        "lastScheduleTime": "2026-10-03T21:42:01Z",
-        "nextScheduleTime": "2026-10-04T02:00:00Z"
+        "lastCheckTime": "2026-10-04T02:00:00Z",
+        "lastScheduleTime": "2026-10-04T02:00:00Z",
+        "nextScheduleTime": "2026-10-05T02:00:00Z"
       }
     },
     {
@@ -38,10 +38,10 @@
       "metadata": {
         "annotations": {},
         "creationTimestamp": "2026-10-03T21:42:01Z",
-        "generation": 3,
+        "generation": 7,
         "name": "orders-hourly",
         "namespace": "databases",
-        "resourceVersion": "440631",
+        "resourceVersion": "575861",
         "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/scheduledbackups/orders-hourly",
         "uid": "3fcf8e97-d4ee-47f3-8eae-f7bff6afd139"
       },
@@ -59,9 +59,9 @@
         "suspend": false
       },
       "status": {
-        "lastCheckTime": "2026-10-03T23:00:00Z",
-        "lastScheduleTime": "2026-10-03T23:00:00Z",
-        "nextScheduleTime": "2026-10-04T00:00:00Z"
+        "lastCheckTime": "2026-10-04T13:00:00Z",
+        "lastScheduleTime": "2026-10-04T13:00:00Z",
+        "nextScheduleTime": "2026-10-04T14:00:00Z"
       }
     },
     {

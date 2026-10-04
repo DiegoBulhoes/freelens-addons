@@ -5,18 +5,18 @@
       "apiVersion": "postgresql.cnpg.io/v1",
       "kind": "Backup",
       "metadata": {
-        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "creationTimestamp": "2026-10-04T02:00:00Z",
         "generation": 1,
         "labels": {
           "cnpg.io/cluster": "billing-db",
-          "cnpg.io/immediateBackup": "true",
+          "cnpg.io/immediateBackup": "false",
           "cnpg.io/scheduled-backup": "billing-nightly"
         },
-        "name": "billing-nightly-20261003214201",
+        "name": "billing-nightly-20261004020000",
         "namespace": "databases",
-        "resourceVersion": "421189",
-        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/billing-nightly-20261003214201",
-        "uid": "6c7327ea-7fbd-446b-96b7-ea3b27177471"
+        "resourceVersion": "485847",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/billing-nightly-20261004020000",
+        "uid": "67b1bc84-9658-4cae-8923-23b38b9c1abc"
       },
       "spec": {
         "cluster": {
@@ -30,15 +30,273 @@
       "status": {
         "error": "rpc error: code = Unknown desc = exit status 1",
         "instanceID": {
-          "ContainerID": "containerd://8ee6b3d5599fdac8c0699484f456d3a3905a16217e6900f9e1d0f169e30fc23c",
-          "podName": "billing-db-1",
-          "sessionID": "4750f013-66b1-4748-806f-4a7d729dab5d"
+          "ContainerID": "containerd://eb1cfab8a46d62022de77028e3a02c36b2958069e214f0d9ea7e5126b860ec14",
+          "podName": "billing-db-2",
+          "sessionID": "c21185f3-d433-42d7-8ade-b2ec67eec963"
         },
         "majorVersion": 18,
         "method": "plugin",
         "phase": "failed",
-        "reconciliationStartedAt": "2026-10-03T21:43:31Z",
-        "reconciliationTerminatedAt": "2026-10-03T21:43:32Z"
+        "reconciliationStartedAt": "2026-10-04T02:00:00Z",
+        "reconciliationTerminatedAt": "2026-10-04T02:00:01Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T00:39:38Z",
+        "generation": 1,
+        "name": "orders-db-20261004003938",
+        "namespace": "databases",
+        "resourceVersion": "464293",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-db-20261004003938",
+        "uid": "bb2b4891-cccf-4a7b-b62d-c99f50096e5b"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        },
+        "target": "primary"
+      },
+      "status": {
+        "backupId": "20261004T003939",
+        "backupName": "backup-20261004003938",
+        "beginLSN": "0/10000028",
+        "beginWal": "000000020000000000000010",
+        "endLSN": "0/10000120",
+        "endWal": "000000020000000000000010",
+        "instanceID": {
+          "ContainerID": "containerd://8cffcd4fca7ce9c5c95e0c2b7b11595ce2dd8d5fb6fa3fb8f5108d2c4b2ef2b4",
+          "podName": "orders-db-2",
+          "sessionID": "267b6505-9149-463c-bf70-dc50ce4f6480"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "2",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T00:39:38Z",
+        "reconciliationTerminatedAt": "2026-10-04T00:39:42Z",
+        "startedAt": "2026-10-04T00:39:39Z",
+        "stoppedAt": "2026-10-04T00:39:39Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T00:42:48Z",
+        "generation": 1,
+        "name": "orders-db-20261004004248",
+        "namespace": "databases",
+        "resourceVersion": "465198",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-db-20261004004248",
+        "uid": "01d46f6f-8b87-48b7-b48b-ebebf8d6dbe6"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        }
+      },
+      "status": {
+        "backupId": "20261004T004248",
+        "backupName": "backup-20261004004248",
+        "beginLSN": "0/12000028",
+        "beginWal": "000000020000000000000012",
+        "endLSN": "0/12002B50",
+        "endWal": "000000020000000000000012",
+        "instanceID": {
+          "ContainerID": "containerd://711193c540361389d18e2d053212804344f779a49f256833329f0cd4a4ce536d",
+          "podName": "orders-db-1",
+          "sessionID": "1108fe16-1ab4-4551-b840-ed3ead494b61"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "2",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T00:42:48Z",
+        "reconciliationTerminatedAt": "2026-10-04T00:42:51Z",
+        "startedAt": "2026-10-04T00:42:48Z",
+        "stoppedAt": "2026-10-04T00:42:49Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T00:42:54Z",
+        "generation": 1,
+        "name": "orders-db-20261004004254",
+        "namespace": "databases",
+        "resourceVersion": "465230",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-db-20261004004254",
+        "uid": "78d0d83d-41f7-4fd7-a972-a847e9c0fee7"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        },
+        "target": "primary"
+      },
+      "status": {
+        "backupId": "20261004T004254",
+        "backupName": "backup-20261004004254",
+        "beginLSN": "0/13000028",
+        "beginWal": "000000020000000000000013",
+        "endLSN": "0/13000120",
+        "endWal": "000000020000000000000013",
+        "instanceID": {
+          "ContainerID": "containerd://8cffcd4fca7ce9c5c95e0c2b7b11595ce2dd8d5fb6fa3fb8f5108d2c4b2ef2b4",
+          "podName": "orders-db-2",
+          "sessionID": "267b6505-9149-463c-bf70-dc50ce4f6480"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "2",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T00:42:54Z",
+        "reconciliationTerminatedAt": "2026-10-04T00:42:58Z",
+        "startedAt": "2026-10-04T00:42:54Z",
+        "stoppedAt": "2026-10-04T00:42:55Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T01:02:45Z",
+        "generation": 1,
+        "name": "orders-db-20261004010245",
+        "namespace": "databases",
+        "resourceVersion": "470870",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-db-20261004010245",
+        "uid": "ddcc33d1-5d66-4b31-9cf3-0784711c7448"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        }
+      },
+      "status": {
+        "backupId": "20261004T010245",
+        "backupName": "backup-20261004010245",
+        "beginLSN": "0/1B003668",
+        "beginWal": "00000004000000000000001B",
+        "endLSN": "0/1C0006A8",
+        "endWal": "00000004000000000000001C",
+        "instanceID": {
+          "ContainerID": "containerd://e051dfdb16bb72666c82071dd8c310ca63115affa9c66fe78a1624c43e4679be",
+          "podName": "orders-db-1",
+          "sessionID": "9beef233-f0b4-4f49-a4b5-8bb0cca27f88"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "4",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T01:02:45Z",
+        "reconciliationTerminatedAt": "2026-10-04T01:02:47Z",
+        "startedAt": "2026-10-04T01:02:45Z",
+        "stoppedAt": "2026-10-04T01:02:46Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T01:02:50Z",
+        "generation": 1,
+        "name": "orders-db-20261004010250",
+        "namespace": "databases",
+        "resourceVersion": "470905",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-db-20261004010250",
+        "uid": "fcb93099-0b54-4d70-ad84-5362b9443df3"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        },
+        "target": "primary"
+      },
+      "status": {
+        "backupId": "20261004T010250",
+        "backupName": "backup-20261004010250",
+        "beginLSN": "0/1D000028",
+        "beginWal": "00000004000000000000001D",
+        "endLSN": "0/1D000120",
+        "endWal": "00000004000000000000001D",
+        "instanceID": {
+          "ContainerID": "containerd://b3f450d15c574ddceaae5ffd0c7b38843e574485f9ca57211a684ba912816093",
+          "podName": "orders-db-2",
+          "sessionID": "cf57751d-028d-42e5-88f4-f23127d872fc"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "4",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T01:02:50Z",
+        "reconciliationTerminatedAt": "2026-10-04T01:02:54Z",
+        "startedAt": "2026-10-04T01:02:51Z",
+        "stoppedAt": "2026-10-04T01:02:51Z"
       }
     },
     {
@@ -234,6 +492,758 @@
         "reconciliationTerminatedAt": "2026-10-03T23:00:02Z",
         "startedAt": "2026-10-03T23:00:00Z",
         "stoppedAt": "2026-10-03T23:00:01Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T00:00:00Z",
+        "generation": 1,
+        "labels": {
+          "cnpg.io/cluster": "orders-db",
+          "cnpg.io/immediateBackup": "false",
+          "cnpg.io/scheduled-backup": "orders-hourly"
+        },
+        "name": "orders-hourly-20261004000000",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "postgresql.cnpg.io/v1",
+            "controller": true,
+            "kind": "ScheduledBackup",
+            "name": "orders-hourly",
+            "uid": "3fcf8e97-d4ee-47f3-8eae-f7bff6afd139"
+          }
+        ],
+        "resourceVersion": "455021",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-hourly-20261004000000",
+        "uid": "25dba288-1e05-4fa1-9924-45f5136a01c7"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        }
+      },
+      "status": {
+        "backupId": "20261004T000000",
+        "backupName": "backup-20261004000000",
+        "beginLSN": "0/B3C6B00",
+        "beginWal": "00000002000000000000000B",
+        "endLSN": "0/D001AE8",
+        "endWal": "00000002000000000000000D",
+        "instanceID": {
+          "ContainerID": "containerd://193a7885e2f0189c334639e32ac9cbfc2db72e0bb3a1a6ee9997df03f32e6948",
+          "podName": "orders-db-1",
+          "sessionID": "a8822416-a746-41a9-b43d-cc7c9d162c75"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "2",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T00:00:00Z",
+        "reconciliationTerminatedAt": "2026-10-04T00:00:02Z",
+        "startedAt": "2026-10-04T00:00:00Z",
+        "stoppedAt": "2026-10-04T00:00:01Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T00:53:14Z",
+        "generation": 1,
+        "name": "orders-hourly-20261004005314",
+        "namespace": "databases",
+        "resourceVersion": "468678",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-hourly-20261004005314",
+        "uid": "b95e0ff6-88dc-450f-889c-30b8cc2e0ad6"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        }
+      },
+      "status": {
+        "backupId": "20261004T005315",
+        "backupName": "backup-20261004005314",
+        "beginLSN": "0/18000028",
+        "beginWal": "000000040000000000000018",
+        "endLSN": "0/190030B0",
+        "endWal": "000000040000000000000019",
+        "instanceID": {
+          "ContainerID": "containerd://e051dfdb16bb72666c82071dd8c310ca63115affa9c66fe78a1624c43e4679be",
+          "podName": "orders-db-1",
+          "sessionID": "9beef233-f0b4-4f49-a4b5-8bb0cca27f88"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "4",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T00:53:14Z",
+        "reconciliationTerminatedAt": "2026-10-04T00:53:17Z",
+        "startedAt": "2026-10-04T00:53:15Z",
+        "stoppedAt": "2026-10-04T00:53:15Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T01:00:00Z",
+        "generation": 1,
+        "labels": {
+          "cnpg.io/cluster": "orders-db",
+          "cnpg.io/immediateBackup": "false",
+          "cnpg.io/scheduled-backup": "orders-hourly"
+        },
+        "name": "orders-hourly-20261004010000",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "postgresql.cnpg.io/v1",
+            "controller": true,
+            "kind": "ScheduledBackup",
+            "name": "orders-hourly",
+            "uid": "3fcf8e97-d4ee-47f3-8eae-f7bff6afd139"
+          }
+        ],
+        "resourceVersion": "470107",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-hourly-20261004010000",
+        "uid": "77b5ffa4-b1eb-4ae1-b069-015014153db1"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        }
+      },
+      "status": {
+        "backupId": "20261004T010000",
+        "backupName": "backup-20261004010000",
+        "beginLSN": "0/1B000028",
+        "beginWal": "00000004000000000000001B",
+        "endLSN": "0/1B0032C0",
+        "endWal": "00000004000000000000001B",
+        "instanceID": {
+          "ContainerID": "containerd://e051dfdb16bb72666c82071dd8c310ca63115affa9c66fe78a1624c43e4679be",
+          "podName": "orders-db-1",
+          "sessionID": "9beef233-f0b4-4f49-a4b5-8bb0cca27f88"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "4",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T01:00:00Z",
+        "reconciliationTerminatedAt": "2026-10-04T01:00:02Z",
+        "startedAt": "2026-10-04T01:00:00Z",
+        "stoppedAt": "2026-10-04T01:00:00Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T01:09:30Z",
+        "generation": 1,
+        "name": "orders-hourly-20261004010930",
+        "namespace": "databases",
+        "resourceVersion": "473538",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-hourly-20261004010930",
+        "uid": "48ed2ac4-a6bb-4399-972c-8ba99ba7e9fa"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        }
+      },
+      "status": {
+        "backupId": "20261004T010931",
+        "backupName": "backup-20261004010931",
+        "beginLSN": "0/22000028",
+        "beginWal": "000000060000000000000022",
+        "endLSN": "0/2300FD68",
+        "endWal": "000000060000000000000023",
+        "instanceID": {
+          "ContainerID": "containerd://a8cd564b968e0141b7525f522e491b2117fe250acee77d3b1ffcfc7157531807",
+          "podName": "orders-db-1",
+          "sessionID": "0e5d4e9c-4994-4edd-98a0-7f1e53f55596"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "6",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T01:09:30Z",
+        "reconciliationTerminatedAt": "2026-10-04T01:09:34Z",
+        "startedAt": "2026-10-04T01:09:31Z",
+        "stoppedAt": "2026-10-04T01:09:32Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T02:00:00Z",
+        "generation": 1,
+        "labels": {
+          "cnpg.io/cluster": "orders-db",
+          "cnpg.io/immediateBackup": "false",
+          "cnpg.io/scheduled-backup": "orders-hourly"
+        },
+        "name": "orders-hourly-20261004020000",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "postgresql.cnpg.io/v1",
+            "controller": true,
+            "kind": "ScheduledBackup",
+            "name": "orders-hourly",
+            "uid": "3fcf8e97-d4ee-47f3-8eae-f7bff6afd139"
+          }
+        ],
+        "resourceVersion": "485868",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-hourly-20261004020000",
+        "uid": "abddc3fa-8a10-419b-949d-f67b584b2eaa"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        }
+      },
+      "status": {
+        "backupId": "20261004T020001",
+        "backupName": "backup-20261004020001",
+        "beginLSN": "0/2677FEE8",
+        "beginWal": "000000060000000000000026",
+        "endLSN": "0/28001BD8",
+        "endWal": "000000060000000000000028",
+        "instanceID": {
+          "ContainerID": "containerd://a8cd564b968e0141b7525f522e491b2117fe250acee77d3b1ffcfc7157531807",
+          "podName": "orders-db-1",
+          "sessionID": "0e5d4e9c-4994-4edd-98a0-7f1e53f55596"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "6",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T02:00:00Z",
+        "reconciliationTerminatedAt": "2026-10-04T02:00:05Z",
+        "startedAt": "2026-10-04T02:00:01Z",
+        "stoppedAt": "2026-10-04T02:00:02Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T03:00:00Z",
+        "generation": 1,
+        "labels": {
+          "cnpg.io/cluster": "orders-db",
+          "cnpg.io/immediateBackup": "false",
+          "cnpg.io/scheduled-backup": "orders-hourly"
+        },
+        "name": "orders-hourly-20261004030000",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "postgresql.cnpg.io/v1",
+            "controller": true,
+            "kind": "ScheduledBackup",
+            "name": "orders-hourly",
+            "uid": "3fcf8e97-d4ee-47f3-8eae-f7bff6afd139"
+          }
+        ],
+        "resourceVersion": "500283",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-hourly-20261004030000",
+        "uid": "48cc5835-7416-4642-9f4a-14ef5acba061"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        }
+      },
+      "status": {
+        "backupId": "20261004T030000",
+        "backupName": "backup-20261004030000",
+        "beginLSN": "0/28001E00",
+        "beginWal": "000000060000000000000028",
+        "endLSN": "0/2A001D08",
+        "endWal": "00000006000000000000002A",
+        "instanceID": {
+          "ContainerID": "containerd://a8cd564b968e0141b7525f522e491b2117fe250acee77d3b1ffcfc7157531807",
+          "podName": "orders-db-1",
+          "sessionID": "0e5d4e9c-4994-4edd-98a0-7f1e53f55596"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "6",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T03:00:00Z",
+        "reconciliationTerminatedAt": "2026-10-04T03:00:04Z",
+        "startedAt": "2026-10-04T03:00:00Z",
+        "stoppedAt": "2026-10-04T03:00:01Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T04:00:00Z",
+        "generation": 1,
+        "labels": {
+          "cnpg.io/cluster": "orders-db",
+          "cnpg.io/immediateBackup": "false",
+          "cnpg.io/scheduled-backup": "orders-hourly"
+        },
+        "name": "orders-hourly-20261004040000",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "postgresql.cnpg.io/v1",
+            "controller": true,
+            "kind": "ScheduledBackup",
+            "name": "orders-hourly",
+            "uid": "3fcf8e97-d4ee-47f3-8eae-f7bff6afd139"
+          }
+        ],
+        "resourceVersion": "514483",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-hourly-20261004040000",
+        "uid": "8aff5f8d-e8af-408f-a7c2-33441d19d9dc"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        }
+      },
+      "status": {
+        "backupId": "20261004T040000",
+        "backupName": "backup-20261004040000",
+        "beginLSN": "0/2A001EF8",
+        "beginWal": "00000006000000000000002A",
+        "endLSN": "0/2C001E38",
+        "endWal": "00000006000000000000002C",
+        "instanceID": {
+          "ContainerID": "containerd://a8cd564b968e0141b7525f522e491b2117fe250acee77d3b1ffcfc7157531807",
+          "podName": "orders-db-1",
+          "sessionID": "0e5d4e9c-4994-4edd-98a0-7f1e53f55596"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "6",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T04:00:00Z",
+        "reconciliationTerminatedAt": "2026-10-04T04:00:03Z",
+        "startedAt": "2026-10-04T04:00:00Z",
+        "stoppedAt": "2026-10-04T04:00:01Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T05:00:00Z",
+        "generation": 1,
+        "labels": {
+          "cnpg.io/cluster": "orders-db",
+          "cnpg.io/immediateBackup": "false",
+          "cnpg.io/scheduled-backup": "orders-hourly"
+        },
+        "name": "orders-hourly-20261004050000",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "postgresql.cnpg.io/v1",
+            "controller": true,
+            "kind": "ScheduledBackup",
+            "name": "orders-hourly",
+            "uid": "3fcf8e97-d4ee-47f3-8eae-f7bff6afd139"
+          }
+        ],
+        "resourceVersion": "531009",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-hourly-20261004050000",
+        "uid": "2932576f-471e-4fc2-8b9f-8dc68eb28567"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        }
+      },
+      "status": {
+        "backupId": "20261004T050000",
+        "backupName": "backup-20261004050000",
+        "beginLSN": "0/2C002078",
+        "beginWal": "00000006000000000000002C",
+        "endLSN": "0/2E001F68",
+        "endWal": "00000006000000000000002E",
+        "instanceID": {
+          "ContainerID": "containerd://a8cd564b968e0141b7525f522e491b2117fe250acee77d3b1ffcfc7157531807",
+          "podName": "orders-db-1",
+          "sessionID": "0e5d4e9c-4994-4edd-98a0-7f1e53f55596"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "6",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T05:00:00Z",
+        "reconciliationTerminatedAt": "2026-10-04T05:00:02Z",
+        "startedAt": "2026-10-04T05:00:00Z",
+        "stoppedAt": "2026-10-04T05:00:01Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T06:00:00Z",
+        "generation": 1,
+        "labels": {
+          "cnpg.io/cluster": "orders-db",
+          "cnpg.io/immediateBackup": "false",
+          "cnpg.io/scheduled-backup": "orders-hourly"
+        },
+        "name": "orders-hourly-20261004060000",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "postgresql.cnpg.io/v1",
+            "controller": true,
+            "kind": "ScheduledBackup",
+            "name": "orders-hourly",
+            "uid": "3fcf8e97-d4ee-47f3-8eae-f7bff6afd139"
+          }
+        ],
+        "resourceVersion": "547953",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-hourly-20261004060000",
+        "uid": "543c8cba-a1fe-442d-b7e6-798b298c7041"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        }
+      },
+      "status": {
+        "backupId": "20261004T060000",
+        "backupName": "backup-20261004060000",
+        "beginLSN": "0/2E002170",
+        "beginWal": "00000006000000000000002E",
+        "endLSN": "0/30001C38",
+        "endWal": "000000060000000000000030",
+        "instanceID": {
+          "ContainerID": "containerd://a8cd564b968e0141b7525f522e491b2117fe250acee77d3b1ffcfc7157531807",
+          "podName": "orders-db-1",
+          "sessionID": "0e5d4e9c-4994-4edd-98a0-7f1e53f55596"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "6",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T06:00:00Z",
+        "reconciliationTerminatedAt": "2026-10-04T06:00:02Z",
+        "startedAt": "2026-10-04T06:00:00Z",
+        "stoppedAt": "2026-10-04T06:00:00Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T11:57:32Z",
+        "generation": 1,
+        "labels": {
+          "cnpg.io/cluster": "orders-db",
+          "cnpg.io/immediateBackup": "false",
+          "cnpg.io/scheduled-backup": "orders-hourly"
+        },
+        "name": "orders-hourly-20261004070000",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "postgresql.cnpg.io/v1",
+            "controller": true,
+            "kind": "ScheduledBackup",
+            "name": "orders-hourly",
+            "uid": "3fcf8e97-d4ee-47f3-8eae-f7bff6afd139"
+          }
+        ],
+        "resourceVersion": "558418",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-hourly-20261004070000",
+        "uid": "549c46e6-d1ad-4e1e-8d6f-0bc9b03fc95f"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        }
+      },
+      "status": {
+        "backupId": "20261004T115754",
+        "backupName": "backup-20261004115753",
+        "beginLSN": "0/32000028",
+        "beginWal": "000000060000000000000032",
+        "endLSN": "0/32002C28",
+        "endWal": "000000060000000000000032",
+        "instanceID": {
+          "ContainerID": "containerd://8f94b2e175e8a9c0731ea5ef0f78635d2c93e82b0e23c78b502dc068a69d1f91",
+          "podName": "orders-db-1",
+          "sessionID": "db467e38-f635-45c1-b8ec-4b36441dee2b"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "6",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T11:57:53Z",
+        "reconciliationTerminatedAt": "2026-10-04T11:57:57Z",
+        "startedAt": "2026-10-04T11:57:54Z",
+        "stoppedAt": "2026-10-04T11:57:54Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T12:00:00Z",
+        "generation": 1,
+        "labels": {
+          "cnpg.io/cluster": "orders-db",
+          "cnpg.io/immediateBackup": "false",
+          "cnpg.io/scheduled-backup": "orders-hourly"
+        },
+        "name": "orders-hourly-20261004120000",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "postgresql.cnpg.io/v1",
+            "controller": true,
+            "kind": "ScheduledBackup",
+            "name": "orders-hourly",
+            "uid": "3fcf8e97-d4ee-47f3-8eae-f7bff6afd139"
+          }
+        ],
+        "resourceVersion": "559528",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-hourly-20261004120000",
+        "uid": "2daa7835-7435-420f-9e69-3049ed0dda78"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        }
+      },
+      "status": {
+        "backupId": "20261004T120000",
+        "backupName": "backup-20261004120000",
+        "beginLSN": "0/32000028",
+        "beginWal": "000000060000000000000032",
+        "endLSN": "0/32002FD0",
+        "endWal": "000000060000000000000032",
+        "instanceID": {
+          "ContainerID": "containerd://8f94b2e175e8a9c0731ea5ef0f78635d2c93e82b0e23c78b502dc068a69d1f91",
+          "podName": "orders-db-1",
+          "sessionID": "db467e38-f635-45c1-b8ec-4b36441dee2b"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "6",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T12:00:00Z",
+        "reconciliationTerminatedAt": "2026-10-04T12:00:05Z",
+        "startedAt": "2026-10-04T12:00:00Z",
+        "stoppedAt": "2026-10-04T12:00:02Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Backup",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T13:00:00Z",
+        "generation": 1,
+        "labels": {
+          "cnpg.io/cluster": "orders-db",
+          "cnpg.io/immediateBackup": "false",
+          "cnpg.io/scheduled-backup": "orders-hourly"
+        },
+        "name": "orders-hourly-20261004130000",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "postgresql.cnpg.io/v1",
+            "controller": true,
+            "kind": "ScheduledBackup",
+            "name": "orders-hourly",
+            "uid": "3fcf8e97-d4ee-47f3-8eae-f7bff6afd139"
+          }
+        ],
+        "resourceVersion": "575888",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/backups/orders-hourly-20261004130000",
+        "uid": "d20d3a4a-6a1d-4f1e-be48-fcd1f50ee187"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        }
+      },
+      "status": {
+        "backupId": "20261004T130000",
+        "backupName": "backup-20261004130000",
+        "beginLSN": "0/320031F8",
+        "beginWal": "000000060000000000000032",
+        "endLSN": "0/34000640",
+        "endWal": "000000060000000000000034",
+        "instanceID": {
+          "ContainerID": "containerd://8f94b2e175e8a9c0731ea5ef0f78635d2c93e82b0e23c78b502dc068a69d1f91",
+          "podName": "orders-db-1",
+          "sessionID": "db467e38-f635-45c1-b8ec-4b36441dee2b"
+        },
+        "majorVersion": 18,
+        "method": "plugin",
+        "online": true,
+        "phase": "completed",
+        "pluginMetadata": {
+          "clusterUID": "7f6fcbe1-916d-43d7-a961-d714aa102fcb",
+          "displayName": "BarmanCloudInstance",
+          "name": "barman-cloud.cloudnative-pg.io",
+          "pluginName": "barman-cloud.cloudnative-pg.io",
+          "timeline": "6",
+          "version": "0.15.0"
+        },
+        "reconciliationStartedAt": "2026-10-04T13:00:00Z",
+        "reconciliationTerminatedAt": "2026-10-04T13:00:04Z",
+        "startedAt": "2026-10-04T13:00:00Z",
+        "stoppedAt": "2026-10-04T13:00:01Z"
       }
     }
   ],

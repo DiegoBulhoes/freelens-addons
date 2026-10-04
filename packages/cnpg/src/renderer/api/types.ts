@@ -33,6 +33,20 @@ export interface ClusterSpec {
     barmanObjectStore?: { destinationPath?: string };
     volumeSnapshot?: { className?: string };
   };
+  certificates?: CertificateNames;
+  bootstrap?: { initdb?: { database?: string; owner?: string } };
+}
+
+export interface CertificateNames {
+  serverTLSSecret?: string;
+  serverCASecret?: string;
+  clientCASecret?: string;
+  replicationTLSSecret?: string;
+}
+
+/** A Secret's metadata only, with cert-manager's annotations: its values are never read. */
+export interface SecretMetaLike {
+  metadata: { name: string; namespace?: string; annotations?: Record<string, string> };
 }
 
 export interface ReportedInstance {
@@ -57,7 +71,7 @@ export interface ClusterStatus {
   lastFailedBackup?: string;
   image?: string;
   conditions?: Condition[];
-  certificates?: { expirations?: Record<string, string> };
+  certificates?: CertificateNames & { expirations?: Record<string, string> };
   danglingPVC?: string[];
   unusablePVC?: string[];
   initializingPVC?: string[];

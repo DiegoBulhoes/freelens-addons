@@ -10,7 +10,7 @@
         "generation": 1,
         "name": "backups",
         "namespace": "databases",
-        "resourceVersion": "440649",
+        "resourceVersion": "575885",
         "selfLink": "/apis/barmancloud.cnpg.io/v1/namespaces/databases/objectstores/backups",
         "uid": "0a034202-e033-4986-a843-eb661c3b7266"
       },
@@ -38,7 +38,7 @@
         "serverRecoveryWindow": {
           "orders-db": {
             "firstRecoverabilityPoint": "2026-10-03T21:43:32Z",
-            "lastSuccessfulBackupTime": "2026-10-03T23:00:01Z"
+            "lastSuccessfulBackupTime": "2026-10-04T13:00:01Z"
           }
         }
       }
@@ -52,7 +52,7 @@
         "generation": 1,
         "name": "backups-wrong-keys",
         "namespace": "databases",
-        "resourceVersion": "421187",
+        "resourceVersion": "485845",
         "selfLink": "/apis/barmancloud.cnpg.io/v1/namespaces/databases/objectstores/backups-wrong-keys",
         "uid": "237b5c00-7c7c-40e9-aabf-880ba9f6bf05"
       },
@@ -75,7 +75,7 @@
       "status": {
         "serverRecoveryWindow": {
           "billing-db": {
-            "lastFailedBackupTime": "2026-10-03T21:43:32Z"
+            "lastFailedBackupTime": "2026-10-04T02:00:01Z"
           }
         }
       }

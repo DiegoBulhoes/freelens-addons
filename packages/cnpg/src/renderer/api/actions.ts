@@ -1,6 +1,7 @@
 import { Renderer } from "@freelensapp/extensions";
 
 import { causeFromLog, logSourceFor } from "./causes";
+import { METADATA_ONLY, type PartialObjectMetadataList, secretNamesFrom } from "./connection";
 import { Backup, Cluster, Pooler, Publication, ScheduledBackup, Subscription } from "./kinds";
 import {
   type BackupManifest,
@@ -18,6 +19,7 @@ import type {
   PoolerLike,
   PublicationLike,
   ScheduledBackupLike,
+  SecretMetaLike,
   SubscriptionLike,
 } from "./types";
 
@@ -236,4 +238,20 @@ export async function readMetrics(cluster: ClusterLike, pod: string): Promise<st
   const text = await request.get(metricsPath(cluster, pod));
 
   return typeof text === "string" ? text : "";
+}
+
+export async function listSecretNames(namespaces: string[]): Promise<SecretMetaLike[]> {
+  const lists = await Promise.all(
+    namespaces.map(async (namespace) => {
+      const response = await fetch(`/api-kube/api/v1/namespaces/${namespace}/secrets`, {
+        headers: { Accept: METADATA_ONLY },
+      });
+
+      if (!response.ok) throw new Error(`${response.status} ${response.statusText}`.trim());
+
+      return secretNamesFrom((await response.json()) as PartialObjectMetadataList);
+    }),
+  );
+
+  return lists.flat();
 }

@@ -215,6 +215,30 @@ describe("a replicated cluster, in detail", () => {
     expect(await stamp()).toEqual(before);
   }, 60_000);
 
+  it("closes an instance's menu once an item is picked, and keeps the drawer open", async () => {
+    await openDrawer();
+    await fromInstanceMenu(replica(), "Restart");
+    await dialogText();
+
+    expect(
+      await waitFor(
+        "the menu to close",
+        async () =>
+          (await session.evaluate<number>(
+            `[...document.querySelectorAll('.MenuItem')].filter((each) => !each.closest('${DRAWER}')).length`,
+            frame,
+          )) === 0
+            ? true
+            : undefined,
+        // The host's close animation is under a second; longer means it stayed open.
+        5_000,
+      ),
+    ).toBe(true);
+    expect(await countOf(`${DRAWER} [data-section="cnpg-instances"]`)).toBeGreaterThan(0);
+
+    await cancelDialog();
+  }, 60_000);
+
   it("says the primary restarts in place, and refuses to destroy it", async () => {
     await openDrawer();
 

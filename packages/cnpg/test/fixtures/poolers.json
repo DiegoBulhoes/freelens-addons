@@ -6,13 +6,13 @@
       "kind": "Pooler",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "creationTimestamp": "2026-10-04T01:18:06Z",
         "generation": 1,
         "name": "legacy-rw",
         "namespace": "databases",
-        "resourceVersion": "419421",
+        "resourceVersion": "475649",
         "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/poolers/legacy-rw",
-        "uid": "63bbc936-a05d-4029-aa01-f6e5efdde200"
+        "uid": "130bbfa6-2161-4496-ba13-c650531cd59d"
       },
       "spec": {
         "cluster": {
@@ -87,10 +87,10 @@
       "metadata": {
         "annotations": {},
         "creationTimestamp": "2026-10-03T21:42:01Z",
-        "generation": 1,
+        "generation": 5,
         "name": "orders-rw",
         "namespace": "databases",
-        "resourceVersion": "419643",
+        "resourceVersion": "473580",
         "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/poolers/orders-rw",
         "uid": "4f912e56-7976-4101-ad6a-ae6b33325883"
       },

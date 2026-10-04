@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { KubeObject } from "@freelensapp/kube-object";
 import type { Inventory } from "../src/renderer/api/attention";
+import { type PartialObjectMetadataList, secretNamesFrom } from "../src/renderer/api/connection";
 
 import { Backup, Cluster, ObjectStore, Pooler, ScheduledBackup } from "../src/renderer/api/kinds";
 import type {
@@ -15,6 +16,7 @@ import type {
   PoolerLike,
   PublicationLike,
   ScheduledBackupLike,
+  SecretMetaLike,
   SubscriptionLike,
 } from "../src/renderer/api/types";
 
@@ -29,6 +31,7 @@ import podsJson from "./fixtures/pods.json";
 import poolersJson from "./fixtures/poolers.json";
 import publicationsJson from "./fixtures/publications.json";
 import scheduledBackupsJson from "./fixtures/scheduled-backups.json";
+import secretNamesJson from "./fixtures/secret-names.json";
 import subscriptionsJson from "./fixtures/subscriptions.json";
 
 type Raw = { items: unknown[] };
@@ -102,3 +105,6 @@ export function instanceStatus(pod: string): InstanceStatus {
 
 export const postgresLog = () =>
   readFileSync(resolve(__dirname, "fixtures/postgres-log.txt"), "utf8");
+
+export const secrets = (): SecretMetaLike[] =>
+  secretNamesFrom(secretNamesJson as unknown as PartialObjectMetadataList);

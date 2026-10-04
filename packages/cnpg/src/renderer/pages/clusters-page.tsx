@@ -6,6 +6,7 @@ import { ago } from "../api/backups";
 import { type ClusterBulk, clusterRefusal } from "../api/bulk";
 import { wantsCause } from "../api/causes";
 import { postgresVersion, readyCount, replicaNames } from "../api/clusters";
+import { serverTlsSource, tlsSecretsOf } from "../api/connection";
 import { backupNow, hibernationPatch, reloadPatch, restartPatch } from "../api/operations";
 import { formatBytes, replicaLags, worstLag } from "../api/replication";
 import { describeLoadState } from "../api/store-state";
@@ -18,6 +19,7 @@ import { Status } from "../components/status";
 import { causeKey, useCauses } from "../hooks/use-causes";
 import { useCnpgStores } from "../hooks/use-cnpg-stores";
 import { useInstanceStatuses } from "../hooks/use-instance-statuses";
+import { useSecretNames } from "../hooks/use-secret-names";
 
 export interface ClustersPageParams {
   name?: { get(): string };
@@ -72,6 +74,10 @@ export const ClustersPage = observer(({ params }: { params?: ClustersPageParams 
       run: (row) => run(row.cluster),
     });
   const selected = rows.find((row) => keyOf(row) === selectedKey);
+  const secrets = useSecretNames(
+    [...new Set(stores.clusters.map((cluster) => cluster.getNs() ?? ""))].sort(),
+  );
+  const tlsOf = (row: ClusterRow) => serverTlsSource(tlsSecretsOf(row.cluster, secrets));
   const causes = useCauses(
     rows.filter((row) => wantsCause(row.backup.label)).map((row) => row.cluster),
   );
@@ -126,6 +132,12 @@ export const ClustersPage = observer(({ params }: { params?: ClustersPageParams 
       className: "CNPG-table__shrink",
       cell: (row) => replicaNames(row.cluster).join(", ") || "—",
       sortValue: (row) => replicaNames(row.cluster).length,
+    },
+    {
+      title: "TLS",
+      className: "CNPG-table__shrink",
+      cell: (row) => <span className="CNPG-muted">{tlsOf(row)}</span>,
+      sortValue: (row) => tlsOf(row),
     },
     {
       title: "Lag",
@@ -227,6 +239,7 @@ export const ClustersPage = observer(({ params }: { params?: ClustersPageParams 
       }}
     >
       <ClusterDrawer
+        secrets={secrets}
         cause={selected ? causes.get(causeKey(selected.cluster)) : undefined}
         row={selected}
         inventory={stores}

@@ -6,16 +6,16 @@
       "kind": "Publication",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T23:09:57Z",
+        "creationTimestamp": "2026-10-04T01:18:06Z",
         "finalizers": [
           "cnpg.io/deletePublication"
         ],
         "generation": 1,
         "name": "legacy-pub",
         "namespace": "databases",
-        "resourceVersion": "443793",
+        "resourceVersion": "558253",
         "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/publications/legacy-pub",
-        "uid": "368ced26-4897-419a-bc5b-98d4dd7ac9e2"
+        "uid": "95ad6a57-798e-4b8c-8e91-708a88561a67"
       },
       "spec": {
         "cluster": {

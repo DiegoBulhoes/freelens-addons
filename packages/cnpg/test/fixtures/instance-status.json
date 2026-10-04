@@ -4,7 +4,7 @@
             "namespace": "databases",
             "pod": "billing-db-1",
             "status": {
-                "currentLsn": "0/6000000",
+                "currentLsn": "0/8000000",
                 "systemID": "7692560244539453466",
                 "isPrimary": true,
                 "replayPaused": false,
@@ -26,18 +26,18 @@
                 "loadedConfigurationHash": "6b7f3f0823c6da0273eaa121707c30104709f97c797eb0bc6644e73590288443",
                 "lastArchivedWALTime": "-infinity",
                 "lastFailedWAL": "000000010000000000000001",
-                "lastFailedWALTime": "2026-10-03T23:46:33.362855Z",
-                "currentWAL": "000000010000000000000006",
-                "readyWalFiles": 6,
+                "lastFailedWALTime": "2026-10-04T13:33:00.492639Z",
+                "currentWAL": "000000010000000000000008",
+                "readyWalFiles": 8,
                 "timeLineID": 1,
                 "replicationInfo": [
                     {
                         "applicationName": "billing-db-2",
                         "state": "streaming",
-                        "receivedLsn": "0/6000000",
-                        "writeLsn": "0/6000000",
-                        "flushLsn": "0/6000000",
-                        "replayLsn": "0/6000000",
+                        "receivedLsn": "0/8000000",
+                        "writeLsn": "0/8000000",
+                        "flushLsn": "0/8000000",
+                        "replayLsn": "0/8000000",
                         "writeLag": "00:00:00",
                         "flushLag": "00:00:00",
                         "replayLag": "00:00:00",
@@ -49,7 +49,7 @@
                     {
                         "slotName": "_cnpg_billing_db_2",
                         "slotType": "physical",
-                        "restartLsn": "0/6000000",
+                        "restartLsn": "0/8000000",
                         "walStatus": "reserved",
                         "active": true
                     }
@@ -58,7 +58,7 @@
                 "instanceManagerVersion": "1.30.0",
                 "instanceArch": "amd64",
                 "isInstanceManagerUpgrading": false,
-                "sessionID": "4750f013-66b1-4748-806f-4a7d729dab5d",
+                "sessionID": "08adc929-1009-47e6-9b76-67a4d3c87db0",
                 "isPodReady": false
             }
         },
@@ -66,8 +66,8 @@
             "namespace": "databases",
             "pod": "billing-db-2",
             "status": {
-                "receivedLsn": "0/6000000",
-                "replayLsn": "0/6000000",
+                "receivedLsn": "0/8000000",
+                "replayLsn": "0/8000000",
                 "systemID": "7692560244539453466",
                 "isPrimary": false,
                 "replayPaused": false,
@@ -94,7 +94,7 @@
                 "instanceManagerVersion": "1.30.0",
                 "instanceArch": "amd64",
                 "isInstanceManagerUpgrading": false,
-                "sessionID": "c21185f3-d433-42d7-8ade-b2ec67eec963",
+                "sessionID": "c320e224-6465-4f29-99b2-872caf647e51",
                 "isPodReady": false
             }
         },
@@ -102,7 +102,7 @@
             "namespace": "databases",
             "pod": "inventory-db-1",
             "status": {
-                "currentLsn": "0/6000000",
+                "currentLsn": "0/E2FED00",
                 "systemID": "7692560244491542552",
                 "isPrimary": true,
                 "replayPaused": false,
@@ -123,16 +123,16 @@
                     "status": {}
                 },
                 "loadedConfigurationHash": "fcfcd436805c1917148e9c9e223eedfcfb425ab2afc9b8714cf1b28e829bc534",
-                "lastArchivedWAL": "000000010000000000000005",
-                "lastArchivedWALTime": "2026-10-03T23:17:45.755891Z",
+                "lastArchivedWAL": "00000001000000000000000D",
+                "lastArchivedWALTime": "2026-10-04T12:07:19.662816Z",
                 "lastFailedWALTime": "-infinity",
-                "currentWAL": "000000010000000000000006",
+                "currentWAL": "00000001000000000000000E",
                 "timeLineID": 1,
                 "executableHash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13",
                 "instanceManagerVersion": "1.30.0",
                 "instanceArch": "amd64",
                 "isInstanceManagerUpgrading": false,
-                "sessionID": "977db0d2-9fe5-42ce-a7f8-001733f2039e",
+                "sessionID": "38b913ac-b3bc-4d43-9454-d13e1223ef65",
                 "isPodReady": false
             }
         },
@@ -140,8 +140,8 @@
             "namespace": "databases",
             "pod": "orders-db-1",
             "status": {
-                "receivedLsn": "0/D000000",
-                "replayLsn": "0/D000000",
+                "receivedLsn": "0/373C9440",
+                "replayLsn": "0/373C9440",
                 "systemID": "7692560244499226653",
                 "isPrimary": false,
                 "replayPaused": false,
@@ -150,7 +150,6 @@
                 "isWalReceiverActive": true,
                 "isPgRewindRunning": false,
                 "mightBeUnavailable": false,
-                "isArchivingWAL": true,
                 "node": "",
                 "pod": {
                     "metadata": {
@@ -162,15 +161,14 @@
                     "status": {}
                 },
                 "loadedConfigurationHash": "f5367cc0aead051c84a6c06d5cb012f300a3968fb62ff2b83538a7d6eddbf554",
-                "lastArchivedWAL": "000000010000000000000007",
-                "lastArchivedWALTime": "2026-10-03T21:44:18.785244Z",
+                "lastArchivedWALTime": "-infinity",
                 "lastFailedWALTime": "-infinity",
-                "timeLineID": 2,
+                "timeLineID": 6,
                 "executableHash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13",
                 "instanceManagerVersion": "1.30.0",
                 "instanceArch": "amd64",
                 "isInstanceManagerUpgrading": false,
-                "sessionID": "a8822416-a746-41a9-b43d-cc7c9d162c75",
+                "sessionID": "db467e38-f635-45c1-b8ec-4b36441dee2b",
                 "isPodReady": false
             }
         },
@@ -178,7 +176,7 @@
             "namespace": "databases",
             "pod": "orders-db-2",
             "status": {
-                "currentLsn": "0/D000000",
+                "currentLsn": "0/373C9440",
                 "systemID": "7692560244499226653",
                 "isPrimary": true,
                 "replayPaused": false,
@@ -199,36 +197,35 @@
                     "status": {}
                 },
                 "loadedConfigurationHash": "f5367cc0aead051c84a6c06d5cb012f300a3968fb62ff2b83538a7d6eddbf554",
-                "lastArchivedWAL": "00000002000000000000000C",
-                "lastArchivedWALTime": "2026-10-03T23:20:47.364952Z",
-                "lastFailedWAL": "00000002.history",
-                "lastFailedWALTime": "2026-10-03T21:44:21.930075Z",
-                "currentWAL": "00000002000000000000000D",
-                "timeLineID": 2,
+                "lastArchivedWAL": "000000060000000000000036",
+                "lastArchivedWALTime": "2026-10-04T13:32:24.271594Z",
+                "lastFailedWALTime": "-infinity",
+                "currentWAL": "000000060000000000000037",
+                "timeLineID": 6,
                 "replicationInfo": [
                     {
-                        "applicationName": "orders-db-3",
+                        "applicationName": "orders-db-1",
                         "state": "streaming",
-                        "receivedLsn": "0/D000000",
-                        "writeLsn": "0/D000000",
-                        "flushLsn": "0/D000000",
-                        "replayLsn": "0/B007538",
-                        "writeLag": "00:00:00.025869",
-                        "flushLag": "00:00:00.025869",
-                        "replayLag": "00:35:53.865841",
+                        "receivedLsn": "0/373C9440",
+                        "writeLsn": "0/373C9440",
+                        "flushLsn": "0/373C9440",
+                        "replayLsn": "0/373C9440",
+                        "writeLag": "00:00:00",
+                        "flushLag": "00:00:00",
+                        "replayLag": "00:00:00",
                         "syncState": "async",
                         "syncPriority": "0"
                     },
                     {
-                        "applicationName": "orders-db-1",
+                        "applicationName": "orders-db-3",
                         "state": "streaming",
-                        "receivedLsn": "0/D000000",
-                        "writeLsn": "0/D000000",
-                        "flushLsn": "0/D000000",
-                        "replayLsn": "0/D000000",
-                        "writeLag": "00:00:00",
-                        "flushLag": "00:00:00",
-                        "replayLag": "00:00:00",
+                        "receivedLsn": "0/373C9440",
+                        "writeLsn": "0/373C9440",
+                        "flushLsn": "0/373C9440",
+                        "replayLsn": "0/37000110",
+                        "writeLag": "00:00:00.000406",
+                        "flushLag": "00:00:00.002523",
+                        "replayLag": "00:00:25.583329",
                         "syncState": "async",
                         "syncPriority": "0"
                     }
@@ -240,22 +237,22 @@
                         "slotType": "logical",
                         "datoid": "16385",
                         "database": "app",
-                        "catalogXmin": "813",
-                        "restartLsn": "0/C000110",
+                        "catalogXmin": "1018",
+                        "restartLsn": "0/373C4278",
                         "walStatus": "reserved",
                         "active": true
                     },
                     {
                         "slotName": "_cnpg_orders_db_3",
                         "slotType": "physical",
-                        "restartLsn": "0/D000000",
+                        "restartLsn": "0/373C9440",
                         "walStatus": "reserved",
                         "active": true
                     },
                     {
                         "slotName": "_cnpg_orders_db_1",
                         "slotType": "physical",
-                        "restartLsn": "0/D000000",
+                        "restartLsn": "0/373C9440",
                         "walStatus": "reserved",
                         "active": true
                     }
@@ -264,7 +261,7 @@
                 "instanceManagerVersion": "1.30.0",
                 "instanceArch": "amd64",
                 "isInstanceManagerUpgrading": false,
-                "sessionID": "267b6505-9149-463c-bf70-dc50ce4f6480",
+                "sessionID": "ff2fe08f-0e4b-490f-afa0-a25b3aea9657",
                 "isPodReady": false
             }
         },
@@ -272,8 +269,8 @@
             "namespace": "databases",
             "pod": "orders-db-3",
             "status": {
-                "receivedLsn": "0/D000000",
-                "replayLsn": "0/B007538",
+                "receivedLsn": "0/373C9440",
+                "replayLsn": "0/37000110",
                 "systemID": "7692560244499226653",
                 "isPrimary": false,
                 "replayPaused": true,
@@ -295,12 +292,12 @@
                 "loadedConfigurationHash": "f5367cc0aead051c84a6c06d5cb012f300a3968fb62ff2b83538a7d6eddbf554",
                 "lastArchivedWALTime": "-infinity",
                 "lastFailedWALTime": "-infinity",
-                "timeLineID": 2,
+                "timeLineID": 6,
                 "executableHash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13",
                 "instanceManagerVersion": "1.30.0",
                 "instanceArch": "amd64",
                 "isInstanceManagerUpgrading": false,
-                "sessionID": "5a6f9c18-c627-415d-94bd-4466983cb940",
+                "sessionID": "f5b543a0-9303-4638-a5b7-826954f86915",
                 "isPodReady": false
             }
         }

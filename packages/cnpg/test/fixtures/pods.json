@@ -373,7 +373,7 @@
             "uid": "73436e03-3def-4551-841f-92a8afa162d3"
           }
         ],
-        "resourceVersion": "420776",
+        "resourceVersion": "558060",
         "selfLink": "/api/v1/namespaces/databases/pods/billing-db-1",
         "uid": "48055c5f-693a-4bff-885a-330fcc2c3ba4"
       },
@@ -824,7 +824,7 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:42:42Z",
+            "lastTransitionTime": "2026-10-04T11:57:10Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
@@ -838,14 +838,14 @@
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:43:13Z",
+            "lastTransitionTime": "2026-10-04T11:57:31Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:43:13Z",
+            "lastTransitionTime": "2026-10-04T11:57:31Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
@@ -864,10 +864,18 @@
               "cpu": "50m",
               "memory": "128Mi"
             },
-            "containerID": "containerd://8ee6b3d5599fdac8c0699484f456d3a3905a16217e6900f9e1d0f169e30fc23c",
+            "containerID": "containerd://5531ff33bd05558ca07d4782d8b8fcad67cb84bfad70662e70d7b76f76b1498d",
             "image": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
             "imageID": "ghcr.io/cloudnative-pg/postgresql@sha256:42708a75345b7a48fdd9257b071830783a97fd228529196b6313187a7198e185",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://8ee6b3d5599fdac8c0699484f456d3a3905a16217e6900f9e1d0f169e30fc23c",
+                "exitCode": 255,
+                "finishedAt": "2026-10-04T11:57:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-03T21:43:03Z"
+              }
+            },
             "name": "postgres",
             "ready": true,
             "resources": {
@@ -876,11 +884,11 @@
                 "memory": "128Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 1,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-03T21:43:03Z"
+                "startedAt": "2026-10-04T11:57:16Z"
               }
             },
             "user": {
@@ -935,10 +943,18 @@
               "cpu": "50m",
               "memory": "128Mi"
             },
-            "containerID": "containerd://18aedf1a49e6ea1aa394b73db9d48b32389bffc842dc3140a6c6785eb9f0f4e5",
+            "containerID": "containerd://c3dd5ae41cdccce19dfb97d7d3e3645fc55c4ac9040630ea1cbe7195c598eba1",
             "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.30.0",
             "imageID": "ghcr.io/cloudnative-pg/cloudnative-pg@sha256:a2701eb97cdd2a34b1fdb2cb51987f544b706e40bec72ae7146cd8580efefebb",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://18aedf1a49e6ea1aa394b73db9d48b32389bffc842dc3140a6c6785eb9f0f4e5",
+                "exitCode": 0,
+                "finishedAt": "2026-10-03T21:42:42Z",
+                "reason": "Completed",
+                "startedAt": "2026-10-03T21:42:42Z"
+              }
+            },
             "name": "bootstrap-controller",
             "ready": true,
             "resources": {
@@ -947,15 +963,15 @@
                 "memory": "128Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 1,
             "started": false,
             "state": {
               "terminated": {
-                "containerID": "containerd://18aedf1a49e6ea1aa394b73db9d48b32389bffc842dc3140a6c6785eb9f0f4e5",
+                "containerID": "containerd://c3dd5ae41cdccce19dfb97d7d3e3645fc55c4ac9040630ea1cbe7195c598eba1",
                 "exitCode": 0,
-                "finishedAt": "2026-10-03T21:42:42Z",
+                "finishedAt": "2026-10-04T11:57:13Z",
                 "reason": "Completed",
-                "startedAt": "2026-10-03T21:42:42Z"
+                "startedAt": "2026-10-04T11:57:13Z"
               }
             },
             "user": {
@@ -993,18 +1009,26 @@
             ]
           },
           {
-            "containerID": "containerd://bc68a8336ce0bf8192ac41bad8a53770ee82b881bebf2b5e68339abc9bde51d1",
+            "containerID": "containerd://9bce95dd526c2d7d12f705795d347a7e1793f1d45e7b1b86e963d4bc085d7997",
             "image": "ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar:v0.15.0",
             "imageID": "ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar@sha256:06c78deca670525daa35fb1e5323159092785d11cf87b86217bdd5c679a41a84",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://bc68a8336ce0bf8192ac41bad8a53770ee82b881bebf2b5e68339abc9bde51d1",
+                "exitCode": 255,
+                "finishedAt": "2026-10-04T11:57:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-03T21:43:01Z"
+              }
+            },
             "name": "plugin-barman-cloud",
             "ready": true,
             "resources": {},
-            "restartCount": 0,
+            "restartCount": 1,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-03T21:43:01Z"
+                "startedAt": "2026-10-04T11:57:15Z"
               }
             },
             "user": {
@@ -1096,7 +1120,7 @@
             "uid": "73436e03-3def-4551-841f-92a8afa162d3"
           }
         ],
-        "resourceVersion": "421249",
+        "resourceVersion": "558028",
         "selfLink": "/api/v1/namespaces/databases/pods/billing-db-2",
         "uid": "73d1361a-d51b-43e5-b6da-092abaaf6df8"
       },
@@ -1547,7 +1571,7 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:43:26Z",
+            "lastTransitionTime": "2026-10-04T11:57:11Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
@@ -1561,14 +1585,14 @@
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:43:36Z",
+            "lastTransitionTime": "2026-10-04T11:57:29Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:43:36Z",
+            "lastTransitionTime": "2026-10-04T11:57:29Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
@@ -1587,10 +1611,18 @@
               "cpu": "50m",
               "memory": "128Mi"
             },
-            "containerID": "containerd://eb1cfab8a46d62022de77028e3a02c36b2958069e214f0d9ea7e5126b860ec14",
+            "containerID": "containerd://e072ebb3ead3a133b1af6091ab2b9a77218e369e7489183d99604df6be072c85",
             "image": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
             "imageID": "ghcr.io/cloudnative-pg/postgresql@sha256:42708a75345b7a48fdd9257b071830783a97fd228529196b6313187a7198e185",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://eb1cfab8a46d62022de77028e3a02c36b2958069e214f0d9ea7e5126b860ec14",
+                "exitCode": 255,
+                "finishedAt": "2026-10-04T11:57:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-03T21:43:28Z"
+              }
+            },
             "name": "postgres",
             "ready": true,
             "resources": {
@@ -1599,11 +1631,11 @@
                 "memory": "128Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 1,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-03T21:43:28Z"
+                "startedAt": "2026-10-04T11:57:16Z"
               }
             },
             "user": {
@@ -1658,10 +1690,18 @@
               "cpu": "50m",
               "memory": "128Mi"
             },
-            "containerID": "containerd://c435cdfb42391157c887a52065729ff187a7fe6661930cc101878a4c4b50cd3a",
+            "containerID": "containerd://c24935d7ed1f6ee448a91d172273a5befbe8cc16506624fb262375e9f259048e",
             "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.30.0",
             "imageID": "ghcr.io/cloudnative-pg/cloudnative-pg@sha256:a2701eb97cdd2a34b1fdb2cb51987f544b706e40bec72ae7146cd8580efefebb",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "finishedAt": null,
+                "message": "Unable to get init container status from container runtime and pod has been initialized, treat it as exited normally",
+                "reason": "Completed",
+                "startedAt": null
+              }
+            },
             "name": "bootstrap-controller",
             "ready": true,
             "resources": {
@@ -1674,11 +1714,11 @@
             "started": false,
             "state": {
               "terminated": {
-                "containerID": "containerd://c435cdfb42391157c887a52065729ff187a7fe6661930cc101878a4c4b50cd3a",
+                "containerID": "containerd://c24935d7ed1f6ee448a91d172273a5befbe8cc16506624fb262375e9f259048e",
                 "exitCode": 0,
-                "finishedAt": "2026-10-03T21:43:26Z",
+                "finishedAt": "2026-10-04T11:57:14Z",
                 "reason": "Completed",
-                "startedAt": "2026-10-03T21:43:26Z"
+                "startedAt": "2026-10-04T11:57:14Z"
               }
             },
             "user": {
@@ -1716,18 +1756,26 @@
             ]
           },
           {
-            "containerID": "containerd://49e7d257be26fc100e2922414c26ee016a54ecf051829e0ab13f11932144235c",
+            "containerID": "containerd://ce1ca15e609f74db560220c0ea27cbfea8af74ebbc0cb9235536b881d1cf64e2",
             "image": "ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar:v0.15.0",
             "imageID": "ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar@sha256:06c78deca670525daa35fb1e5323159092785d11cf87b86217bdd5c679a41a84",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://49e7d257be26fc100e2922414c26ee016a54ecf051829e0ab13f11932144235c",
+                "exitCode": 255,
+                "finishedAt": "2026-10-04T11:57:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-03T21:43:27Z"
+              }
+            },
             "name": "plugin-barman-cloud",
             "ready": true,
             "resources": {},
-            "restartCount": 0,
+            "restartCount": 1,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-03T21:43:27Z"
+                "startedAt": "2026-10-04T11:57:15Z"
               }
             },
             "user": {
@@ -1793,7 +1841,7 @@
           "cnpg.io/podEnvHash": "58bb7999c6",
           "cnpg.io/podSpec": "{\"volumes\":[{\"name\":\"pgdata\",\"persistentVolumeClaim\":{\"claimName\":\"inventory-db-1\"}},{\"name\":\"scratch-data\",\"emptyDir\":{}},{\"name\":\"shm\",\"emptyDir\":{\"medium\":\"Memory\"}}],\"initContainers\":[{\"name\":\"bootstrap-controller\",\"image\":\"ghcr.io/cloudnative-pg/cloudnative-pg:1.30.0\",\"command\":[\"/manager\",\"bootstrap\",\"/controller/manager\",\"--log-level=info\"],\"resources\":{\"requests\":{\"cpu\":\"50m\",\"memory\":\"128Mi\"}},\"volumeMounts\":[{\"name\":\"pgdata\",\"mountPath\":\"/var/lib/postgresql/data\"},{\"name\":\"scratch-data\",\"mountPath\":\"/run\"},{\"name\":\"scratch-data\",\"mountPath\":\"/controller\"},{\"name\":\"shm\",\"mountPath\":\"/dev/shm\"}],\"securityContext\":{\"capabilities\":{\"drop\":[\"ALL\"]},\"privileged\":false,\"runAsNonRoot\":true,\"readOnlyRootFilesystem\":true,\"allowPrivilegeEscalation\":false,\"seccompProfile\":{\"type\":\"RuntimeDefault\"}}}],\"containers\":[{\"name\":\"postgres\",\"image\":\"ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie\",\"command\":[\"/controller/manager\",\"instance\",\"run\",\"--status-port-tls\",\"--log-level=info\"],\"ports\":[{\"name\":\"postgresql\",\"containerPort\":5432,\"protocol\":\"TCP\"},{\"name\":\"metrics\",\"containerPort\":9187,\"protocol\":\"TCP\"},{\"name\":\"status\",\"containerPort\":8000,\"protocol\":\"TCP\"}],\"env\":[{\"name\":\"PGDATA\",\"value\":\"/var/lib/postgresql/data/pgdata\"},{\"name\":\"POD_NAME\",\"value\":\"inventory-db-1\"},{\"name\":\"NAMESPACE\",\"value\":\"databases\"},{\"name\":\"CLUSTER_NAME\",\"value\":\"inventory-db\"},{\"name\":\"PSQL_HISTORY\",\"value\":\"/controller/tmp/.psql_history\"},{\"name\":\"PGPORT\",\"value\":\"5432\"},{\"name\":\"PGHOST\",\"value\":\"/controller/run\"},{\"name\":\"TMPDIR\",\"value\":\"/controller/tmp\"}],\"resources\":{\"requests\":{\"cpu\":\"50m\",\"memory\":\"128Mi\"}},\"volumeMounts\":[{\"name\":\"pgdata\",\"mountPath\":\"/var/lib/postgresql/data\"},{\"name\":\"scratch-data\",\"mountPath\":\"/run\"},{\"name\":\"scratch-data\",\"mountPath\":\"/controller\"},{\"name\":\"shm\",\"mountPath\":\"/dev/shm\"}],\"livenessProbe\":{\"httpGet\":{\"path\":\"/healthz\",\"port\":8000,\"scheme\":\"HTTPS\"},\"timeoutSeconds\":5,\"periodSeconds\":10},\"readinessProbe\":{\"httpGet\":{\"path\":\"/readyz\",\"port\":8000,\"scheme\":\"HTTPS\"},\"timeoutSeconds\":5,\"periodSeconds\":10},\"startupProbe\":{\"httpGet\":{\"path\":\"/startupz\",\"port\":8000,\"scheme\":\"HTTPS\"},\"timeoutSeconds\":5,\"periodSeconds\":10,\"failureThreshold\":360},\"securityContext\":{\"capabilities\":{\"drop\":[\"ALL\"]},\"privileged\":false,\"runAsNonRoot\":true,\"readOnlyRootFilesystem\":true,\"allowPrivilegeEscalation\":false,\"seccompProfile\":{\"type\":\"RuntimeDefault\"}}}],\"terminationGracePeriodSeconds\":1800,\"serviceAccountName\":\"inventory-db\",\"securityContext\":{\"runAsUser\":26,\"runAsGroup\":26,\"runAsNonRoot\":true,\"fsGroup\":26,\"seccompProfile\":{\"type\":\"RuntimeDefault\"}},\"hostname\":\"inventory-db-1\",\"affinity\":{\"podAntiAffinity\":{\"preferredDuringSchedulingIgnoredDuringExecution\":[{\"weight\":100,\"podAffinityTerm\":{\"labelSelector\":{\"matchExpressions\":[{\"key\":\"cnpg.io/cluster\",\"operator\":\"In\",\"values\":[\"inventory-db\"]},{\"key\":\"cnpg.io/podRole\",\"operator\":\"In\",\"values\":[\"instance\"]}]},\"topologyKey\":\"kubernetes.io/hostname\"}}]}}}"
         },
-        "creationTimestamp": "2026-10-03T21:42:41Z",
+        "creationTimestamp": "2026-10-04T01:09:09Z",
         "generation": 1,
         "labels": {
           "app.kubernetes.io/component": "database",
@@ -1819,9 +1867,9 @@
             "uid": "bcf798d5-77c5-4804-8f82-cab715671406"
           }
         ],
-        "resourceVersion": "420518",
+        "resourceVersion": "557959",
         "selfLink": "/api/v1/namespaces/databases/pods/inventory-db-1",
-        "uid": "2fb52918-e6e6-4a81-b1fa-7f966a041a07"
+        "uid": "657f7d02-05cf-4d42-98c2-2aee13437abb"
       },
       "spec": {
         "affinity": {
@@ -1991,7 +2039,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-4h5f9",
+                "name": "kube-api-access-cmh59",
                 "readOnly": true
               }
             ]
@@ -2052,7 +2100,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-4h5f9",
+                "name": "kube-api-access-cmh59",
                 "readOnly": true
               }
             ]
@@ -2107,7 +2155,7 @@
             "name": "shm"
           },
           {
-            "name": "kube-api-access-4h5f9",
+            "name": "kube-api-access-cmh59",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -2154,35 +2202,35 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:42:42Z",
+            "lastTransitionTime": "2026-10-04T11:57:10Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:42:42Z",
+            "lastTransitionTime": "2026-10-04T01:09:10Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:42:53Z",
+            "lastTransitionTime": "2026-10-04T11:57:25Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:42:53Z",
+            "lastTransitionTime": "2026-10-04T11:57:25Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:42:41Z",
+            "lastTransitionTime": "2026-10-04T01:09:09Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -2194,10 +2242,18 @@
               "cpu": "50m",
               "memory": "128Mi"
             },
-            "containerID": "containerd://e7f4e650a9b15345068d0bc2fab1c69db777a7fa9245004e066aee0e273d5223",
+            "containerID": "containerd://e6b5773e2e177cb5df39dded6ba69d8612f1da255412d30b030dc92defc7c368",
             "image": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
             "imageID": "ghcr.io/cloudnative-pg/postgresql@sha256:42708a75345b7a48fdd9257b071830783a97fd228529196b6313187a7198e185",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://98850c8c439104cf2c4563a391759a5032aeec76fe91f02fa835423dae61f09f",
+                "exitCode": 255,
+                "finishedAt": "2026-10-04T11:57:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-04T01:09:10Z"
+              }
+            },
             "name": "postgres",
             "ready": true,
             "resources": {
@@ -2206,11 +2262,11 @@
                 "memory": "128Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 1,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-03T21:42:43Z"
+                "startedAt": "2026-10-04T11:57:15Z"
               }
             },
             "user": {
@@ -2242,7 +2298,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-4h5f9",
+                "name": "kube-api-access-cmh59",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -2261,10 +2317,18 @@
               "cpu": "50m",
               "memory": "128Mi"
             },
-            "containerID": "containerd://8cc4e38f4a0d9198ab0c0bb29e16025995487b0e57f4ab78100949cb765acb19",
+            "containerID": "containerd://f9da7df096e9f1af82097a0fa0212fb7b0d0a59d9cd7416afea7a488d7ccb4d5",
             "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.30.0",
             "imageID": "ghcr.io/cloudnative-pg/cloudnative-pg@sha256:a2701eb97cdd2a34b1fdb2cb51987f544b706e40bec72ae7146cd8580efefebb",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://f8b0f31a0435d1d0f669850cfdb69199203ddc04d7bc069ed3652518a095c663",
+                "exitCode": 0,
+                "finishedAt": "2026-10-04T01:09:10Z",
+                "reason": "Completed",
+                "startedAt": "2026-10-04T01:09:09Z"
+              }
+            },
             "name": "bootstrap-controller",
             "ready": true,
             "resources": {
@@ -2273,15 +2337,15 @@
                 "memory": "128Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 1,
             "started": false,
             "state": {
               "terminated": {
-                "containerID": "containerd://8cc4e38f4a0d9198ab0c0bb29e16025995487b0e57f4ab78100949cb765acb19",
+                "containerID": "containerd://f9da7df096e9f1af82097a0fa0212fb7b0d0a59d9cd7416afea7a488d7ccb4d5",
                 "exitCode": 0,
-                "finishedAt": "2026-10-03T21:42:42Z",
+                "finishedAt": "2026-10-04T11:57:13Z",
                 "reason": "Completed",
-                "startedAt": "2026-10-03T21:42:42Z"
+                "startedAt": "2026-10-04T11:57:13Z"
               }
             },
             "user": {
@@ -2312,7 +2376,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-4h5f9",
+                "name": "kube-api-access-cmh59",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -2334,7 +2398,7 @@
             "memory": "128Mi"
           }
         },
-        "startTime": "2026-10-03T21:42:41Z"
+        "startTime": "2026-10-04T01:09:09Z"
       }
     },
     {
@@ -2347,7 +2411,7 @@
           "cnpg.io/podEnvHash": "8559558d94",
           "cnpg.io/podSpec": "{\"volumes\":[{\"name\":\"pgdata\",\"persistentVolumeClaim\":{\"claimName\":\"orders-db-1\"}},{\"name\":\"scratch-data\",\"emptyDir\":{}},{\"name\":\"shm\",\"emptyDir\":{\"medium\":\"Memory\"}},{\"name\":\"tbs-archive\",\"persistentVolumeClaim\":{\"claimName\":\"orders-db-1-tbs-archive\"}},{\"name\":\"plugins\",\"emptyDir\":{}}],\"initContainers\":[{\"name\":\"bootstrap-controller\",\"image\":\"ghcr.io/cloudnative-pg/cloudnative-pg:1.30.0\",\"command\":[\"/manager\",\"bootstrap\",\"/controller/manager\",\"--log-level=info\"],\"resources\":{\"requests\":{\"cpu\":\"50m\",\"memory\":\"128Mi\"}},\"volumeMounts\":[{\"name\":\"pgdata\",\"mountPath\":\"/var/lib/postgresql/data\"},{\"name\":\"scratch-data\",\"mountPath\":\"/run\"},{\"name\":\"scratch-data\",\"mountPath\":\"/controller\"},{\"name\":\"shm\",\"mountPath\":\"/dev/shm\"},{\"name\":\"tbs-archive\",\"mountPath\":\"/var/lib/postgresql/tablespaces/archive\"}],\"securityContext\":{\"capabilities\":{\"drop\":[\"ALL\"]},\"privileged\":false,\"runAsNonRoot\":true,\"readOnlyRootFilesystem\":true,\"allowPrivilegeEscalation\":false,\"seccompProfile\":{\"type\":\"RuntimeDefault\"}}},{\"name\":\"plugin-barman-cloud\",\"image\":\"ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar:v0.15.0\",\"args\":[\"instance\"],\"env\":[{\"name\":\"PGDATA\",\"value\":\"/var/lib/postgresql/data/pgdata\"},{\"name\":\"POD_NAME\",\"value\":\"orders-db-1\"},{\"name\":\"NAMESPACE\",\"value\":\"databases\"},{\"name\":\"CLUSTER_NAME\",\"value\":\"orders-db\"},{\"name\":\"PSQL_HISTORY\",\"value\":\"/controller/tmp/.psql_history\"},{\"name\":\"PGPORT\",\"value\":\"5432\"},{\"name\":\"PGHOST\",\"value\":\"/controller/run\"},{\"name\":\"TMPDIR\",\"value\":\"/controller/tmp\"},{\"name\":\"SPOOL_DIRECTORY\",\"value\":\"/controller/wal-restore-spool\"},{\"name\":\"CUSTOM_CNPG_GROUP\",\"value\":\"postgresql.cnpg.io\"},{\"name\":\"CUSTOM_CNPG_VERSION\",\"value\":\"v1\"}],\"resources\":{},\"restartPolicy\":\"Always\",\"volumeMounts\":[{\"name\":\"pgdata\",\"mountPath\":\"/var/lib/postgresql/data\"},{\"name\":\"scratch-data\",\"mountPath\":\"/controller\"},{\"name\":\"shm\",\"mountPath\":\"/dev/shm\"},{\"name\":\"tbs-archive\",\"mountPath\":\"/var/lib/postgresql/tablespaces/archive\"},{\"name\":\"plugins\",\"mountPath\":\"/plugins\"}],\"startupProbe\":{\"exec\":{\"command\":[\"/manager\",\"healthcheck\",\"unix\"]},\"timeoutSeconds\":5,\"periodSeconds\":1,\"failureThreshold\":30},\"securityContext\":{\"capabilities\":{\"drop\":[\"ALL\"]},\"privileged\":false,\"runAsNonRoot\":true,\"readOnlyRootFilesystem\":true,\"allowPrivilegeEscalation\":false,\"seccompProfile\":{\"type\":\"RuntimeDefault\"}}}],\"containers\":[{\"name\":\"postgres\",\"image\":\"ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie\",\"command\":[\"/controller/manager\",\"instance\",\"run\",\"--status-port-tls\",\"--log-level=info\"],\"ports\":[{\"name\":\"postgresql\",\"containerPort\":5432,\"protocol\":\"TCP\"},{\"name\":\"metrics\",\"containerPort\":9187,\"protocol\":\"TCP\"},{\"name\":\"status\",\"containerPort\":8000,\"protocol\":\"TCP\"}],\"env\":[{\"name\":\"PGDATA\",\"value\":\"/var/lib/postgresql/data/pgdata\"},{\"name\":\"POD_NAME\",\"value\":\"orders-db-1\"},{\"name\":\"NAMESPACE\",\"value\":\"databases\"},{\"name\":\"CLUSTER_NAME\",\"value\":\"orders-db\"},{\"name\":\"PSQL_HISTORY\",\"value\":\"/controller/tmp/.psql_history\"},{\"name\":\"PGPORT\",\"value\":\"5432\"},{\"name\":\"PGHOST\",\"value\":\"/controller/run\"},{\"name\":\"TMPDIR\",\"value\":\"/controller/tmp\"}],\"resources\":{\"requests\":{\"cpu\":\"50m\",\"memory\":\"128Mi\"}},\"volumeMounts\":[{\"name\":\"pgdata\",\"mountPath\":\"/var/lib/postgresql/data\"},{\"name\":\"scratch-data\",\"mountPath\":\"/run\"},{\"name\":\"scratch-data\",\"mountPath\":\"/controller\"},{\"name\":\"shm\",\"mountPath\":\"/dev/shm\"},{\"name\":\"tbs-archive\",\"mountPath\":\"/var/lib/postgresql/tablespaces/archive\"},{\"name\":\"plugins\",\"mountPath\":\"/plugins\"}],\"livenessProbe\":{\"httpGet\":{\"path\":\"/healthz\",\"port\":8000,\"scheme\":\"HTTPS\"},\"timeoutSeconds\":5,\"periodSeconds\":10},\"readinessProbe\":{\"httpGet\":{\"path\":\"/readyz\",\"port\":8000,\"scheme\":\"HTTPS\"},\"timeoutSeconds\":5,\"periodSeconds\":10},\"startupProbe\":{\"httpGet\":{\"path\":\"/startupz\",\"port\":8000,\"scheme\":\"HTTPS\"},\"timeoutSeconds\":5,\"periodSeconds\":10,\"failureThreshold\":360},\"securityContext\":{\"capabilities\":{\"drop\":[\"ALL\"]},\"privileged\":false,\"runAsNonRoot\":true,\"readOnlyRootFilesystem\":true,\"allowPrivilegeEscalation\":false,\"seccompProfile\":{\"type\":\"RuntimeDefault\"}}}],\"terminationGracePeriodSeconds\":1800,\"serviceAccountName\":\"orders-db\",\"securityContext\":{\"runAsUser\":26,\"runAsGroup\":26,\"runAsNonRoot\":true,\"fsGroup\":26,\"seccompProfile\":{\"type\":\"RuntimeDefault\"}},\"hostname\":\"orders-db-1\",\"affinity\":{\"podAntiAffinity\":{\"preferredDuringSchedulingIgnoredDuringExecution\":[{\"weight\":100,\"podAffinityTerm\":{\"labelSelector\":{\"matchExpressions\":[{\"key\":\"cnpg.io/cluster\",\"operator\":\"In\",\"values\":[\"orders-db\"]},{\"key\":\"cnpg.io/podRole\",\"operator\":\"In\",\"values\":[\"instance\"]}]},\"topologyKey\":\"kubernetes.io/hostname\"}}]}}}"
         },
-        "creationTimestamp": "2026-10-03T23:10:22Z",
+        "creationTimestamp": "2026-10-04T01:07:56Z",
         "generation": 1,
         "labels": {
           "app.kubernetes.io/component": "database",
@@ -2373,9 +2437,9 @@
             "uid": "7f6fcbe1-916d-43d7-a961-d714aa102fcb"
           }
         ],
-        "resourceVersion": "443385",
+        "resourceVersion": "558015",
         "selfLink": "/api/v1/namespaces/databases/pods/orders-db-1",
-        "uid": "78b2ea4d-2a43-4261-aae2-c22a90d406f3"
+        "uid": "1924628e-ac74-4ce3-a651-3e0abaaa5047"
       },
       "spec": {
         "affinity": {
@@ -2553,7 +2617,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-t4lzj",
+                "name": "kube-api-access-2k4mp",
                 "readOnly": true
               }
             ]
@@ -2618,7 +2682,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-t4lzj",
+                "name": "kube-api-access-2k4mp",
                 "readOnly": true
               }
             ]
@@ -2730,7 +2794,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-t4lzj",
+                "name": "kube-api-access-2k4mp",
                 "readOnly": true
               }
             ]
@@ -2795,7 +2859,7 @@
             "name": "plugins"
           },
           {
-            "name": "kube-api-access-t4lzj",
+            "name": "kube-api-access-2k4mp",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -2842,35 +2906,35 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T23:10:25Z",
+            "lastTransitionTime": "2026-10-04T11:57:11Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T23:10:27Z",
+            "lastTransitionTime": "2026-10-04T01:07:58Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T23:10:36Z",
+            "lastTransitionTime": "2026-10-04T11:57:29Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T23:10:36Z",
+            "lastTransitionTime": "2026-10-04T11:57:29Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T23:10:25Z",
+            "lastTransitionTime": "2026-10-04T01:07:56Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -2882,10 +2946,18 @@
               "cpu": "50m",
               "memory": "128Mi"
             },
-            "containerID": "containerd://193a7885e2f0189c334639e32ac9cbfc2db72e0bb3a1a6ee9997df03f32e6948",
+            "containerID": "containerd://8f94b2e175e8a9c0731ea5ef0f78635d2c93e82b0e23c78b502dc068a69d1f91",
             "image": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
             "imageID": "ghcr.io/cloudnative-pg/postgresql@sha256:42708a75345b7a48fdd9257b071830783a97fd228529196b6313187a7198e185",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://a8cd564b968e0141b7525f522e491b2117fe250acee77d3b1ffcfc7157531807",
+                "exitCode": 255,
+                "finishedAt": "2026-10-04T11:57:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-04T01:07:58Z"
+              }
+            },
             "name": "postgres",
             "ready": true,
             "resources": {
@@ -2894,11 +2966,11 @@
                 "memory": "128Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 1,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-03T23:10:27Z"
+                "startedAt": "2026-10-04T11:57:16Z"
               }
             },
             "user": {
@@ -2938,7 +3010,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-t4lzj",
+                "name": "kube-api-access-2k4mp",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -2957,10 +3029,18 @@
               "cpu": "50m",
               "memory": "128Mi"
             },
-            "containerID": "containerd://fb8204bce9238be83895b9468fb9343935c71e4386170e504d00fe23c311e053",
+            "containerID": "containerd://19e9630384e6015e3ae38d6c13151338367d961a948c3763201d01cd3899f4ae",
             "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.30.0",
             "imageID": "ghcr.io/cloudnative-pg/cloudnative-pg@sha256:a2701eb97cdd2a34b1fdb2cb51987f544b706e40bec72ae7146cd8580efefebb",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "exitCode": 0,
+                "finishedAt": null,
+                "message": "Unable to get init container status from container runtime and pod has been initialized, treat it as exited normally",
+                "reason": "Completed",
+                "startedAt": null
+              }
+            },
             "name": "bootstrap-controller",
             "ready": true,
             "resources": {
@@ -2973,11 +3053,11 @@
             "started": false,
             "state": {
               "terminated": {
-                "containerID": "containerd://fb8204bce9238be83895b9468fb9343935c71e4386170e504d00fe23c311e053",
+                "containerID": "containerd://19e9630384e6015e3ae38d6c13151338367d961a948c3763201d01cd3899f4ae",
                 "exitCode": 0,
-                "finishedAt": "2026-10-03T23:10:26Z",
+                "finishedAt": "2026-10-04T11:57:14Z",
                 "reason": "Completed",
-                "startedAt": "2026-10-03T23:10:25Z"
+                "startedAt": "2026-10-04T11:57:14Z"
               }
             },
             "user": {
@@ -3012,25 +3092,33 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-t4lzj",
+                "name": "kube-api-access-2k4mp",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
             ]
           },
           {
-            "containerID": "containerd://1d995256c7617aa01163cc7318abbe019ab280cd5cbf6e40f0f9f98bfb6b1925",
+            "containerID": "containerd://b1a95b692d265f450d7ec745f5b986d38617e706b61991cb97f740dd8031eb86",
             "image": "ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar:v0.15.0",
             "imageID": "ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar@sha256:06c78deca670525daa35fb1e5323159092785d11cf87b86217bdd5c679a41a84",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://4fe4ac1cd613a04771ba10360541b1ebad060bda29070876b9ee147155817ece",
+                "exitCode": 255,
+                "finishedAt": "2026-10-04T11:57:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-04T01:07:57Z"
+              }
+            },
             "name": "plugin-barman-cloud",
             "ready": true,
             "resources": {},
-            "restartCount": 0,
+            "restartCount": 1,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-03T23:10:26Z"
+                "startedAt": "2026-10-04T11:57:15Z"
               }
             },
             "user": {
@@ -3065,7 +3153,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-t4lzj",
+                "name": "kube-api-access-2k4mp",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -3087,7 +3175,7 @@
             "memory": "128Mi"
           }
         },
-        "startTime": "2026-10-03T23:10:25Z"
+        "startTime": "2026-10-04T01:07:56Z"
       }
     },
     {
@@ -3126,7 +3214,7 @@
             "uid": "7f6fcbe1-916d-43d7-a961-d714aa102fcb"
           }
         ],
-        "resourceVersion": "443631",
+        "resourceVersion": "557946",
         "selfLink": "/api/v1/namespaces/databases/pods/orders-db-2",
         "uid": "1e49e350-fd9d-4395-b95d-9d763ba0b112"
       },
@@ -3595,7 +3683,7 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T23:10:43Z",
+            "lastTransitionTime": "2026-10-04T11:57:10Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
@@ -3609,14 +3697,14 @@
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T23:10:53Z",
+            "lastTransitionTime": "2026-10-04T11:57:24Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T23:10:53Z",
+            "lastTransitionTime": "2026-10-04T11:57:24Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
@@ -3635,10 +3723,18 @@
               "cpu": "50m",
               "memory": "128Mi"
             },
-            "containerID": "containerd://8cffcd4fca7ce9c5c95e0c2b7b11595ce2dd8d5fb6fa3fb8f5108d2c4b2ef2b4",
+            "containerID": "containerd://c7aac78c3f758aaed211f7ee3bb0f53145b0984c4f9f71859a51ce124f53fe62",
             "image": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
             "imageID": "ghcr.io/cloudnative-pg/postgresql@sha256:42708a75345b7a48fdd9257b071830783a97fd228529196b6313187a7198e185",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://e7e7141a0fdb7efc0baf66be970f225db9ba657efd965593e0180fd9966366fa",
+                "exitCode": 255,
+                "finishedAt": "2026-10-04T11:57:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-04T01:07:22Z"
+              }
+            },
             "name": "postgres",
             "ready": true,
             "resources": {
@@ -3647,11 +3743,11 @@
                 "memory": "128Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 3,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-03T23:10:45Z"
+                "startedAt": "2026-10-04T11:57:16Z"
               }
             },
             "user": {
@@ -3710,10 +3806,18 @@
               "cpu": "50m",
               "memory": "128Mi"
             },
-            "containerID": "containerd://fabb7b8d2a538c6d6ad95b9205f26b7c77fd74f8d07655149a29efd38671ede3",
+            "containerID": "containerd://a7235940b5fe4516b42d78b0673c579bc4d5e29e03560f2838c88a5246921186",
             "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.30.0",
             "imageID": "ghcr.io/cloudnative-pg/cloudnative-pg@sha256:a2701eb97cdd2a34b1fdb2cb51987f544b706e40bec72ae7146cd8580efefebb",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://fabb7b8d2a538c6d6ad95b9205f26b7c77fd74f8d07655149a29efd38671ede3",
+                "exitCode": 0,
+                "finishedAt": "2026-10-03T23:10:43Z",
+                "reason": "Completed",
+                "startedAt": "2026-10-03T23:10:43Z"
+              }
+            },
             "name": "bootstrap-controller",
             "ready": true,
             "resources": {
@@ -3722,15 +3826,15 @@
                 "memory": "128Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 1,
             "started": false,
             "state": {
               "terminated": {
-                "containerID": "containerd://fabb7b8d2a538c6d6ad95b9205f26b7c77fd74f8d07655149a29efd38671ede3",
+                "containerID": "containerd://a7235940b5fe4516b42d78b0673c579bc4d5e29e03560f2838c88a5246921186",
                 "exitCode": 0,
-                "finishedAt": "2026-10-03T23:10:43Z",
+                "finishedAt": "2026-10-04T11:57:13Z",
                 "reason": "Completed",
-                "startedAt": "2026-10-03T23:10:43Z"
+                "startedAt": "2026-10-04T11:57:13Z"
               }
             },
             "user": {
@@ -3772,18 +3876,26 @@
             ]
           },
           {
-            "containerID": "containerd://8301d9cf39b7f912a32345830bbf726279a124ed383a6c51a4d93a741ca6d5f8",
+            "containerID": "containerd://fff253ab28bf125f6d14ff26cc60ce25809b72cb89a7d8251213c0af72167488",
             "image": "ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar:v0.15.0",
             "imageID": "ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar@sha256:06c78deca670525daa35fb1e5323159092785d11cf87b86217bdd5c679a41a84",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://8301d9cf39b7f912a32345830bbf726279a124ed383a6c51a4d93a741ca6d5f8",
+                "exitCode": 255,
+                "finishedAt": "2026-10-04T11:57:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-03T23:10:44Z"
+              }
+            },
             "name": "plugin-barman-cloud",
             "ready": true,
             "resources": {},
-            "restartCount": 0,
+            "restartCount": 1,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-03T23:10:44Z"
+                "startedAt": "2026-10-04T11:57:15Z"
               }
             },
             "user": {
@@ -3853,7 +3965,7 @@
           "cnpg.io/podEnvHash": "cdcc74f64",
           "cnpg.io/podSpec": "{\"volumes\":[{\"name\":\"pgdata\",\"persistentVolumeClaim\":{\"claimName\":\"orders-db-3\"}},{\"name\":\"scratch-data\",\"emptyDir\":{}},{\"name\":\"shm\",\"emptyDir\":{\"medium\":\"Memory\"}},{\"name\":\"tbs-archive\",\"persistentVolumeClaim\":{\"claimName\":\"orders-db-3-tbs-archive\"}},{\"name\":\"plugins\",\"emptyDir\":{}}],\"initContainers\":[{\"name\":\"bootstrap-controller\",\"image\":\"ghcr.io/cloudnative-pg/cloudnative-pg:1.30.0\",\"command\":[\"/manager\",\"bootstrap\",\"/controller/manager\",\"--log-level=info\"],\"resources\":{\"requests\":{\"cpu\":\"50m\",\"memory\":\"128Mi\"}},\"volumeMounts\":[{\"name\":\"pgdata\",\"mountPath\":\"/var/lib/postgresql/data\"},{\"name\":\"scratch-data\",\"mountPath\":\"/run\"},{\"name\":\"scratch-data\",\"mountPath\":\"/controller\"},{\"name\":\"shm\",\"mountPath\":\"/dev/shm\"},{\"name\":\"tbs-archive\",\"mountPath\":\"/var/lib/postgresql/tablespaces/archive\"}],\"securityContext\":{\"capabilities\":{\"drop\":[\"ALL\"]},\"privileged\":false,\"runAsNonRoot\":true,\"readOnlyRootFilesystem\":true,\"allowPrivilegeEscalation\":false,\"seccompProfile\":{\"type\":\"RuntimeDefault\"}}},{\"name\":\"plugin-barman-cloud\",\"image\":\"ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar:v0.15.0\",\"args\":[\"instance\"],\"env\":[{\"name\":\"PGDATA\",\"value\":\"/var/lib/postgresql/data/pgdata\"},{\"name\":\"POD_NAME\",\"value\":\"orders-db-3\"},{\"name\":\"NAMESPACE\",\"value\":\"databases\"},{\"name\":\"CLUSTER_NAME\",\"value\":\"orders-db\"},{\"name\":\"PSQL_HISTORY\",\"value\":\"/controller/tmp/.psql_history\"},{\"name\":\"PGPORT\",\"value\":\"5432\"},{\"name\":\"PGHOST\",\"value\":\"/controller/run\"},{\"name\":\"TMPDIR\",\"value\":\"/controller/tmp\"},{\"name\":\"SPOOL_DIRECTORY\",\"value\":\"/controller/wal-restore-spool\"},{\"name\":\"CUSTOM_CNPG_GROUP\",\"value\":\"postgresql.cnpg.io\"},{\"name\":\"CUSTOM_CNPG_VERSION\",\"value\":\"v1\"}],\"resources\":{},\"restartPolicy\":\"Always\",\"volumeMounts\":[{\"name\":\"pgdata\",\"mountPath\":\"/var/lib/postgresql/data\"},{\"name\":\"scratch-data\",\"mountPath\":\"/controller\"},{\"name\":\"shm\",\"mountPath\":\"/dev/shm\"},{\"name\":\"tbs-archive\",\"mountPath\":\"/var/lib/postgresql/tablespaces/archive\"},{\"name\":\"plugins\",\"mountPath\":\"/plugins\"}],\"startupProbe\":{\"exec\":{\"command\":[\"/manager\",\"healthcheck\",\"unix\"]},\"timeoutSeconds\":5,\"periodSeconds\":1,\"failureThreshold\":30},\"securityContext\":{\"capabilities\":{\"drop\":[\"ALL\"]},\"privileged\":false,\"runAsNonRoot\":true,\"readOnlyRootFilesystem\":true,\"allowPrivilegeEscalation\":false,\"seccompProfile\":{\"type\":\"RuntimeDefault\"}}}],\"containers\":[{\"name\":\"postgres\",\"image\":\"ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie\",\"command\":[\"/controller/manager\",\"instance\",\"run\",\"--status-port-tls\",\"--log-level=info\"],\"ports\":[{\"name\":\"postgresql\",\"containerPort\":5432,\"protocol\":\"TCP\"},{\"name\":\"metrics\",\"containerPort\":9187,\"protocol\":\"TCP\"},{\"name\":\"status\",\"containerPort\":8000,\"protocol\":\"TCP\"}],\"env\":[{\"name\":\"PGDATA\",\"value\":\"/var/lib/postgresql/data/pgdata\"},{\"name\":\"POD_NAME\",\"value\":\"orders-db-3\"},{\"name\":\"NAMESPACE\",\"value\":\"databases\"},{\"name\":\"CLUSTER_NAME\",\"value\":\"orders-db\"},{\"name\":\"PSQL_HISTORY\",\"value\":\"/controller/tmp/.psql_history\"},{\"name\":\"PGPORT\",\"value\":\"5432\"},{\"name\":\"PGHOST\",\"value\":\"/controller/run\"},{\"name\":\"TMPDIR\",\"value\":\"/controller/tmp\"}],\"resources\":{\"requests\":{\"cpu\":\"50m\",\"memory\":\"128Mi\"}},\"volumeMounts\":[{\"name\":\"pgdata\",\"mountPath\":\"/var/lib/postgresql/data\"},{\"name\":\"scratch-data\",\"mountPath\":\"/run\"},{\"name\":\"scratch-data\",\"mountPath\":\"/controller\"},{\"name\":\"shm\",\"mountPath\":\"/dev/shm\"},{\"name\":\"tbs-archive\",\"mountPath\":\"/var/lib/postgresql/tablespaces/archive\"},{\"name\":\"plugins\",\"mountPath\":\"/plugins\"}],\"livenessProbe\":{\"httpGet\":{\"path\":\"/healthz\",\"port\":8000,\"scheme\":\"HTTPS\"},\"timeoutSeconds\":5,\"periodSeconds\":10},\"readinessProbe\":{\"httpGet\":{\"path\":\"/readyz\",\"port\":8000,\"scheme\":\"HTTPS\"},\"timeoutSeconds\":5,\"periodSeconds\":10},\"startupProbe\":{\"httpGet\":{\"path\":\"/startupz\",\"port\":8000,\"scheme\":\"HTTPS\"},\"timeoutSeconds\":5,\"periodSeconds\":10,\"failureThreshold\":360},\"securityContext\":{\"capabilities\":{\"drop\":[\"ALL\"]},\"privileged\":false,\"runAsNonRoot\":true,\"readOnlyRootFilesystem\":true,\"allowPrivilegeEscalation\":false,\"seccompProfile\":{\"type\":\"RuntimeDefault\"}}}],\"terminationGracePeriodSeconds\":1800,\"serviceAccountName\":\"orders-db\",\"securityContext\":{\"runAsUser\":26,\"runAsGroup\":26,\"runAsNonRoot\":true,\"fsGroup\":26,\"seccompProfile\":{\"type\":\"RuntimeDefault\"}},\"hostname\":\"orders-db-3\",\"affinity\":{\"podAntiAffinity\":{\"preferredDuringSchedulingIgnoredDuringExecution\":[{\"weight\":100,\"podAffinityTerm\":{\"labelSelector\":{\"matchExpressions\":[{\"key\":\"cnpg.io/cluster\",\"operator\":\"In\",\"values\":[\"orders-db\"]},{\"key\":\"cnpg.io/podRole\",\"operator\":\"In\",\"values\":[\"instance\"]}]},\"topologyKey\":\"kubernetes.io/hostname\"}}]}}}"
         },
-        "creationTimestamp": "2026-10-03T23:09:59Z",
+        "creationTimestamp": "2026-10-04T01:08:45Z",
         "generation": 1,
         "labels": {
           "app.kubernetes.io/component": "database",
@@ -3879,9 +3991,9 @@
             "uid": "7f6fcbe1-916d-43d7-a961-d714aa102fcb"
           }
         ],
-        "resourceVersion": "443176",
+        "resourceVersion": "558000",
         "selfLink": "/api/v1/namespaces/databases/pods/orders-db-3",
-        "uid": "f3f4e9c4-7207-40fa-b419-e44c294175e3"
+        "uid": "b3ab01f9-a60b-4e52-a901-37b830fb9164"
       },
       "spec": {
         "affinity": {
@@ -4059,7 +4171,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-5822d",
+                "name": "kube-api-access-f7pbd",
                 "readOnly": true
               }
             ]
@@ -4124,7 +4236,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-5822d",
+                "name": "kube-api-access-f7pbd",
                 "readOnly": true
               }
             ]
@@ -4236,7 +4348,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-5822d",
+                "name": "kube-api-access-f7pbd",
                 "readOnly": true
               }
             ]
@@ -4301,7 +4413,7 @@
             "name": "plugins"
           },
           {
-            "name": "kube-api-access-5822d",
+            "name": "kube-api-access-f7pbd",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -4348,35 +4460,35 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T23:10:10Z",
+            "lastTransitionTime": "2026-10-04T11:57:11Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T23:10:12Z",
+            "lastTransitionTime": "2026-10-04T01:08:47Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T23:10:21Z",
+            "lastTransitionTime": "2026-10-04T11:57:28Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T23:10:21Z",
+            "lastTransitionTime": "2026-10-04T11:57:28Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T23:10:10Z",
+            "lastTransitionTime": "2026-10-04T01:08:45Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -4388,10 +4500,18 @@
               "cpu": "50m",
               "memory": "128Mi"
             },
-            "containerID": "containerd://6404d71cff4d881b283f9e7716279aca036d7a580e5ca63e10a47b4df0f293a0",
+            "containerID": "containerd://98e888aab69a61d579524b9f77bcd007a85fa004b88ecfece1e50dcc2022c9dc",
             "image": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
             "imageID": "ghcr.io/cloudnative-pg/postgresql@sha256:42708a75345b7a48fdd9257b071830783a97fd228529196b6313187a7198e185",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://96579e76725d1ef12752ff50733e8591848c8b11576dc0260eb491fdddb3fb69",
+                "exitCode": 255,
+                "finishedAt": "2026-10-04T11:57:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-04T01:08:47Z"
+              }
+            },
             "name": "postgres",
             "ready": true,
             "resources": {
@@ -4400,11 +4520,11 @@
                 "memory": "128Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 1,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-03T23:10:12Z"
+                "startedAt": "2026-10-04T11:57:16Z"
               }
             },
             "user": {
@@ -4444,7 +4564,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-5822d",
+                "name": "kube-api-access-f7pbd",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -4463,10 +4583,18 @@
               "cpu": "50m",
               "memory": "128Mi"
             },
-            "containerID": "containerd://8b7b1ccc1c952e8ff8e01bc584076c8d8d49d066c4445b8b480545d6317bf7c7",
+            "containerID": "containerd://2b4a0e67d81135cebb519bf69e6812f5229bdf6059ba16d0542651a3cc9facc6",
             "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.30.0",
             "imageID": "ghcr.io/cloudnative-pg/cloudnative-pg@sha256:a2701eb97cdd2a34b1fdb2cb51987f544b706e40bec72ae7146cd8580efefebb",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://ce867a73074d10e67e36303c37e3d17eb8f660dcd79f5a1bc9c23a7ad367317d",
+                "exitCode": 0,
+                "finishedAt": "2026-10-04T01:08:46Z",
+                "reason": "Completed",
+                "startedAt": "2026-10-04T01:08:45Z"
+              }
+            },
             "name": "bootstrap-controller",
             "ready": true,
             "resources": {
@@ -4475,15 +4603,15 @@
                 "memory": "128Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 1,
             "started": false,
             "state": {
               "terminated": {
-                "containerID": "containerd://8b7b1ccc1c952e8ff8e01bc584076c8d8d49d066c4445b8b480545d6317bf7c7",
+                "containerID": "containerd://2b4a0e67d81135cebb519bf69e6812f5229bdf6059ba16d0542651a3cc9facc6",
                 "exitCode": 0,
-                "finishedAt": "2026-10-03T23:10:10Z",
+                "finishedAt": "2026-10-04T11:57:14Z",
                 "reason": "Completed",
-                "startedAt": "2026-10-03T23:10:10Z"
+                "startedAt": "2026-10-04T11:57:14Z"
               }
             },
             "user": {
@@ -4518,25 +4646,33 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-5822d",
+                "name": "kube-api-access-f7pbd",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
             ]
           },
           {
-            "containerID": "containerd://12b94db4c7729b2a5e9e70abc38d565d9b1ace07373cb60564de1931db190e3e",
+            "containerID": "containerd://76a7edcfaaf1773dbfffd30e0bdccb707b6360ad9f96556999800e322ddf2dd9",
             "image": "ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar:v0.15.0",
             "imageID": "ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar@sha256:06c78deca670525daa35fb1e5323159092785d11cf87b86217bdd5c679a41a84",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://ab5f45f1ba3ed3efeeb1594a896ba41e9cb116bfd61bced40af991c17d7b5ba0",
+                "exitCode": 255,
+                "finishedAt": "2026-10-04T11:57:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-04T01:08:46Z"
+              }
+            },
             "name": "plugin-barman-cloud",
             "ready": true,
             "resources": {},
-            "restartCount": 0,
+            "restartCount": 1,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-03T23:10:11Z"
+                "startedAt": "2026-10-04T11:57:15Z"
               }
             },
             "user": {
@@ -4571,7 +4707,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-5822d",
+                "name": "kube-api-access-f7pbd",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -4593,7 +4729,7 @@
             "memory": "128Mi"
           }
         },
-        "startTime": "2026-10-03T23:10:10Z"
+        "startTime": "2026-10-04T01:08:45Z"
       }
     },
     {
@@ -4625,7 +4761,7 @@
             "uid": "9ce66921-dac8-4105-80b2-36cc8afd5898"
           }
         ],
-        "resourceVersion": "420032",
+        "resourceVersion": "557742",
         "selfLink": "/api/v1/namespaces/databases/pods/orders-ro-7458fb798b-8gspb",
         "uid": "2e0ec99f-7110-4d78-96d3-558eb116b37d"
       },
@@ -4857,7 +4993,7 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:42:03Z",
+            "lastTransitionTime": "2026-10-04T11:57:10Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
@@ -4871,14 +5007,14 @@
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:42:16Z",
+            "lastTransitionTime": "2026-10-04T11:57:13Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:42:16Z",
+            "lastTransitionTime": "2026-10-04T11:57:13Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
@@ -4893,18 +5029,26 @@
         ],
         "containerStatuses": [
           {
-            "containerID": "containerd://990186fa04b26375f12d9279e26536351ccafc66f02eb699ad4bb9ab41431fec",
+            "containerID": "containerd://0909cb4be7d05993c2f79c9cc6389fb1ddb7df01eabce34f9bb9d3e6b19299bd",
             "image": "ghcr.io/cloudnative-pg/pgbouncer:1.25.1",
             "imageID": "ghcr.io/cloudnative-pg/pgbouncer@sha256:e6ddfe22d845e603825e235dd8334b21ecd125abea2a2172478f556b8dee2bb8",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://990186fa04b26375f12d9279e26536351ccafc66f02eb699ad4bb9ab41431fec",
+                "exitCode": 255,
+                "finishedAt": "2026-10-04T11:57:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-03T21:42:16Z"
+              }
+            },
             "name": "pgbouncer",
             "ready": true,
             "resources": {},
-            "restartCount": 0,
+            "restartCount": 1,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-03T21:42:16Z"
+                "startedAt": "2026-10-04T11:57:13Z"
               }
             },
             "user": {
@@ -4938,22 +5082,30 @@
         ],
         "initContainerStatuses": [
           {
-            "containerID": "containerd://f531e639b4ea228e94e6983f37993463d719ca18405e19bd12c2957aa33c1d39",
+            "containerID": "containerd://04e9313cd8d7c543d52c68cbc21b3efa50b72303966e0962f7ed75d201fea162",
             "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.30.0",
             "imageID": "ghcr.io/cloudnative-pg/cloudnative-pg@sha256:a2701eb97cdd2a34b1fdb2cb51987f544b706e40bec72ae7146cd8580efefebb",
-            "lastState": {},
-            "name": "bootstrap-controller",
-            "ready": true,
-            "resources": {},
-            "restartCount": 0,
-            "started": false,
-            "state": {
+            "lastState": {
               "terminated": {
                 "containerID": "containerd://f531e639b4ea228e94e6983f37993463d719ca18405e19bd12c2957aa33c1d39",
                 "exitCode": 0,
                 "finishedAt": "2026-10-03T21:42:03Z",
                 "reason": "Completed",
                 "startedAt": "2026-10-03T21:42:03Z"
+              }
+            },
+            "name": "bootstrap-controller",
+            "ready": true,
+            "resources": {},
+            "restartCount": 1,
+            "started": false,
+            "state": {
+              "terminated": {
+                "containerID": "containerd://04e9313cd8d7c543d52c68cbc21b3efa50b72303966e0962f7ed75d201fea162",
+                "exitCode": 0,
+                "finishedAt": "2026-10-04T11:57:11Z",
+                "reason": "Completed",
+                "startedAt": "2026-10-04T11:57:11Z"
               }
             },
             "user": {
@@ -5021,7 +5173,7 @@
             "uid": "6cf74e19-160b-4181-ab29-f59731e35e0a"
           }
         ],
-        "resourceVersion": "420036",
+        "resourceVersion": "557730",
         "selfLink": "/api/v1/namespaces/databases/pods/orders-rw-6757c6566-7fvxf",
         "uid": "433c1e4b-46b4-42ef-9ee5-7e7b228d3c87"
       },
@@ -5253,7 +5405,7 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:42:03Z",
+            "lastTransitionTime": "2026-10-04T11:57:10Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
@@ -5267,14 +5419,14 @@
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:42:16Z",
+            "lastTransitionTime": "2026-10-04T11:57:13Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:42:16Z",
+            "lastTransitionTime": "2026-10-04T11:57:13Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
@@ -5289,18 +5441,26 @@
         ],
         "containerStatuses": [
           {
-            "containerID": "containerd://cf02d25653bfd489e3d73d10f88237b73178f356e792659deb91e65b4f0ab4d4",
+            "containerID": "containerd://5de5fe93b330a3cbc1ebfbc6170a416c87cf181cb6445249636e0b9c73d3ceff",
             "image": "ghcr.io/cloudnative-pg/pgbouncer:1.25.1",
             "imageID": "ghcr.io/cloudnative-pg/pgbouncer@sha256:e6ddfe22d845e603825e235dd8334b21ecd125abea2a2172478f556b8dee2bb8",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://cf02d25653bfd489e3d73d10f88237b73178f356e792659deb91e65b4f0ab4d4",
+                "exitCode": 255,
+                "finishedAt": "2026-10-04T11:57:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-03T21:42:16Z"
+              }
+            },
             "name": "pgbouncer",
             "ready": true,
             "resources": {},
-            "restartCount": 0,
+            "restartCount": 1,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-03T21:42:16Z"
+                "startedAt": "2026-10-04T11:57:13Z"
               }
             },
             "user": {
@@ -5334,22 +5494,30 @@
         ],
         "initContainerStatuses": [
           {
-            "containerID": "containerd://e9a56971e5766def4cbeffefd01b4ac32c900bc54675da89c74cdc36dc1e43a0",
+            "containerID": "containerd://e15cac41768b888442cc74859dff760a3e918c753c1bf0a010f878023457440a",
             "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.30.0",
             "imageID": "ghcr.io/cloudnative-pg/cloudnative-pg@sha256:a2701eb97cdd2a34b1fdb2cb51987f544b706e40bec72ae7146cd8580efefebb",
-            "lastState": {},
-            "name": "bootstrap-controller",
-            "ready": true,
-            "resources": {},
-            "restartCount": 0,
-            "started": false,
-            "state": {
+            "lastState": {
               "terminated": {
                 "containerID": "containerd://e9a56971e5766def4cbeffefd01b4ac32c900bc54675da89c74cdc36dc1e43a0",
                 "exitCode": 0,
                 "finishedAt": "2026-10-03T21:42:03Z",
                 "reason": "Completed",
                 "startedAt": "2026-10-03T21:42:03Z"
+              }
+            },
+            "name": "bootstrap-controller",
+            "ready": true,
+            "resources": {},
+            "restartCount": 1,
+            "started": false,
+            "state": {
+              "terminated": {
+                "containerID": "containerd://e15cac41768b888442cc74859dff760a3e918c753c1bf0a010f878023457440a",
+                "exitCode": 0,
+                "finishedAt": "2026-10-04T11:57:11Z",
+                "reason": "Completed",
+                "startedAt": "2026-10-04T11:57:11Z"
               }
             },
             "user": {
@@ -5417,7 +5585,7 @@
             "uid": "6cf74e19-160b-4181-ab29-f59731e35e0a"
           }
         ],
-        "resourceVersion": "420043",
+        "resourceVersion": "557829",
         "selfLink": "/api/v1/namespaces/databases/pods/orders-rw-6757c6566-wgjh5",
         "uid": "06baa0b9-e599-4dd6-8c86-cdf58db3060f"
       },
@@ -5649,7 +5817,7 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:42:03Z",
+            "lastTransitionTime": "2026-10-04T11:57:10Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
@@ -5663,14 +5831,14 @@
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:42:16Z",
+            "lastTransitionTime": "2026-10-04T11:57:17Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-03T21:42:16Z",
+            "lastTransitionTime": "2026-10-04T11:57:17Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
@@ -5685,18 +5853,26 @@
         ],
         "containerStatuses": [
           {
-            "containerID": "containerd://53a98e91a3d6e563f7e421e88a232a9b0cc6169bf5bb28112617aea52381cf03",
+            "containerID": "containerd://bc5b4ef18e33d701ffa21728daa8905cdfdf704a9bd0bf4b861601550ce63947",
             "image": "ghcr.io/cloudnative-pg/pgbouncer:1.25.1",
             "imageID": "ghcr.io/cloudnative-pg/pgbouncer@sha256:e6ddfe22d845e603825e235dd8334b21ecd125abea2a2172478f556b8dee2bb8",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://53a98e91a3d6e563f7e421e88a232a9b0cc6169bf5bb28112617aea52381cf03",
+                "exitCode": 255,
+                "finishedAt": "2026-10-04T11:57:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-03T21:42:16Z"
+              }
+            },
             "name": "pgbouncer",
             "ready": true,
             "resources": {},
-            "restartCount": 0,
+            "restartCount": 1,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-03T21:42:16Z"
+                "startedAt": "2026-10-04T11:57:13Z"
               }
             },
             "user": {
@@ -5730,22 +5906,30 @@
         ],
         "initContainerStatuses": [
           {
-            "containerID": "containerd://a7e6e4a7218583c5f8ffd918726b0618a3a0916ef03c84ad4d99d627b016a49b",
+            "containerID": "containerd://67b43b062d36b5cc23497a84a714ba68be31b663895a1d0239f27e2a36810dbd",
             "image": "ghcr.io/cloudnative-pg/cloudnative-pg:1.30.0",
             "imageID": "ghcr.io/cloudnative-pg/cloudnative-pg@sha256:a2701eb97cdd2a34b1fdb2cb51987f544b706e40bec72ae7146cd8580efefebb",
-            "lastState": {},
-            "name": "bootstrap-controller",
-            "ready": true,
-            "resources": {},
-            "restartCount": 0,
-            "started": false,
-            "state": {
+            "lastState": {
               "terminated": {
                 "containerID": "containerd://a7e6e4a7218583c5f8ffd918726b0618a3a0916ef03c84ad4d99d627b016a49b",
                 "exitCode": 0,
                 "finishedAt": "2026-10-03T21:42:03Z",
                 "reason": "Completed",
                 "startedAt": "2026-10-03T21:42:03Z"
+              }
+            },
+            "name": "bootstrap-controller",
+            "ready": true,
+            "resources": {},
+            "restartCount": 1,
+            "started": false,
+            "state": {
+              "terminated": {
+                "containerID": "containerd://67b43b062d36b5cc23497a84a714ba68be31b663895a1d0239f27e2a36810dbd",
+                "exitCode": 0,
+                "finishedAt": "2026-10-04T11:57:11Z",
+                "reason": "Completed",
+                "startedAt": "2026-10-04T11:57:11Z"
               }
             },
             "user": {

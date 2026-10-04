@@ -187,6 +187,10 @@ metadata:
 spec:
   instances: 1
   storage: { size: 1Gi }
+  # Its server certificate comes from cert-manager; the others use the operator's own.
+  certificates:
+    serverTLSSecret: inventory-db-server-tls
+    serverCASecret: inventory-db-server-tls
   externalClusters:
     - name: orders
       connectionParameters:
@@ -307,3 +311,25 @@ spec:
   name: billing_sub
   publicationName: billing_pub
   externalClusterName: billing
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: inventory-db-server-tls
+  namespace: databases
+spec:
+  secretName: inventory-db-server-tls
+  usages: [server auth]
+  issuerRef:
+    kind: ClusterIssuer
+    name: demo-ca
+  dnsNames:
+    - inventory-db-rw
+    - inventory-db-rw.databases
+    - inventory-db-rw.databases.svc
+    - inventory-db-r
+    - inventory-db-r.databases
+    - inventory-db-r.databases.svc
+    - inventory-db-ro
+    - inventory-db-ro.databases
+    - inventory-db-ro.databases.svc

@@ -139,9 +139,10 @@ export function InstancesSection({
                   </WithTooltip>
                   <MenuActions toolbar={false} autoCloseOnSelect>
                     <MenuItem
-                      // The menu renders outside the drawer; unprevented, this click would close it.
-                      onClick={(event: { preventDefault(): void }) => {
-                        event.preventDefault();
+                      // The menu renders outside the drawer. Prevented natively, the drawer ignores
+                      // the click; the React event stays unprevented, so the menu still closes.
+                      onClick={(event: { nativeEvent: Event }) => {
+                        event.nativeEvent.preventDefault();
                         confirmRestartInstance(cluster, instance.name);
                       }}
                     >
@@ -156,8 +157,8 @@ export function InstancesSection({
                       <span className="title">Restart</span>
                     </MenuItem>
                     <MenuItem
-                      onClick={(event: { preventDefault(): void }) => {
-                        event.preventDefault();
+                      onClick={(event: { nativeEvent: Event }) => {
+                        event.nativeEvent.preventDefault();
                         confirmDestroyInstance(cluster, instance.name);
                       }}
                     >
