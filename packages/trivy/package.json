@@ -1,6 +1,6 @@
 {
   "name": "@freelens-addons/trivy",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "See what the Trivy operator scanned, what it could not, and what it found",
   "license": "Apache-2.0",
