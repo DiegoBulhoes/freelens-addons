@@ -1,0 +1,1016 @@
+/*
+ * The design standard. Edit it here and run the skill's scripts/sync-design.sh; never edit a copy.
+ *
+ * - Colours come from the host's theme; the one literal is a pressed filter's white.
+ * - Content sits on --sidebarBackground: --layoutBackground equals it in the light theme.
+ * - Every component that can be a <button> resets `text-align: center`.
+ */
+
+.CNPG {
+  --cnpg-gap-xs: calc(var(--unit, 8px) * 0.5);
+  --cnpg-gap-sm: var(--unit, 8px);
+  --cnpg-gap-md: calc(var(--unit, 8px) * 2);
+  --cnpg-gap-lg: calc(var(--unit, 8px) * 3);
+
+  --cnpg-small: var(--font-size-small, 12px);
+  --cnpg-radius: var(--border-radius, 3px);
+  --cnpg-line: var(--borderFaintColor, rgba(127, 127, 127, 0.25));
+  --cnpg-line-strong: var(--borderColor, rgba(127, 127, 127, 0.5));
+  --cnpg-surface: var(--sidebarBackground, rgba(127, 127, 127, 0.15));
+  --cnpg-surface-hover: var(--sidebarItemHoverBackground, rgba(127, 127, 127, 0.25));
+
+  --cnpg-tone-critical: var(--colorError);
+  --cnpg-tone-warning: var(--colorWarning);
+  --cnpg-tone-ok: var(--colorSuccess);
+  --cnpg-tone-info: var(--colorInfo);
+
+  color: var(--textColorPrimary);
+}
+
+.CNPG :is(button, a, input):focus-visible {
+  outline: 2px solid var(--colorInfo);
+  outline-offset: 1px;
+}
+
+/* The host's ConfirmDialog is white in every theme; ours follows the theme. */
+.ConfirmDialog:has(.CNPG-dialog) > .box {
+  border: 1px solid var(--borderColor);
+  background-color: var(--contentColor);
+  color: var(--textColorPrimary);
+}
+
+.ConfirmDialog:has(.CNPG-dialog) .confirm-buttons {
+  background: var(--layoutBackground);
+}
+
+/* One text colour in our dialogs; the two root classes outrank the host's control rules. */
+.CNPG.CNPG-dialog,
+.CNPG.CNPG-dialog
+  :is(
+    .CNPG-muted,
+    .CNPG-hint,
+    .CNPG-filter:not([aria-pressed="true"]),
+    .Checkbox,
+    .Checkbox label,
+    .Input,
+    .Input label,
+    input
+  ) {
+  color: inherit;
+}
+
+/* ─── Page ──────────────────────────────────────────────────────────────── */
+
+.CNPG-page {
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding: var(--cnpg-gap-lg);
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: var(--cnpg-gap-lg);
+  min-width: 0;
+}
+
+/* Laid out as the host's `.ItemListLayout`. */
+.CNPG-page--list {
+  padding: 0;
+  gap: 0;
+  background: var(--contentColor);
+}
+
+.CNPG-page--list > .CNPG-page__head {
+  padding: var(--cnpg-gap-md);
+}
+
+.CNPG-page--list > .CNPG-filters {
+  padding: 0 var(--cnpg-gap-md) var(--cnpg-gap-md);
+}
+
+.CNPG-page--list > .CNPG-section > .CNPG-section__note {
+  padding: 0 var(--cnpg-gap-md) var(--cnpg-gap-md);
+}
+
+.CNPG-page__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--cnpg-gap-md);
+  flex-wrap: wrap;
+}
+
+.CNPG-page__head > :first-child {
+  flex: 1 1 20em;
+  min-width: 0;
+}
+
+.CNPG-page__headline {
+  display: flex;
+  align-items: baseline;
+  gap: var(--cnpg-gap-sm);
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: calc(var(--unit, 8px) * 3);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: 1.25;
+}
+
+.CNPG-page__subline {
+  margin: var(--cnpg-gap-xs) 0 0;
+  color: var(--textColorSecondary);
+}
+
+.CNPG-page__count {
+  font-size: var(--font-size-small, 12px);
+  color: var(--textColorSecondary);
+}
+
+.CNPG-page__subline--alarm {
+  color: var(--cnpg-tone-critical);
+}
+
+.CNPG-page__actions {
+  display: grid;
+  justify-items: end;
+  gap: var(--cnpg-gap-xs);
+  max-width: 28em;
+  text-align: right;
+}
+
+/* ─── Section ───────────────────────────────────────────────────────────── */
+
+.CNPG-section {
+  display: grid;
+  gap: var(--cnpg-gap-sm);
+  min-width: 0;
+}
+
+.CNPG-section__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--cnpg-gap-sm);
+  flex-wrap: wrap;
+}
+
+.CNPG-section__bar > :last-child:not(:first-child) {
+  margin-left: auto;
+}
+
+.CNPG-section__title {
+  margin: 0;
+  font-size: var(--font-size-big, 16px);
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+.CNPG-section__note {
+  margin: 0;
+  color: var(--textColorSecondary);
+}
+
+/* ─── Cards ─────────────────────────────────────────────────────────────── */
+
+/* auto-fill, not auto-fit: a card keeps its width however few there are. */
+.CNPG-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: var(--cnpg-gap-sm);
+}
+
+.CNPG-card {
+  display: grid;
+  align-content: start;
+  gap: var(--cnpg-gap-xs);
+  padding: var(--cnpg-gap-md);
+  border: 1px solid var(--cnpg-line);
+  border-radius: var(--cnpg-radius);
+  background: var(--cnpg-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.CNPG-card {
+  cursor: pointer;
+}
+
+button.CNPG-card:hover {
+  background: var(--cnpg-surface-hover);
+  border-color: var(--cnpg-line-strong);
+}
+
+.CNPG-card__value {
+  font-size: calc(var(--unit, 8px) * 3.5);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.CNPG-card__label {
+  font-size: var(--cnpg-small);
+  color: var(--textColorSecondary);
+}
+
+.CNPG-card--critical .CNPG-card__value {
+  color: var(--cnpg-tone-critical);
+}
+
+.CNPG-card--warning .CNPG-card__value {
+  color: var(--cnpg-tone-warning);
+}
+
+.CNPG-card--info .CNPG-card__value {
+  color: var(--cnpg-tone-info);
+}
+
+.CNPG-card--ok .CNPG-card__value {
+  color: var(--cnpg-tone-ok);
+}
+
+/* ─── Rows ──────────────────────────────────────────────────────────────── */
+
+.CNPG-list {
+  display: grid;
+  gap: var(--cnpg-gap-xs);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.CNPG-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--cnpg-gap-md);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--cnpg-gap-sm) var(--cnpg-gap-md);
+  border: 1px solid var(--cnpg-line);
+  border-left: 3px solid var(--cnpg-line);
+  border-radius: var(--cnpg-radius);
+  background: var(--cnpg-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.CNPG-row {
+  cursor: pointer;
+}
+
+button.CNPG-row:hover,
+.CNPG-row:has(> button.CNPG-row__main:hover) {
+  background: var(--cnpg-surface-hover);
+}
+
+.CNPG-row--critical {
+  border-left-color: var(--cnpg-tone-critical);
+}
+
+.CNPG-row--warning {
+  border-left-color: var(--cnpg-tone-warning);
+}
+
+.CNPG-row--info {
+  border-left-color: var(--cnpg-tone-info);
+}
+
+.CNPG-row--ok {
+  border-left-color: var(--cnpg-tone-ok);
+}
+
+.CNPG-row__state {
+  flex: 0 0 9em;
+  font-size: var(--cnpg-small);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+.CNPG-row--critical .CNPG-row__state {
+  color: var(--cnpg-tone-critical);
+}
+
+.CNPG-row--warning .CNPG-row__state {
+  color: var(--cnpg-tone-warning);
+}
+
+.CNPG-row--info .CNPG-row__state {
+  color: var(--cnpg-tone-info);
+}
+
+.CNPG-row--ok .CNPG-row__state {
+  color: var(--cnpg-tone-ok);
+}
+
+.CNPG-row__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+button.CNPG-row__main {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.CNPG-row__name {
+  display: flex;
+  align-items: baseline;
+  gap: var(--cnpg-gap-xs) var(--cnpg-gap-sm);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.CNPG-row__meta {
+  font-size: var(--cnpg-small);
+  color: var(--textColorSecondary);
+}
+
+.CNPG-row__reason {
+  font-size: var(--cnpg-small);
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+.CNPG-row__aside {
+  flex: none;
+  font-size: var(--cnpg-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.CNPG-row__actions {
+  flex: none;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: var(--cnpg-gap-xs);
+}
+
+/* ─── Boxes ─────────────────────────────────────────────────────────────── */
+
+.CNPG-box {
+  display: grid;
+  gap: var(--cnpg-gap-xs);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--cnpg-gap-sm) var(--cnpg-gap-md);
+  border: 1px solid var(--cnpg-line);
+  border-left: 3px solid var(--cnpg-line);
+  border-radius: var(--cnpg-radius);
+  background: var(--cnpg-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.CNPG-box {
+  cursor: pointer;
+}
+
+button.CNPG-box:hover {
+  background: var(--cnpg-surface-hover);
+}
+
+.CNPG-box--critical {
+  border-left-color: var(--cnpg-tone-critical);
+}
+
+.CNPG-box--warning {
+  border-left-color: var(--cnpg-tone-warning);
+}
+
+.CNPG-box--info {
+  border-left-color: var(--cnpg-tone-info);
+}
+
+.CNPG-box--ok {
+  border-left-color: var(--cnpg-tone-ok);
+}
+
+.CNPG-box__head {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  align-items: baseline;
+  gap: var(--cnpg-gap-sm);
+  width: 100%;
+}
+
+button.CNPG-box__head {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.CNPG-box__title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--cnpg-gap-xs) var(--cnpg-gap-sm);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.CNPG-box__meta {
+  font-size: var(--cnpg-small);
+  color: var(--textColorSecondary);
+}
+
+.CNPG-box__count {
+  font-size: var(--cnpg-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.CNPG-box__reason {
+  margin: 0;
+  font-size: var(--cnpg-small);
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+/* ─── Chips ─────────────────────────────────────────────────────────────── */
+
+.CNPG-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cnpg-gap-xs);
+}
+
+/* On the surface grey, so it takes the page's colour to stand out. */
+.CNPG-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--cnpg-gap-xs);
+  padding: 1px var(--cnpg-gap-sm);
+  border: 1px solid transparent;
+  border-radius: var(--cnpg-radius);
+  background: var(--contentColor, rgba(127, 127, 127, 0.1));
+  font: inherit;
+  font-size: var(--cnpg-small);
+  color: inherit;
+  text-align: left;
+}
+
+button.CNPG-chip {
+  color: var(--colorInfo);
+  cursor: pointer;
+}
+
+button.CNPG-chip:hover {
+  border-color: var(--colorInfo);
+}
+
+.CNPG-chip__meta {
+  color: var(--textColorSecondary);
+}
+
+/* ─── Tags ──────────────────────────────────────────────────────────────── */
+
+/* Toned through `color`, so a domain class that sets it tones the tag too. */
+.CNPG-tag {
+  display: inline-block;
+  padding: 0 var(--cnpg-gap-xs);
+  border: 1px solid currentColor;
+  border-radius: var(--cnpg-radius);
+  font-size: var(--cnpg-small);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.CNPG-tag--critical {
+  color: var(--cnpg-tone-critical);
+}
+
+.CNPG-tag--warning {
+  color: var(--cnpg-tone-warning);
+}
+
+.CNPG-tag--info {
+  color: var(--cnpg-tone-info);
+}
+
+.CNPG-tag--ok {
+  color: var(--cnpg-tone-ok);
+}
+
+.CNPG-tag--neutral {
+  color: var(--textColorSecondary);
+}
+
+/* ─── Tables ────────────────────────────────────────────────────────────── */
+
+/* Value for value as the host's lists (Freelens 1.10.3 `.ItemListLayout`, `.TableCell`). */
+.CNPG-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--contentColor);
+}
+
+.CNPG-table th {
+  box-sizing: border-box;
+  height: 33px;
+  padding: var(--cnpg-gap-sm);
+  border-top: 1px solid var(--borderFaintColor);
+  border-bottom: 1px solid var(--borderFaintColor);
+  background: var(--tableHeaderBackground);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: 1.1;
+  text-align: left;
+  color: var(--tableHeaderColor, var(--textColorPrimary));
+  white-space: nowrap;
+}
+
+.CNPG-table th:first-child,
+.CNPG-table td:first-child {
+  padding-left: var(--cnpg-gap-md);
+}
+
+/* 33px: the pitch at which the host's virtual list places its rows. */
+.CNPG-table td {
+  box-sizing: border-box;
+  height: 33px;
+  /* No vertical padding, so a 23px ⋮ or a tag fits. */
+  padding: 0 var(--cnpg-gap-sm);
+  line-height: 1.1;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+.CNPG-table__number {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Every column that must not break needs __shrink, or this one squeezes it to a letter per line. */
+.CNPG-table__fill {
+  width: 100%;
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.CNPG-table__shrink {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.CNPG-table__actions {
+  width: 1%;
+  line-height: 0;
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* The first cell of a selectable row, holding the host's own Checkbox, as its lists do. */
+.CNPG-table__check {
+  width: 1%;
+  padding-right: 0;
+  line-height: 0;
+}
+
+.CNPG-table__row--selected td {
+  background: var(--tableBgcSelected, var(--cnpg-surface-hover));
+}
+
+.CNPG-table__row--clickable {
+  cursor: pointer;
+}
+
+.CNPG-table__row--clickable:hover td {
+  background: var(--tableBgcSelected, var(--cnpg-surface-hover));
+}
+
+.CNPG-table th[aria-sort] > .CNPG-sort {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.CNPG-table th[aria-sort="ascending"] > .CNPG-sort::after {
+  content: " ▲";
+}
+
+.CNPG-table th[aria-sort="descending"] > .CNPG-sort::after {
+  content: " ▼";
+}
+
+/* ─── Facts ─────────────────────────────────────────────────────────────── */
+
+.CNPG-facts {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--cnpg-gap-xs) var(--cnpg-gap-md);
+  margin: 0;
+  padding: var(--cnpg-gap-sm) var(--cnpg-gap-md);
+  border: 1px solid var(--cnpg-line);
+  border-radius: var(--cnpg-radius);
+  background: var(--cnpg-surface);
+}
+
+.CNPG-facts dt {
+  color: var(--textColorSecondary);
+}
+
+.CNPG-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ─── Banner ────────────────────────────────────────────────────────────── */
+
+.CNPG-banner {
+  display: grid;
+  gap: var(--cnpg-gap-xs);
+  padding: var(--cnpg-gap-sm) var(--cnpg-gap-md);
+  border: 1px solid var(--cnpg-tone-warning);
+  border-radius: var(--cnpg-radius);
+  background: var(--cnpg-surface);
+}
+
+.CNPG-banner__title {
+  display: flex;
+  align-items: center;
+  gap: var(--cnpg-gap-sm);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--cnpg-tone-warning);
+}
+
+.CNPG-banner__body {
+  overflow-wrap: anywhere;
+}
+
+.CNPG-banner--critical {
+  border-color: var(--cnpg-tone-critical);
+}
+
+.CNPG-banner--critical .CNPG-banner__title {
+  color: var(--cnpg-tone-critical);
+}
+
+/* ─── Controls ──────────────────────────────────────────────────────────── */
+
+.CNPG-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cnpg-gap-xs);
+}
+
+.CNPG-filter {
+  padding: 2px var(--cnpg-gap-sm);
+  border: 1px solid var(--cnpg-line);
+  border-radius: var(--cnpg-radius);
+  background: transparent;
+  font: inherit;
+  font-size: var(--cnpg-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.CNPG-filter:hover {
+  border-color: var(--cnpg-line-strong);
+  color: var(--textColorPrimary);
+}
+
+.CNPG-filter[aria-pressed="true"] {
+  border-color: var(--colorInfo);
+  background: var(--colorInfo);
+  color: #fff;
+}
+
+.CNPG-filter__count {
+  margin-left: var(--cnpg-gap-xs);
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+.CNPG-button {
+  padding: var(--cnpg-gap-xs) var(--cnpg-gap-md);
+  border: 1px solid var(--cnpg-line-strong);
+  border-radius: var(--cnpg-radius);
+  background: var(--cnpg-surface);
+  font: inherit;
+  color: var(--textColorPrimary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.CNPG-button:hover:not(:disabled) {
+  background: var(--cnpg-surface-hover);
+}
+
+.CNPG-button--primary {
+  border-color: var(--colorInfo);
+}
+
+.CNPG-button--caution {
+  border-color: var(--cnpg-tone-warning);
+  color: var(--cnpg-tone-warning);
+}
+
+.CNPG-button:disabled {
+  border-color: var(--cnpg-line);
+  color: var(--textColorSecondary);
+  cursor: not-allowed;
+}
+
+.CNPG-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--cnpg-gap-xs);
+  flex-wrap: wrap;
+}
+
+.CNPG-icon-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--textColorSecondary);
+  cursor: pointer;
+}
+
+.CNPG-icon-button:hover {
+  color: var(--textColorPrimary);
+}
+
+.CNPG-search {
+  min-width: 0;
+  padding: var(--cnpg-gap-xs) var(--cnpg-gap-sm);
+  border: 1px solid var(--inputControlBorder, var(--cnpg-line));
+  border-radius: var(--cnpg-radius);
+  background: var(--inputControlBackground, transparent);
+  font: inherit;
+  color: var(--textColorPrimary);
+}
+
+.CNPG-search:hover {
+  border-color: var(--inputControlHoverBorder, var(--cnpg-line-strong));
+}
+
+.CNPG-search:focus {
+  outline: none;
+  border-color: var(--colorInfo);
+}
+
+.CNPG-search--wide {
+  flex: 1 1 20rem;
+}
+
+.CNPG-link {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: var(--colorInfo);
+  text-align: left;
+  cursor: pointer;
+}
+
+.CNPG-link:hover,
+.CNPG a:hover {
+  text-decoration: underline;
+}
+
+.CNPG a {
+  color: var(--colorInfo);
+  text-decoration: none;
+}
+
+/* ─── Picker ────────────────────────────────────────────────────────────── */
+
+.CNPG-picker {
+  height: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.CNPG-picker__side {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: var(--cnpg-gap-sm);
+  padding: var(--cnpg-gap-md);
+  border-right: 1px solid var(--cnpg-line);
+  min-height: 0;
+}
+
+.CNPG-picker__list {
+  overflow-y: auto;
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 1px;
+  min-height: 0;
+}
+
+.CNPG-picker__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "name aside" "meta aside";
+  align-items: center;
+  gap: 0 var(--cnpg-gap-sm);
+  padding: var(--cnpg-gap-sm);
+  border: none;
+  border-left: 2px solid transparent;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.CNPG-picker__item:hover {
+  background: var(--cnpg-surface-hover);
+}
+
+.CNPG-picker__item--selected {
+  border-left-color: var(--colorInfo);
+  background: var(--cnpg-surface);
+}
+
+.CNPG-picker__name {
+  grid-area: name;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.CNPG-picker__meta {
+  grid-area: meta;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--cnpg-small);
+  color: var(--textColorSecondary);
+}
+
+.CNPG-picker__aside {
+  grid-area: aside;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: var(--cnpg-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.CNPG-picker__detail {
+  overflow-y: auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+.CNPG-picker__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+  padding: var(--cnpg-gap-lg);
+  color: var(--textColorSecondary);
+  text-align: center;
+}
+
+/* ─── Status ────────────────────────────────────────────────────────────── */
+
+.CNPG-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cnpg-gap-xs);
+  white-space: nowrap;
+}
+
+.CNPG-status::before {
+  content: "";
+  width: 0.6em;
+  height: 0.6em;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--textColorSecondary);
+}
+
+.CNPG-status--critical::before {
+  background: var(--cnpg-tone-critical);
+}
+
+.CNPG-status--warning::before {
+  background: var(--cnpg-tone-warning);
+}
+
+.CNPG-status--info::before {
+  background: var(--cnpg-tone-info);
+}
+
+.CNPG-status--ok::before {
+  background: var(--cnpg-tone-ok);
+}
+
+/* ─── Namespace selector ────────────────────────────────────────────────── */
+
+.CNPG-namespaces {
+  min-width: 16em;
+}
+
+/* ─── Drawer ────────────────────────────────────────────────────────────── */
+
+.CNPG-drawer {
+  display: grid;
+  gap: var(--cnpg-gap-lg);
+  min-width: 0;
+  padding-block: var(--cnpg-gap-sm);
+}
+
+/* ─── Form ──────────────────────────────────────────────────────────────── */
+
+.CNPG-form {
+  display: grid;
+  gap: var(--cnpg-gap-md);
+}
+
+.CNPG-form__field {
+  display: grid;
+  gap: var(--cnpg-gap-xs);
+}
+
+/* ─── Selection ─────────────────────────────────────────────────────────── */
+
+.CNPG-selection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cnpg-gap-md);
+  padding: var(--cnpg-gap-sm) var(--cnpg-gap-md);
+  border-top: 1px solid var(--cnpg-line);
+  background: var(--cnpg-surface);
+}
+
+.CNPG-selection__what {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.CNPG-selection__count {
+  color: var(--textColorSecondary);
+}
+
+/* ─── Text ──────────────────────────────────────────────────────────────── */
+
+.CNPG-muted {
+  color: var(--textColorSecondary);
+}
+
+.CNPG-hint {
+  font-size: var(--cnpg-small);
+  color: var(--textColorSecondary);
+}
+
+.CNPG code,
+.CNPG-mono {
+  font-family: var(--font-monospace, monospace);
+  font-size: var(--cnpg-small);
+}
+
+.CNPG-truncate {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.CNPG-text--critical {
+  color: var(--cnpg-tone-critical);
+}
+
+.CNPG-text--warning {
+  color: var(--cnpg-tone-warning);
+}
+
+.CNPG-text--info {
+  color: var(--cnpg-tone-info);
+}
+
+.CNPG-text--ok {
+  color: var(--cnpg-tone-ok);
+}

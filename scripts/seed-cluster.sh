@@ -12,6 +12,8 @@ readonly ARGOCD_VERSION="v3.5.2"
 readonly TRIVY_OPERATOR_VERSION="v0.34.0"
 readonly CERT_MANAGER_VERSION="v1.21.2"
 readonly IMAGE_UPDATER_VERSION="v1.3.0"
+readonly CNPG_VERSION="1.30.0"
+readonly BARMAN_CLOUD_VERSION="v0.15.0"
 
 export KUBECONFIG="${KUBECONFIG_PATH}"
 
@@ -42,6 +44,10 @@ say "Argo CD Image Updater ${IMAGE_UPDATER_VERSION}"
 kubectl apply --server-side --force-conflicts -n argocd -f \
   "https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/${IMAGE_UPDATER_VERSION}/config/install.yaml"
 
+say "CloudNativePG ${CNPG_VERSION}"
+kubectl apply --server-side --force-conflicts -f \
+  "https://github.com/cloudnative-pg/cloudnative-pg/releases/download/v${CNPG_VERSION}/cnpg-${CNPG_VERSION}.yaml"
+
 say "Pebble, a test ACME server"
 kubectl apply -f dev/cluster/25-pebble.yaml
 
@@ -53,6 +59,7 @@ for deployment in cert-manager cert-manager-cainjector cert-manager-webhook; do
 done
 kubectl -n acme-test rollout status deploy/pebble --timeout=300s
 kubectl -n argocd rollout status deploy/argocd-image-updater-controller --timeout=300s
+kubectl -n cnpg-system rollout status deploy/cnpg-controller-manager --timeout=300s
 
 say "Sample ArgoCD Applications"
 kubectl apply -f dev/cluster/20-argocd-applications.yaml
@@ -68,6 +75,43 @@ for attempt in $(seq 1 30); do
   sleep 4
 done
 kubectl apply -f dev/cluster/30-cert-manager.yaml
+
+# The plugin's certificates need cert-manager, so it comes after it.
+say "Barman Cloud plugin ${BARMAN_CLOUD_VERSION}"
+kubectl apply --server-side --force-conflicts -f \
+  "https://github.com/cloudnative-pg/plugin-barman-cloud/releases/download/${BARMAN_CLOUD_VERSION}/manifest.yaml"
+kubectl -n cnpg-system rollout status deploy/barman-cloud --timeout=300s
+
+say "Postgres clusters, backups and poolers"
+kubectl apply -f dev/cluster/50-cnpg.yaml
+for cluster in orders-db billing-db inventory-db reports-db; do
+  kubectl -n databases wait --for=condition=Ready "cluster/${cluster}" --timeout=600s
+done
+
+# The subscription needs the table on both ends; the publication carries its rows across.
+psql_on() { # pod database sql
+  kubectl -n databases exec "$1" -c postgres -- psql -d "$2" -At -c "$3"
+}
+for cluster in orders-db inventory-db; do
+  psql_on "$(kubectl -n databases get cluster "${cluster}" -o jsonpath='{.status.currentPrimary}')" app \
+    "create table if not exists orders (id bigint primary key, placed_at timestamptz not null default now(), total numeric(10,2) not null)"
+done
+
+# States no manifest can declare: a switchover, and a hibernated cluster.
+say "Switching orders-db over, hibernating reports-db"
+kubectl -n databases patch cluster orders-db --subresource=status --type merge -p \
+  '{"status":{"targetPrimary":"orders-db-2","phase":"Switchover in progress","phaseReason":"Switching over to orders-db-2"}}' >/dev/null
+kubectl -n databases annotate cluster reports-db cnpg.io/hibernation=on --overwrite
+for _ in $(seq 1 100); do
+  [[ "$(kubectl -n databases get cluster orders-db -o jsonpath='{.status.currentPrimary}')" == "orders-db-2" ]] && break
+  sleep 3
+done
+
+# Replication lag: one replica stops replaying while the primary keeps writing.
+say "Pausing replay on orders-db-3, then writing on the primary"
+kubectl -n databases wait --for=condition=Ready cluster/orders-db --timeout=600s
+psql_on orders-db-3 postgres "select pg_wal_replay_pause()"
+psql_on orders-db-2 app "insert into orders select g, now(), g * 1.5 from generate_series(1, 20000) g on conflict do nothing"
 
 # Valid but failing to renew: issue renewal-stalls, then remove flaky-ca's key.
 say "Breaking flaky-ca once renewal-stalls has been issued"

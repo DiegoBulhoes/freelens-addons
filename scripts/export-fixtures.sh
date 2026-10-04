@@ -59,8 +59,51 @@ cert-manager() {
   echo "  exported at → ${out}/exported-at.json"
 }
 
+cnpg() {
+  emit clusters.postgresql.cnpg.io clusters.json -A
+  emit backups.postgresql.cnpg.io backups.json -A
+  emit scheduledbackups.postgresql.cnpg.io scheduled-backups.json -A
+  emit poolers.postgresql.cnpg.io poolers.json -A
+  emit objectstores.barmancloud.cnpg.io object-stores.json -A
+  emit events events.json -A --field-selector type=Warning
+  # Env values are redacted by the sanitiser.
+  emit pods pods.json -A -l cnpg.io/cluster
+  emit publications.postgresql.cnpg.io publications.json -A
+  emit subscriptions.postgresql.cnpg.io subscriptions.json -A
+  emit poddisruptionbudgets pdbs.json -A -l cnpg.io/cluster
+  # What `kubectl cnpg status` reads from each instance: lag, slots, LSNs, archiving.
+  {
+    printf '{"items":['
+    first=1
+    for pod in $(kubectl get pods -A -l cnpg.io/podRole=instance --field-selector status.phase=Running \
+      -o jsonpath='{range .items[*]}{.metadata.namespace}/{.metadata.name}{" "}{end}'); do
+      [[ ${first} -eq 1 ]] || printf ','
+      first=0
+      printf '{"namespace":"%s","pod":"%s","status":' "${pod%%/*}" "${pod##*/}"
+      kubectl get --raw "/api/v1/namespaces/${pod%%/*}/pods/https:${pod##*/}:8000/proxy/pg/status"
+      printf '}'
+    done
+    printf ']}\n'
+  } | python3 -m json.tool > "${out}/instance-status.json"
+  echo "  instance status → ${out}/instance-status.json"
+  kubectl logs -n databases -l cnpg.io/cluster=orders-db,cnpg.io/podRole=instance -c postgres \
+    --tail=60 --prefix=false > "${out}/postgres-log.txt"
+  echo "  postgres log → ${out}/postgres-log.txt"
+  # The exporter's uptime and database sizes, from orders-db's primary.
+  kubectl get --raw "/api/v1/namespaces/databases/pods/orders-db-2:9187/proxy/metrics" \
+    | grep -E '^(# (HELP|TYPE) )?cnpg_pg_(postmaster_start_time|database_size_bytes)' > "${out}/metrics.txt"
+  echo "  metrics → ${out}/metrics.txt"
+  # Barman writes the cause of a failed backup here only; billing-db's keys are wrong on purpose.
+  kubectl logs -n databases -l cnpg.io/cluster=billing-db,cnpg.io/instanceRole=primary \
+    -c plugin-barman-cloud --tail=200 > "${out}/plugin-log.txt"
+  echo "  plugin log → ${out}/plugin-log.txt"
+
+  printf '{ "exportedAt": "%s" }\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "${out}/exported-at.json"
+  echo "  exported at → ${out}/exported-at.json"
+}
+
 packages=("$@")
-[[ ${#packages[@]} -eq 0 ]] && packages=(argocd trivy cert-manager)
+[[ ${#packages[@]} -eq 0 ]] && packages=(argocd trivy cert-manager cnpg)
 
 # Public repository: only the dev k3s, recognised by its fixed node name.
 if [[ "$(kubectl get nodes -o jsonpath='{.items[*].metadata.name}')" != "freelens-addons-dev" ]]; then

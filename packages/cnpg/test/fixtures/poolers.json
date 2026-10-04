@@ -1,0 +1,137 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Pooler",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "generation": 1,
+        "name": "legacy-rw",
+        "namespace": "databases",
+        "resourceVersion": "419421",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/poolers/legacy-rw",
+        "uid": "63bbc936-a05d-4029-aa01-f6e5efdde200"
+      },
+      "spec": {
+        "cluster": {
+          "name": "legacy-db"
+        },
+        "instances": 1,
+        "pgbouncer": {
+          "paused": false,
+          "poolMode": "session"
+        },
+        "type": "rw"
+      },
+      "status": {
+        "phase": "inactive",
+        "phaseReason": "Cluster \"legacy-db\" not found"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Pooler",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "generation": 1,
+        "name": "orders-ro",
+        "namespace": "databases",
+        "resourceVersion": "419650",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/poolers/orders-ro",
+        "uid": "cdeeeca6-5532-48a7-afdc-ea58e87165c5"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "instances": 1,
+        "pgbouncer": {
+          "paused": false,
+          "poolMode": "session"
+        },
+        "type": "ro"
+      },
+      "status": {
+        "image": "ghcr.io/cloudnative-pg/pgbouncer:1.25.1",
+        "instances": 1,
+        "phase": "active",
+        "secrets": {
+          "clientCA": {
+            "name": "orders-db-ca",
+            "version": "419317"
+          },
+          "clientTLS": {
+            "name": "orders-db-server",
+            "version": "419321"
+          },
+          "pgBouncerSecrets": {
+            "authQuery": {
+              "name": "orders-db-pooler",
+              "version": "419523"
+            }
+          },
+          "serverCA": {
+            "name": "orders-db-ca",
+            "version": "419317"
+          },
+          "serverTLS": {}
+        }
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Pooler",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "generation": 1,
+        "name": "orders-rw",
+        "namespace": "databases",
+        "resourceVersion": "419643",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/poolers/orders-rw",
+        "uid": "4f912e56-7976-4101-ad6a-ae6b33325883"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "instances": 2,
+        "pgbouncer": {
+          "paused": false,
+          "poolMode": "transaction"
+        },
+        "type": "rw"
+      },
+      "status": {
+        "image": "ghcr.io/cloudnative-pg/pgbouncer:1.25.1",
+        "instances": 2,
+        "phase": "active",
+        "secrets": {
+          "clientCA": {
+            "name": "orders-db-ca",
+            "version": "419317"
+          },
+          "clientTLS": {
+            "name": "orders-db-server",
+            "version": "419321"
+          },
+          "pgBouncerSecrets": {
+            "authQuery": {
+              "name": "orders-db-pooler",
+              "version": "419523"
+            }
+          },
+          "serverCA": {
+            "name": "orders-db-ca",
+            "version": "419317"
+          },
+          "serverTLS": {}
+        }
+      }
+    }
+  ],
+  "kind": "List"
+}

@@ -1,0 +1,13 @@
+import { Renderer } from "@freelensapp/extensions";
+
+const {
+  Component: { NamespaceSelectFilter },
+} = Renderer;
+
+export function NamespaceFilter() {
+  return (
+    <div className="CNPG-namespaces">
+      <NamespaceSelectFilter id="cnpg-namespace-select" />
+    </div>
+  );
+}

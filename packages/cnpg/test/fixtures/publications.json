@@ -1,0 +1,70 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Publication",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T23:09:57Z",
+        "finalizers": [
+          "cnpg.io/deletePublication"
+        ],
+        "generation": 1,
+        "name": "legacy-pub",
+        "namespace": "databases",
+        "resourceVersion": "443793",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/publications/legacy-pub",
+        "uid": "368ced26-4897-419a-bc5b-98d4dd7ac9e2"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "dbname": "legacy",
+        "name": "legacy_pub",
+        "publicationReclaimPolicy": "retain",
+        "target": {
+          "allTables": true
+        }
+      },
+      "status": {
+        "applied": false,
+        "message": "while getting publication status (scan): failed to connect to `user=postgres database=legacy`: /controller/run/.s.PGSQL.5432 (/controller/run): server error: FATAL: database \"legacy\" does not exist (SQLSTATE 3D000)"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Publication",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T23:09:57Z",
+        "finalizers": [
+          "cnpg.io/deletePublication"
+        ],
+        "generation": 1,
+        "name": "orders-pub",
+        "namespace": "databases",
+        "resourceVersion": "442941",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/publications/orders-pub",
+        "uid": "336c14ad-4382-447d-8e76-a1af77ae159f"
+      },
+      "spec": {
+        "cluster": {
+          "name": "orders-db"
+        },
+        "dbname": "app",
+        "name": "orders_pub",
+        "publicationReclaimPolicy": "retain",
+        "target": {
+          "allTables": true
+        }
+      },
+      "status": {
+        "applied": true,
+        "observedGeneration": 1
+      }
+    }
+  ],
+  "kind": "List"
+}

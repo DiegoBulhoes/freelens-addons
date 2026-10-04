@@ -1,0 +1,1360 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Cluster",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "generation": 1,
+        "name": "analytics-db",
+        "namespace": "databases",
+        "resourceVersion": "441679",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/clusters/analytics-db",
+        "uid": "bd7cb461-96d0-4a49-a6e6-cdf774d05655"
+      },
+      "spec": {
+        "affinity": {
+          "podAntiAffinityType": "preferred"
+        },
+        "bootstrap": {
+          "initdb": {
+            "database": "app",
+            "encoding": "UTF8",
+            "localeCType": "C",
+            "localeCollate": "C",
+            "owner": "app"
+          }
+        },
+        "enablePDB": true,
+        "enableSuperuserAccess": false,
+        "failoverDelay": 0,
+        "imageName": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
+        "instances": 2,
+        "logLevel": "info",
+        "maxSyncReplicas": 0,
+        "minSyncReplicas": 0,
+        "monitoring": {
+          "customQueriesConfigMap": [
+            {
+              "key": "queries",
+              "name": "cnpg-default-monitoring"
+            }
+          ],
+          "disableDefaultQueries": false,
+          "enablePodMonitor": false
+        },
+        "postgresGID": 26,
+        "postgresUID": 26,
+        "postgresql": {
+          "parameters": {
+            "archive_mode": "on",
+            "archive_timeout": "5min",
+            "dynamic_shared_memory_type": "posix",
+            "full_page_writes": "on",
+            "log_destination": "csvlog",
+            "log_directory": "/controller/log",
+            "log_filename": "postgres",
+            "log_rotation_age": "0",
+            "log_rotation_size": "0",
+            "log_truncate_on_rotation": "false",
+            "logging_collector": "on",
+            "max_parallel_workers": "32",
+            "max_replication_slots": "32",
+            "max_worker_processes": "32",
+            "shared_memory_type": "mmap",
+            "shared_preload_libraries": "",
+            "ssl_max_protocol_version": "TLSv1.3",
+            "ssl_min_protocol_version": "TLSv1.3",
+            "wal_keep_size": "512MB",
+            "wal_level": "logical",
+            "wal_log_hints": "on",
+            "wal_receiver_timeout": "5s",
+            "wal_sender_timeout": "5s"
+          },
+          "syncReplicaElectionConstraint": {
+            "enabled": false
+          }
+        },
+        "primaryUpdateMethod": "restart",
+        "primaryUpdateStrategy": "unsupervised",
+        "probes": {
+          "liveness": {
+            "isolationCheck": {
+              "connectionTimeout": 1000,
+              "enabled": true,
+              "requestTimeout": 1000
+            }
+          }
+        },
+        "replicationSlots": {
+          "highAvailability": {
+            "enabled": true,
+            "slotPrefix": "_cnpg_"
+          },
+          "synchronizeReplicas": {
+            "enabled": true
+          },
+          "updateInterval": 30
+        },
+        "resources": {},
+        "smartShutdownTimeout": 180,
+        "startDelay": 3600,
+        "stopDelay": 1800,
+        "storage": {
+          "resizeInUseVolumes": true,
+          "size": "1Gi",
+          "storageClass": "does-not-exist"
+        },
+        "switchoverDelay": 3600
+      },
+      "status": {
+        "availableArchitectures": [
+          {
+            "goArch": "amd64",
+            "hash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13"
+          },
+          {
+            "goArch": "arm64",
+            "hash": "e61cf87bb9c89f1bca69d41367fd9a5c5c02e3eb7491922560984d03f85ecff0"
+          }
+        ],
+        "certificates": {
+          "clientCASecret": "analytics-db-ca",
+          "expirations": {
+            "analytics-db-ca": "2027-01-01 21:37:02 +0000 UTC",
+            "analytics-db-replication": "2027-01-01 21:37:02 +0000 UTC",
+            "analytics-db-server": "2027-01-01 21:37:02 +0000 UTC"
+          },
+          "replicationTLSSecret": "analytics-db-replication",
+          "serverAltDNSNames": [
+            "analytics-db-rw",
+            "analytics-db-rw.databases",
+            "analytics-db-rw.databases.svc",
+            "analytics-db-rw.databases.svc.cluster.local",
+            "analytics-db-r",
+            "analytics-db-r.databases",
+            "analytics-db-r.databases.svc",
+            "analytics-db-r.databases.svc.cluster.local",
+            "analytics-db-ro",
+            "analytics-db-ro.databases",
+            "analytics-db-ro.databases.svc",
+            "analytics-db-ro.databases.svc.cluster.local"
+          ],
+          "serverCASecret": "analytics-db-ca",
+          "serverTLSSecret": "analytics-db-server"
+        },
+        "cloudNativePGCommitHash": "4b5e244a7",
+        "cloudNativePGOperatorHash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13",
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T21:42:03Z",
+            "message": "Cluster has been bootstrapped",
+            "reason": "BootstrapCompleted",
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T21:42:02Z",
+            "message": "No instances are present in the cluster to report a system ID.",
+            "reason": "NotFound",
+            "status": "False",
+            "type": "ConsistentSystemID"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T21:42:02Z",
+            "message": "Cluster Is Not Ready",
+            "reason": "ClusterIsNotReady",
+            "status": "False",
+            "type": "Ready"
+          }
+        ],
+        "configMapResourceVersion": {
+          "metrics": {
+            "cnpg-default-monitoring": "419402"
+          }
+        },
+        "image": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
+        "initializingPVC": [
+          "analytics-db-1"
+        ],
+        "instanceNames": [
+          "analytics-db-1"
+        ],
+        "instances": 1,
+        "jobCount": 1,
+        "managedRolesStatus": {},
+        "operatorCertificateFingerprint": "9133a9180851934e12b1252a576c0ec62aa55697e5c670bca18441984c64cfe1",
+        "pgDataImageInfo": {
+          "image": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
+          "majorVersion": 18
+        },
+        "phase": "Setting up primary",
+        "phaseReason": "Creating primary instance analytics-db-1",
+        "poolerIntegrations": {
+          "pgBouncerIntegration": {}
+        },
+        "pvcCount": 1,
+        "readService": "analytics-db-r",
+        "secretsResourceVersion": {
+          "applicationSecretVersion": "419462",
+          "clientCaSecretVersion": "419443",
+          "replicationSecretVersion": "419457",
+          "serverCaSecretVersion": "419443",
+          "serverSecretVersion": "419448"
+        },
+        "selector": "cnpg.io/cluster=analytics-db,cnpg.io/podRole=instance",
+        "switchReplicaClusterStatus": {},
+        "targetPrimary": "analytics-db-1",
+        "targetPrimaryTimestamp": "2026-10-03T21:42:02.643427Z",
+        "topology": {
+          "successfullyExtracted": true
+        },
+        "writeService": "analytics-db-rw"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Cluster",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "generation": 1,
+        "name": "billing-db",
+        "namespace": "databases",
+        "resourceVersion": "441726",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/clusters/billing-db",
+        "uid": "73436e03-3def-4551-841f-92a8afa162d3"
+      },
+      "spec": {
+        "affinity": {
+          "podAntiAffinityType": "preferred"
+        },
+        "bootstrap": {
+          "initdb": {
+            "database": "app",
+            "encoding": "UTF8",
+            "localeCType": "C",
+            "localeCollate": "C",
+            "owner": "app"
+          }
+        },
+        "enablePDB": true,
+        "enableSuperuserAccess": false,
+        "failoverDelay": 0,
+        "imageName": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
+        "instances": 2,
+        "logLevel": "info",
+        "maxSyncReplicas": 0,
+        "minSyncReplicas": 0,
+        "monitoring": {
+          "customQueriesConfigMap": [
+            {
+              "key": "queries",
+              "name": "cnpg-default-monitoring"
+            }
+          ],
+          "disableDefaultQueries": false,
+          "enablePodMonitor": false
+        },
+        "plugins": [
+          {
+            "enabled": true,
+            "isWALArchiver": true,
+            "name": "barman-cloud.cloudnative-pg.io",
+            "parameters": {
+              "barmanObjectName": "backups-wrong-keys"
+            }
+          }
+        ],
+        "postgresGID": 26,
+        "postgresUID": 26,
+        "postgresql": {
+          "parameters": {
+            "archive_mode": "on",
+            "archive_timeout": "5min",
+            "dynamic_shared_memory_type": "posix",
+            "full_page_writes": "on",
+            "log_destination": "csvlog",
+            "log_directory": "/controller/log",
+            "log_filename": "postgres",
+            "log_rotation_age": "0",
+            "log_rotation_size": "0",
+            "log_truncate_on_rotation": "false",
+            "logging_collector": "on",
+            "max_parallel_workers": "32",
+            "max_replication_slots": "32",
+            "max_worker_processes": "32",
+            "shared_memory_type": "mmap",
+            "shared_preload_libraries": "",
+            "ssl_max_protocol_version": "TLSv1.3",
+            "ssl_min_protocol_version": "TLSv1.3",
+            "wal_keep_size": "512MB",
+            "wal_level": "logical",
+            "wal_log_hints": "on",
+            "wal_receiver_timeout": "5s",
+            "wal_sender_timeout": "5s"
+          },
+          "syncReplicaElectionConstraint": {
+            "enabled": false
+          }
+        },
+        "primaryUpdateMethod": "restart",
+        "primaryUpdateStrategy": "unsupervised",
+        "probes": {
+          "liveness": {
+            "isolationCheck": {
+              "connectionTimeout": 1000,
+              "enabled": true,
+              "requestTimeout": 1000
+            }
+          }
+        },
+        "replicationSlots": {
+          "highAvailability": {
+            "enabled": true,
+            "slotPrefix": "_cnpg_"
+          },
+          "synchronizeReplicas": {
+            "enabled": true
+          },
+          "updateInterval": 30
+        },
+        "resources": {
+          "requests": {
+            "cpu": "50m",
+            "memory": "128Mi"
+          }
+        },
+        "smartShutdownTimeout": 180,
+        "startDelay": 3600,
+        "stopDelay": 1800,
+        "storage": {
+          "resizeInUseVolumes": true,
+          "size": "1Gi"
+        },
+        "switchoverDelay": 3600
+      },
+      "status": {
+        "availableArchitectures": [
+          {
+            "goArch": "amd64",
+            "hash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13"
+          },
+          {
+            "goArch": "arm64",
+            "hash": "e61cf87bb9c89f1bca69d41367fd9a5c5c02e3eb7491922560984d03f85ecff0"
+          }
+        ],
+        "certificates": {
+          "clientCASecret": "billing-db-ca",
+          "expirations": {
+            "billing-db-ca": "2027-01-01 21:37:01 +0000 UTC",
+            "billing-db-replication": "2027-01-01 21:37:01 +0000 UTC",
+            "billing-db-server": "2027-01-01 21:37:01 +0000 UTC"
+          },
+          "replicationTLSSecret": "billing-db-replication",
+          "serverAltDNSNames": [
+            "billing-db-rw",
+            "billing-db-rw.databases",
+            "billing-db-rw.databases.svc",
+            "billing-db-rw.databases.svc.cluster.local",
+            "billing-db-r",
+            "billing-db-r.databases",
+            "billing-db-r.databases.svc",
+            "billing-db-r.databases.svc.cluster.local",
+            "billing-db-ro",
+            "billing-db-ro.databases",
+            "billing-db-ro.databases.svc",
+            "billing-db-ro.databases.svc.cluster.local"
+          ],
+          "serverCASecret": "billing-db-ca",
+          "serverTLSSecret": "billing-db-server"
+        },
+        "cloudNativePGCommitHash": "4b5e244a7",
+        "cloudNativePGOperatorHash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13",
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T21:42:03Z",
+            "message": "Cluster has been bootstrapped",
+            "reason": "BootstrapCompleted",
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T23:04:39Z",
+            "message": "Cluster is Ready",
+            "reason": "ClusterIsReady",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T21:43:05Z",
+            "message": "A single, unique system ID was found across reporting instances.",
+            "reason": "Unique",
+            "status": "True",
+            "type": "ConsistentSystemID"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T21:43:04Z",
+            "message": "rpc error: code = Unknown desc = unexpected failure invoking barman-cloud-wal-archive: exit status 4",
+            "reason": "ContinuousArchivingFailing",
+            "status": "False",
+            "type": "ContinuousArchiving"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T21:43:31Z",
+            "message": "rpc error: code = Unknown desc = exit status 1",
+            "reason": "LastBackupFailed",
+            "status": "False",
+            "type": "LastBackupSucceeded"
+          }
+        ],
+        "configMapResourceVersion": {
+          "metrics": {
+            "cnpg-default-monitoring": "419402"
+          }
+        },
+        "currentPrimary": "billing-db-1",
+        "currentPrimaryTimestamp": "2026-10-03T21:43:04.052006Z",
+        "healthyPVC": [
+          "billing-db-1",
+          "billing-db-2"
+        ],
+        "image": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
+        "instanceNames": [
+          "billing-db-1",
+          "billing-db-2"
+        ],
+        "instances": 2,
+        "instancesReportedState": {
+          "billing-db-1": {
+            "ip": "198.51.100.10",
+            "isPrimary": true,
+            "timeLineID": 1
+          },
+          "billing-db-2": {
+            "ip": "198.51.100.11",
+            "isPrimary": false,
+            "timeLineID": 1
+          }
+        },
+        "instancesStatus": {
+          "healthy": [
+            "billing-db-1",
+            "billing-db-2"
+          ]
+        },
+        "lastFailedBackup": "2026-10-03T21:43:32Z",
+        "managedRolesStatus": {},
+        "operatorCertificateFingerprint": "9133a9180851934e12b1252a576c0ec62aa55697e5c670bca18441984c64cfe1",
+        "pgDataImageInfo": {
+          "image": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
+          "majorVersion": 18
+        },
+        "phase": "Cluster in healthy state",
+        "pluginStatus": [
+          {
+            "capabilities": [
+              "TYPE_RECONCILER_HOOKS",
+              "TYPE_LIFECYCLE_SERVICE",
+              "TYPE_INSTANCE_SIDECAR_INJECTION"
+            ],
+            "name": "barman-cloud.cloudnative-pg.io",
+            "version": "0.15.0"
+          }
+        ],
+        "poolerIntegrations": {
+          "pgBouncerIntegration": {}
+        },
+        "pvcCount": 2,
+        "readService": "billing-db-r",
+        "readyInstances": 2,
+        "secretsResourceVersion": {
+          "applicationSecretVersion": "419383",
+          "clientCaSecretVersion": "419373",
+          "replicationSecretVersion": "419379",
+          "serverCaSecretVersion": "419373",
+          "serverSecretVersion": "419375"
+        },
+        "selector": "cnpg.io/cluster=billing-db,cnpg.io/podRole=instance",
+        "switchReplicaClusterStatus": {},
+        "systemID": "7692560244539453466",
+        "targetPrimary": "billing-db-1",
+        "targetPrimaryTimestamp": "2026-10-03T21:42:03.359882Z",
+        "timelineID": 1,
+        "topology": {
+          "instances": {
+            "billing-db-1": {},
+            "billing-db-2": {}
+          },
+          "nodesUsed": 1,
+          "successfullyExtracted": true
+        },
+        "writeService": "billing-db-rw"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Cluster",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "generation": 2,
+        "name": "inventory-db",
+        "namespace": "databases",
+        "resourceVersion": "442961",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/clusters/inventory-db",
+        "uid": "bcf798d5-77c5-4804-8f82-cab715671406"
+      },
+      "spec": {
+        "affinity": {
+          "podAntiAffinityType": "preferred"
+        },
+        "bootstrap": {
+          "initdb": {
+            "database": "app",
+            "encoding": "UTF8",
+            "localeCType": "C",
+            "localeCollate": "C",
+            "owner": "app"
+          }
+        },
+        "enablePDB": true,
+        "enableSuperuserAccess": false,
+        "externalClusters": [
+          {
+            "connectionParameters": {
+              "dbname": "app",
+              "host": "orders-db-rw.databases.svc",
+              "user": "postgres"
+            },
+            "name": "orders",
+            "password": {
+              "key": "password",
+              "name": "orders-db-superuser"
+            }
+          }
+        ],
+        "failoverDelay": 0,
+        "imageName": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
+        "instances": 1,
+        "logLevel": "info",
+        "maxSyncReplicas": 0,
+        "minSyncReplicas": 0,
+        "monitoring": {
+          "customQueriesConfigMap": [
+            {
+              "key": "queries",
+              "name": "cnpg-default-monitoring"
+            }
+          ],
+          "disableDefaultQueries": false,
+          "enablePodMonitor": false
+        },
+        "postgresGID": 26,
+        "postgresUID": 26,
+        "postgresql": {
+          "parameters": {
+            "archive_mode": "on",
+            "archive_timeout": "5min",
+            "dynamic_shared_memory_type": "posix",
+            "full_page_writes": "on",
+            "log_destination": "csvlog",
+            "log_directory": "/controller/log",
+            "log_filename": "postgres",
+            "log_rotation_age": "0",
+            "log_rotation_size": "0",
+            "log_truncate_on_rotation": "false",
+            "logging_collector": "on",
+            "max_parallel_workers": "32",
+            "max_replication_slots": "32",
+            "max_worker_processes": "32",
+            "shared_memory_type": "mmap",
+            "shared_preload_libraries": "",
+            "ssl_max_protocol_version": "TLSv1.3",
+            "ssl_min_protocol_version": "TLSv1.3",
+            "wal_keep_size": "512MB",
+            "wal_level": "logical",
+            "wal_log_hints": "on",
+            "wal_receiver_timeout": "5s",
+            "wal_sender_timeout": "5s"
+          },
+          "syncReplicaElectionConstraint": {
+            "enabled": false
+          }
+        },
+        "primaryUpdateMethod": "restart",
+        "primaryUpdateStrategy": "unsupervised",
+        "probes": {
+          "liveness": {
+            "isolationCheck": {
+              "connectionTimeout": 1000,
+              "enabled": true,
+              "requestTimeout": 1000
+            }
+          }
+        },
+        "replicationSlots": {
+          "highAvailability": {
+            "enabled": true,
+            "slotPrefix": "_cnpg_"
+          },
+          "synchronizeReplicas": {
+            "enabled": true
+          },
+          "updateInterval": 30
+        },
+        "resources": {
+          "requests": {
+            "cpu": "50m",
+            "memory": "128Mi"
+          }
+        },
+        "smartShutdownTimeout": 180,
+        "startDelay": 3600,
+        "stopDelay": 1800,
+        "storage": {
+          "resizeInUseVolumes": true,
+          "size": "1Gi"
+        },
+        "switchoverDelay": 3600
+      },
+      "status": {
+        "availableArchitectures": [
+          {
+            "goArch": "amd64",
+            "hash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13"
+          },
+          {
+            "goArch": "arm64",
+            "hash": "e61cf87bb9c89f1bca69d41367fd9a5c5c02e3eb7491922560984d03f85ecff0"
+          }
+        ],
+        "certificates": {
+          "clientCASecret": "inventory-db-ca",
+          "expirations": {
+            "inventory-db-ca": "2027-01-01 21:37:01 +0000 UTC",
+            "inventory-db-replication": "2027-01-01 21:37:01 +0000 UTC",
+            "inventory-db-server": "2027-01-01 21:37:01 +0000 UTC"
+          },
+          "replicationTLSSecret": "inventory-db-replication",
+          "serverAltDNSNames": [
+            "inventory-db-rw",
+            "inventory-db-rw.databases",
+            "inventory-db-rw.databases.svc",
+            "inventory-db-rw.databases.svc.cluster.local",
+            "inventory-db-r",
+            "inventory-db-r.databases",
+            "inventory-db-r.databases.svc",
+            "inventory-db-r.databases.svc.cluster.local",
+            "inventory-db-ro",
+            "inventory-db-ro.databases",
+            "inventory-db-ro.databases.svc",
+            "inventory-db-ro.databases.svc.cluster.local"
+          ],
+          "serverCASecret": "inventory-db-ca",
+          "serverTLSSecret": "inventory-db-server"
+        },
+        "cloudNativePGCommitHash": "4b5e244a7",
+        "cloudNativePGOperatorHash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13",
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T21:42:03Z",
+            "message": "Cluster has been bootstrapped",
+            "reason": "BootstrapCompleted",
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T21:42:45Z",
+            "message": "A single, unique system ID was found across reporting instances.",
+            "reason": "Unique",
+            "status": "True",
+            "type": "ConsistentSystemID"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T21:42:53Z",
+            "message": "Cluster is Ready",
+            "reason": "ClusterIsReady",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T21:42:43Z",
+            "message": "Continuous archiving is working",
+            "reason": "ContinuousArchivingSuccess",
+            "status": "True",
+            "type": "ContinuousArchiving"
+          }
+        ],
+        "configMapResourceVersion": {
+          "metrics": {
+            "cnpg-default-monitoring": "419402"
+          }
+        },
+        "currentPrimary": "inventory-db-1",
+        "currentPrimaryTimestamp": "2026-10-03T21:42:43.899381Z",
+        "healthyPVC": [
+          "inventory-db-1"
+        ],
+        "image": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
+        "instanceNames": [
+          "inventory-db-1"
+        ],
+        "instances": 1,
+        "instancesReportedState": {
+          "inventory-db-1": {
+            "ip": "198.51.100.12",
+            "isPrimary": true,
+            "timeLineID": 1
+          }
+        },
+        "instancesStatus": {
+          "healthy": [
+            "inventory-db-1"
+          ]
+        },
+        "managedRolesStatus": {},
+        "operatorCertificateFingerprint": "9133a9180851934e12b1252a576c0ec62aa55697e5c670bca18441984c64cfe1",
+        "pgDataImageInfo": {
+          "image": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
+          "majorVersion": 18
+        },
+        "phase": "Cluster in healthy state",
+        "poolerIntegrations": {
+          "pgBouncerIntegration": {}
+        },
+        "pvcCount": 1,
+        "readService": "inventory-db-r",
+        "readyInstances": 1,
+        "secretsResourceVersion": {
+          "applicationSecretVersion": "419425",
+          "clientCaSecretVersion": "419403",
+          "externalClusterSecretVersion": {
+            "orders-db-superuser": "442927"
+          },
+          "replicationSecretVersion": "419420",
+          "serverCaSecretVersion": "419403",
+          "serverSecretVersion": "419416"
+        },
+        "selector": "cnpg.io/cluster=inventory-db,cnpg.io/podRole=instance",
+        "switchReplicaClusterStatus": {},
+        "systemID": "7692560244491542552",
+        "targetPrimary": "inventory-db-1",
+        "targetPrimaryTimestamp": "2026-10-03T21:42:02.367159Z",
+        "timelineID": 1,
+        "topology": {
+          "instances": {
+            "inventory-db-1": {}
+          },
+          "nodesUsed": 1,
+          "successfullyExtracted": true
+        },
+        "writeService": "inventory-db-rw"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Cluster",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "generation": 2,
+        "name": "orders-db",
+        "namespace": "databases",
+        "resourceVersion": "443644",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/clusters/orders-db",
+        "uid": "7f6fcbe1-916d-43d7-a961-d714aa102fcb"
+      },
+      "spec": {
+        "affinity": {
+          "podAntiAffinityType": "preferred"
+        },
+        "bootstrap": {
+          "initdb": {
+            "database": "app",
+            "encoding": "UTF8",
+            "localeCType": "C",
+            "localeCollate": "C",
+            "owner": "app"
+          }
+        },
+        "enablePDB": true,
+        "enableSuperuserAccess": true,
+        "failoverDelay": 0,
+        "imageName": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
+        "instances": 3,
+        "logLevel": "info",
+        "managed": {
+          "roles": [
+            {
+              "connectionLimit": -1,
+              "ensure": "present",
+              "inherit": true,
+              "login": true,
+              "name": "reporting"
+            },
+            {
+              "connectionLimit": -1,
+              "ensure": "present",
+              "inRoles": [
+                "role_that_does_not_exist"
+              ],
+              "inherit": true,
+              "login": true,
+              "name": "auditor"
+            }
+          ]
+        },
+        "maxSyncReplicas": 0,
+        "minSyncReplicas": 0,
+        "monitoring": {
+          "customQueriesConfigMap": [
+            {
+              "key": "queries",
+              "name": "cnpg-default-monitoring"
+            }
+          ],
+          "disableDefaultQueries": false,
+          "enablePodMonitor": false
+        },
+        "plugins": [
+          {
+            "enabled": true,
+            "isWALArchiver": true,
+            "name": "barman-cloud.cloudnative-pg.io",
+            "parameters": {
+              "barmanObjectName": "backups"
+            }
+          }
+        ],
+        "postgresGID": 26,
+        "postgresUID": 26,
+        "postgresql": {
+          "parameters": {
+            "archive_mode": "on",
+            "archive_timeout": "5min",
+            "dynamic_shared_memory_type": "posix",
+            "full_page_writes": "on",
+            "log_destination": "csvlog",
+            "log_directory": "/controller/log",
+            "log_filename": "postgres",
+            "log_rotation_age": "0",
+            "log_rotation_size": "0",
+            "log_truncate_on_rotation": "false",
+            "logging_collector": "on",
+            "max_parallel_workers": "32",
+            "max_replication_slots": "32",
+            "max_worker_processes": "32",
+            "shared_memory_type": "mmap",
+            "shared_preload_libraries": "",
+            "ssl_max_protocol_version": "TLSv1.3",
+            "ssl_min_protocol_version": "TLSv1.3",
+            "wal_keep_size": "512MB",
+            "wal_level": "logical",
+            "wal_log_hints": "on",
+            "wal_receiver_timeout": "5s",
+            "wal_sender_timeout": "5s"
+          },
+          "syncReplicaElectionConstraint": {
+            "enabled": false
+          }
+        },
+        "primaryUpdateMethod": "restart",
+        "primaryUpdateStrategy": "unsupervised",
+        "probes": {
+          "liveness": {
+            "isolationCheck": {
+              "connectionTimeout": 1000,
+              "enabled": true,
+              "requestTimeout": 1000
+            }
+          }
+        },
+        "replicationSlots": {
+          "highAvailability": {
+            "enabled": true,
+            "slotPrefix": "_cnpg_"
+          },
+          "synchronizeReplicas": {
+            "enabled": true
+          },
+          "updateInterval": 30
+        },
+        "resources": {
+          "requests": {
+            "cpu": "50m",
+            "memory": "128Mi"
+          }
+        },
+        "smartShutdownTimeout": 180,
+        "startDelay": 3600,
+        "stopDelay": 1800,
+        "storage": {
+          "resizeInUseVolumes": true,
+          "size": "1Gi"
+        },
+        "switchoverDelay": 3600,
+        "tablespaces": [
+          {
+            "name": "archive",
+            "owner": {
+              "name": "app"
+            },
+            "storage": {
+              "resizeInUseVolumes": true,
+              "size": "1Gi"
+            },
+            "temporary": false
+          }
+        ]
+      },
+      "status": {
+        "availableArchitectures": [
+          {
+            "goArch": "amd64",
+            "hash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13"
+          },
+          {
+            "goArch": "arm64",
+            "hash": "e61cf87bb9c89f1bca69d41367fd9a5c5c02e3eb7491922560984d03f85ecff0"
+          }
+        ],
+        "certificates": {
+          "clientCASecret": "orders-db-ca",
+          "expirations": {
+            "orders-db-ca": "2027-01-01 21:37:01 +0000 UTC",
+            "orders-db-replication": "2027-01-01 21:37:01 +0000 UTC",
+            "orders-db-server": "2027-01-01 21:37:01 +0000 UTC"
+          },
+          "replicationTLSSecret": "orders-db-replication",
+          "serverAltDNSNames": [
+            "orders-db-rw",
+            "orders-db-rw.databases",
+            "orders-db-rw.databases.svc",
+            "orders-db-rw.databases.svc.cluster.local",
+            "orders-db-r",
+            "orders-db-r.databases",
+            "orders-db-r.databases.svc",
+            "orders-db-r.databases.svc.cluster.local",
+            "orders-db-ro",
+            "orders-db-ro.databases",
+            "orders-db-ro.databases.svc",
+            "orders-db-ro.databases.svc.cluster.local"
+          ],
+          "serverCASecret": "orders-db-ca",
+          "serverTLSSecret": "orders-db-server"
+        },
+        "cloudNativePGCommitHash": "4b5e244a7",
+        "cloudNativePGOperatorHash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13",
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T21:42:03Z",
+            "message": "Cluster has been bootstrapped",
+            "reason": "BootstrapCompleted",
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T23:10:53Z",
+            "message": "Cluster is Ready",
+            "reason": "ClusterIsReady",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T21:43:05Z",
+            "message": "A single, unique system ID was found across reporting instances.",
+            "reason": "Unique",
+            "status": "True",
+            "type": "ConsistentSystemID"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T21:44:23Z",
+            "message": "Continuous archiving is working",
+            "reason": "ContinuousArchivingSuccess",
+            "status": "True",
+            "type": "ContinuousArchiving"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T23:00:02Z",
+            "message": "Backup was successful",
+            "reason": "LastBackupSucceeded",
+            "status": "True",
+            "type": "LastBackupSucceeded"
+          }
+        ],
+        "configMapResourceVersion": {
+          "metrics": {
+            "cnpg-default-monitoring": "419402"
+          }
+        },
+        "currentPrimary": "orders-db-2",
+        "currentPrimaryTimestamp": "2026-10-03T21:44:22.006496Z",
+        "healthyPVC": [
+          "orders-db-1",
+          "orders-db-1-tbs-archive",
+          "orders-db-2",
+          "orders-db-2-tbs-archive",
+          "orders-db-3",
+          "orders-db-3-tbs-archive"
+        ],
+        "image": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
+        "instanceNames": [
+          "orders-db-1",
+          "orders-db-2",
+          "orders-db-3"
+        ],
+        "instances": 3,
+        "instancesReportedState": {
+          "orders-db-1": {
+            "ip": "198.51.100.13",
+            "isPrimary": false,
+            "timeLineID": 2
+          },
+          "orders-db-2": {
+            "ip": "198.51.100.14",
+            "isPrimary": true,
+            "timeLineID": 2
+          },
+          "orders-db-3": {
+            "ip": "198.51.100.15",
+            "isPrimary": false,
+            "timeLineID": 2
+          }
+        },
+        "instancesStatus": {
+          "healthy": [
+            "orders-db-1",
+            "orders-db-2",
+            "orders-db-3"
+          ]
+        },
+        "managedRolesStatus": {
+          "byStatus": {
+            "not-managed": [
+              "app"
+            ],
+            "pending-reconciliation": [
+              "auditor"
+            ],
+            "reconciled": [
+              "reporting"
+            ],
+            "reserved": [
+              "cnpg_pooler_pgbouncer",
+              "cnpg_metrics_exporter",
+              "streaming_replica",
+              "postgres"
+            ]
+          },
+          "cannotReconcile": {
+            "auditor": [
+              "could not perform CREATE on role auditor: role \"role_that_does_not_exist\" does not exist"
+            ]
+          },
+          "passwordStatus": {
+            "reporting": {
+              "transactionID": 773
+            }
+          }
+        },
+        "operatorCertificateFingerprint": "9133a9180851934e12b1252a576c0ec62aa55697e5c670bca18441984c64cfe1",
+        "pgDataImageInfo": {
+          "image": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
+          "majorVersion": 18
+        },
+        "phase": "Cluster in healthy state",
+        "pluginStatus": [
+          {
+            "capabilities": [
+              "TYPE_RECONCILER_HOOKS",
+              "TYPE_LIFECYCLE_SERVICE",
+              "TYPE_INSTANCE_SIDECAR_INJECTION"
+            ],
+            "name": "barman-cloud.cloudnative-pg.io",
+            "version": "0.15.0"
+          }
+        ],
+        "poolerIntegrations": {
+          "pgBouncerIntegration": {
+            "secrets": [
+              "orders-db-pooler"
+            ]
+          }
+        },
+        "pvcCount": 6,
+        "readService": "orders-db-r",
+        "readyInstances": 3,
+        "secretsResourceVersion": {
+          "applicationSecretVersion": "419330",
+          "clientCaSecretVersion": "419317",
+          "replicationSecretVersion": "419328",
+          "serverCaSecretVersion": "419317",
+          "serverSecretVersion": "419321",
+          "superuserSecretVersion": "442927"
+        },
+        "selector": "cnpg.io/cluster=orders-db,cnpg.io/podRole=instance",
+        "switchReplicaClusterStatus": {},
+        "systemID": "7692560244499226653",
+        "tablespacesStatus": [
+          {
+            "name": "archive",
+            "owner": "app",
+            "state": "reconciled"
+          }
+        ],
+        "targetPrimary": "orders-db-2",
+        "targetPrimaryTimestamp": "2026-10-03T21:42:02.955236Z",
+        "timelineID": 2,
+        "topology": {
+          "instances": {
+            "orders-db-1": {},
+            "orders-db-2": {},
+            "orders-db-3": {}
+          },
+          "nodesUsed": 1,
+          "successfullyExtracted": true
+        },
+        "writeService": "orders-db-rw"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Cluster",
+      "metadata": {
+        "annotations": {
+          "cnpg.io/hibernation": "on"
+        },
+        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "generation": 1,
+        "name": "reports-db",
+        "namespace": "databases",
+        "resourceVersion": "441680",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/clusters/reports-db",
+        "uid": "e07cade6-d582-45ae-a992-37ebcf9fa4f0"
+      },
+      "spec": {
+        "affinity": {
+          "podAntiAffinityType": "preferred"
+        },
+        "bootstrap": {
+          "initdb": {
+            "database": "app",
+            "encoding": "UTF8",
+            "localeCType": "C",
+            "localeCollate": "C",
+            "owner": "app"
+          }
+        },
+        "enablePDB": true,
+        "enableSuperuserAccess": false,
+        "failoverDelay": 0,
+        "imageName": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
+        "instances": 1,
+        "logLevel": "info",
+        "maxSyncReplicas": 0,
+        "minSyncReplicas": 0,
+        "monitoring": {
+          "customQueriesConfigMap": [
+            {
+              "key": "queries",
+              "name": "cnpg-default-monitoring"
+            }
+          ],
+          "disableDefaultQueries": false,
+          "enablePodMonitor": false
+        },
+        "postgresGID": 26,
+        "postgresUID": 26,
+        "postgresql": {
+          "parameters": {
+            "archive_mode": "on",
+            "archive_timeout": "5min",
+            "dynamic_shared_memory_type": "posix",
+            "full_page_writes": "on",
+            "log_destination": "csvlog",
+            "log_directory": "/controller/log",
+            "log_filename": "postgres",
+            "log_rotation_age": "0",
+            "log_rotation_size": "0",
+            "log_truncate_on_rotation": "false",
+            "logging_collector": "on",
+            "max_parallel_workers": "32",
+            "max_replication_slots": "32",
+            "max_worker_processes": "32",
+            "shared_memory_type": "mmap",
+            "shared_preload_libraries": "",
+            "ssl_max_protocol_version": "TLSv1.3",
+            "ssl_min_protocol_version": "TLSv1.3",
+            "wal_keep_size": "512MB",
+            "wal_level": "logical",
+            "wal_log_hints": "on",
+            "wal_receiver_timeout": "5s",
+            "wal_sender_timeout": "5s"
+          },
+          "syncReplicaElectionConstraint": {
+            "enabled": false
+          }
+        },
+        "primaryUpdateMethod": "restart",
+        "primaryUpdateStrategy": "unsupervised",
+        "probes": {
+          "liveness": {
+            "isolationCheck": {
+              "connectionTimeout": 1000,
+              "enabled": true,
+              "requestTimeout": 1000
+            }
+          }
+        },
+        "replicationSlots": {
+          "highAvailability": {
+            "enabled": true,
+            "slotPrefix": "_cnpg_"
+          },
+          "synchronizeReplicas": {
+            "enabled": true
+          },
+          "updateInterval": 30
+        },
+        "resources": {
+          "requests": {
+            "cpu": "50m",
+            "memory": "128Mi"
+          }
+        },
+        "smartShutdownTimeout": 180,
+        "startDelay": 3600,
+        "stopDelay": 1800,
+        "storage": {
+          "resizeInUseVolumes": true,
+          "size": "1Gi"
+        },
+        "switchoverDelay": 3600
+      },
+      "status": {
+        "availableArchitectures": [
+          {
+            "goArch": "amd64",
+            "hash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13"
+          },
+          {
+            "goArch": "arm64",
+            "hash": "e61cf87bb9c89f1bca69d41367fd9a5c5c02e3eb7491922560984d03f85ecff0"
+          }
+        ],
+        "certificates": {
+          "clientCASecret": "reports-db-ca",
+          "expirations": {
+            "reports-db-ca": "2027-01-01 21:37:01 +0000 UTC",
+            "reports-db-replication": "2027-01-01 21:37:02 +0000 UTC",
+            "reports-db-server": "2027-01-01 21:37:01 +0000 UTC"
+          },
+          "replicationTLSSecret": "reports-db-replication",
+          "serverAltDNSNames": [
+            "reports-db-rw",
+            "reports-db-rw.databases",
+            "reports-db-rw.databases.svc",
+            "reports-db-rw.databases.svc.cluster.local",
+            "reports-db-r",
+            "reports-db-r.databases",
+            "reports-db-r.databases.svc",
+            "reports-db-r.databases.svc.cluster.local",
+            "reports-db-ro",
+            "reports-db-ro.databases",
+            "reports-db-ro.databases.svc",
+            "reports-db-ro.databases.svc.cluster.local"
+          ],
+          "serverCASecret": "reports-db-ca",
+          "serverTLSSecret": "reports-db-server"
+        },
+        "cloudNativePGCommitHash": "4b5e244a7",
+        "cloudNativePGOperatorHash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13",
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T21:42:03Z",
+            "message": "Cluster has been bootstrapped",
+            "reason": "BootstrapCompleted",
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T21:44:18Z",
+            "message": "No instances are present in the cluster to report a system ID.",
+            "reason": "NotFound",
+            "status": "False",
+            "type": "ConsistentSystemID"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T21:42:53Z",
+            "message": "Cluster is Ready",
+            "reason": "ClusterIsReady",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T21:42:43Z",
+            "message": "Continuous archiving is working",
+            "reason": "ContinuousArchivingSuccess",
+            "status": "True",
+            "type": "ContinuousArchiving"
+          },
+          {
+            "lastTransitionTime": "2026-10-03T21:44:19Z",
+            "message": "Cluster has been hibernated",
+            "reason": "Hibernated",
+            "status": "True",
+            "type": "cnpg.io/hibernation"
+          }
+        ],
+        "configMapResourceVersion": {
+          "metrics": {
+            "cnpg-default-monitoring": "419402"
+          }
+        },
+        "currentPrimary": "reports-db-1",
+        "currentPrimaryTimestamp": "2026-10-03T21:42:43.897548Z",
+        "danglingPVC": [
+          "reports-db-1"
+        ],
+        "image": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
+        "instanceNames": [
+          "reports-db-1"
+        ],
+        "instances": 1,
+        "managedRolesStatus": {},
+        "operatorCertificateFingerprint": "9133a9180851934e12b1252a576c0ec62aa55697e5c670bca18441984c64cfe1",
+        "pgDataImageInfo": {
+          "image": "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie",
+          "majorVersion": 18
+        },
+        "phase": "Cluster in healthy state",
+        "poolerIntegrations": {
+          "pgBouncerIntegration": {}
+        },
+        "pvcCount": 1,
+        "readService": "reports-db-r",
+        "secretsResourceVersion": {
+          "applicationSecretVersion": "419450",
+          "clientCaSecretVersion": "419426",
+          "replicationSecretVersion": "419446",
+          "serverCaSecretVersion": "419426",
+          "serverSecretVersion": "419429"
+        },
+        "selector": "cnpg.io/cluster=reports-db,cnpg.io/podRole=instance",
+        "switchReplicaClusterStatus": {},
+        "targetPrimary": "reports-db-1",
+        "targetPrimaryTimestamp": "2026-10-03T21:42:02.654421Z",
+        "timelineID": 1,
+        "topology": {
+          "successfullyExtracted": true
+        },
+        "writeService": "reports-db-rw"
+      }
+    }
+  ],
+  "kind": "List"
+}

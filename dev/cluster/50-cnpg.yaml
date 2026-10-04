@@ -1,0 +1,309 @@
+# CloudNativePG samples, one per state the pages rank. Backups go to RustFS through the
+# Barman Cloud plugin. The credentials below exist only inside this disposable cluster.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: databases
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: s3-credentials
+  namespace: databases
+stringData:
+  ACCESS_KEY_ID: dev-backups
+  ACCESS_SECRET_KEY: dev-backups-not-a-secret
+---
+# Wrong keys: archiving through it fails.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: s3-credentials-wrong
+  namespace: databases
+stringData:
+  ACCESS_KEY_ID: nobody
+  ACCESS_SECRET_KEY: wrong-on-purpose
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rustfs
+  namespace: databases
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: rustfs }
+  template:
+    metadata:
+      labels: { app: rustfs }
+    spec:
+      containers:
+        - name: rustfs
+          image: rustfs/rustfs:1.0.0@sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff
+          env:
+            - name: RUSTFS_ACCESS_KEY
+              valueFrom: { secretKeyRef: { name: s3-credentials, key: ACCESS_KEY_ID } }
+            - name: RUSTFS_SECRET_KEY
+              valueFrom: { secretKeyRef: { name: s3-credentials, key: ACCESS_SECRET_KEY } }
+          ports:
+            - { name: s3, containerPort: 9000 }
+          volumeMounts:
+            - { name: data, mountPath: /data }
+            - { name: logs, mountPath: /logs }
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: logs
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rustfs
+  namespace: databases
+spec:
+  selector: { app: rustfs }
+  ports:
+    - { name: s3, port: 9000 }
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: backups
+  namespace: databases
+spec:
+  retentionPolicy: 7d
+  configuration:
+    destinationPath: s3://backups/
+    endpointURL: http://rustfs.databases.svc:9000
+    s3Credentials:
+      accessKeyId: { name: s3-credentials, key: ACCESS_KEY_ID }
+      secretAccessKey: { name: s3-credentials, key: ACCESS_SECRET_KEY }
+    wal:
+      compression: gzip
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: backups-wrong-keys
+  namespace: databases
+spec:
+  configuration:
+    destinationPath: s3://backups/
+    endpointURL: http://rustfs.databases.svc:9000
+    s3Credentials:
+      accessKeyId: { name: s3-credentials-wrong, key: ACCESS_KEY_ID }
+      secretAccessKey: { name: s3-credentials-wrong, key: ACCESS_SECRET_KEY }
+---
+# Healthy: three instances, WAL archived, hourly backups. One managed role cannot be reconciled.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: orders-db
+  namespace: databases
+spec:
+  instances: 3
+  enableSuperuserAccess: true
+  storage: { size: 1Gi }
+  tablespaces:
+    - name: archive
+      storage: { size: 1Gi }
+  managed:
+    roles:
+      - name: reporting
+        ensure: present
+        login: true
+      - name: auditor
+        ensure: present
+        login: true
+        inRoles: [role_that_does_not_exist]
+  resources:
+    requests: { cpu: 50m, memory: 128Mi }
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters: { barmanObjectName: backups }
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: orders-hourly
+  namespace: databases
+spec:
+  schedule: "0 0 * * * *"
+  immediate: true
+  backupOwnerReference: self
+  cluster: { name: orders-db }
+  method: plugin
+  pluginConfiguration: { name: barman-cloud.cloudnative-pg.io }
+---
+# Suspended: a schedule nobody resumed.
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: orders-weekly
+  namespace: databases
+spec:
+  schedule: "0 0 3 * * 0"
+  suspend: true
+  cluster: { name: orders-db }
+  method: plugin
+  pluginConfiguration: { name: barman-cloud.cloudnative-pg.io }
+---
+# Archiving fails: the object store refuses its keys, so backups fail too.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: billing-db
+  namespace: databases
+spec:
+  instances: 2
+  storage: { size: 1Gi }
+  resources:
+    requests: { cpu: 50m, memory: 128Mi }
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters: { barmanObjectName: backups-wrong-keys }
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: billing-nightly
+  namespace: databases
+spec:
+  schedule: "0 0 2 * * *"
+  immediate: true
+  cluster: { name: billing-db }
+  method: plugin
+  pluginConfiguration: { name: barman-cloud.cloudnative-pg.io }
+---
+# No backup of any kind. Subscribes to orders-db.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: inventory-db
+  namespace: databases
+spec:
+  instances: 1
+  storage: { size: 1Gi }
+  externalClusters:
+    - name: orders
+      connectionParameters:
+        host: orders-db-rw.databases.svc
+        user: postgres
+        dbname: app
+      password: { name: orders-db-superuser, key: password }
+  resources:
+    requests: { cpu: 50m, memory: 128Mi }
+---
+# Hibernated by the seed once it is up.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: reports-db
+  namespace: databases
+spec:
+  instances: 1
+  storage: { size: 1Gi }
+  resources:
+    requests: { cpu: 50m, memory: 128Mi }
+---
+# Never starts: its storage class does not exist.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: analytics-db
+  namespace: databases
+spec:
+  instances: 2
+  storage:
+    size: 1Gi
+    storageClass: does-not-exist
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+metadata:
+  name: orders-rw
+  namespace: databases
+spec:
+  cluster: { name: orders-db }
+  instances: 2
+  type: rw
+  pgbouncer:
+    poolMode: transaction
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+metadata:
+  name: orders-ro
+  namespace: databases
+spec:
+  cluster: { name: orders-db }
+  instances: 1
+  type: ro
+  pgbouncer:
+    poolMode: session
+---
+# Points at a cluster that does not exist.
+apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+metadata:
+  name: legacy-rw
+  namespace: databases
+spec:
+  cluster: { name: legacy-db }
+  instances: 1
+  type: rw
+  pgbouncer:
+    poolMode: session
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Publication
+metadata:
+  name: orders-pub
+  namespace: databases
+spec:
+  cluster: { name: orders-db }
+  dbname: app
+  name: orders_pub
+  target:
+    allTables: true
+---
+# Its database does not exist.
+apiVersion: postgresql.cnpg.io/v1
+kind: Publication
+metadata:
+  name: legacy-pub
+  namespace: databases
+spec:
+  cluster: { name: orders-db }
+  dbname: legacy
+  name: legacy_pub
+  target:
+    allTables: true
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Subscription
+metadata:
+  name: orders-sub
+  namespace: databases
+spec:
+  cluster: { name: inventory-db }
+  dbname: app
+  name: orders_sub
+  publicationName: orders_pub
+  externalClusterName: orders
+---
+# Its external cluster is not declared.
+apiVersion: postgresql.cnpg.io/v1
+kind: Subscription
+metadata:
+  name: billing-sub
+  namespace: databases
+spec:
+  cluster: { name: inventory-db }
+  dbname: app
+  name: billing_sub
+  publicationName: billing_pub
+  externalClusterName: billing

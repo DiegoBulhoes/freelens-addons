@@ -1,0 +1,95 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "ScheduledBackup",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "generation": 1,
+        "name": "billing-nightly",
+        "namespace": "databases",
+        "resourceVersion": "419374",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/scheduledbackups/billing-nightly",
+        "uid": "723638a0-63fb-4f91-855c-342072af4f0f"
+      },
+      "spec": {
+        "backupOwnerReference": "none",
+        "cluster": {
+          "name": "billing-db"
+        },
+        "immediate": true,
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        },
+        "schedule": "0 0 2 * * *"
+      },
+      "status": {
+        "lastCheckTime": "2026-10-03T21:42:01Z",
+        "lastScheduleTime": "2026-10-03T21:42:01Z",
+        "nextScheduleTime": "2026-10-04T02:00:00Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "ScheduledBackup",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "generation": 3,
+        "name": "orders-hourly",
+        "namespace": "databases",
+        "resourceVersion": "440631",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/scheduledbackups/orders-hourly",
+        "uid": "3fcf8e97-d4ee-47f3-8eae-f7bff6afd139"
+      },
+      "spec": {
+        "backupOwnerReference": "self",
+        "cluster": {
+          "name": "orders-db"
+        },
+        "immediate": true,
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        },
+        "schedule": "0 0 * * * *",
+        "suspend": false
+      },
+      "status": {
+        "lastCheckTime": "2026-10-03T23:00:00Z",
+        "lastScheduleTime": "2026-10-03T23:00:00Z",
+        "nextScheduleTime": "2026-10-04T00:00:00Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "ScheduledBackup",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "generation": 1,
+        "name": "orders-weekly",
+        "namespace": "databases",
+        "resourceVersion": "419327",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/scheduledbackups/orders-weekly",
+        "uid": "ada6a1f5-ce36-4314-97ba-272324544331"
+      },
+      "spec": {
+        "backupOwnerReference": "none",
+        "cluster": {
+          "name": "orders-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        },
+        "schedule": "0 0 3 * * 0",
+        "suspend": true
+      }
+    }
+  ],
+  "kind": "List"
+}

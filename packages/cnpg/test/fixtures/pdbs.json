@@ -1,0 +1,360 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "policy/v1",
+      "kind": "PodDisruptionBudget",
+      "metadata": {
+        "annotations": {
+          "cnpg.io/operatorVersion": "1.30.0"
+        },
+        "creationTimestamp": "2026-10-03T21:42:02Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/component": "database",
+          "app.kubernetes.io/instance": "analytics-db",
+          "app.kubernetes.io/managed-by": "cloudnative-pg",
+          "app.kubernetes.io/name": "postgresql",
+          "app.kubernetes.io/version": "18",
+          "cnpg.io/cluster": "analytics-db"
+        },
+        "name": "analytics-db-primary",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "postgresql.cnpg.io/v1",
+            "controller": true,
+            "kind": "Cluster",
+            "name": "analytics-db",
+            "uid": "bd7cb461-96d0-4a49-a6e6-cdf774d05655"
+          }
+        ],
+        "resourceVersion": "419508",
+        "selfLink": "/apis/policy/v1/namespaces/databases/poddisruptionbudgets/analytics-db-primary",
+        "uid": "68d3c912-3fd6-4448-9a80-f765a844289c"
+      },
+      "spec": {
+        "minAvailable": 1,
+        "selector": {
+          "matchLabels": {
+            "cnpg.io/cluster": "analytics-db",
+            "cnpg.io/instanceRole": "primary"
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T21:42:02Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "InsufficientPods",
+            "status": "False",
+            "type": "DisruptionAllowed"
+          }
+        ],
+        "currentHealthy": 0,
+        "desiredHealthy": 1,
+        "disruptionsAllowed": 0,
+        "expectedPods": 0,
+        "observedGeneration": 1
+      }
+    },
+    {
+      "apiVersion": "policy/v1",
+      "kind": "PodDisruptionBudget",
+      "metadata": {
+        "annotations": {
+          "cnpg.io/operatorVersion": "1.30.0"
+        },
+        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/component": "database",
+          "app.kubernetes.io/instance": "billing-db",
+          "app.kubernetes.io/managed-by": "cloudnative-pg",
+          "app.kubernetes.io/name": "postgresql",
+          "app.kubernetes.io/version": "18",
+          "cnpg.io/cluster": "billing-db"
+        },
+        "name": "billing-db-primary",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "postgresql.cnpg.io/v1",
+            "controller": true,
+            "kind": "Cluster",
+            "name": "billing-db",
+            "uid": "73436e03-3def-4551-841f-92a8afa162d3"
+          }
+        ],
+        "resourceVersion": "420780",
+        "selfLink": "/apis/policy/v1/namespaces/databases/poddisruptionbudgets/billing-db-primary",
+        "uid": "74a723eb-b8f0-42a1-a36b-98bd9e65eefa"
+      },
+      "spec": {
+        "minAvailable": 1,
+        "selector": {
+          "matchLabels": {
+            "cnpg.io/cluster": "billing-db",
+            "cnpg.io/instanceRole": "primary"
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T21:42:01Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "InsufficientPods",
+            "status": "False",
+            "type": "DisruptionAllowed"
+          }
+        ],
+        "currentHealthy": 1,
+        "desiredHealthy": 1,
+        "disruptionsAllowed": 0,
+        "expectedPods": 1,
+        "observedGeneration": 1
+      }
+    },
+    {
+      "apiVersion": "policy/v1",
+      "kind": "PodDisruptionBudget",
+      "metadata": {
+        "annotations": {
+          "cnpg.io/operatorVersion": "1.30.0"
+        },
+        "creationTimestamp": "2026-10-03T21:42:02Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/component": "database",
+          "app.kubernetes.io/instance": "inventory-db",
+          "app.kubernetes.io/managed-by": "cloudnative-pg",
+          "app.kubernetes.io/name": "postgresql",
+          "app.kubernetes.io/version": "18",
+          "cnpg.io/cluster": "inventory-db"
+        },
+        "name": "inventory-db-primary",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "postgresql.cnpg.io/v1",
+            "controller": true,
+            "kind": "Cluster",
+            "name": "inventory-db",
+            "uid": "bcf798d5-77c5-4804-8f82-cab715671406"
+          }
+        ],
+        "resourceVersion": "420523",
+        "selfLink": "/apis/policy/v1/namespaces/databases/poddisruptionbudgets/inventory-db-primary",
+        "uid": "ecf5de94-d9ca-479a-9b58-d10c540d3ab9"
+      },
+      "spec": {
+        "minAvailable": 1,
+        "selector": {
+          "matchLabels": {
+            "cnpg.io/cluster": "inventory-db",
+            "cnpg.io/instanceRole": "primary"
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T21:42:02Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "InsufficientPods",
+            "status": "False",
+            "type": "DisruptionAllowed"
+          }
+        ],
+        "currentHealthy": 1,
+        "desiredHealthy": 1,
+        "disruptionsAllowed": 0,
+        "expectedPods": 1,
+        "observedGeneration": 1
+      }
+    },
+    {
+      "apiVersion": "policy/v1",
+      "kind": "PodDisruptionBudget",
+      "metadata": {
+        "annotations": {
+          "cnpg.io/operatorVersion": "1.30.0"
+        },
+        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/component": "database",
+          "app.kubernetes.io/instance": "orders-db",
+          "app.kubernetes.io/managed-by": "cloudnative-pg",
+          "app.kubernetes.io/name": "postgresql",
+          "app.kubernetes.io/version": "18",
+          "cnpg.io/cluster": "orders-db"
+        },
+        "name": "orders-db",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "postgresql.cnpg.io/v1",
+            "controller": true,
+            "kind": "Cluster",
+            "name": "orders-db",
+            "uid": "7f6fcbe1-916d-43d7-a961-d714aa102fcb"
+          }
+        ],
+        "resourceVersion": "443390",
+        "selfLink": "/apis/policy/v1/namespaces/databases/poddisruptionbudgets/orders-db",
+        "uid": "e635c691-6afa-4344-8712-89278224183e"
+      },
+      "spec": {
+        "minAvailable": 1,
+        "selector": {
+          "matchLabels": {
+            "cnpg.io/cluster": "orders-db",
+            "cnpg.io/instanceRole": "replica"
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T23:10:36Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "SufficientPods",
+            "status": "True",
+            "type": "DisruptionAllowed"
+          }
+        ],
+        "currentHealthy": 2,
+        "desiredHealthy": 1,
+        "disruptionsAllowed": 1,
+        "expectedPods": 2,
+        "observedGeneration": 1
+      }
+    },
+    {
+      "apiVersion": "policy/v1",
+      "kind": "PodDisruptionBudget",
+      "metadata": {
+        "annotations": {
+          "cnpg.io/operatorVersion": "1.30.0"
+        },
+        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/component": "database",
+          "app.kubernetes.io/instance": "orders-db",
+          "app.kubernetes.io/managed-by": "cloudnative-pg",
+          "app.kubernetes.io/name": "postgresql",
+          "app.kubernetes.io/version": "18",
+          "cnpg.io/cluster": "orders-db"
+        },
+        "name": "orders-db-primary",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "postgresql.cnpg.io/v1",
+            "controller": true,
+            "kind": "Cluster",
+            "name": "orders-db",
+            "uid": "7f6fcbe1-916d-43d7-a961-d714aa102fcb"
+          }
+        ],
+        "resourceVersion": "443633",
+        "selfLink": "/apis/policy/v1/namespaces/databases/poddisruptionbudgets/orders-db-primary",
+        "uid": "65e13090-dcaa-45ee-8b1e-696f1069d327"
+      },
+      "spec": {
+        "minAvailable": 1,
+        "selector": {
+          "matchLabels": {
+            "cnpg.io/cluster": "orders-db",
+            "cnpg.io/instanceRole": "primary"
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T21:42:01Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "InsufficientPods",
+            "status": "False",
+            "type": "DisruptionAllowed"
+          }
+        ],
+        "currentHealthy": 1,
+        "desiredHealthy": 1,
+        "disruptionsAllowed": 0,
+        "expectedPods": 1,
+        "observedGeneration": 1
+      }
+    },
+    {
+      "apiVersion": "policy/v1",
+      "kind": "PodDisruptionBudget",
+      "metadata": {
+        "annotations": {
+          "cnpg.io/operatorVersion": "1.30.0"
+        },
+        "creationTimestamp": "2026-10-03T21:42:02Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/component": "database",
+          "app.kubernetes.io/instance": "reports-db",
+          "app.kubernetes.io/managed-by": "cloudnative-pg",
+          "app.kubernetes.io/name": "postgresql",
+          "app.kubernetes.io/version": "18",
+          "cnpg.io/cluster": "reports-db"
+        },
+        "name": "reports-db-primary",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "postgresql.cnpg.io/v1",
+            "controller": true,
+            "kind": "Cluster",
+            "name": "reports-db",
+            "uid": "e07cade6-d582-45ae-a992-37ebcf9fa4f0"
+          }
+        ],
+        "resourceVersion": "421880",
+        "selfLink": "/apis/policy/v1/namespaces/databases/poddisruptionbudgets/reports-db-primary",
+        "uid": "b46a3ef6-7ca9-4270-901a-21999b2ecace"
+      },
+      "spec": {
+        "minAvailable": 1,
+        "selector": {
+          "matchLabels": {
+            "cnpg.io/cluster": "reports-db",
+            "cnpg.io/instanceRole": "primary"
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-03T21:42:02Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "InsufficientPods",
+            "status": "False",
+            "type": "DisruptionAllowed"
+          }
+        ],
+        "currentHealthy": 0,
+        "desiredHealthy": 1,
+        "disruptionsAllowed": 0,
+        "expectedPods": 0,
+        "observedGeneration": 1
+      }
+    }
+  ],
+  "kind": "List"
+}

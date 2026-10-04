@@ -1,0 +1,85 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "barmancloud.cnpg.io/v1",
+      "kind": "ObjectStore",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "generation": 1,
+        "name": "backups",
+        "namespace": "databases",
+        "resourceVersion": "440649",
+        "selfLink": "/apis/barmancloud.cnpg.io/v1/namespaces/databases/objectstores/backups",
+        "uid": "0a034202-e033-4986-a843-eb661c3b7266"
+      },
+      "spec": {
+        "configuration": {
+          "destinationPath": "s3://backups/",
+          "endpointURL": "http://rustfs.databases.svc:9000",
+          "s3Credentials": {
+            "accessKeyId": {
+              "key": "ACCESS_KEY_ID",
+              "name": "s3-credentials"
+            },
+            "secretAccessKey": {
+              "key": "ACCESS_SECRET_KEY",
+              "name": "s3-credentials"
+            }
+          },
+          "wal": {
+            "compression": "gzip"
+          }
+        },
+        "retentionPolicy": "7d"
+      },
+      "status": {
+        "serverRecoveryWindow": {
+          "orders-db": {
+            "firstRecoverabilityPoint": "2026-10-03T21:43:32Z",
+            "lastSuccessfulBackupTime": "2026-10-03T23:00:01Z"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "barmancloud.cnpg.io/v1",
+      "kind": "ObjectStore",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "generation": 1,
+        "name": "backups-wrong-keys",
+        "namespace": "databases",
+        "resourceVersion": "421187",
+        "selfLink": "/apis/barmancloud.cnpg.io/v1/namespaces/databases/objectstores/backups-wrong-keys",
+        "uid": "237b5c00-7c7c-40e9-aabf-880ba9f6bf05"
+      },
+      "spec": {
+        "configuration": {
+          "destinationPath": "s3://backups/",
+          "endpointURL": "http://rustfs.databases.svc:9000",
+          "s3Credentials": {
+            "accessKeyId": {
+              "key": "ACCESS_KEY_ID",
+              "name": "s3-credentials-wrong"
+            },
+            "secretAccessKey": {
+              "key": "ACCESS_SECRET_KEY",
+              "name": "s3-credentials-wrong"
+            }
+          }
+        }
+      },
+      "status": {
+        "serverRecoveryWindow": {
+          "billing-db": {
+            "lastFailedBackupTime": "2026-10-03T21:43:32Z"
+          }
+        }
+      }
+    }
+  ],
+  "kind": "List"
+}
