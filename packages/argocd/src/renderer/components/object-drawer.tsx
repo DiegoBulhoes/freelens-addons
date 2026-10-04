@@ -5,7 +5,7 @@ import type { Tone } from "./status";
 import { ArgoCDStyles } from "./styles";
 
 const {
-  Component: { Drawer, Icon },
+  Component: { Drawer, Icon, MenuActions, MenuItem },
 } = Renderer;
 
 export interface DrawerAction {
@@ -44,15 +44,26 @@ export function ObjectDrawer({
       open={open}
       title={`${kind}: ${name}`}
       onClose={onClose}
-      toolbar={actions.map((action) => (
-        <Icon
-          key={action.icon}
-          material={action.icon}
-          tooltip={action.title}
-          interactive
-          onClick={action.onClick}
-        />
-      ))}
+      // The host's own drawers put their actions in a toolbar MenuActions; its items carry the spacing.
+      toolbar={
+        actions.length > 0 && (
+          <MenuActions toolbar autoCloseOnSelect>
+            {actions.map((action) => (
+              <MenuItem
+                key={action.icon}
+                // The menu renders outside the drawer, so an unprevented click closes it.
+                onClick={(event: { preventDefault(): void }) => {
+                  event.preventDefault();
+                  action.onClick();
+                }}
+              >
+                <Icon material={action.icon} tooltip={action.title} interactive />
+                <span className="title">{action.title}</span>
+              </MenuItem>
+            ))}
+          </MenuActions>
+        )
+      }
     >
       {open && (
         <div className="ArgoCD ArgoCD-drawer" data-section={section}>

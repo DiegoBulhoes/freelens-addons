@@ -1,6 +1,7 @@
 import { refreshApplication, syncApplication } from "./actions";
+import type { AppProject } from "./app-project";
 import type { Application } from "./application";
-import type { RefreshMode } from "./patches";
+import { isFrozen, type RefreshMode } from "./patches";
 
 const MAX_CONCURRENT_REQUESTS = 4;
 
@@ -101,4 +102,46 @@ export function listNames(names: string[], shown = 6): string {
   }
 
   return `${names.slice(0, shown).join(", ")} and ${names.length - shown} more`;
+}
+
+export interface Plan<Item> {
+  ready: Item[];
+  skipped: { item: Item; reason: string }[];
+}
+
+/** Splits a selection into what an action applies to and what it would refuse, with why. */
+export function planFor<Item>(
+  items: Item[],
+  refuse: (item: Item) => string | undefined,
+): Plan<Item> {
+  const plan: Plan<Item> = { ready: [], skipped: [] };
+
+  for (const item of items) {
+    const reason = refuse(item);
+
+    if (reason) plan.skipped.push({ item, reason });
+    else plan.ready.push(item);
+  }
+
+  return plan;
+}
+
+export function describeEachOutcome(verb: string, done: number, failed: string[]): string {
+  const what = `${verb} ${done} of ${done + failed.length}.`;
+
+  return failed.length === 0 ? what : `${what} Failed: ${failed.join(", ")}.`;
+}
+
+export type ProjectBulk = "refresh" | "sync" | "freeze" | "resume";
+
+export function projectRefusal(
+  action: ProjectBulk,
+  countApplications: (project: AppProject) => number,
+) {
+  return (project: AppProject): string | undefined => {
+    if (action === "freeze") return isFrozen(project) ? "already frozen" : undefined;
+    if (action === "resume") return isFrozen(project) ? undefined : "not frozen";
+
+    return countApplications(project) === 0 ? "it has no Applications" : undefined;
+  };
 }

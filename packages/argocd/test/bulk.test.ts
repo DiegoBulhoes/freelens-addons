@@ -1,14 +1,19 @@
 import { describe, expect, it } from "vitest";
+import { AppProject } from "../src/renderer/api/app-project";
 import type { Application } from "../src/renderer/api/application";
 import {
   applyToEachApplication,
   type BulkOutcome,
+  describeEachOutcome,
   describeOutcome,
   listNames,
+  planFor,
+  projectRefusal,
   refreshEach,
   syncEach,
 } from "../src/renderer/api/bulk";
-import { applications } from "./fixtures";
+import { frozenWindows } from "../src/renderer/api/patches";
+import { applications, appProjects, projectVariantOf } from "./fixtures";
 
 function recordingAction(calledWith: string[]) {
   return async (application: Application) => {
@@ -205,5 +210,65 @@ describe("listNames", () => {
 
   it("names the first few and counts the rest", () => {
     expect(listNames(["a", "b", "c", "d", "e"], 2)).toBe("a, b and 3 more");
+  });
+});
+
+describe("planning a bulk action", () => {
+  it("splits the selection into what it applies to and what it skips, with why", () => {
+    const targets = applications().slice(0, 4);
+    const refused = targets[1]?.getName();
+    const plan = planFor(targets, (application) =>
+      application.getName() === refused ? "not this one" : undefined,
+    );
+
+    expect(plan.ready.map((each) => each.getName())).toEqual(
+      targets.filter((each) => each.getName() !== refused).map((each) => each.getName()),
+    );
+    expect(plan.skipped.map(({ item, reason }) => [item.getName(), reason])).toEqual([
+      [refused, "not this one"],
+    ]);
+  });
+
+  it("reports how many were done, and names those that failed", () => {
+    expect(describeEachOutcome("Deleted", 2, [])).toBe("Deleted 2 of 2.");
+    expect(describeEachOutcome("Deleted", 1, ["podinfo-chart"])).toBe(
+      "Deleted 1 of 2. Failed: podinfo-chart.",
+    );
+  });
+});
+
+describe("which projects a bulk action skips", () => {
+  const frozen = () =>
+    projectVariantOf("demo", (data) => {
+      data.spec.syncWindows = frozenWindows([]);
+    });
+  const counted = (project: AppProject) =>
+    AppProject.selectApplications(project, applications()).length;
+
+  it("freezes only what is not frozen yet, and resumes only what is", () => {
+    const [project] = appProjects();
+
+    expect(projectRefusal("freeze", counted)(project as AppProject)).toBeUndefined();
+    expect(projectRefusal("freeze", counted)(frozen())).toBe("already frozen");
+    expect(projectRefusal("resume", counted)(frozen())).toBeUndefined();
+    expect(projectRefusal("resume", counted)(project as AppProject)).toBe("not frozen");
+  });
+
+  it("refreshes and syncs only projects that have Applications", () => {
+    const projects = appProjects();
+    const withApplications = projects.filter((project) => counted(project) > 0);
+
+    expect(withApplications.length).toBeGreaterThan(0);
+
+    for (const action of ["refresh", "sync"] as const) {
+      const plan = planFor(projects, projectRefusal(action, counted));
+
+      expect(plan.ready).toEqual(withApplications);
+      expect(plan.skipped.every(({ reason }) => reason === "it has no Applications")).toBe(true);
+    }
+
+    expect(projectRefusal("sync", () => 0)(projects[0] as AppProject)).toBe(
+      "it has no Applications",
+    );
   });
 });

@@ -5,6 +5,7 @@ import { useMemo } from "react";
 
 import { AppProject, type AppProjectApi } from "../api/app-project";
 import { Application } from "../api/application";
+import { ProjectSelectionActions } from "../components/project-selection-actions";
 import { useKubeStore } from "../components/use-kube-store";
 
 const {
@@ -97,6 +98,12 @@ export const AppProjectsPage = observer(() => {
       searchFilters={[(object: AppProject) => object.getSearchFields()]}
       renderHeaderTitle="ArgoCD Projects"
       renderTableHeader={renderTableHeader}
+      renderFooter={(parent) => (
+        <ProjectSelectionActions
+          getItems={() => parent.items}
+          pickOnlySelected={(items) => store.pickOnlySelected(items)}
+        />
+      )}
       renderTableContents={(object: AppProject) => [
         <WithTooltip key="name">{object.getName()}</WithTooltip>,
         <span key="applications">{countApplications(object)}</span>,

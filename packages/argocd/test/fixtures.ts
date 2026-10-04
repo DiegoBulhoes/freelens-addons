@@ -93,4 +93,22 @@ export function variantOf(name: string, change: (data: MutableApplication) => vo
   return new Application(data as never);
 }
 
+/** A real AppProject with one change applied. */
+export function projectVariantOf(
+  name: string,
+  change: (data: { spec: Record<string, unknown> }) => void,
+): AppProject {
+  const source = appProjects().find((candidate) => candidate.getName() === name);
+
+  if (!source) throw new Error(`no AppProject named ${name} in the fixtures`);
+
+  const data = JSON.parse(JSON.stringify(source.toPlainObject())) as {
+    spec: Record<string, unknown>;
+  };
+
+  change(data);
+
+  return new AppProject(data as never);
+}
+
 export { Ingress, KubeEvent, Node, Pod };

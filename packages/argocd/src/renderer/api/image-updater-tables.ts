@@ -82,3 +82,23 @@ export function updateSearchTexts(update: UpdateRow): string[] {
 export function ruleKey(name: string, namespace: string | undefined): string {
   return `${namespace ?? ""}/${name}`;
 }
+
+export function imageKey(image: TrackedImage): string {
+  return `${image.namespace}/${image.updater}/${image.alias}/${image.applications
+    .map((watched) => watched.name)
+    .join(",")}`;
+}
+
+export function updateKey(update: UpdateRow): string {
+  return `${update.namespace}/${update.updater}/${update.alias}/${update.to}`;
+}
+
+export function findRule(
+  rows: RuleRow[],
+  name: string,
+  namespace: string | undefined,
+): RuleRow | undefined {
+  const wanted = ruleKey(name, namespace);
+
+  return rows.find((row) => ruleKey(row.updater.getName(), row.updater.getNs()) === wanted);
+}

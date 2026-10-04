@@ -4,10 +4,11 @@ import { type ReactNode, useState } from "react";
 
 import { describeCount, nextSort, type Sort, searchRows, sortRows } from "../api/table";
 import { NamespaceFilter } from "./namespace-filter";
+import { type SelectionAction, SelectionBar } from "./selection-bar";
 import { ArgoCDStyles } from "./styles";
 
 const {
-  Component: { MenuActions },
+  Component: { Checkbox, MenuActions },
 } = Renderer;
 
 export interface Column<Row> {
@@ -34,6 +35,8 @@ export interface ListPageProps<Row> {
   empty: string;
   initialQuery?: string;
   filters?: ReactNode;
+  /** Ticks rows and offers these actions on them. */
+  selection?: { hint: string; actions: SelectionAction<Row>[] };
   /** The drawer, rendered beside the table so it overlays the page. */
   children?: ReactNode;
 }
@@ -41,11 +44,25 @@ export interface ListPageProps<Row> {
 function ListPageView<Row>(props: ListPageProps<Row>) {
   const [query, setQuery] = useState(props.initialQuery ?? "");
   const [sort, setSort] = useState<Sort>();
+  const [ticked, setTicked] = useState<ReadonlySet<string>>(new Set());
   const { columns, rows } = props;
 
   const shown = sortRows(searchRows(rows, query, props.searchTexts), sort, (row, column) =>
     columns.find((each) => each.title === column)?.sortValue?.(row),
   );
+  // A row searched away or deleted drops out of the selection.
+  const selected = shown.filter((row) => ticked.has(props.keyOf(row)));
+  const toggle = (keys: string[], on: boolean) =>
+    setTicked((before) => {
+      const next = new Set(before);
+
+      for (const key of keys) {
+        if (on) next.add(key);
+        else next.delete(key);
+      }
+
+      return next;
+    });
 
   return (
     <div className="ArgoCD ArgoCD-page ArgoCD-page--list">
@@ -77,6 +94,15 @@ function ListPageView<Row>(props: ListPageProps<Row>) {
 
       {props.filters}
 
+      {props.selection && (
+        <SelectionBar
+          getItems={() => shown}
+          pickOnlySelected={() => selected}
+          hint={props.selection.hint}
+          actions={props.selection.actions}
+        />
+      )}
+
       <section className="ArgoCD-section" data-section={props.section ?? "list"}>
         {shown.length === 0 ? (
           <p className="ArgoCD-section__note">
@@ -86,6 +112,15 @@ function ListPageView<Row>(props: ListPageProps<Row>) {
           <table className="ArgoCD-table">
             <thead>
               <tr>
+                {props.selection && (
+                  <th className="ArgoCD-table__check">
+                    <Checkbox
+                      aria-label="Select every row shown"
+                      value={selected.length > 0 && selected.length === shown.length}
+                      onChange={(on: boolean) => toggle(shown.map(props.keyOf), on)}
+                    />
+                  </th>
+                )}
                 {columns.map((column) => (
                   <th
                     key={column.title}
@@ -117,11 +152,19 @@ function ListPageView<Row>(props: ListPageProps<Row>) {
             <tbody>
               {shown.map((row) => {
                 const items = props.menu?.(row);
+                const key = props.keyOf(row);
 
                 return (
                   <tr
-                    key={props.keyOf(row)}
-                    className={props.onOpen ? "ArgoCD-table__row--clickable" : undefined}
+                    key={key}
+                    className={
+                      [
+                        props.onOpen ? "ArgoCD-table__row--clickable" : "",
+                        ticked.has(key) ? "ArgoCD-table__row--selected" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ") || undefined
+                    }
                     // Prevented, or the drawer's outside-click listener closes it as it opens.
                     onClick={
                       props.onOpen
@@ -132,6 +175,19 @@ function ListPageView<Row>(props: ListPageProps<Row>) {
                         : undefined
                     }
                   >
+                    {props.selection && (
+                      <td
+                        className="ArgoCD-table__check"
+                        onClick={(event) => event.stopPropagation()}
+                        onKeyDown={(event) => event.stopPropagation()}
+                      >
+                        <Checkbox
+                          aria-label={`Select ${key}`}
+                          value={ticked.has(key)}
+                          onChange={(on: boolean) => toggle([key], on)}
+                        />
+                      </td>
+                    )}
                     {columns.map((column) => (
                       <td key={column.title} className={column.className}>
                         {column.cell(row)}

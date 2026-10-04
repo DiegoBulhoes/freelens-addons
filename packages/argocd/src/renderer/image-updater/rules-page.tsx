@@ -1,9 +1,10 @@
 import type { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 import { useState } from "react";
-
+import { deleteRule } from "../api/image-updater-actions";
 import { RULE_COLUMNS, RULE_SORT, ruleKey, ruleSearchTexts } from "../api/image-updater-tables";
 import { describeRulesState, type RuleRow, rankRules } from "../api/image-updates";
+import { bulkAction } from "../components/bulk";
 import { type Column, ListPage } from "../components/list-page";
 import { Status } from "../components/status";
 import { useImageUpdaterStores } from "../hooks/use-image-updater-stores";
@@ -83,6 +84,22 @@ export const ImageUpdaterRulesPage = observer(
         keyOf={keyOf}
         searchTexts={ruleSearchTexts}
         onOpen={(row) => setSelectedKey(keyOf(row))}
+        selection={{
+          hint: "Deleting a rule stops its images being updated; the Applications keep the tags they run now.",
+          actions: [
+            bulkAction<RuleRow>({
+              label: "Delete",
+              done: "Deleted",
+              kind: "rule",
+              tooltip: "Deletes each ticked rule, so its images stop being updated.",
+              caution: true,
+              nameOf: (row) => row.updater.getName(),
+              detail:
+                "Their images stop being updated. The Applications keep the tags they run now.",
+              run: (row) => deleteRule(row.updater),
+            }),
+          ],
+        }}
         empty="No ImageUpdater rules in the namespaces in scope."
       >
         <RuleDrawer

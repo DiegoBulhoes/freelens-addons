@@ -3,7 +3,13 @@ import { observer } from "mobx-react";
 import { useState } from "react";
 
 import { locateImages } from "../api/image-updater-patches";
-import { IMAGE_COLUMNS, IMAGE_SORT, imageSearchTexts, ruleKey } from "../api/image-updater-tables";
+import {
+  findRule,
+  IMAGE_COLUMNS,
+  IMAGE_SORT,
+  imageKey,
+  imageSearchTexts,
+} from "../api/image-updater-tables";
 import {
   countWatching,
   describeRulesState,
@@ -14,6 +20,7 @@ import {
 import { type Column, ListPage } from "../components/list-page";
 import { useImageUpdaterStores } from "../hooks/use-image-updater-stores";
 import { confirmEditImage } from "./dialogs";
+import { ImageDrawer } from "./image-drawers";
 import { RuleDrawer } from "./rule-drawer";
 import { ApplicationLinks, describeChoice } from "./shared";
 
@@ -21,29 +28,21 @@ const {
   Component: { Icon, MenuItem },
 } = Renderer;
 
-const keyOf = (image: TrackedImage) =>
-  `${image.namespace}/${image.updater}/${image.alias}/${image.applications
-    .map((watched) => watched.name)
-    .join(",")}`;
-
 export const ImageUpdaterImagesPage = observer(
   ({ extension }: { extension: Renderer.LensExtension }) => {
     const { updaters, applications, state } = useImageUpdaterStores();
-    const [selectedRule, setSelectedRule] = useState<string>();
+    const [opened, setOpened] = useState<{ image: string } | { rule: TrackedImage }>();
     const images = trackedImages(updaters, applications);
     const ranked = rankRules(updaters, applications, Date.now());
-    const ruleOf = (image: TrackedImage) =>
-      ranked.find(
-        (row) =>
-          ruleKey(row.updater.getName(), row.updater.getNs()) ===
-          ruleKey(image.updater, image.namespace),
-      );
-    const selected = ranked.find(
-      (row) => ruleKey(row.updater.getName(), row.updater.getNs()) === selectedRule,
-    );
+    const ruleOf = (image: TrackedImage) => findRule(ranked, image.updater, image.namespace);
+    const image =
+      opened && "image" in opened
+        ? images.find((each) => imageKey(each) === opened.image)
+        : undefined;
+    const rule = opened && "rule" in opened ? ruleOf(opened.rule) : undefined;
 
     const openApplication = (name: string) => {
-      setSelectedRule(undefined);
+      setOpened(undefined);
       void extension.navigate("applications", { name });
     };
 
@@ -115,7 +114,7 @@ export const ImageUpdaterImagesPage = observer(
         title="Watched images"
         subline={
           images.length > 0
-            ? `${countWatching(images)} of ${images.length} reach an Application the controller updates. A row opens its rule.`
+            ? `${countWatching(images)} of ${images.length} reach an Application the controller updates. A row opens the image.`
             : undefined
         }
         alarm={state === "unreachable" ? describeRulesState(state) : undefined}
@@ -123,17 +122,24 @@ export const ImageUpdaterImagesPage = observer(
         section="image-updater-images"
         rows={images}
         columns={columns}
-        keyOf={keyOf}
+        keyOf={imageKey}
         searchTexts={imageSearchTexts}
-        onOpen={(image) => setSelectedRule(ruleKey(image.updater, image.namespace))}
+        onOpen={(row) => setOpened({ image: imageKey(row) })}
         menu={menu}
         empty="No rule names an image yet."
       >
+        <ImageDrawer
+          image={image}
+          rule={image ? ruleOf(image)?.updater : undefined}
+          onClose={() => setOpened(undefined)}
+          onOpenRule={() => image && setOpened({ rule: image })}
+          onOpenApplication={openApplication}
+        />
         <RuleDrawer
-          updater={selected?.updater}
-          health={selected?.health}
+          updater={rule?.updater}
+          health={rule?.health}
           applications={applications}
-          onClose={() => setSelectedRule(undefined)}
+          onClose={() => setOpened(undefined)}
           onOpenApplication={openApplication}
         />
       </ListPage>

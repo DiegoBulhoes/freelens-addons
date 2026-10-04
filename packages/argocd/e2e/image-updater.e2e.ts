@@ -8,6 +8,7 @@ import {
   clusterItems,
   hoverForTooltip,
   notificationSaying,
+  openDrawer,
   openWorkbench,
   sidebarItems,
   typeInto,
@@ -20,8 +21,11 @@ const RULES = "/apis/argocd-image-updater.argoproj.io/v1alpha1/imageupdaters";
 const GROUPS = ["argocd", "argocd-image-updater"];
 const DRAWER = ".ArgoCDObjectDrawer";
 /** A drawer title-bar icon, by its Material name. */
+// The drawer showing a body: one being replaced stays in the page, emptied, while it slides out.
+const OPEN_DRAWER = openDrawer(DRAWER);
+/** A title-bar icon of the open drawer, by its Material name. */
 const TOOLBAR_ICON = (name: string) =>
-  `[...document.querySelectorAll(${JSON.stringify(`${DRAWER} .drawer-title i.Icon`)})].find((each) => each.textContent.trim() === ${JSON.stringify(name)})`;
+  `[...(${OPEN_DRAWER}?.querySelectorAll(".drawer-title i.Icon") ?? [])].find((each) => each.textContent.trim() === ${JSON.stringify(name)})`;
 
 interface Rule {
   metadata: { name: string };
@@ -58,11 +62,13 @@ describe("the Image Updater screens", () => {
     await waitFor(`${page} to render`, async () => ((await countOf(ready)) > 0 ? true : undefined));
   };
 
-  /** The first cell of each body row in a section's table, or each row's name in a list. */
+  /** The first cell after the checkbox of each body row in a section's table, or each row's name in a list. */
   const rowsIn = (section: string) =>
     session.evaluate<string[]>(
-      `[...document.querySelectorAll('[data-section="${section}"] tbody tr td:first-child, [data-section="${section}"] .ArgoCD-row__name b')]
-        .map((cell) => cell.textContent.split(" · ")[0].trim())`,
+      `[
+        ...[...document.querySelectorAll('[data-section="${section}"] tbody tr')].map((row) => row.querySelector("td:not(.ArgoCD-table__check)")),
+        ...document.querySelectorAll('[data-section="${section}"] .ArgoCD-row__name b'),
+      ].map((cell) => cell.textContent.split(" · ")[0].trim())`,
       frame,
     );
 
@@ -99,11 +105,13 @@ describe("the Image Updater screens", () => {
     );
   };
 
-  /** Opens a rule's drawer by clicking the row of a list page whose first cell names it. */
-  const openFromRow = async (section: string) => {
+  /** Opens a row's drawer by clicking its second cell (the first is a checkbox where rows tick), in the row whose text has `having`. */
+  const openFromRow = async (section: string, drawer: string, having = "") => {
     const clicked = await session.evaluate<boolean>(
       `(() => {
-        const cell = document.querySelector('[data-section="${section}"] tbody tr td');
+        const row = [...document.querySelectorAll('[data-section="${section}"] tbody tr')]
+          .find((each) => each.textContent.includes(${JSON.stringify(having)}));
+        const cell = row?.querySelector("td:nth-child(2)");
         if (!cell) return false;
         cell.click();
         return true;
@@ -111,24 +119,49 @@ describe("the Image Updater screens", () => {
       frame,
     );
 
-    expect(clicked, `${section} has no row`).toBe(true);
+    expect(clicked, `${section} has no row with ${having}`).toBe(true);
 
-    return waitFor("the rule's drawer", async () =>
-      (await countOf(`${DRAWER} [data-section="image-updater-rule"]`)) > 0
-        ? await drawerText()
-        : undefined,
+    return waitFor(`the ${drawer} drawer`, async () =>
+      (await countOf(`${DRAWER} [data-section="${drawer}"]`)) > 0 ? await drawerText() : undefined,
     );
   };
 
-  const closeDrawer = async () => {
-    await session.evaluate(
-      `[...document.querySelectorAll(${JSON.stringify(`${DRAWER} .drawer-title i.Icon`)})].find((each) => each.textContent.trim() === "close")?.click()`,
-      frame,
-    );
+  const closeDrawer = async (drawer = "image-updater-rule") => {
+    await session.evaluate(`${TOOLBAR_ICON("close")}?.click()`, frame);
     await waitFor("the drawer to close", async () =>
-      (await countOf(`${DRAWER} [data-section="image-updater-rule"]`)) === 0 ? true : undefined,
+      (await countOf(`${DRAWER} [data-section="${drawer}"]`)) === 0 ? true : undefined,
     );
   };
+
+  /** Each title-bar icon is there and its tooltip says what it does. */
+  const expectTitleBar = async (icons: [icon: string, says: RegExp][]) => {
+    for (const [icon, says] of icons) {
+      expect(await session.evaluate<boolean>(`Boolean(${TOOLBAR_ICON(icon)})`, frame)).toBe(true);
+
+      await session.evaluate(`${TOOLBAR_ICON(icon)}.setAttribute("data-hovered", "")`, frame);
+      expect(await hoverForTooltip(session, frame, `${DRAWER} [data-hovered]`)).toMatch(says);
+      // Leave it, or its open tooltip is the one read for the next icon.
+      await session.evaluate(
+        `(() => {
+          const icon = document.querySelector(${JSON.stringify(`${DRAWER} [data-hovered]`)});
+          for (const type of ["pointerleave", "pointerout", "mouseleave", "mouseout"]) {
+            icon?.dispatchEvent(new MouseEvent(type, { bubbles: true }));
+          }
+          icon?.removeAttribute("data-hovered");
+        })()`,
+        frame,
+      );
+      await new Promise((resolve) => setTimeout(resolve, 600));
+    }
+  };
+
+  /** A rule with images of its own (not annotations) that has updated one. */
+  const updatedRule = () =>
+    rules.find(
+      (rule) =>
+        rule.status?.lastUpdatedAt &&
+        rule.spec.applicationRefs.some((ref) => !ref.useAnnotations && ref.images?.length),
+    )?.metadata.name ?? "";
 
   /** Presses a button, expects a confirmation that says `says`, and cancels it. */
   const confirmThenCancel = async (selector: string, label: string, says: RegExp) => {
@@ -210,19 +243,13 @@ describe("the Image Updater screens", () => {
     beforeAll(async () => {
       await open("image-updater-rules", "[data-section='image-updater-rules'] tbody tr");
 
-      const updated = rules.find(
-        (rule) =>
-          rule.status?.lastUpdatedAt &&
-          rule.spec.applicationRefs.some((ref) => !ref.useAnnotations && ref.images?.length),
-      );
-
-      expect(updated, "the development cluster seeds a rule that updated").toBeDefined();
-      name = updated?.metadata.name ?? "";
+      name = updatedRule();
+      expect(name, "the development cluster seeds a rule that updated").not.toBe("");
 
       const clicked = await session.evaluate<boolean>(
         `(() => {
           const row = [...document.querySelectorAll('[data-section="image-updater-rules"] tbody tr')]
-            .find((each) => each.querySelector("td").textContent.split(" · ")[0].trim() === ${JSON.stringify(name)});
+            .find((each) => each.querySelector("td:not(.ArgoCD-table__check)").textContent.split(" · ")[0].trim() === ${JSON.stringify(name)});
           if (!row) return false;
           row.click();
           return true;
@@ -261,27 +288,10 @@ describe("the Image Updater screens", () => {
     }, 60_000);
 
     it("puts the rule's own actions in the title bar, each with a tooltip", async () => {
-      for (const [icon, says] of [
+      await expectTitleBar([
         ["subject", /controller's log/],
         ["delete", /Deletes the rule/],
-      ] as const) {
-        expect(await session.evaluate<boolean>(`Boolean(${TOOLBAR_ICON(icon)})`, frame)).toBe(true);
-
-        await session.evaluate(`${TOOLBAR_ICON(icon)}.setAttribute("data-hovered", "")`, frame);
-        expect(await hoverForTooltip(session, frame, `${DRAWER} [data-hovered]`)).toMatch(says);
-        // Leave it, or its open tooltip is the one read for the next icon.
-        await session.evaluate(
-          `(() => {
-            const icon = document.querySelector(${JSON.stringify(`${DRAWER} [data-hovered]`)});
-            for (const type of ["pointerleave", "pointerout", "mouseleave", "mouseout"]) {
-              icon?.dispatchEvent(new MouseEvent(type, { bubbles: true }));
-            }
-            icon?.removeAttribute("data-hovered");
-          })()`,
-          frame,
-        );
-        await new Promise((resolve) => setTimeout(resolve, 600));
-      }
+      ]);
 
       expect(
         await session.evaluate<boolean>(
@@ -356,6 +366,76 @@ describe("the Image Updater screens", () => {
 
       expect(drawer).toContain(name);
     }, 90_000);
+  });
+
+  describe("ticking rules", () => {
+    const SECTION = "image-updater-rules";
+    const BAR = '[data-section="selection"]';
+
+    beforeAll(() => open(SECTION, `[data-section='${SECTION}'] tbody tr`), 60_000);
+
+    /** Ticks the first `count` rows by their own checkbox, as a person would. */
+    const tick = (count: number) =>
+      session.evaluate(
+        `[...document.querySelectorAll('[data-section="${SECTION}"] tbody .ArgoCD-table__check input')].slice(0, ${count}).forEach((box) => box.click())`,
+        frame,
+      );
+
+    it("ticks a rule without opening its drawer, and offers Delete in the bar", async () => {
+      expect(await countOf(BAR)).toBe(0);
+
+      await tick(2);
+
+      const bar = await waitFor("the selection bar", async () => {
+        const text = await session.evaluate<string>(
+          `document.querySelector(${JSON.stringify(BAR)})?.textContent ?? ""`,
+          frame,
+        );
+
+        return text || undefined;
+      });
+
+      expect(bar).toMatch(/2 selected/);
+      expect(
+        await session.evaluate<string[]>(
+          `[...document.querySelectorAll(${JSON.stringify(`${BAR} button`)})].map((each) => each.textContent.trim())`,
+          frame,
+        ),
+      ).toEqual(["Delete"]);
+      expect(await countOf(`[data-section="${SECTION}"] tbody .ArgoCD-table__row--selected`)).toBe(
+        2,
+      );
+      expect(await countOf(`${DRAWER} [data-section="image-updater-rule"]`)).toBe(0);
+      expect(await designViolations(session, frame, "ArgoCD")).toEqual([]);
+    }, 60_000);
+
+    it("deletes no rule when the wrong word is typed", async () => {
+      await clickByText(session, frame, `${BAR} button`, "Delete");
+
+      const dialog = await dialogText();
+
+      expect(dialog).toMatch(/Delete 2 rules\?/);
+      expect(dialog).toContain("Type confirm to confirm.");
+      expect(await dialogColourViolations(session, frame, "ArgoCD")).toEqual([]);
+
+      await typeInto(session, frame, '.ConfirmDialog input[aria-label="Confirmation"]', "not-it");
+      await clickByText(session, frame, ".ConfirmDialog button", "Delete 2");
+
+      expect(
+        await notificationSaying(session, frame, 'Nothing was changed: "confirm"'),
+      ).toBeTruthy();
+
+      const after = await clusterItems<Rule>(session, frame, RULES);
+
+      expect(after.map((rule) => rule.metadata.name).sort()).toEqual(
+        rules.map((rule) => rule.metadata.name).sort(),
+      );
+    }, 60_000);
+
+    it("goes away once nothing is ticked", async () => {
+      await tick(2);
+      await waitFor("the bar to go", async () => ((await countOf(BAR)) === 0 ? true : undefined));
+    }, 30_000);
   });
 
   describe("the images", () => {
@@ -438,11 +518,51 @@ describe("the Image Updater screens", () => {
       expect(await sortState()).toBe("none");
     }, 60_000);
 
-    it("opens the rule of an image from its row", async () => {
-      const text = await openFromRow("image-updater-images");
+    it("opens the image from its row: how a tag is picked, where it is written, what it reaches", async () => {
+      const text = await openFromRow("image-updater-images", "image-updater-image", updatedRule());
 
-      expect(text).toMatch(/ImageUpdater: /);
+      expect(text).toMatch(/Image: /);
+      for (const fact of [
+        "Repository",
+        "Strategy",
+        "Constraint",
+        "Allowed tags",
+        "Writes to",
+        "Settings in",
+        "Rule",
+      ]) {
+        expect(text).toContain(fact);
+      }
+      expect(
+        await countOf(`${DRAWER} [data-section="image-updater-image-applications"] .ArgoCD-row`),
+      ).toBeGreaterThan(0);
       expect(await designViolations(session, frame, "ArgoCD")).toEqual([]);
+    }, 60_000);
+
+    it("puts Edit in the image's title bar, and asks before saving", async () => {
+      await expectTitleBar([["edit", /constraint, the strategy and the allowed tags/]]);
+
+      await session.evaluate(`${TOOLBAR_ICON("edit")}.click()`, frame);
+      await waitFor("the edit form", async () =>
+        (await countOf('.ConfirmDialog input[aria-label="Version constraint"]')) > 0
+          ? true
+          : undefined,
+      );
+      expect(await dialogColourViolations(session, frame, "ArgoCD")).toEqual([]);
+      await cancelDialog();
+    }, 60_000);
+
+    it("opens the image's rule from its link", async () => {
+      await clickByText(
+        session,
+        frame,
+        `${DRAWER} [data-section="image-updater-image"] .ArgoCD-facts button.ArgoCD-link`,
+        updatedRule(),
+      );
+      await waitFor("the rule's drawer", async () =>
+        (await countOf(`${DRAWER} [data-section="image-updater-rule"]`)) > 0 ? true : undefined,
+      );
+      expect(await countOf(`${DRAWER} [data-section="image-updater-image"]`)).toBe(0);
       await closeDrawer();
     }, 60_000);
 
@@ -478,10 +598,50 @@ describe("the Image Updater screens", () => {
       ).toBeGreaterThanOrEqual(updated);
     });
 
-    it("opens the rule of an update from its row", async () => {
-      const text = await openFromRow("image-updater-updates");
+    it("opens the update from its row: from and to, when, its Applications and its rule", async () => {
+      const text = await openFromRow("image-updater-updates", "image-updater-update");
 
-      expect(text).toMatch(/→/);
+      expect(text).toMatch(/Image update: .+ → /);
+      for (const fact of ["From", "To", "When", "Applications updated", "Rule"]) {
+        expect(text).toContain(fact);
+      }
+      expect(
+        await countOf(`${DRAWER} [data-section="image-updater-update-applications"] .ArgoCD-row`),
+      ).toBeGreaterThan(0);
+      expect(await designViolations(session, frame, "ArgoCD")).toEqual([]);
+    }, 60_000);
+
+    it("puts Undo in the update's title bar, and asks first", async () => {
+      await expectTitleBar([["undo", /previous tag back/]]);
+
+      await session.evaluate(`${TOOLBAR_ICON("undo")}.click()`, frame);
+
+      const dialog = await waitFor("the Undo confirmation or its refusal", async () => {
+        const text = await session.evaluate<string>(
+          "document.querySelector('.ConfirmDialog')?.textContent || document.querySelector('.Notifications')?.textContent || ''",
+          frame,
+        );
+
+        return text || undefined;
+      });
+
+      if ((await countOf(".ConfirmDialog")) > 0) {
+        expect(dialog).toMatch(/Pin to/);
+        expect(await dialogColourViolations(session, frame, "ArgoCD")).toEqual([]);
+        await cancelDialog();
+      } else {
+        expect(dialog).toMatch(/Cannot undo from here/);
+      }
+    }, 60_000);
+
+    it("opens the update's rule from its link", async () => {
+      await session.evaluate(
+        `document.querySelector(${JSON.stringify(`${DRAWER} [data-section="image-updater-update"] .ArgoCD-facts button.ArgoCD-link`)}).click()`,
+        frame,
+      );
+      await waitFor("the rule's drawer", async () =>
+        (await countOf(`${DRAWER} [data-section="image-updater-rule"]`)) > 0 ? true : undefined,
+      );
       await closeDrawer();
     }, 60_000);
 

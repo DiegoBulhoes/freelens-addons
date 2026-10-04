@@ -59,7 +59,7 @@ Every page has the host's namespace selector.
 | Sources, last sync, conditions, managed resources, images, deploy history | Application details drawer |
 | Image Updater rules that watch the Application's images | Application details drawer |
 | Allowed sources, destinations, roles, sync windows | Projects list |
-| Refresh all, Sync all, Freeze, Resume | Project menu |
+| Refresh all, Sync all, Freeze, Resume | Project menu, and on ticked projects (skipping those already frozen or not frozen) |
 
 ## Image Updater
 
@@ -69,9 +69,9 @@ appears only where the `ImageUpdater` CRD exists.
 | Screen | Features |
 |--------|----------|
 | Overview | Rules that are failing, erroring behind `Ready=True`, not checking, or matching nothing; counts; Check now |
-| Rules | Every rule with its state, Applications, images, last check and last update; a row opens the rule |
-| Images | Each watched image: how it picks a tag, the Applications it reaches and the tag each runs, where updates are written; a row opens its rule; Edit |
-| Updates | Each rule's last update, from which tag to which; a row opens its rule; Undo |
+| Rules | Every rule with its state, Applications, images, last check and last update; a row opens the rule; Delete on ticked rules |
+| Images | Each watched image: how it picks a tag, the Applications it reaches and the tag each runs, where updates are written; a row opens the image's drawer, with its rule a link away; Edit |
+| Updates | Each rule's last update, from which tag to which; a row opens the update's drawer, with the Applications it reached and whether Undo is possible; Undo |
 | Rule drawer | Controller log and Delete in the title bar; last update with Undo, images with Edit, commands to copy |
 
 Rules, Images and Updates each count their rows, search them, and sort by any column.
