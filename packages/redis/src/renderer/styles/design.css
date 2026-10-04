@@ -1,0 +1,1029 @@
+/*
+ * The design standard. Edit it here and run the skill's scripts/sync-design.sh; never edit a copy.
+ *
+ * - Colours come from the host's theme; the one literal is a pressed filter's white.
+ * - Content sits on --sidebarBackground: --layoutBackground equals it in the light theme.
+ * - Every component that can be a <button> resets `text-align: center`.
+ */
+
+.Redis {
+  --redis-gap-xs: calc(var(--unit, 8px) * 0.5);
+  --redis-gap-sm: var(--unit, 8px);
+  --redis-gap-md: calc(var(--unit, 8px) * 2);
+  --redis-gap-lg: calc(var(--unit, 8px) * 3);
+
+  --redis-small: var(--font-size-small, 12px);
+  --redis-radius: var(--border-radius, 3px);
+  --redis-line: var(--borderFaintColor, rgba(127, 127, 127, 0.25));
+  --redis-line-strong: var(--borderColor, rgba(127, 127, 127, 0.5));
+  --redis-surface: var(--sidebarBackground, rgba(127, 127, 127, 0.15));
+  --redis-surface-hover: var(--sidebarItemHoverBackground, rgba(127, 127, 127, 0.25));
+
+  --redis-tone-critical: var(--colorError);
+  --redis-tone-warning: var(--colorWarning);
+  --redis-tone-ok: var(--colorSuccess);
+  --redis-tone-info: var(--colorInfo);
+
+  color: var(--textColorPrimary);
+}
+
+.Redis :is(button, a, input):focus-visible {
+  outline: 2px solid var(--colorInfo);
+  outline-offset: 1px;
+}
+
+/* The host's ConfirmDialog is white in every theme; ours follows the theme. */
+.ConfirmDialog:has(.Redis-dialog) > .box {
+  border: 1px solid var(--borderColor);
+  background-color: var(--contentColor);
+  color: var(--textColorPrimary);
+}
+
+.ConfirmDialog:has(.Redis-dialog) .confirm-buttons {
+  background: var(--layoutBackground);
+}
+
+/* One text colour in our dialogs; the two root classes outrank the host's control rules. */
+.Redis.Redis-dialog,
+.Redis.Redis-dialog
+  :is(
+    .Redis-muted,
+    .Redis-hint,
+    .Redis-filter:not([aria-pressed="true"]),
+    .Checkbox,
+    .Checkbox label,
+    .Input,
+    .Input label,
+    input
+  ) {
+  color: inherit;
+}
+
+/* ─── Page ──────────────────────────────────────────────────────────────── */
+
+.Redis-page {
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding: var(--redis-gap-lg);
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: var(--redis-gap-lg);
+  min-width: 0;
+}
+
+/* Laid out as the host's `.ItemListLayout`. */
+.Redis-page--list {
+  padding: 0;
+  gap: 0;
+  background: var(--contentColor);
+}
+
+.Redis-page--list > .Redis-page__head {
+  padding: var(--redis-gap-md);
+}
+
+.Redis-page--list > .Redis-filters {
+  padding: 0 var(--redis-gap-md) var(--redis-gap-md);
+}
+
+.Redis-page--list > .Redis-section > .Redis-section__note {
+  padding: 0 var(--redis-gap-md) var(--redis-gap-md);
+}
+
+.Redis-page__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--redis-gap-md);
+  flex-wrap: wrap;
+}
+
+.Redis-page__head > :first-child {
+  flex: 1 1 20em;
+  min-width: 0;
+}
+
+.Redis-page__headline {
+  display: flex;
+  align-items: baseline;
+  gap: var(--redis-gap-sm);
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: calc(var(--unit, 8px) * 3);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: 1.25;
+}
+
+.Redis-page__subline {
+  margin: var(--redis-gap-xs) 0 0;
+  color: var(--textColorSecondary);
+}
+
+.Redis-page__count {
+  font-size: var(--font-size-small, 12px);
+  color: var(--textColorSecondary);
+}
+
+.Redis-page__subline--alarm {
+  color: var(--redis-tone-critical);
+}
+
+.Redis-page__actions {
+  display: grid;
+  justify-items: end;
+  gap: var(--redis-gap-xs);
+  max-width: 28em;
+  text-align: right;
+}
+
+/* ─── Section ───────────────────────────────────────────────────────────── */
+
+.Redis-section {
+  display: grid;
+  gap: var(--redis-gap-sm);
+  min-width: 0;
+}
+
+.Redis-section__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--redis-gap-sm);
+  flex-wrap: wrap;
+}
+
+.Redis-section__bar > :last-child:not(:first-child) {
+  margin-left: auto;
+}
+
+.Redis-section__title {
+  margin: 0;
+  font-size: var(--font-size-big, 16px);
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+.Redis-section__note {
+  margin: 0;
+  color: var(--textColorSecondary);
+}
+
+/* ─── Cards ─────────────────────────────────────────────────────────────── */
+
+/* auto-fill, not auto-fit: a card keeps its width however few there are. */
+.Redis-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: var(--redis-gap-sm);
+}
+
+.Redis-card {
+  display: grid;
+  align-content: start;
+  gap: var(--redis-gap-xs);
+  padding: var(--redis-gap-md);
+  border: 1px solid var(--redis-line);
+  border-radius: var(--redis-radius);
+  background: var(--redis-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.Redis-card {
+  cursor: pointer;
+}
+
+button.Redis-card:hover {
+  background: var(--redis-surface-hover);
+  border-color: var(--redis-line-strong);
+}
+
+.Redis-card__value {
+  font-size: calc(var(--unit, 8px) * 3.5);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.Redis-card__label {
+  font-size: var(--redis-small);
+  color: var(--textColorSecondary);
+}
+
+.Redis-card--critical .Redis-card__value {
+  color: var(--redis-tone-critical);
+}
+
+.Redis-card--warning .Redis-card__value {
+  color: var(--redis-tone-warning);
+}
+
+.Redis-card--info .Redis-card__value {
+  color: var(--redis-tone-info);
+}
+
+.Redis-card--ok .Redis-card__value {
+  color: var(--redis-tone-ok);
+}
+
+/* ─── Rows ──────────────────────────────────────────────────────────────── */
+
+.Redis-list {
+  display: grid;
+  gap: var(--redis-gap-xs);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.Redis-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--redis-gap-md);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--redis-gap-sm) var(--redis-gap-md);
+  border: 1px solid var(--redis-line);
+  border-left: 3px solid var(--redis-line);
+  border-radius: var(--redis-radius);
+  background: var(--redis-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.Redis-row {
+  cursor: pointer;
+}
+
+button.Redis-row:hover,
+.Redis-row:has(> button.Redis-row__main:hover) {
+  background: var(--redis-surface-hover);
+}
+
+.Redis-row--critical {
+  border-left-color: var(--redis-tone-critical);
+}
+
+.Redis-row--warning {
+  border-left-color: var(--redis-tone-warning);
+}
+
+.Redis-row--info {
+  border-left-color: var(--redis-tone-info);
+}
+
+.Redis-row--ok {
+  border-left-color: var(--redis-tone-ok);
+}
+
+.Redis-row__state {
+  flex: 0 0 9em;
+  font-size: var(--redis-small);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+.Redis-row--critical .Redis-row__state {
+  color: var(--redis-tone-critical);
+}
+
+.Redis-row--warning .Redis-row__state {
+  color: var(--redis-tone-warning);
+}
+
+.Redis-row--info .Redis-row__state {
+  color: var(--redis-tone-info);
+}
+
+.Redis-row--ok .Redis-row__state {
+  color: var(--redis-tone-ok);
+}
+
+.Redis-row__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+button.Redis-row__main {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.Redis-row__name {
+  display: flex;
+  align-items: baseline;
+  gap: var(--redis-gap-xs) var(--redis-gap-sm);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.Redis-row__meta {
+  font-size: var(--redis-small);
+  color: var(--textColorSecondary);
+}
+
+.Redis-row__reason {
+  font-size: var(--redis-small);
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+.Redis-row__aside {
+  flex: none;
+  font-size: var(--redis-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.Redis-row__actions {
+  flex: none;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: var(--redis-gap-xs);
+}
+
+/* A value to copy beside its button: the value wraps anywhere, so the button stays in view. */
+.Redis-copyable {
+  display: flex;
+  align-items: center;
+  gap: var(--redis-gap-sm);
+}
+
+.Redis-copyable > code {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ─── Boxes ─────────────────────────────────────────────────────────────── */
+
+.Redis-box {
+  display: grid;
+  gap: var(--redis-gap-xs);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--redis-gap-sm) var(--redis-gap-md);
+  border: 1px solid var(--redis-line);
+  border-left: 3px solid var(--redis-line);
+  border-radius: var(--redis-radius);
+  background: var(--redis-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.Redis-box {
+  cursor: pointer;
+}
+
+button.Redis-box:hover {
+  background: var(--redis-surface-hover);
+}
+
+.Redis-box--critical {
+  border-left-color: var(--redis-tone-critical);
+}
+
+.Redis-box--warning {
+  border-left-color: var(--redis-tone-warning);
+}
+
+.Redis-box--info {
+  border-left-color: var(--redis-tone-info);
+}
+
+.Redis-box--ok {
+  border-left-color: var(--redis-tone-ok);
+}
+
+.Redis-box__head {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  align-items: baseline;
+  gap: var(--redis-gap-sm);
+  width: 100%;
+}
+
+button.Redis-box__head {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.Redis-box__title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--redis-gap-xs) var(--redis-gap-sm);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.Redis-box__meta {
+  font-size: var(--redis-small);
+  color: var(--textColorSecondary);
+}
+
+.Redis-box__count {
+  font-size: var(--redis-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.Redis-box__reason {
+  margin: 0;
+  font-size: var(--redis-small);
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+/* ─── Chips ─────────────────────────────────────────────────────────────── */
+
+.Redis-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--redis-gap-xs);
+}
+
+/* On the surface grey, so it takes the page's colour to stand out. */
+.Redis-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--redis-gap-xs);
+  padding: 1px var(--redis-gap-sm);
+  border: 1px solid transparent;
+  border-radius: var(--redis-radius);
+  background: var(--contentColor, rgba(127, 127, 127, 0.1));
+  font: inherit;
+  font-size: var(--redis-small);
+  color: inherit;
+  text-align: left;
+}
+
+button.Redis-chip {
+  color: var(--colorInfo);
+  cursor: pointer;
+}
+
+button.Redis-chip:hover {
+  border-color: var(--colorInfo);
+}
+
+.Redis-chip__meta {
+  color: var(--textColorSecondary);
+}
+
+/* ─── Tags ──────────────────────────────────────────────────────────────── */
+
+/* Toned through `color`, so a domain class that sets it tones the tag too. */
+.Redis-tag {
+  display: inline-block;
+  padding: 0 var(--redis-gap-xs);
+  border: 1px solid currentColor;
+  border-radius: var(--redis-radius);
+  font-size: var(--redis-small);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.Redis-tag--critical {
+  color: var(--redis-tone-critical);
+}
+
+.Redis-tag--warning {
+  color: var(--redis-tone-warning);
+}
+
+.Redis-tag--info {
+  color: var(--redis-tone-info);
+}
+
+.Redis-tag--ok {
+  color: var(--redis-tone-ok);
+}
+
+.Redis-tag--neutral {
+  color: var(--textColorSecondary);
+}
+
+/* ─── Tables ────────────────────────────────────────────────────────────── */
+
+/* Value for value as the host's lists (Freelens 1.10.3 `.ItemListLayout`, `.TableCell`). */
+.Redis-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--contentColor);
+}
+
+.Redis-table th {
+  box-sizing: border-box;
+  height: 33px;
+  padding: var(--redis-gap-sm);
+  border-top: 1px solid var(--borderFaintColor);
+  border-bottom: 1px solid var(--borderFaintColor);
+  background: var(--tableHeaderBackground);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: 1.1;
+  text-align: left;
+  color: var(--tableHeaderColor, var(--textColorPrimary));
+  white-space: nowrap;
+}
+
+.Redis-table th:first-child,
+.Redis-table td:first-child {
+  padding-left: var(--redis-gap-md);
+}
+
+/* 33px: the pitch at which the host's virtual list places its rows. */
+.Redis-table td {
+  box-sizing: border-box;
+  height: 33px;
+  /* No vertical padding, so a 23px ⋮ or a tag fits. */
+  padding: 0 var(--redis-gap-sm);
+  line-height: 1.1;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+.Redis-table__number {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Every column that must not break needs __shrink, or this one squeezes it to a letter per line. */
+.Redis-table__fill {
+  width: 100%;
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.Redis-table__shrink {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.Redis-table__actions {
+  width: 1%;
+  line-height: 0;
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* The first cell of a selectable row, holding the host's own Checkbox, as its lists do. */
+.Redis-table__check {
+  width: 1%;
+  padding-right: 0;
+  line-height: 0;
+}
+
+.Redis-table__row--selected td {
+  background: var(--tableBgcSelected, var(--redis-surface-hover));
+}
+
+.Redis-table__row--clickable {
+  cursor: pointer;
+}
+
+.Redis-table__row--clickable:hover td {
+  background: var(--tableBgcSelected, var(--redis-surface-hover));
+}
+
+.Redis-table th[aria-sort] > .Redis-sort {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.Redis-table th[aria-sort="ascending"] > .Redis-sort::after {
+  content: " ▲";
+}
+
+.Redis-table th[aria-sort="descending"] > .Redis-sort::after {
+  content: " ▼";
+}
+
+/* ─── Facts ─────────────────────────────────────────────────────────────── */
+
+.Redis-facts {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--redis-gap-xs) var(--redis-gap-md);
+  margin: 0;
+  padding: var(--redis-gap-sm) var(--redis-gap-md);
+  border: 1px solid var(--redis-line);
+  border-radius: var(--redis-radius);
+  background: var(--redis-surface);
+}
+
+.Redis-facts dt {
+  color: var(--textColorSecondary);
+}
+
+.Redis-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ─── Banner ────────────────────────────────────────────────────────────── */
+
+.Redis-banner {
+  display: grid;
+  gap: var(--redis-gap-xs);
+  padding: var(--redis-gap-sm) var(--redis-gap-md);
+  border: 1px solid var(--redis-tone-warning);
+  border-radius: var(--redis-radius);
+  background: var(--redis-surface);
+}
+
+.Redis-banner__title {
+  display: flex;
+  align-items: center;
+  gap: var(--redis-gap-sm);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--redis-tone-warning);
+}
+
+.Redis-banner__body {
+  overflow-wrap: anywhere;
+}
+
+.Redis-banner--critical {
+  border-color: var(--redis-tone-critical);
+}
+
+.Redis-banner--critical .Redis-banner__title {
+  color: var(--redis-tone-critical);
+}
+
+/* ─── Controls ──────────────────────────────────────────────────────────── */
+
+.Redis-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--redis-gap-xs);
+}
+
+.Redis-filter {
+  padding: 2px var(--redis-gap-sm);
+  border: 1px solid var(--redis-line);
+  border-radius: var(--redis-radius);
+  background: transparent;
+  font: inherit;
+  font-size: var(--redis-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.Redis-filter:hover {
+  border-color: var(--redis-line-strong);
+  color: var(--textColorPrimary);
+}
+
+.Redis-filter[aria-pressed="true"] {
+  border-color: var(--colorInfo);
+  background: var(--colorInfo);
+  color: #fff;
+}
+
+.Redis-filter__count {
+  margin-left: var(--redis-gap-xs);
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+.Redis-button {
+  padding: var(--redis-gap-xs) var(--redis-gap-md);
+  border: 1px solid var(--redis-line-strong);
+  border-radius: var(--redis-radius);
+  background: var(--redis-surface);
+  font: inherit;
+  color: var(--textColorPrimary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.Redis-button:hover:not(:disabled) {
+  background: var(--redis-surface-hover);
+}
+
+.Redis-button--primary {
+  border-color: var(--colorInfo);
+}
+
+.Redis-button--caution {
+  border-color: var(--redis-tone-warning);
+  color: var(--redis-tone-warning);
+}
+
+.Redis-button:disabled {
+  border-color: var(--redis-line);
+  color: var(--textColorSecondary);
+  cursor: not-allowed;
+}
+
+.Redis-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--redis-gap-xs);
+  flex-wrap: wrap;
+}
+
+.Redis-icon-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--textColorSecondary);
+  cursor: pointer;
+}
+
+.Redis-icon-button:hover {
+  color: var(--textColorPrimary);
+}
+
+.Redis-search {
+  min-width: 0;
+  padding: var(--redis-gap-xs) var(--redis-gap-sm);
+  border: 1px solid var(--inputControlBorder, var(--redis-line));
+  border-radius: var(--redis-radius);
+  background: var(--inputControlBackground, transparent);
+  font: inherit;
+  color: var(--textColorPrimary);
+}
+
+.Redis-search:hover {
+  border-color: var(--inputControlHoverBorder, var(--redis-line-strong));
+}
+
+.Redis-search:focus {
+  outline: none;
+  border-color: var(--colorInfo);
+}
+
+.Redis-search--wide {
+  flex: 1 1 20rem;
+}
+
+.Redis-link {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: var(--colorInfo);
+  text-align: left;
+  cursor: pointer;
+}
+
+.Redis-link:hover,
+.Redis a:hover {
+  text-decoration: underline;
+}
+
+.Redis a {
+  color: var(--colorInfo);
+  text-decoration: none;
+}
+
+/* ─── Picker ────────────────────────────────────────────────────────────── */
+
+.Redis-picker {
+  height: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.Redis-picker__side {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: var(--redis-gap-sm);
+  padding: var(--redis-gap-md);
+  border-right: 1px solid var(--redis-line);
+  min-height: 0;
+}
+
+.Redis-picker__list {
+  overflow-y: auto;
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 1px;
+  min-height: 0;
+}
+
+.Redis-picker__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "name aside" "meta aside";
+  align-items: center;
+  gap: 0 var(--redis-gap-sm);
+  padding: var(--redis-gap-sm);
+  border: none;
+  border-left: 2px solid transparent;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.Redis-picker__item:hover {
+  background: var(--redis-surface-hover);
+}
+
+.Redis-picker__item--selected {
+  border-left-color: var(--colorInfo);
+  background: var(--redis-surface);
+}
+
+.Redis-picker__name {
+  grid-area: name;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.Redis-picker__meta {
+  grid-area: meta;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--redis-small);
+  color: var(--textColorSecondary);
+}
+
+.Redis-picker__aside {
+  grid-area: aside;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: var(--redis-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.Redis-picker__detail {
+  overflow-y: auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+.Redis-picker__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+  padding: var(--redis-gap-lg);
+  color: var(--textColorSecondary);
+  text-align: center;
+}
+
+/* ─── Status ────────────────────────────────────────────────────────────── */
+
+.Redis-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--redis-gap-xs);
+  white-space: nowrap;
+}
+
+.Redis-status::before {
+  content: "";
+  width: 0.6em;
+  height: 0.6em;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--textColorSecondary);
+}
+
+.Redis-status--critical::before {
+  background: var(--redis-tone-critical);
+}
+
+.Redis-status--warning::before {
+  background: var(--redis-tone-warning);
+}
+
+.Redis-status--info::before {
+  background: var(--redis-tone-info);
+}
+
+.Redis-status--ok::before {
+  background: var(--redis-tone-ok);
+}
+
+/* ─── Namespace selector ────────────────────────────────────────────────── */
+
+.Redis-namespaces {
+  min-width: 16em;
+}
+
+/* ─── Drawer ────────────────────────────────────────────────────────────── */
+
+.Redis-drawer {
+  display: grid;
+  gap: var(--redis-gap-lg);
+  min-width: 0;
+  padding-block: var(--redis-gap-sm);
+}
+
+/* ─── Form ──────────────────────────────────────────────────────────────── */
+
+.Redis-form {
+  display: grid;
+  gap: var(--redis-gap-md);
+}
+
+.Redis-form__field {
+  display: grid;
+  gap: var(--redis-gap-xs);
+}
+
+/* ─── Selection ─────────────────────────────────────────────────────────── */
+
+.Redis-selection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--redis-gap-md);
+  padding: var(--redis-gap-sm) var(--redis-gap-md);
+  border-top: 1px solid var(--redis-line);
+  background: var(--redis-surface);
+}
+
+.Redis-selection__what {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.Redis-selection__count {
+  color: var(--textColorSecondary);
+}
+
+/* ─── Text ──────────────────────────────────────────────────────────────── */
+
+.Redis-muted {
+  color: var(--textColorSecondary);
+}
+
+.Redis-hint {
+  font-size: var(--redis-small);
+  color: var(--textColorSecondary);
+}
+
+.Redis code,
+.Redis-mono {
+  font-family: var(--font-monospace, monospace);
+  font-size: var(--redis-small);
+}
+
+.Redis-truncate {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.Redis-text--critical {
+  color: var(--redis-tone-critical);
+}
+
+.Redis-text--warning {
+  color: var(--redis-tone-warning);
+}
+
+.Redis-text--info {
+  color: var(--redis-tone-info);
+}
+
+.Redis-text--ok {
+  color: var(--redis-tone-ok);
+}

@@ -1,0 +1,88 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "redis.redis.opstreelabs.in/v1beta2",
+      "kind": "RedisCluster",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T17:01:13Z",
+        "finalizers": [
+          "redisClusterFinalizer"
+        ],
+        "generation": 2,
+        "name": "shards",
+        "namespace": "redis",
+        "resourceVersion": "605911",
+        "selfLink": "/apis/redis.redis.opstreelabs.in/v1beta2/namespaces/redis/redisclusters/shards",
+        "uid": "8181ddf7-85c7-46bc-bc6b-2e919f168b67"
+      },
+      "spec": {
+        "clusterSize": 3,
+        "clusterVersion": "v7",
+        "kubernetesConfig": {
+          "image": "quay.io/opstree/redis:v8.2.9",
+          "imagePullPolicy": "IfNotPresent",
+          "redisSecret": {
+            "key": "password",
+            "name": "redis-password"
+          },
+          "resources": {
+            "requests": {
+              "cpu": "20m",
+              "memory": "32Mi"
+            }
+          },
+          "updateStrategy": {}
+        },
+        "persistenceEnabled": true,
+        "podSecurityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "port": 6379,
+        "redisFollower": {},
+        "redisLeader": {},
+        "storage": {
+          "nodeConfVolume": false,
+          "nodeConfVolumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "accessModes": [
+                "ReadWriteOnce"
+              ],
+              "resources": {
+                "requests": {
+                  "storage": "1Gi"
+                }
+              }
+            },
+            "status": {}
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "accessModes": [
+                "ReadWriteOnce"
+              ],
+              "resources": {
+                "requests": {
+                  "storage": "1Gi"
+                }
+              }
+            },
+            "status": {}
+          },
+          "volumeMount": {}
+        }
+      },
+      "status": {
+        "readyFollowerReplicas": 3,
+        "readyLeaderReplicas": 3,
+        "reason": "RedisCluster is ready",
+        "state": "Ready"
+      }
+    }
+  ],
+  "kind": "List"
+}

@@ -15,6 +15,7 @@ readonly IMAGE_UPDATER_VERSION="v1.3.0"
 readonly CNPG_VERSION="1.30.0"
 readonly BARMAN_CLOUD_VERSION="v0.15.0"
 readonly MCK_VERSION="1.12.0"
+readonly REDIS_OPERATOR_VERSION="v0.26.0"
 
 export KUBECONFIG="${KUBECONFIG_PATH}"
 
@@ -129,6 +130,20 @@ kubectl apply -f dev/cluster/60-mongodb.yaml
 for replica_set in catalog-rs sessions-rs; do
   kubectl -n mongodb wait --for=jsonpath='{.status.phase}'=Running "mongodbcommunity/${replica_set}" --timeout=600s
 done
+
+# Its kustomize pins an older image and never pulls; both set to what the release published.
+say "redis-operator ${REDIS_OPERATOR_VERSION}"
+kubectl apply --server-side --force-conflicts \
+  -k "github.com/OT-CONTAINER-KIT/redis-operator/config/default?ref=${REDIS_OPERATOR_VERSION}"
+kubectl -n redis-operator-system patch deployment redis-operator-redis-operator --type json -p \
+  "[{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/image\",\"value\":\"quay.io/opstree/redis-operator:${REDIS_OPERATOR_VERSION}\"},{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/imagePullPolicy\",\"value\":\"IfNotPresent\"}]"
+kubectl -n redis-operator-system rollout status deployment/redis-operator-redis-operator --timeout=300s
+
+say "Redis replication, sentinels, cluster and standalone"
+kubectl apply -f dev/cluster/70-redis.yaml
+kubectl -n redis wait --for=jsonpath='{.status.state}'=Ready rediscluster/shards --timeout=600s
+# The master moves on failover, so wait for any.
+timeout 600 sh -c 'until [ -n "$(kubectl -n redis get redisreplication cache -o jsonpath="{.status.masterNode}")" ]; do sleep 5; done'
 
 # Valid but failing to renew: issue renewal-stalls, then remove flaky-ca's key.
 say "Breaking flaky-ca once renewal-stalls has been issued"

@@ -1,0 +1,561 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "cache",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "cache",
+          "redis_setup_type": "replication",
+          "role": "replication"
+        },
+        "name": "cache-cache-0",
+        "namespace": "redis",
+        "resourceVersion": "603611",
+        "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/cache-cache-0",
+        "uid": "2ad245c2-e400-4cb8-8d2e-b8a1a93ffdce"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-2ad245c2-e400-4cb8-8d2e-b8a1a93ffdce"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "1Gi"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "cache",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T17:01:29Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "cache",
+          "redis_setup_type": "replication",
+          "role": "replication"
+        },
+        "name": "cache-cache-1",
+        "namespace": "redis",
+        "resourceVersion": "603962",
+        "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/cache-cache-1",
+        "uid": "d6e9b80d-da3a-4fd6-868f-7d21251e329e"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-d6e9b80d-da3a-4fd6-868f-7d21251e329e"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "1Gi"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "cache",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T17:01:32Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "cache",
+          "redis_setup_type": "replication",
+          "role": "replication"
+        },
+        "name": "cache-cache-2",
+        "namespace": "redis",
+        "resourceVersion": "604150",
+        "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/cache-cache-2",
+        "uid": "11c5088c-49a0-4a41-8ad3-21558cc4a429"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-11c5088c-49a0-4a41-8ad3-21558cc4a429"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "1Gi"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "legacy-store"
+        },
+        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "legacy-store",
+          "redis_setup_type": "standalone",
+          "role": "standalone"
+        },
+        "name": "legacy-store-legacy-store-0",
+        "namespace": "redis",
+        "resourceVersion": "603333",
+        "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/legacy-store-legacy-store-0",
+        "uid": "ad8e64b5-aa41-4ef2-9acf-541e5851d321"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        },
+        "storageClassName": "no-such-class",
+        "volumeMode": "Filesystem"
+      },
+      "status": {
+        "phase": "Pending"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "sessions",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "sessions",
+          "redis_setup_type": "standalone",
+          "role": "standalone"
+        },
+        "name": "sessions-sessions-0",
+        "namespace": "redis",
+        "resourceVersion": "603663",
+        "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/sessions-sessions-0",
+        "uid": "3a2f8c3e-fb60-4972-b323-5d505cc2f01c"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-3a2f8c3e-fb60-4972-b323-5d505cc2f01c"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "1Gi"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "shards",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T17:01:43Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "shards-follower",
+          "cluster": "shards",
+          "redis_setup_type": "cluster",
+          "role": "follower"
+        },
+        "name": "shards-follower-shards-follower-0",
+        "namespace": "redis",
+        "resourceVersion": "604377",
+        "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/shards-follower-shards-follower-0",
+        "uid": "a1018607-9fff-480d-ad64-a8ef04bea9db"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-a1018607-9fff-480d-ad64-a8ef04bea9db"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "1Gi"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "shards",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T17:01:46Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "shards-follower",
+          "cluster": "shards",
+          "redis_setup_type": "cluster",
+          "role": "follower"
+        },
+        "name": "shards-follower-shards-follower-1",
+        "namespace": "redis",
+        "resourceVersion": "604471",
+        "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/shards-follower-shards-follower-1",
+        "uid": "346139da-5168-41e8-a665-2f6ebdb42170"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-346139da-5168-41e8-a665-2f6ebdb42170"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "1Gi"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "shards",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T17:01:52Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "shards-follower",
+          "cluster": "shards",
+          "redis_setup_type": "cluster",
+          "role": "follower"
+        },
+        "name": "shards-follower-shards-follower-2",
+        "namespace": "redis",
+        "resourceVersion": "604666",
+        "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/shards-follower-shards-follower-2",
+        "uid": "ecffc2ed-e223-4e0b-88e4-2ca931089b36"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-ecffc2ed-e223-4e0b-88e4-2ca931089b36"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "1Gi"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "shards",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "shards-leader",
+          "cluster": "shards",
+          "redis_setup_type": "cluster",
+          "role": "leader"
+        },
+        "name": "shards-leader-shards-leader-0",
+        "namespace": "redis",
+        "resourceVersion": "603624",
+        "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/shards-leader-shards-leader-0",
+        "uid": "2a2e5ecf-39ec-490e-ae51-8c647096e84b"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-2a2e5ecf-39ec-490e-ae51-8c647096e84b"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "1Gi"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "shards",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T17:01:29Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "shards-leader",
+          "cluster": "shards",
+          "redis_setup_type": "cluster",
+          "role": "leader"
+        },
+        "name": "shards-leader-shards-leader-1",
+        "namespace": "redis",
+        "resourceVersion": "604003",
+        "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/shards-leader-shards-leader-1",
+        "uid": "81ad02f4-5d8c-4182-b159-a3f32a8dd1bf"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-81ad02f4-5d8c-4182-b159-a3f32a8dd1bf"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "1Gi"
+        },
+        "phase": "Bound"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "annotations": {
+          "pv.kubernetes.io/bind-completed": "yes",
+          "pv.kubernetes.io/bound-by-controller": "yes",
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "shards",
+          "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+          "volume.kubernetes.io/selected-node": "freelens-addons-dev",
+          "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+        },
+        "creationTimestamp": "2026-10-04T17:01:34Z",
+        "finalizers": [
+          "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+          "app": "shards-leader",
+          "cluster": "shards",
+          "redis_setup_type": "cluster",
+          "role": "leader"
+        },
+        "name": "shards-leader-shards-leader-2",
+        "namespace": "redis",
+        "resourceVersion": "604200",
+        "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/shards-leader-shards-leader-2",
+        "uid": "6157a2ef-9f1f-41eb-9c17-f77190085610"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        },
+        "storageClassName": "local-path",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-6157a2ef-9f1f-41eb-9c17-f77190085610"
+      },
+      "status": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "capacity": {
+          "storage": "1Gi"
+        },
+        "phase": "Bound"
+      }
+    }
+  ],
+  "kind": "List"
+}

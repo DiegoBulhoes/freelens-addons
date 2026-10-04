@@ -1,0 +1,62 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "redis.redis.opstreelabs.in/v1beta2",
+      "kind": "RedisSentinel",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T17:01:13Z",
+        "finalizers": [
+          "redisSentinelFinalizer"
+        ],
+        "generation": 2,
+        "name": "cache-sentinel",
+        "namespace": "redis",
+        "resourceVersion": "603243",
+        "selfLink": "/apis/redis.redis.opstreelabs.in/v1beta2/namespaces/redis/redissentinels/cache-sentinel",
+        "uid": "b5a777ab-72e8-496f-8692-50c07fe24342"
+      },
+      "spec": {
+        "clusterSize": 3,
+        "kubernetesConfig": {
+          "image": "quay.io/opstree/redis-sentinel:v8.2.9",
+          "imagePullPolicy": "IfNotPresent",
+          "redisSecret": {
+            "key": "password",
+            "name": "redis-password"
+          },
+          "resources": {
+            "requests": {
+              "cpu": "20m",
+              "memory": "32Mi"
+            }
+          },
+          "updateStrategy": {}
+        },
+        "podSecurityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "redisSentinelConfig": {
+          "announceHostnames": "no",
+          "downAfterMilliseconds": "5000",
+          "failoverTimeout": "10000",
+          "masterGroupName": "myMaster",
+          "parallelSyncs": "1",
+          "quorum": "2",
+          "redisPort": "6379",
+          "redisReplicationName": "cache",
+          "redisReplicationPassword": {
+            "secretKeyRef": {
+              "key": "password",
+              "name": "redis-password"
+            }
+          },
+          "resolveHostnames": "no"
+        }
+      }
+    }
+  ],
+  "kind": "List"
+}

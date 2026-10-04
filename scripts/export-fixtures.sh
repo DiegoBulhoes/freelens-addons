@@ -142,8 +142,27 @@ mongodb() {
   echo "  exported at → ${out}/exported-at.json"
 }
 
+redis() {
+  emit redis.redis.redis.opstreelabs.in standalones.json -n redis
+  emit redisreplications.redis.redis.opstreelabs.in replications.json -n redis
+  emit redisclusters.redis.redis.opstreelabs.in clusters.json -n redis
+  emit redissentinels.redis.redis.opstreelabs.in sentinels.json -n redis
+  emit events events.json -n redis --field-selector type=Warning
+  # Env values are redacted by the sanitiser.
+  emit pods pods.json -n redis
+  emit persistentvolumeclaims pvcs.json -n redis
+  # Metadata only: names and cert-manager's annotations, never a value.
+  kubectl get secrets -n redis -o json \
+    | python3 -c 'import json, sys; print(json.dumps({"items": [{"metadata": {"name": s["metadata"]["name"], "namespace": s["metadata"]["namespace"], "annotations": {k: v for k, v in (s["metadata"].get("annotations") or {}).items() if k.startswith("cert-manager.io/")}}} for s in json.load(sys.stdin)["items"]]}, indent=2))' \
+    > "${out}/secret-names.json"
+  echo "  secret names → ${out}/secret-names.json"
+
+  printf '{ "exportedAt": "%s" }\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "${out}/exported-at.json"
+  echo "  exported at → ${out}/exported-at.json"
+}
+
 packages=("$@")
-[[ ${#packages[@]} -eq 0 ]] && packages=(argocd trivy cert-manager cnpg mongodb)
+[[ ${#packages[@]} -eq 0 ]] && packages=(argocd trivy cert-manager cnpg mongodb redis)
 
 # Public repository: only the dev k3s, recognised by its fixed node name.
 if [[ "$(kubectl get nodes -o jsonpath='{.items[*].metadata.name}')" != "freelens-addons-dev" ]]; then

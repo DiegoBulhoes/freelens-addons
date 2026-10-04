@@ -1,0 +1,4770 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "broken-cache"
+        },
+        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "generateName": "broken-cache-",
+        "generation": 1,
+        "labels": {
+          "app": "broken-cache",
+          "apps.kubernetes.io/pod-index": "0",
+          "controller-revision-hash": "broken-cache-ddf7ddf5c",
+          "redis_setup_type": "replication",
+          "role": "replication",
+          "statefulset.kubernetes.io/pod-name": "broken-cache-0"
+        },
+        "name": "broken-cache-0",
+        "namespace": "redis",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "StatefulSet",
+            "name": "broken-cache",
+            "uid": "813c7bb1-687e-45e3-9670-8de850a81109"
+          }
+        ],
+        "resourceVersion": "608735",
+        "selfLink": "/api/v1/namespaces/redis/pods/broken-cache-0",
+        "uid": "b8c12be5-8130-4a0e-a833-c0f0ae922eb9"
+      },
+      "spec": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "REDIS_ADDR",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SERVER_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SETUP_MODE",
+                "value": "redacted-by-fixture-export"
+              }
+            ],
+            "image": "quay.io/opstree/redis:v9.9.999",
+            "imagePullPolicy": "IfNotPresent",
+            "livenessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "name": "broken-cache",
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "resources": {},
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "volumeMounts": [
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-wdr75",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "enableServiceLinks": true,
+        "hostname": "broken-cache-0",
+        "nodeName": "freelens-addons-dev",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "serviceAccount": "default",
+        "serviceAccountName": "default",
+        "subdomain": "broken-cache-headless",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          }
+        ],
+        "volumes": [
+          {
+            "emptyDir": {},
+            "name": "config"
+          },
+          {
+            "name": "kube-api-access-wdr75",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:14Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:14Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:14Z",
+            "message": "containers with unready status: [broken-cache]",
+            "observedGeneration": 1,
+            "reason": "ContainersNotReady",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:14Z",
+            "message": "containers with unready status: [broken-cache]",
+            "observedGeneration": 1,
+            "reason": "ContainersNotReady",
+            "status": "False",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:14Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "image": "quay.io/opstree/redis:v9.9.999",
+            "imageID": "",
+            "lastState": {},
+            "name": "broken-cache",
+            "ready": false,
+            "restartCount": 0,
+            "started": false,
+            "state": {
+              "waiting": {
+                "message": "Back-off pulling image \"quay.io/opstree/redis:v9.9.999\": ErrImagePull: rpc error: code = NotFound desc = failed to pull and unpack image \"quay.io/opstree/redis:v9.9.999\": failed to resolve reference \"quay.io/opstree/redis:v9.9.999\": quay.io/opstree/redis:v9.9.999: not found",
+                "reason": "ImagePullBackOff"
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-wdr75",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "hostIP": "198.51.100.10",
+        "hostIPs": [
+          {
+            "ip": "198.51.100.10"
+          }
+        ],
+        "observedGeneration": 1,
+        "phase": "Pending",
+        "podIP": "198.51.100.11",
+        "podIPs": [
+          {
+            "ip": "198.51.100.11"
+          }
+        ],
+        "qosClass": "BestEffort",
+        "resources": {},
+        "startTime": "2026-10-04T17:01:14Z"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "cache"
+        },
+        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "generateName": "cache-",
+        "generation": 1,
+        "labels": {
+          "app": "cache",
+          "apps.kubernetes.io/pod-index": "0",
+          "controller-revision-hash": "cache-fbcfc464d",
+          "redis-role": "slave",
+          "redis_setup_type": "replication",
+          "role": "replication",
+          "statefulset.kubernetes.io/pod-name": "cache-0"
+        },
+        "name": "cache-0",
+        "namespace": "redis",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "StatefulSet",
+            "name": "cache",
+            "uid": "cbd31980-d274-492e-a28b-88df8ce3fd25"
+          }
+        ],
+        "resourceVersion": "607121",
+        "selfLink": "/api/v1/namespaces/redis/pods/cache-0",
+        "uid": "b457ea38-4777-4711-93a7-512262212e61"
+      },
+      "spec": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "PERSISTENCE_ENABLED",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_ADDR",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "key": "password",
+                    "name": "redis-password"
+                  }
+                }
+              },
+              {
+                "name": "REDIS_PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SERVER_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SETUP_MODE",
+                "value": "redacted-by-fixture-export"
+              }
+            ],
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imagePullPolicy": "IfNotPresent",
+            "livenessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "name": "cache",
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "cache"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-szhc7",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "enableServiceLinks": true,
+        "hostname": "cache-0",
+        "nodeName": "freelens-addons-dev",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "serviceAccount": "default",
+        "serviceAccountName": "default",
+        "subdomain": "cache-headless",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          }
+        ],
+        "volumes": [
+          {
+            "name": "cache",
+            "persistentVolumeClaim": {
+              "claimName": "cache-cache-0"
+            }
+          },
+          {
+            "emptyDir": {},
+            "name": "config"
+          },
+          {
+            "name": "kube-api-access-szhc7",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "allocatedResources": {
+          "cpu": "20m",
+          "memory": "32Mi"
+        },
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:23Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:23Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:29Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:29Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:23Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "allocatedResources": {
+              "cpu": "20m",
+              "memory": "32Mi"
+            },
+            "containerID": "containerd://cf70800f3bb731f4680dc69c5f8129fdb91dac06764a24a8da8f8aeafba821eb",
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
+            "lastState": {},
+            "name": "cache",
+            "ready": true,
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-10-04T17:01:29Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 1000,
+                "supplementalGroups": [
+                  1000
+                ],
+                "uid": 1000
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "cache"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-szhc7",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "hostIP": "198.51.100.10",
+        "hostIPs": [
+          {
+            "ip": "198.51.100.10"
+          }
+        ],
+        "observedGeneration": 1,
+        "phase": "Running",
+        "podIP": "198.51.100.12",
+        "podIPs": [
+          {
+            "ip": "198.51.100.12"
+          }
+        ],
+        "qosClass": "Burstable",
+        "resources": {
+          "requests": {
+            "memory": "32Mi"
+          }
+        },
+        "startTime": "2026-10-04T17:01:23Z"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "cache"
+        },
+        "creationTimestamp": "2026-10-04T17:01:29Z",
+        "generateName": "cache-",
+        "generation": 1,
+        "labels": {
+          "app": "cache",
+          "apps.kubernetes.io/pod-index": "1",
+          "controller-revision-hash": "cache-fbcfc464d",
+          "redis-role": "master",
+          "redis_setup_type": "replication",
+          "role": "replication",
+          "statefulset.kubernetes.io/pod-name": "cache-1"
+        },
+        "name": "cache-1",
+        "namespace": "redis",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "StatefulSet",
+            "name": "cache",
+            "uid": "cbd31980-d274-492e-a28b-88df8ce3fd25"
+          }
+        ],
+        "resourceVersion": "607126",
+        "selfLink": "/api/v1/namespaces/redis/pods/cache-1",
+        "uid": "1323c63d-c088-4a5f-992f-2bdaab5cbc58"
+      },
+      "spec": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "PERSISTENCE_ENABLED",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_ADDR",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "key": "password",
+                    "name": "redis-password"
+                  }
+                }
+              },
+              {
+                "name": "REDIS_PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SERVER_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SETUP_MODE",
+                "value": "redacted-by-fixture-export"
+              }
+            ],
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imagePullPolicy": "IfNotPresent",
+            "livenessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "name": "cache",
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "cache"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-vnjvm",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "enableServiceLinks": true,
+        "hostname": "cache-1",
+        "nodeName": "freelens-addons-dev",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "serviceAccount": "default",
+        "serviceAccountName": "default",
+        "subdomain": "cache-headless",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          }
+        ],
+        "volumes": [
+          {
+            "name": "cache",
+            "persistentVolumeClaim": {
+              "claimName": "cache-cache-1"
+            }
+          },
+          {
+            "emptyDir": {},
+            "name": "config"
+          },
+          {
+            "name": "kube-api-access-vnjvm",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "allocatedResources": {
+          "cpu": "20m",
+          "memory": "32Mi"
+        },
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:32Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:32Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:32Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:32Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:32Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "allocatedResources": {
+              "cpu": "20m",
+              "memory": "32Mi"
+            },
+            "containerID": "containerd://8bc1287e86077779026fd83eae0a197c797ff9d41c7c00a5ddc72ba49d6e5364",
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
+            "lastState": {},
+            "name": "cache",
+            "ready": true,
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-10-04T17:01:32Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 1000,
+                "supplementalGroups": [
+                  1000
+                ],
+                "uid": 1000
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "cache"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-vnjvm",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "hostIP": "198.51.100.10",
+        "hostIPs": [
+          {
+            "ip": "198.51.100.10"
+          }
+        ],
+        "observedGeneration": 1,
+        "phase": "Running",
+        "podIP": "198.51.100.13",
+        "podIPs": [
+          {
+            "ip": "198.51.100.13"
+          }
+        ],
+        "qosClass": "Burstable",
+        "resources": {
+          "requests": {
+            "memory": "32Mi"
+          }
+        },
+        "startTime": "2026-10-04T17:01:32Z"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "cache"
+        },
+        "creationTimestamp": "2026-10-04T17:01:32Z",
+        "generateName": "cache-",
+        "generation": 1,
+        "labels": {
+          "app": "cache",
+          "apps.kubernetes.io/pod-index": "2",
+          "controller-revision-hash": "cache-fbcfc464d",
+          "redis-role": "slave",
+          "redis_setup_type": "replication",
+          "role": "replication",
+          "statefulset.kubernetes.io/pod-name": "cache-2"
+        },
+        "name": "cache-2",
+        "namespace": "redis",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "StatefulSet",
+            "name": "cache",
+            "uid": "cbd31980-d274-492e-a28b-88df8ce3fd25"
+          }
+        ],
+        "resourceVersion": "605252",
+        "selfLink": "/api/v1/namespaces/redis/pods/cache-2",
+        "uid": "2facf327-9041-4dbc-8e10-f2306e37de0d"
+      },
+      "spec": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "PERSISTENCE_ENABLED",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_ADDR",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "key": "password",
+                    "name": "redis-password"
+                  }
+                }
+              },
+              {
+                "name": "REDIS_PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SERVER_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SETUP_MODE",
+                "value": "redacted-by-fixture-export"
+              }
+            ],
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imagePullPolicy": "IfNotPresent",
+            "livenessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "name": "cache",
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "cache"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-qmck2",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "enableServiceLinks": true,
+        "hostname": "cache-2",
+        "nodeName": "freelens-addons-dev",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "serviceAccount": "default",
+        "serviceAccountName": "default",
+        "subdomain": "cache-headless",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          }
+        ],
+        "volumes": [
+          {
+            "name": "cache",
+            "persistentVolumeClaim": {
+              "claimName": "cache-cache-2"
+            }
+          },
+          {
+            "emptyDir": {},
+            "name": "config"
+          },
+          {
+            "name": "kube-api-access-qmck2",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "allocatedResources": {
+          "cpu": "20m",
+          "memory": "32Mi"
+        },
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:37Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:36Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:37Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:37Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:36Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "allocatedResources": {
+              "cpu": "20m",
+              "memory": "32Mi"
+            },
+            "containerID": "containerd://9018a707a5a5e8358630e368d2825e6c27cda52f9b0c4a3d40699a307ab6d29e",
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
+            "lastState": {},
+            "name": "cache",
+            "ready": true,
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-10-04T17:01:37Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 1000,
+                "supplementalGroups": [
+                  1000
+                ],
+                "uid": 1000
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "cache"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-qmck2",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "hostIP": "198.51.100.10",
+        "hostIPs": [
+          {
+            "ip": "198.51.100.10"
+          }
+        ],
+        "observedGeneration": 1,
+        "phase": "Running",
+        "podIP": "198.51.100.14",
+        "podIPs": [
+          {
+            "ip": "198.51.100.14"
+          }
+        ],
+        "qosClass": "Burstable",
+        "resources": {
+          "requests": {
+            "memory": "32Mi"
+          }
+        },
+        "startTime": "2026-10-04T17:01:36Z"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "cache-sentinel"
+        },
+        "creationTimestamp": "2026-10-04T17:01:53Z",
+        "generateName": "cache-sentinel-sentinel-",
+        "generation": 1,
+        "labels": {
+          "app": "cache-sentinel-sentinel",
+          "apps.kubernetes.io/pod-index": "0",
+          "controller-revision-hash": "cache-sentinel-sentinel-846d64655",
+          "redis_setup_type": "sentinel",
+          "role": "sentinel",
+          "statefulset.kubernetes.io/pod-name": "cache-sentinel-sentinel-0"
+        },
+        "name": "cache-sentinel-sentinel-0",
+        "namespace": "redis",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "StatefulSet",
+            "name": "cache-sentinel-sentinel",
+            "uid": "c158947f-f2ba-4f96-b4af-ab294fd692fc"
+          }
+        ],
+        "resourceVersion": "604877",
+        "selfLink": "/api/v1/namespaces/redis/pods/cache-sentinel-sentinel-0",
+        "uid": "14b7569f-f9d0-4c19-bb50-539fc5b55a64"
+      },
+      "spec": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "REDIS_ADDR",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "key": "password",
+                    "name": "redis-password"
+                  }
+                }
+              },
+              {
+                "name": "SENTINEL_PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SERVER_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SETUP_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "MASTER_GROUP_NAME",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "QUORUM",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "DOWN_AFTER_MILLISECONDS",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "PARALLEL_SYNCS",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "FAILOVER_TIMEOUT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "RESOLVE_HOSTNAMES",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "ANNOUNCE_HOSTNAMES",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "MASTER_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "key": "password",
+                    "name": "redis-password"
+                  }
+                }
+              }
+            ],
+            "image": "quay.io/opstree/redis-sentinel:v8.2.9",
+            "imagePullPolicy": "IfNotPresent",
+            "livenessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${SENTINEL_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "name": "cache-sentinel-sentinel",
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${SENTINEL_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "volumeMounts": [
+              {
+                "mountPath": "/etc/redis",
+                "name": "config"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-z68ml",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "enableServiceLinks": true,
+        "hostname": "cache-sentinel-sentinel-0",
+        "nodeName": "freelens-addons-dev",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "serviceAccount": "default",
+        "serviceAccountName": "default",
+        "subdomain": "cache-sentinel-sentinel-headless",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          }
+        ],
+        "volumes": [
+          {
+            "emptyDir": {},
+            "name": "config"
+          },
+          {
+            "name": "kube-api-access-z68ml",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "allocatedResources": {
+          "cpu": "20m",
+          "memory": "32Mi"
+        },
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:54Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:53Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:02:02Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:02:02Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:53Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "allocatedResources": {
+              "cpu": "20m",
+              "memory": "32Mi"
+            },
+            "containerID": "containerd://248aebce2566b3c4589785cc11b7deb3103cb4890187bd918a21ab8113774e40",
+            "image": "quay.io/opstree/redis-sentinel:v8.2.9",
+            "imageID": "quay.io/opstree/redis-sentinel@sha256:38c615472337f56fd6db64d388aa4565af7046e14fb3f36f2893d8295ac0ffc3",
+            "lastState": {},
+            "name": "cache-sentinel-sentinel",
+            "ready": true,
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-10-04T17:02:02Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 1000,
+                "supplementalGroups": [
+                  1000
+                ],
+                "uid": 1000
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/etc/redis",
+                "name": "config"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-z68ml",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "hostIP": "198.51.100.10",
+        "hostIPs": [
+          {
+            "ip": "198.51.100.10"
+          }
+        ],
+        "observedGeneration": 1,
+        "phase": "Running",
+        "podIP": "198.51.100.15",
+        "podIPs": [
+          {
+            "ip": "198.51.100.15"
+          }
+        ],
+        "qosClass": "Burstable",
+        "resources": {
+          "requests": {
+            "memory": "32Mi"
+          }
+        },
+        "startTime": "2026-10-04T17:01:53Z"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "cache-sentinel"
+        },
+        "creationTimestamp": "2026-10-04T17:02:02Z",
+        "generateName": "cache-sentinel-sentinel-",
+        "generation": 1,
+        "labels": {
+          "app": "cache-sentinel-sentinel",
+          "apps.kubernetes.io/pod-index": "1",
+          "controller-revision-hash": "cache-sentinel-sentinel-846d64655",
+          "redis_setup_type": "sentinel",
+          "role": "sentinel",
+          "statefulset.kubernetes.io/pod-name": "cache-sentinel-sentinel-1"
+        },
+        "name": "cache-sentinel-sentinel-1",
+        "namespace": "redis",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "StatefulSet",
+            "name": "cache-sentinel-sentinel",
+            "uid": "c158947f-f2ba-4f96-b4af-ab294fd692fc"
+          }
+        ],
+        "resourceVersion": "604900",
+        "selfLink": "/api/v1/namespaces/redis/pods/cache-sentinel-sentinel-1",
+        "uid": "9adfdcf5-0fc5-496b-a554-65bf1baa143f"
+      },
+      "spec": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "REDIS_ADDR",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "key": "password",
+                    "name": "redis-password"
+                  }
+                }
+              },
+              {
+                "name": "SENTINEL_PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SERVER_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SETUP_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "MASTER_GROUP_NAME",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "QUORUM",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "DOWN_AFTER_MILLISECONDS",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "PARALLEL_SYNCS",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "FAILOVER_TIMEOUT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "RESOLVE_HOSTNAMES",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "ANNOUNCE_HOSTNAMES",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "MASTER_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "key": "password",
+                    "name": "redis-password"
+                  }
+                }
+              }
+            ],
+            "image": "quay.io/opstree/redis-sentinel:v8.2.9",
+            "imagePullPolicy": "IfNotPresent",
+            "livenessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${SENTINEL_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "name": "cache-sentinel-sentinel",
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${SENTINEL_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "volumeMounts": [
+              {
+                "mountPath": "/etc/redis",
+                "name": "config"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-fc2l6",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "enableServiceLinks": true,
+        "hostname": "cache-sentinel-sentinel-1",
+        "nodeName": "freelens-addons-dev",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "serviceAccount": "default",
+        "serviceAccountName": "default",
+        "subdomain": "cache-sentinel-sentinel-headless",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          }
+        ],
+        "volumes": [
+          {
+            "emptyDir": {},
+            "name": "config"
+          },
+          {
+            "name": "kube-api-access-fc2l6",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "allocatedResources": {
+          "cpu": "20m",
+          "memory": "32Mi"
+        },
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:02:03Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:02:02Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:02:03Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:02:03Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:02:02Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "allocatedResources": {
+              "cpu": "20m",
+              "memory": "32Mi"
+            },
+            "containerID": "containerd://dd69fc8e5e8a749cc385248fd7fe77695bebdca9ff97e215236e095dcd7e9393",
+            "image": "quay.io/opstree/redis-sentinel:v8.2.9",
+            "imageID": "quay.io/opstree/redis-sentinel@sha256:38c615472337f56fd6db64d388aa4565af7046e14fb3f36f2893d8295ac0ffc3",
+            "lastState": {},
+            "name": "cache-sentinel-sentinel",
+            "ready": true,
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-10-04T17:02:03Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 1000,
+                "supplementalGroups": [
+                  1000
+                ],
+                "uid": 1000
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/etc/redis",
+                "name": "config"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-fc2l6",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "hostIP": "198.51.100.10",
+        "hostIPs": [
+          {
+            "ip": "198.51.100.10"
+          }
+        ],
+        "observedGeneration": 1,
+        "phase": "Running",
+        "podIP": "198.51.100.16",
+        "podIPs": [
+          {
+            "ip": "198.51.100.16"
+          }
+        ],
+        "qosClass": "Burstable",
+        "resources": {
+          "requests": {
+            "memory": "32Mi"
+          }
+        },
+        "startTime": "2026-10-04T17:02:02Z"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "cache-sentinel"
+        },
+        "creationTimestamp": "2026-10-04T17:02:03Z",
+        "generateName": "cache-sentinel-sentinel-",
+        "generation": 1,
+        "labels": {
+          "app": "cache-sentinel-sentinel",
+          "apps.kubernetes.io/pod-index": "2",
+          "controller-revision-hash": "cache-sentinel-sentinel-846d64655",
+          "redis_setup_type": "sentinel",
+          "role": "sentinel",
+          "statefulset.kubernetes.io/pod-name": "cache-sentinel-sentinel-2"
+        },
+        "name": "cache-sentinel-sentinel-2",
+        "namespace": "redis",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "StatefulSet",
+            "name": "cache-sentinel-sentinel",
+            "uid": "c158947f-f2ba-4f96-b4af-ab294fd692fc"
+          }
+        ],
+        "resourceVersion": "604901",
+        "selfLink": "/api/v1/namespaces/redis/pods/cache-sentinel-sentinel-2",
+        "uid": "3c4f5477-3026-48e3-9032-b8f24b7f2b87"
+      },
+      "spec": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "REDIS_ADDR",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "key": "password",
+                    "name": "redis-password"
+                  }
+                }
+              },
+              {
+                "name": "SENTINEL_PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SERVER_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SETUP_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "MASTER_GROUP_NAME",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "QUORUM",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "DOWN_AFTER_MILLISECONDS",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "PARALLEL_SYNCS",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "FAILOVER_TIMEOUT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "RESOLVE_HOSTNAMES",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "ANNOUNCE_HOSTNAMES",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "MASTER_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "key": "password",
+                    "name": "redis-password"
+                  }
+                }
+              }
+            ],
+            "image": "quay.io/opstree/redis-sentinel:v8.2.9",
+            "imagePullPolicy": "IfNotPresent",
+            "livenessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${SENTINEL_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "name": "cache-sentinel-sentinel",
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${SENTINEL_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "volumeMounts": [
+              {
+                "mountPath": "/etc/redis",
+                "name": "config"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-9wrmz",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "enableServiceLinks": true,
+        "hostname": "cache-sentinel-sentinel-2",
+        "nodeName": "freelens-addons-dev",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "serviceAccount": "default",
+        "serviceAccountName": "default",
+        "subdomain": "cache-sentinel-sentinel-headless",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          }
+        ],
+        "volumes": [
+          {
+            "emptyDir": {},
+            "name": "config"
+          },
+          {
+            "name": "kube-api-access-9wrmz",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "allocatedResources": {
+          "cpu": "20m",
+          "memory": "32Mi"
+        },
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:02:03Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:02:03Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:02:03Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:02:03Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:02:03Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "allocatedResources": {
+              "cpu": "20m",
+              "memory": "32Mi"
+            },
+            "containerID": "containerd://4460e7633fd81ba69ed4eac5ff5a8072c95e22c5640403b384856f98e401b160",
+            "image": "quay.io/opstree/redis-sentinel:v8.2.9",
+            "imageID": "quay.io/opstree/redis-sentinel@sha256:38c615472337f56fd6db64d388aa4565af7046e14fb3f36f2893d8295ac0ffc3",
+            "lastState": {},
+            "name": "cache-sentinel-sentinel",
+            "ready": true,
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-10-04T17:02:03Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 1000,
+                "supplementalGroups": [
+                  1000
+                ],
+                "uid": 1000
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/etc/redis",
+                "name": "config"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-9wrmz",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "hostIP": "198.51.100.10",
+        "hostIPs": [
+          {
+            "ip": "198.51.100.10"
+          }
+        ],
+        "observedGeneration": 1,
+        "phase": "Running",
+        "podIP": "198.51.100.17",
+        "podIPs": [
+          {
+            "ip": "198.51.100.17"
+          }
+        ],
+        "qosClass": "Burstable",
+        "resources": {
+          "requests": {
+            "memory": "32Mi"
+          }
+        },
+        "startTime": "2026-10-04T17:02:03Z"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "legacy-store"
+        },
+        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "generateName": "legacy-store-",
+        "generation": 1,
+        "labels": {
+          "app": "legacy-store",
+          "apps.kubernetes.io/pod-index": "0",
+          "controller-revision-hash": "legacy-store-5797cf4b9d",
+          "redis_setup_type": "standalone",
+          "role": "standalone",
+          "statefulset.kubernetes.io/pod-name": "legacy-store-0"
+        },
+        "name": "legacy-store-0",
+        "namespace": "redis",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "StatefulSet",
+            "name": "legacy-store",
+            "uid": "f96b017d-0975-4974-b056-d4f504acdb74"
+          }
+        ],
+        "resourceVersion": "603340",
+        "selfLink": "/api/v1/namespaces/redis/pods/legacy-store-0",
+        "uid": "2b2a5ecb-ffd5-4e52-ac3c-28253165a333"
+      },
+      "spec": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "PERSISTENCE_ENABLED",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_ADDR",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SERVER_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SETUP_MODE",
+                "value": "redacted-by-fixture-export"
+              }
+            ],
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imagePullPolicy": "IfNotPresent",
+            "livenessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "name": "legacy-store",
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "resources": {},
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "legacy-store"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-xq274",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "enableServiceLinks": true,
+        "hostname": "legacy-store-0",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "serviceAccount": "default",
+        "serviceAccountName": "default",
+        "subdomain": "legacy-store-headless",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          }
+        ],
+        "volumes": [
+          {
+            "name": "legacy-store",
+            "persistentVolumeClaim": {
+              "claimName": "legacy-store-legacy-store-0"
+            }
+          },
+          {
+            "emptyDir": {},
+            "name": "config"
+          },
+          {
+            "name": "kube-api-access-xq274",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:14Z",
+            "message": "0/1 nodes are available: pod has unbound immediate PersistentVolumeClaims. not found",
+            "observedGeneration": 1,
+            "reason": "Unschedulable",
+            "status": "False",
+            "type": "PodScheduled"
+          }
+        ],
+        "phase": "Pending",
+        "qosClass": "BestEffort"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "sessions"
+        },
+        "creationTimestamp": "2026-10-04T17:04:10Z",
+        "generateName": "sessions-",
+        "generation": 1,
+        "labels": {
+          "app": "sessions",
+          "apps.kubernetes.io/pod-index": "0",
+          "controller-revision-hash": "sessions-75b9fdd6cb",
+          "redis_setup_type": "standalone",
+          "role": "standalone",
+          "statefulset.kubernetes.io/pod-name": "sessions-0"
+        },
+        "name": "sessions-0",
+        "namespace": "redis",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "StatefulSet",
+            "name": "sessions",
+            "uid": "c6dce01b-234b-4401-9b47-cbae5e49e4f7"
+          }
+        ],
+        "resourceVersion": "606347",
+        "selfLink": "/api/v1/namespaces/redis/pods/sessions-0",
+        "uid": "7f963a5b-cd2b-42ec-8441-29437c902276"
+      },
+      "spec": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "PERSISTENCE_ENABLED",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_ADDR",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "key": "password",
+                    "name": "redis-password"
+                  }
+                }
+              },
+              {
+                "name": "REDIS_PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_TLS_CA_CERT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_TLS_CA_KEY",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_TLS_CERT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_TLS_CERT_KEY",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SERVER_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SETUP_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "TLS_MODE",
+                "value": "redacted-by-fixture-export"
+              }
+            ],
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imagePullPolicy": "IfNotPresent",
+            "livenessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} --tls --cert ${REDIS_TLS_CERT} --key ${REDIS_TLS_CERT_KEY} ${REDIS_TLS_CA_CERT:+--cacert} ${REDIS_TLS_CA_CERT} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "name": "sessions",
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} --tls --cert ${REDIS_TLS_CERT} --key ${REDIS_TLS_CERT_KEY} ${REDIS_TLS_CA_CERT:+--cacert} ${REDIS_TLS_CA_CERT} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "sessions"
+              },
+              {
+                "mountPath": "/tls",
+                "name": "tls-certs",
+                "readOnly": true
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-7jvsw",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "enableServiceLinks": true,
+        "hostname": "sessions-0",
+        "nodeName": "freelens-addons-dev",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "serviceAccount": "default",
+        "serviceAccountName": "default",
+        "subdomain": "sessions-headless",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          }
+        ],
+        "volumes": [
+          {
+            "name": "sessions",
+            "persistentVolumeClaim": {
+              "claimName": "sessions-sessions-0"
+            }
+          },
+          {
+            "emptyDir": {},
+            "name": "config"
+          },
+          {
+            "name": "tls-certs",
+            "secret": {
+              "defaultMode": 420,
+              "secretName": "sessions-tls"
+            }
+          },
+          {
+            "name": "kube-api-access-7jvsw",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "allocatedResources": {
+          "cpu": "20m",
+          "memory": "32Mi"
+        },
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:04:10Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:04:10Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:04:10Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:04:10Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:04:10Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "allocatedResources": {
+              "cpu": "20m",
+              "memory": "32Mi"
+            },
+            "containerID": "containerd://a7ed4e99d172032bc467d8a4ae00f51c4ff39da1d56056f391585216fc887cb8",
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
+            "lastState": {},
+            "name": "sessions",
+            "ready": true,
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-10-04T17:04:10Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 1000,
+                "supplementalGroups": [
+                  1000
+                ],
+                "uid": 1000
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "sessions"
+              },
+              {
+                "mountPath": "/tls",
+                "name": "tls-certs",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-7jvsw",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "hostIP": "198.51.100.10",
+        "hostIPs": [
+          {
+            "ip": "198.51.100.10"
+          }
+        ],
+        "observedGeneration": 1,
+        "phase": "Running",
+        "podIP": "198.51.100.18",
+        "podIPs": [
+          {
+            "ip": "198.51.100.18"
+          }
+        ],
+        "qosClass": "Burstable",
+        "resources": {
+          "requests": {
+            "memory": "32Mi"
+          }
+        },
+        "startTime": "2026-10-04T17:04:10Z"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "shards"
+        },
+        "creationTimestamp": "2026-10-04T17:01:43Z",
+        "generateName": "shards-follower-",
+        "generation": 1,
+        "labels": {
+          "app": "shards-follower",
+          "apps.kubernetes.io/pod-index": "0",
+          "cluster": "shards",
+          "controller-revision-hash": "shards-follower-6db9f9c45d",
+          "redis-role": "slave",
+          "redis_setup_type": "cluster",
+          "role": "follower",
+          "statefulset.kubernetes.io/pod-name": "shards-follower-0"
+        },
+        "name": "shards-follower-0",
+        "namespace": "redis",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "StatefulSet",
+            "name": "shards-follower",
+            "uid": "76d9c8c4-4fc3-4186-a3b1-594345cea643"
+          }
+        ],
+        "resourceVersion": "605930",
+        "selfLink": "/api/v1/namespaces/redis/pods/shards-follower-0",
+        "uid": "2754dbd6-d919-4845-be5f-90a5d70b363c"
+      },
+      "spec": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "PERSISTENCE_ENABLED",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_ADDR",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_MAJOR_VERSION",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "key": "password",
+                    "name": "redis-password"
+                  }
+                }
+              },
+              {
+                "name": "REDIS_PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SERVER_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SETUP_MODE",
+                "value": "redacted-by-fixture-export"
+              }
+            ],
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imagePullPolicy": "IfNotPresent",
+            "lifecycle": {
+              "preStop": {
+                "exec": {
+                  "command": [
+                    "sh",
+                    "-c",
+                    "#!/bin/sh\nROLE=$(redis-cli -h $(hostname) -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  info replication | awk -F: '/role:master/ {print \"master\"}')\n\nif [ \"$ROLE\" = \"master\" ]; then\n    BEST_SLAVE=$(redis-cli -h $(hostname) -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  info replication | awk -F: '\n        BEGIN { maxOffset = -1; bestSlave = \"\" }\n        /slave[0-9]+:ip/ {\n            split($2, a, \",\");\n            split(a[1], ip_arr, \"=\");\n            split(a[4], offset_arr, \"=\");\n            ip = ip_arr[2];\n            offset = offset_arr[2] + 0;\n            if (offset > maxOffset) {\n                maxOffset = offset;\n                bestSlave = ip;\n            }\n        }\n        END { print bestSlave }\n    ')\n\n    if [ -n \"$BEST_SLAVE\" ]; then\n        redis-cli -h \"$BEST_SLAVE\" -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  cluster failover\n    fi\nfi"
+                  ]
+                }
+              }
+            },
+            "livenessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "name": "shards-follower",
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "shards-follower"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-msgvl",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "enableServiceLinks": true,
+        "hostname": "shards-follower-0",
+        "nodeName": "freelens-addons-dev",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "serviceAccount": "default",
+        "serviceAccountName": "default",
+        "subdomain": "shards-follower-headless",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          }
+        ],
+        "volumes": [
+          {
+            "name": "shards-follower",
+            "persistentVolumeClaim": {
+              "claimName": "shards-follower-shards-follower-0"
+            }
+          },
+          {
+            "emptyDir": {},
+            "name": "config"
+          },
+          {
+            "name": "kube-api-access-msgvl",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "allocatedResources": {
+          "cpu": "20m",
+          "memory": "32Mi"
+        },
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:46Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:46Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:46Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:46Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:46Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "allocatedResources": {
+              "cpu": "20m",
+              "memory": "32Mi"
+            },
+            "containerID": "containerd://c9e1ffffa801e6289df17625304535bb17450c7bb29e16c09a655a0c4666d7ae",
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
+            "lastState": {},
+            "name": "shards-follower",
+            "ready": true,
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-10-04T17:01:46Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 1000,
+                "supplementalGroups": [
+                  1000
+                ],
+                "uid": 1000
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "shards-follower"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-msgvl",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "hostIP": "198.51.100.10",
+        "hostIPs": [
+          {
+            "ip": "198.51.100.10"
+          }
+        ],
+        "observedGeneration": 1,
+        "phase": "Running",
+        "podIP": "198.51.100.19",
+        "podIPs": [
+          {
+            "ip": "198.51.100.19"
+          }
+        ],
+        "qosClass": "Burstable",
+        "resources": {
+          "requests": {
+            "memory": "32Mi"
+          }
+        },
+        "startTime": "2026-10-04T17:01:46Z"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "shards"
+        },
+        "creationTimestamp": "2026-10-04T17:01:46Z",
+        "generateName": "shards-follower-",
+        "generation": 1,
+        "labels": {
+          "app": "shards-follower",
+          "apps.kubernetes.io/pod-index": "1",
+          "cluster": "shards",
+          "controller-revision-hash": "shards-follower-6db9f9c45d",
+          "redis-role": "slave",
+          "redis_setup_type": "cluster",
+          "role": "follower",
+          "statefulset.kubernetes.io/pod-name": "shards-follower-1"
+        },
+        "name": "shards-follower-1",
+        "namespace": "redis",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "StatefulSet",
+            "name": "shards-follower",
+            "uid": "76d9c8c4-4fc3-4186-a3b1-594345cea643"
+          }
+        ],
+        "resourceVersion": "605932",
+        "selfLink": "/api/v1/namespaces/redis/pods/shards-follower-1",
+        "uid": "9daa7d53-2c61-42c7-aafd-e4bf939f2389"
+      },
+      "spec": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "PERSISTENCE_ENABLED",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_ADDR",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_MAJOR_VERSION",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "key": "password",
+                    "name": "redis-password"
+                  }
+                }
+              },
+              {
+                "name": "REDIS_PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SERVER_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SETUP_MODE",
+                "value": "redacted-by-fixture-export"
+              }
+            ],
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imagePullPolicy": "IfNotPresent",
+            "lifecycle": {
+              "preStop": {
+                "exec": {
+                  "command": [
+                    "sh",
+                    "-c",
+                    "#!/bin/sh\nROLE=$(redis-cli -h $(hostname) -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  info replication | awk -F: '/role:master/ {print \"master\"}')\n\nif [ \"$ROLE\" = \"master\" ]; then\n    BEST_SLAVE=$(redis-cli -h $(hostname) -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  info replication | awk -F: '\n        BEGIN { maxOffset = -1; bestSlave = \"\" }\n        /slave[0-9]+:ip/ {\n            split($2, a, \",\");\n            split(a[1], ip_arr, \"=\");\n            split(a[4], offset_arr, \"=\");\n            ip = ip_arr[2];\n            offset = offset_arr[2] + 0;\n            if (offset > maxOffset) {\n                maxOffset = offset;\n                bestSlave = ip;\n            }\n        }\n        END { print bestSlave }\n    ')\n\n    if [ -n \"$BEST_SLAVE\" ]; then\n        redis-cli -h \"$BEST_SLAVE\" -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  cluster failover\n    fi\nfi"
+                  ]
+                }
+              }
+            },
+            "livenessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "name": "shards-follower",
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "shards-follower"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-fgl7s",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "enableServiceLinks": true,
+        "hostname": "shards-follower-1",
+        "nodeName": "freelens-addons-dev",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "serviceAccount": "default",
+        "serviceAccountName": "default",
+        "subdomain": "shards-follower-headless",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          }
+        ],
+        "volumes": [
+          {
+            "name": "shards-follower",
+            "persistentVolumeClaim": {
+              "claimName": "shards-follower-shards-follower-1"
+            }
+          },
+          {
+            "emptyDir": {},
+            "name": "config"
+          },
+          {
+            "name": "kube-api-access-fgl7s",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "allocatedResources": {
+          "cpu": "20m",
+          "memory": "32Mi"
+        },
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:51Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:50Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:52Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:52Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:50Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "allocatedResources": {
+              "cpu": "20m",
+              "memory": "32Mi"
+            },
+            "containerID": "containerd://f846990556262fc3474334b1d31615ea1c464c9305c36605ce881c5d87111419",
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
+            "lastState": {},
+            "name": "shards-follower",
+            "ready": true,
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-10-04T17:01:51Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 1000,
+                "supplementalGroups": [
+                  1000
+                ],
+                "uid": 1000
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "shards-follower"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-fgl7s",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "hostIP": "198.51.100.10",
+        "hostIPs": [
+          {
+            "ip": "198.51.100.10"
+          }
+        ],
+        "observedGeneration": 1,
+        "phase": "Running",
+        "podIP": "198.51.100.20",
+        "podIPs": [
+          {
+            "ip": "198.51.100.20"
+          }
+        ],
+        "qosClass": "Burstable",
+        "resources": {
+          "requests": {
+            "memory": "32Mi"
+          }
+        },
+        "startTime": "2026-10-04T17:01:50Z"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "shards"
+        },
+        "creationTimestamp": "2026-10-04T17:01:52Z",
+        "generateName": "shards-follower-",
+        "generation": 1,
+        "labels": {
+          "app": "shards-follower",
+          "apps.kubernetes.io/pod-index": "2",
+          "cluster": "shards",
+          "controller-revision-hash": "shards-follower-6db9f9c45d",
+          "redis-role": "slave",
+          "redis_setup_type": "cluster",
+          "role": "follower",
+          "statefulset.kubernetes.io/pod-name": "shards-follower-2"
+        },
+        "name": "shards-follower-2",
+        "namespace": "redis",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "StatefulSet",
+            "name": "shards-follower",
+            "uid": "76d9c8c4-4fc3-4186-a3b1-594345cea643"
+          }
+        ],
+        "resourceVersion": "605934",
+        "selfLink": "/api/v1/namespaces/redis/pods/shards-follower-2",
+        "uid": "2a473ed2-8db7-4c6c-a099-5c1953a0f3ee"
+      },
+      "spec": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "PERSISTENCE_ENABLED",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_ADDR",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_MAJOR_VERSION",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "key": "password",
+                    "name": "redis-password"
+                  }
+                }
+              },
+              {
+                "name": "REDIS_PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SERVER_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SETUP_MODE",
+                "value": "redacted-by-fixture-export"
+              }
+            ],
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imagePullPolicy": "IfNotPresent",
+            "lifecycle": {
+              "preStop": {
+                "exec": {
+                  "command": [
+                    "sh",
+                    "-c",
+                    "#!/bin/sh\nROLE=$(redis-cli -h $(hostname) -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  info replication | awk -F: '/role:master/ {print \"master\"}')\n\nif [ \"$ROLE\" = \"master\" ]; then\n    BEST_SLAVE=$(redis-cli -h $(hostname) -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  info replication | awk -F: '\n        BEGIN { maxOffset = -1; bestSlave = \"\" }\n        /slave[0-9]+:ip/ {\n            split($2, a, \",\");\n            split(a[1], ip_arr, \"=\");\n            split(a[4], offset_arr, \"=\");\n            ip = ip_arr[2];\n            offset = offset_arr[2] + 0;\n            if (offset > maxOffset) {\n                maxOffset = offset;\n                bestSlave = ip;\n            }\n        }\n        END { print bestSlave }\n    ')\n\n    if [ -n \"$BEST_SLAVE\" ]; then\n        redis-cli -h \"$BEST_SLAVE\" -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  cluster failover\n    fi\nfi"
+                  ]
+                }
+              }
+            },
+            "livenessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "name": "shards-follower",
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "shards-follower"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-rkcr7",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "enableServiceLinks": true,
+        "hostname": "shards-follower-2",
+        "nodeName": "freelens-addons-dev",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "serviceAccount": "default",
+        "serviceAccountName": "default",
+        "subdomain": "shards-follower-headless",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          }
+        ],
+        "volumes": [
+          {
+            "name": "shards-follower",
+            "persistentVolumeClaim": {
+              "claimName": "shards-follower-shards-follower-2"
+            }
+          },
+          {
+            "emptyDir": {},
+            "name": "config"
+          },
+          {
+            "name": "kube-api-access-rkcr7",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "allocatedResources": {
+          "cpu": "20m",
+          "memory": "32Mi"
+        },
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:56Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:56Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:57Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:57Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:56Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "allocatedResources": {
+              "cpu": "20m",
+              "memory": "32Mi"
+            },
+            "containerID": "containerd://624d591b052bf7c9d04d4ed222a871b320e851c1d37659adda7c8157260abd78",
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
+            "lastState": {},
+            "name": "shards-follower",
+            "ready": true,
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-10-04T17:01:56Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 1000,
+                "supplementalGroups": [
+                  1000
+                ],
+                "uid": 1000
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "shards-follower"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-rkcr7",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "hostIP": "198.51.100.10",
+        "hostIPs": [
+          {
+            "ip": "198.51.100.10"
+          }
+        ],
+        "observedGeneration": 1,
+        "phase": "Running",
+        "podIP": "198.51.100.21",
+        "podIPs": [
+          {
+            "ip": "198.51.100.21"
+          }
+        ],
+        "qosClass": "Burstable",
+        "resources": {
+          "requests": {
+            "memory": "32Mi"
+          }
+        },
+        "startTime": "2026-10-04T17:01:56Z"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "shards"
+        },
+        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "generateName": "shards-leader-",
+        "generation": 1,
+        "labels": {
+          "app": "shards-leader",
+          "apps.kubernetes.io/pod-index": "0",
+          "cluster": "shards",
+          "controller-revision-hash": "shards-leader-679f6b87cd",
+          "redis-role": "master",
+          "redis_setup_type": "cluster",
+          "role": "leader",
+          "statefulset.kubernetes.io/pod-name": "shards-leader-0"
+        },
+        "name": "shards-leader-0",
+        "namespace": "redis",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "StatefulSet",
+            "name": "shards-leader",
+            "uid": "cd13b0a5-8484-414b-93ff-ba64f760c693"
+          }
+        ],
+        "resourceVersion": "605916",
+        "selfLink": "/api/v1/namespaces/redis/pods/shards-leader-0",
+        "uid": "c0b70aa5-af41-497d-a246-32bc84e7a907"
+      },
+      "spec": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "PERSISTENCE_ENABLED",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_ADDR",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_MAJOR_VERSION",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "key": "password",
+                    "name": "redis-password"
+                  }
+                }
+              },
+              {
+                "name": "REDIS_PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SERVER_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SETUP_MODE",
+                "value": "redacted-by-fixture-export"
+              }
+            ],
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imagePullPolicy": "IfNotPresent",
+            "lifecycle": {
+              "preStop": {
+                "exec": {
+                  "command": [
+                    "sh",
+                    "-c",
+                    "#!/bin/sh\nROLE=$(redis-cli -h $(hostname) -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  info replication | awk -F: '/role:master/ {print \"master\"}')\n\nif [ \"$ROLE\" = \"master\" ]; then\n    BEST_SLAVE=$(redis-cli -h $(hostname) -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  info replication | awk -F: '\n        BEGIN { maxOffset = -1; bestSlave = \"\" }\n        /slave[0-9]+:ip/ {\n            split($2, a, \",\");\n            split(a[1], ip_arr, \"=\");\n            split(a[4], offset_arr, \"=\");\n            ip = ip_arr[2];\n            offset = offset_arr[2] + 0;\n            if (offset > maxOffset) {\n                maxOffset = offset;\n                bestSlave = ip;\n            }\n        }\n        END { print bestSlave }\n    ')\n\n    if [ -n \"$BEST_SLAVE\" ]; then\n        redis-cli -h \"$BEST_SLAVE\" -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  cluster failover\n    fi\nfi"
+                  ]
+                }
+              }
+            },
+            "livenessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "name": "shards-leader",
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "shards-leader"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-t7tp9",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "enableServiceLinks": true,
+        "hostname": "shards-leader-0",
+        "nodeName": "freelens-addons-dev",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "serviceAccount": "default",
+        "serviceAccountName": "default",
+        "subdomain": "shards-leader-headless",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          }
+        ],
+        "volumes": [
+          {
+            "name": "shards-leader",
+            "persistentVolumeClaim": {
+              "claimName": "shards-leader-shards-leader-0"
+            }
+          },
+          {
+            "emptyDir": {},
+            "name": "config"
+          },
+          {
+            "name": "kube-api-access-t7tp9",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "allocatedResources": {
+          "cpu": "20m",
+          "memory": "32Mi"
+        },
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:23Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:23Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:29Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:29Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:23Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "allocatedResources": {
+              "cpu": "20m",
+              "memory": "32Mi"
+            },
+            "containerID": "containerd://d85b376d63d30cf74bbc0ab569546b2fdbddf3bf51f6d6a3d3595d9af3392472",
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
+            "lastState": {},
+            "name": "shards-leader",
+            "ready": true,
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-10-04T17:01:29Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 1000,
+                "supplementalGroups": [
+                  1000
+                ],
+                "uid": 1000
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "shards-leader"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-t7tp9",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "hostIP": "198.51.100.10",
+        "hostIPs": [
+          {
+            "ip": "198.51.100.10"
+          }
+        ],
+        "observedGeneration": 1,
+        "phase": "Running",
+        "podIP": "198.51.100.22",
+        "podIPs": [
+          {
+            "ip": "198.51.100.22"
+          }
+        ],
+        "qosClass": "Burstable",
+        "resources": {
+          "requests": {
+            "memory": "32Mi"
+          }
+        },
+        "startTime": "2026-10-04T17:01:23Z"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "shards"
+        },
+        "creationTimestamp": "2026-10-04T17:01:29Z",
+        "generateName": "shards-leader-",
+        "generation": 1,
+        "labels": {
+          "app": "shards-leader",
+          "apps.kubernetes.io/pod-index": "1",
+          "cluster": "shards",
+          "controller-revision-hash": "shards-leader-679f6b87cd",
+          "redis-role": "master",
+          "redis_setup_type": "cluster",
+          "role": "leader",
+          "statefulset.kubernetes.io/pod-name": "shards-leader-1"
+        },
+        "name": "shards-leader-1",
+        "namespace": "redis",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "StatefulSet",
+            "name": "shards-leader",
+            "uid": "cd13b0a5-8484-414b-93ff-ba64f760c693"
+          }
+        ],
+        "resourceVersion": "605920",
+        "selfLink": "/api/v1/namespaces/redis/pods/shards-leader-1",
+        "uid": "a1ae0018-bc86-4ea3-aec4-bcb8c92b52e0"
+      },
+      "spec": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "PERSISTENCE_ENABLED",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_ADDR",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_MAJOR_VERSION",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "key": "password",
+                    "name": "redis-password"
+                  }
+                }
+              },
+              {
+                "name": "REDIS_PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SERVER_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SETUP_MODE",
+                "value": "redacted-by-fixture-export"
+              }
+            ],
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imagePullPolicy": "IfNotPresent",
+            "lifecycle": {
+              "preStop": {
+                "exec": {
+                  "command": [
+                    "sh",
+                    "-c",
+                    "#!/bin/sh\nROLE=$(redis-cli -h $(hostname) -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  info replication | awk -F: '/role:master/ {print \"master\"}')\n\nif [ \"$ROLE\" = \"master\" ]; then\n    BEST_SLAVE=$(redis-cli -h $(hostname) -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  info replication | awk -F: '\n        BEGIN { maxOffset = -1; bestSlave = \"\" }\n        /slave[0-9]+:ip/ {\n            split($2, a, \",\");\n            split(a[1], ip_arr, \"=\");\n            split(a[4], offset_arr, \"=\");\n            ip = ip_arr[2];\n            offset = offset_arr[2] + 0;\n            if (offset > maxOffset) {\n                maxOffset = offset;\n                bestSlave = ip;\n            }\n        }\n        END { print bestSlave }\n    ')\n\n    if [ -n \"$BEST_SLAVE\" ]; then\n        redis-cli -h \"$BEST_SLAVE\" -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  cluster failover\n    fi\nfi"
+                  ]
+                }
+              }
+            },
+            "livenessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "name": "shards-leader",
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "shards-leader"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-pdbbn",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "enableServiceLinks": true,
+        "hostname": "shards-leader-1",
+        "nodeName": "freelens-addons-dev",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "serviceAccount": "default",
+        "serviceAccountName": "default",
+        "subdomain": "shards-leader-headless",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          }
+        ],
+        "volumes": [
+          {
+            "name": "shards-leader",
+            "persistentVolumeClaim": {
+              "claimName": "shards-leader-shards-leader-1"
+            }
+          },
+          {
+            "emptyDir": {},
+            "name": "config"
+          },
+          {
+            "name": "kube-api-access-pdbbn",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "allocatedResources": {
+          "cpu": "20m",
+          "memory": "32Mi"
+        },
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:33Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:33Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:34Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:34Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:33Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "allocatedResources": {
+              "cpu": "20m",
+              "memory": "32Mi"
+            },
+            "containerID": "containerd://e0215da71f9f7d42640329b2bba95796ece58fb83b8440f7ed40fb5fcbd59755",
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
+            "lastState": {},
+            "name": "shards-leader",
+            "ready": true,
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-10-04T17:01:33Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 1000,
+                "supplementalGroups": [
+                  1000
+                ],
+                "uid": 1000
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "shards-leader"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-pdbbn",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "hostIP": "198.51.100.10",
+        "hostIPs": [
+          {
+            "ip": "198.51.100.10"
+          }
+        ],
+        "observedGeneration": 1,
+        "phase": "Running",
+        "podIP": "198.51.100.23",
+        "podIPs": [
+          {
+            "ip": "198.51.100.23"
+          }
+        ],
+        "qosClass": "Burstable",
+        "resources": {
+          "requests": {
+            "memory": "32Mi"
+          }
+        },
+        "startTime": "2026-10-04T17:01:33Z"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "annotations": {
+          "redis.opstreelabs.in": "true",
+          "redis.opstreelabs.instance": "shards"
+        },
+        "creationTimestamp": "2026-10-04T17:01:34Z",
+        "generateName": "shards-leader-",
+        "generation": 1,
+        "labels": {
+          "app": "shards-leader",
+          "apps.kubernetes.io/pod-index": "2",
+          "cluster": "shards",
+          "controller-revision-hash": "shards-leader-679f6b87cd",
+          "redis-role": "master",
+          "redis_setup_type": "cluster",
+          "role": "leader",
+          "statefulset.kubernetes.io/pod-name": "shards-leader-2"
+        },
+        "name": "shards-leader-2",
+        "namespace": "redis",
+        "ownerReferences": [
+          {
+            "apiVersion": "apps/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "StatefulSet",
+            "name": "shards-leader",
+            "uid": "cd13b0a5-8484-414b-93ff-ba64f760c693"
+          }
+        ],
+        "resourceVersion": "605924",
+        "selfLink": "/api/v1/namespaces/redis/pods/shards-leader-2",
+        "uid": "c9631f33-4011-4e1d-baaf-eb39e1060535"
+      },
+      "spec": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "PERSISTENCE_ENABLED",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_ADDR",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_MAJOR_VERSION",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "REDIS_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "key": "password",
+                    "name": "redis-password"
+                  }
+                }
+              },
+              {
+                "name": "REDIS_PORT",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SERVER_MODE",
+                "value": "redacted-by-fixture-export"
+              },
+              {
+                "name": "SETUP_MODE",
+                "value": "redacted-by-fixture-export"
+              }
+            ],
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imagePullPolicy": "IfNotPresent",
+            "lifecycle": {
+              "preStop": {
+                "exec": {
+                  "command": [
+                    "sh",
+                    "-c",
+                    "#!/bin/sh\nROLE=$(redis-cli -h $(hostname) -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  info replication | awk -F: '/role:master/ {print \"master\"}')\n\nif [ \"$ROLE\" = \"master\" ]; then\n    BEST_SLAVE=$(redis-cli -h $(hostname) -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  info replication | awk -F: '\n        BEGIN { maxOffset = -1; bestSlave = \"\" }\n        /slave[0-9]+:ip/ {\n            split($2, a, \",\");\n            split(a[1], ip_arr, \"=\");\n            split(a[4], offset_arr, \"=\");\n            ip = ip_arr[2];\n            offset = offset_arr[2] + 0;\n            if (offset > maxOffset) {\n                maxOffset = offset;\n                bestSlave = ip;\n            }\n        }\n        END { print bestSlave }\n    ')\n\n    if [ -n \"$BEST_SLAVE\" ]; then\n        redis-cli -h \"$BEST_SLAVE\" -p ${REDIS_PORT}  -a \"${REDIS_PASSWORD}\"  cluster failover\n    fi\nfi"
+                  ]
+                }
+              }
+            },
+            "livenessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "name": "shards-leader",
+            "readinessProbe": {
+              "exec": {
+                "command": [
+                  "sh",
+                  "-ec",
+                  "RESP=\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} ping)\"\n[ \"$RESP\" = \"PONG\" ]"
+                ]
+              },
+              "failureThreshold": 3,
+              "periodSeconds": 10,
+              "successThreshold": 1,
+              "timeoutSeconds": 1
+            },
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "shards-leader"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-qb5pq",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "enableServiceLinks": true,
+        "hostname": "shards-leader-2",
+        "nodeName": "freelens-addons-dev",
+        "preemptionPolicy": "PreemptLowerPriority",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "serviceAccount": "default",
+        "serviceAccountName": "default",
+        "subdomain": "shards-leader-headless",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/not-ready",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          },
+          {
+            "effect": "NoExecute",
+            "key": "node.kubernetes.io/unreachable",
+            "operator": "Exists",
+            "tolerationSeconds": 300
+          }
+        ],
+        "volumes": [
+          {
+            "name": "shards-leader",
+            "persistentVolumeClaim": {
+              "claimName": "shards-leader-shards-leader-2"
+            }
+          },
+          {
+            "emptyDir": {},
+            "name": "config"
+          },
+          {
+            "name": "kube-api-access-qb5pq",
+            "projected": {
+              "defaultMode": 420,
+              "sources": [
+                {
+                  "serviceAccountToken": {
+                    "expirationSeconds": 3607,
+                    "path": "token"
+                  }
+                },
+                {
+                  "configMap": {
+                    "items": [
+                      {
+                        "key": "ca.crt",
+                        "path": "ca.crt"
+                      }
+                    ],
+                    "name": "kube-root-ca.crt"
+                  }
+                },
+                {
+                  "downwardAPI": {
+                    "items": [
+                      {
+                        "fieldRef": {
+                          "apiVersion": "v1",
+                          "fieldPath": "metadata.namespace"
+                        },
+                        "path": "namespace"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "status": {
+        "allocatedResources": {
+          "cpu": "20m",
+          "memory": "32Mi"
+        },
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:39Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:38Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:39Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:39Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-04T17:01:38Z",
+            "observedGeneration": 1,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "allocatedResources": {
+              "cpu": "20m",
+              "memory": "32Mi"
+            },
+            "containerID": "containerd://47fde2a6c9c92cb0b6ff32161eaf1b1224574c9ae506c62acad03e6910820c6b",
+            "image": "quay.io/opstree/redis:v8.2.9",
+            "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
+            "lastState": {},
+            "name": "shards-leader",
+            "ready": true,
+            "resources": {
+              "requests": {
+                "cpu": "20m",
+                "memory": "32Mi"
+              }
+            },
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-10-04T17:01:39Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 1000,
+                "supplementalGroups": [
+                  1000
+                ],
+                "uid": 1000
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/data",
+                "name": "shards-leader"
+              },
+              {
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                "name": "kube-api-access-qb5pq",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "hostIP": "198.51.100.10",
+        "hostIPs": [
+          {
+            "ip": "198.51.100.10"
+          }
+        ],
+        "observedGeneration": 1,
+        "phase": "Running",
+        "podIP": "198.51.100.24",
+        "podIPs": [
+          {
+            "ip": "198.51.100.24"
+          }
+        ],
+        "qosClass": "Burstable",
+        "resources": {
+          "requests": {
+            "memory": "32Mi"
+          }
+        },
+        "startTime": "2026-10-04T17:01:38Z"
+      }
+    }
+  ],
+  "kind": "List"
+}

@@ -1,0 +1,104 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "redis.redis.opstreelabs.in/v1beta2",
+      "kind": "RedisReplication",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T17:01:13Z",
+        "finalizers": [
+          "redisReplicationFinalizer"
+        ],
+        "generation": 2,
+        "name": "broken-cache",
+        "namespace": "redis",
+        "resourceVersion": "603699",
+        "selfLink": "/apis/redis.redis.opstreelabs.in/v1beta2/namespaces/redis/redisreplications/broken-cache",
+        "uid": "7f5fbd50-dca5-44dd-9d1c-ff132c24e962"
+      },
+      "spec": {
+        "clusterSize": 2,
+        "kubernetesConfig": {
+          "image": "quay.io/opstree/redis:v9.9.999",
+          "imagePullPolicy": "IfNotPresent",
+          "updateStrategy": {}
+        },
+        "podSecurityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        }
+      },
+      "status": {
+        "connectionInfo": {
+          "host": "broken-cache-master.redis.svc.cluster.local",
+          "port": 6379
+        }
+      }
+    },
+    {
+      "apiVersion": "redis.redis.opstreelabs.in/v1beta2",
+      "kind": "RedisReplication",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T17:01:13Z",
+        "finalizers": [
+          "redisReplicationFinalizer"
+        ],
+        "generation": 2,
+        "name": "cache",
+        "namespace": "redis",
+        "resourceVersion": "607113",
+        "selfLink": "/apis/redis.redis.opstreelabs.in/v1beta2/namespaces/redis/redisreplications/cache",
+        "uid": "3dba1bb0-8606-4f3c-8064-9171de854324"
+      },
+      "spec": {
+        "clusterSize": 3,
+        "kubernetesConfig": {
+          "image": "quay.io/opstree/redis:v8.2.9",
+          "imagePullPolicy": "IfNotPresent",
+          "redisSecret": {
+            "key": "password",
+            "name": "redis-password"
+          },
+          "resources": {
+            "requests": {
+              "cpu": "20m",
+              "memory": "32Mi"
+            }
+          },
+          "updateStrategy": {}
+        },
+        "podSecurityContext": {
+          "fsGroup": 1000,
+          "runAsUser": 1000
+        },
+        "storage": {
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "accessModes": [
+                "ReadWriteOnce"
+              ],
+              "resources": {
+                "requests": {
+                  "storage": "1Gi"
+                }
+              }
+            },
+            "status": {}
+          },
+          "volumeMount": {}
+        }
+      },
+      "status": {
+        "connectionInfo": {
+          "host": "cache-master.redis.svc.cluster.local",
+          "port": 6379
+        },
+        "masterNode": "cache-1"
+      }
+    }
+  ],
+  "kind": "List"
+}

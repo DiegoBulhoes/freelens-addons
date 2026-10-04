@@ -67,6 +67,7 @@ send a patch are excluded and decide nothing.
 | `workload-pods.ts`, `workload-filter.ts` | `use-workload-pods.ts` |
 | `clusters.ts`, `backups.ts`, `rows.ts`, `attention.ts`, `operations.ts`, `store-state.ts` (CloudNativePG) | `kinds.ts`, `actions.ts`, `use-cnpg-stores.ts` |
 | `agent.ts`, `members.ts`, `replica-sets.ts`, `operations.ts`, `rows.ts`, `upkeep.ts` (MongoDB) | `kinds.ts`, `actions.ts`, `use-mongodb-stores.ts`, `use-agents.ts` |
+| `nodes.ts`, `health.ts`, `operations.ts`, `rows.ts`, `upkeep.ts` (Redis) | `kinds.ts`, `actions.ts`, `use-redis-stores.ts` |
 | `expiry.ts`, `attention.ts`, `chain.ts`, `issuers.ts`, `unmanaged.ts`, `certificate-filter.ts`, `commands.ts`, `secret-metadata.ts`, `renewal.ts`, `requests.ts` | `kinds.ts`, `actions.ts`, `use-cert-manager-stores.ts`, `use-tls-inventory.ts` |
 
 Coverage: 95% of statements, branches, functions and lines in `src/renderer/api/`; `types.ts` is

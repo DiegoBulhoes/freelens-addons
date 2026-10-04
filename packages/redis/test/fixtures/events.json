@@ -1,0 +1,544 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "v1",
+      "count": 5,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-04T17:01:15Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{broken-cache}",
+        "kind": "Pod",
+        "name": "broken-cache-0",
+        "namespace": "redis",
+        "resourceVersion": "603275",
+        "uid": "b8c12be5-8130-4a0e-a833-c0f0ae922eb9"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-04T17:04:15Z",
+      "message": "Failed to pull image \"quay.io/opstree/redis:v9.9.999\": rpc error: code = NotFound desc = failed to pull and unpack image \"quay.io/opstree/redis:v9.9.999\": failed to resolve reference \"quay.io/opstree/redis:v9.9.999\": quay.io/opstree/redis:v9.9.999: not found",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T17:01:15Z",
+        "name": "broken-cache-0.18db623963bd3b52",
+        "namespace": "redis",
+        "resourceVersion": "606370",
+        "selfLink": "/api/v1/namespaces/redis/events/broken-cache-0.18db623963bd3b52",
+        "uid": "bdd6be04-6817-4312-8074-63a8d9e0c62c"
+      },
+      "reason": "Failed",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 5,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-04T17:01:15Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{broken-cache}",
+        "kind": "Pod",
+        "name": "broken-cache-0",
+        "namespace": "redis",
+        "resourceVersion": "603275",
+        "uid": "b8c12be5-8130-4a0e-a833-c0f0ae922eb9"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-04T17:04:15Z",
+      "message": "Error: ErrImagePull",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T17:01:15Z",
+        "name": "broken-cache-0.18db623963bf49d9",
+        "namespace": "redis",
+        "resourceVersion": "606371",
+        "selfLink": "/api/v1/namespaces/redis/events/broken-cache-0.18db623963bf49d9",
+        "uid": "18e1634f-d96c-486c-ba59-1ced3f80459f"
+      },
+      "reason": "Failed",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 41,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-04T17:01:15Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{broken-cache}",
+        "kind": "Pod",
+        "name": "broken-cache-0",
+        "namespace": "redis",
+        "resourceVersion": "603275",
+        "uid": "b8c12be5-8130-4a0e-a833-c0f0ae922eb9"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-04T17:11:18Z",
+      "message": "Error: ImagePullBackOff",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T17:01:15Z",
+        "name": "broken-cache-0.18db623970d207bc",
+        "namespace": "redis",
+        "resourceVersion": "608414",
+        "selfLink": "/api/v1/namespaces/redis/events/broken-cache-0.18db623970d207bc",
+        "uid": "7e40dcb0-2003-4849-ac0e-42e0282763d9"
+      },
+      "reason": "Failed",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "action": "Scheduling",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-04T17:01:14.238473Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "legacy-store-0",
+        "namespace": "redis",
+        "resourceVersion": "603336",
+        "uid": "2b2a5ecb-ffd5-4e52-ac3c-28253165a333"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "0/1 nodes are available: pod has unbound immediate PersistentVolumeClaims. not found",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "name": "legacy-store-0.18db62391c5e0af5",
+        "namespace": "redis",
+        "resourceVersion": "603339",
+        "selfLink": "/api/v1/namespaces/redis/events/legacy-store-0.18db62391c5e0af5",
+        "uid": "1bd3863c-ddfb-4729-9b3e-34d77c3368be"
+      },
+      "reason": "FailedScheduling",
+      "reportingComponent": "default-scheduler",
+      "reportingInstance": "default-scheduler-c4bd3b67d0bc",
+      "source": {},
+      "type": "Warning"
+    },
+    {
+      "action": "Scheduling",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-04T17:01:22.244778Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "legacy-store-0",
+        "namespace": "redis",
+        "resourceVersion": "603340",
+        "uid": "2b2a5ecb-ffd5-4e52-ac3c-28253165a333"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "0/1 nodes are available: pod has unbound immediate PersistentVolumeClaims. not found",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T17:01:22Z",
+        "name": "legacy-store-0.18db623af99467ee",
+        "namespace": "redis",
+        "resourceVersion": "603609",
+        "selfLink": "/api/v1/namespaces/redis/events/legacy-store-0.18db623af99467ee",
+        "uid": "920d9088-5bb2-4204-ba8c-f785fa04c131"
+      },
+      "reason": "FailedScheduling",
+      "reportingComponent": "default-scheduler",
+      "reportingInstance": "default-scheduler-c4bd3b67d0bc",
+      "series": {
+        "count": 2,
+        "lastObservedTime": "2026-10-04T17:01:22.250852Z"
+      },
+      "source": {},
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 42,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-04T17:01:14Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "legacy-store-legacy-store-0",
+        "namespace": "redis",
+        "resourceVersion": "603333",
+        "uid": "ad8e64b5-aa41-4ef2-9acf-541e5851d321"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-04T17:11:27Z",
+      "message": "storageclass.storage.k8s.io \"no-such-class\" not found",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "name": "legacy-store-legacy-store-0.18db62391c0e1baf",
+        "namespace": "redis",
+        "resourceVersion": "608451",
+        "selfLink": "/api/v1/namespaces/redis/events/legacy-store-legacy-store-0.18db62391c0e1baf",
+        "uid": "29b03cc6-cbab-4970-93fa-c22b48add58f"
+      },
+      "reason": "ProvisioningFailed",
+      "reportingComponent": "persistentvolume-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "persistentvolume-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-04T17:01:29Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{sessions}",
+        "kind": "Pod",
+        "name": "sessions-0",
+        "namespace": "redis",
+        "resourceVersion": "603682",
+        "uid": "4fb2f2ce-5967-4f6b-9723-58e649be2546"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-04T17:01:29Z",
+      "message": "Readiness probe errored and resulted in unknown state: rpc error: code = NotFound desc = failed to exec in container: failed to load task: no running task found: task b54a780f40c576215d4570651f325bdbbaac563910eb1f6274b5a8ab45a27270 not found",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T17:01:29Z",
+        "name": "sessions-0.18db623c982062cd",
+        "namespace": "redis",
+        "resourceVersion": "603860",
+        "selfLink": "/api/v1/namespaces/redis/events/sessions-0.18db623c982062cd",
+        "uid": "ea9ab15a-7f57-4b92-a041-6f036f4a63cc"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-04T17:01:29Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{sessions}",
+        "kind": "Pod",
+        "name": "sessions-0",
+        "namespace": "redis",
+        "resourceVersion": "603682",
+        "uid": "4fb2f2ce-5967-4f6b-9723-58e649be2546"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-04T17:01:29Z",
+      "message": "Readiness probe errored and resulted in unknown state: rpc error: code = NotFound desc = failed to exec in container: failed to load task: no running task found: task 2b5ba5bcc660c0a393c8b2d8bcac1afd29b04a04aa9b49effff0384b307fd17b not found",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T17:01:29Z",
+        "name": "sessions-0.18db623cc4960480",
+        "namespace": "redis",
+        "resourceVersion": "603928",
+        "selfLink": "/api/v1/namespaces/redis/events/sessions-0.18db623cc4960480",
+        "uid": "b3ce801b-6727-4162-b4f0-7891472a6f1c"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 12,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-04T17:01:30Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{sessions}",
+        "kind": "Pod",
+        "name": "sessions-0",
+        "namespace": "redis",
+        "resourceVersion": "603682",
+        "uid": "4fb2f2ce-5967-4f6b-9723-58e649be2546"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-04T17:02:54Z",
+      "message": "Back-off restarting failed container sessions in pod sessions-0_redis(4fb2f2ce-5967-4f6b-9723-58e649be2546)",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T17:01:30Z",
+        "name": "sessions-0.18db623cf798eb06",
+        "namespace": "redis",
+        "resourceVersion": "605623",
+        "selfLink": "/api/v1/namespaces/redis/events/sessions-0.18db623cf798eb06",
+        "uid": "31a18935-92cf-4ea5-b267-7fd3967f8fa4"
+      },
+      "reason": "BackOff",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-04T17:01:41Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{sessions}",
+        "kind": "Pod",
+        "name": "sessions-0",
+        "namespace": "redis",
+        "resourceVersion": "603682",
+        "uid": "4fb2f2ce-5967-4f6b-9723-58e649be2546"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-04T17:01:41Z",
+      "message": "Readiness probe errored and resulted in unknown state: rpc error: code = NotFound desc = failed to exec in container: failed to load task: no running task found: task 7afb89569a9696e1e129a55c3ac2e4c941e97fca4b4b5adb476cb1211dd36a18 not found",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T17:01:41Z",
+        "name": "sessions-0.18db623f754e0399",
+        "namespace": "redis",
+        "resourceVersion": "604283",
+        "selfLink": "/api/v1/namespaces/redis/events/sessions-0.18db623f754e0399",
+        "uid": "d35720ab-96b5-42de-804a-6a686321e50e"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-04T17:02:09Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{sessions}",
+        "kind": "Pod",
+        "name": "sessions-0",
+        "namespace": "redis",
+        "resourceVersion": "603682",
+        "uid": "4fb2f2ce-5967-4f6b-9723-58e649be2546"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-04T17:02:09Z",
+      "message": "Readiness probe errored and resulted in unknown state: rpc error: code = NotFound desc = failed to exec in container: failed to load task: no running task found: task c03c149a346dffd7fb2913e5e67512aff28b2ccf4a0c84ee0ec7049c061dbc09 not found",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T17:02:09Z",
+        "name": "sessions-0.18db6245f64c1c0a",
+        "namespace": "redis",
+        "resourceVersion": "604971",
+        "selfLink": "/api/v1/namespaces/redis/events/sessions-0.18db6245f64c1c0a",
+        "uid": "0e666e18-4423-4572-857f-c64ade03e211"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-04T17:02:51Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{sessions}",
+        "kind": "Pod",
+        "name": "sessions-0",
+        "namespace": "redis",
+        "resourceVersion": "603682",
+        "uid": "4fb2f2ce-5967-4f6b-9723-58e649be2546"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-04T17:02:51Z",
+      "message": "Readiness probe errored and resulted in unknown state: rpc error: code = NotFound desc = failed to exec in container: failed to load task: no running task found: task 135055c39e7452e7a3ae0c1d424eed664a7724ff2356913641a26ed4bf1b0cd6 not found",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T17:02:51Z",
+        "name": "sessions-0.18db624fc128f25e",
+        "namespace": "redis",
+        "resourceVersion": "605608",
+        "selfLink": "/api/v1/namespaces/redis/events/sessions-0.18db624fc128f25e",
+        "uid": "7a264af6-9c25-4b73-848d-520c232c31c2"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-04T17:01:51Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{shards-follower}",
+        "kind": "Pod",
+        "name": "shards-follower-1",
+        "namespace": "redis",
+        "resourceVersion": "604480",
+        "uid": "9daa7d53-2c61-42c7-aafd-e4bf939f2389"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-04T17:01:51Z",
+      "message": "Readiness probe failed: Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\nCould not connect to Redis at shards-follower-1:6379: Connection refused\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T17:01:51Z",
+        "name": "shards-follower-1.18db6241bec36eee",
+        "namespace": "redis",
+        "resourceVersion": "604508",
+        "selfLink": "/api/v1/namespaces/redis/events/shards-follower-1.18db6241bec36eee",
+        "uid": "4c6cb43c-8f30-41e4-a6d5-5ce2bee77c85"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-04T17:01:56Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{shards-follower}",
+        "kind": "Pod",
+        "name": "shards-follower-2",
+        "namespace": "redis",
+        "resourceVersion": "604696",
+        "uid": "2a473ed2-8db7-4c6c-a099-5c1953a0f3ee"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-04T17:01:56Z",
+      "message": "Readiness probe failed: Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\nCould not connect to Redis at shards-follower-2:6379: Connection refused\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T17:01:56Z",
+        "name": "shards-follower-2.18db6242fde14219",
+        "namespace": "redis",
+        "resourceVersion": "604729",
+        "selfLink": "/api/v1/namespaces/redis/events/shards-follower-2.18db6242fde14219",
+        "uid": "68158e21-349a-445a-874e-6100dfa45cb2"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-04T17:01:33Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{shards-leader}",
+        "kind": "Pod",
+        "name": "shards-leader-1",
+        "namespace": "redis",
+        "resourceVersion": "604076",
+        "uid": "a1ae0018-bc86-4ea3-aec4-bcb8c92b52e0"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-04T17:01:33Z",
+      "message": "Readiness probe failed: Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\nCould not connect to Redis at shards-leader-1:6379: Connection refused\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T17:01:33Z",
+        "name": "shards-leader-1.18db623daf33003a",
+        "namespace": "redis",
+        "resourceVersion": "604102",
+        "selfLink": "/api/v1/namespaces/redis/events/shards-leader-1.18db623daf33003a",
+        "uid": "0d409812-ba8d-49f5-92bc-15c48fbd8dce"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-04T17:01:39Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{shards-leader}",
+        "kind": "Pod",
+        "name": "shards-leader-2",
+        "namespace": "redis",
+        "resourceVersion": "604214",
+        "uid": "c9631f33-4011-4e1d-baaf-eb39e1060535"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-04T17:01:39Z",
+      "message": "Readiness probe failed: Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.\nCould not connect to Redis at shards-leader-2:6379: Connection refused\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T17:01:39Z",
+        "name": "shards-leader-2.18db623f010b3471",
+        "namespace": "redis",
+        "resourceVersion": "604237",
+        "selfLink": "/api/v1/namespaces/redis/events/shards-leader-2.18db623f010b3471",
+        "uid": "a38dd5e7-27b0-4e0b-952d-0681e0672661"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    }
+  ],
+  "kind": "List"
+}

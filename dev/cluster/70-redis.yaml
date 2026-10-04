@@ -1,0 +1,150 @@
+# redis-operator samples, one per state the pages rank. The password exists only inside this
+# disposable cluster.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: redis-password
+  namespace: redis
+stringData:
+  password: dev-redis-not-a-secret
+---
+# A master and two replicas, watched by three sentinels.
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisReplication
+metadata:
+  name: cache
+  namespace: redis
+spec:
+  clusterSize: 3
+  kubernetesConfig:
+    image: quay.io/opstree/redis:v8.2.9
+    imagePullPolicy: IfNotPresent
+    redisSecret: { name: redis-password, key: password }
+    resources:
+      requests: { cpu: 20m, memory: 32Mi }
+  podSecurityContext: { runAsUser: 1000, fsGroup: 1000 }
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources: { requests: { storage: 1Gi } }
+---
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisSentinel
+metadata:
+  name: cache-sentinel
+  namespace: redis
+spec:
+  clusterSize: 3
+  podSecurityContext: { runAsUser: 1000, fsGroup: 1000 }
+  redisSentinelConfig:
+    redisReplicationName: cache
+    redisReplicationPassword:
+      secretKeyRef: { name: redis-password, key: password }
+  kubernetesConfig:
+    image: quay.io/opstree/redis-sentinel:v8.2.9
+    imagePullPolicy: IfNotPresent
+    redisSecret: { name: redis-password, key: password }
+    resources:
+      requests: { cpu: 20m, memory: 32Mi }
+---
+# Three shards, each a leader and a follower.
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisCluster
+metadata:
+  name: shards
+  namespace: redis
+spec:
+  clusterSize: 3
+  clusterVersion: v7
+  persistenceEnabled: true
+  podSecurityContext: { runAsUser: 1000, fsGroup: 1000 }
+  kubernetesConfig:
+    image: quay.io/opstree/redis:v8.2.9
+    imagePullPolicy: IfNotPresent
+    redisSecret: { name: redis-password, key: password }
+    resources:
+      requests: { cpu: 20m, memory: 32Mi }
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources: { requests: { storage: 1Gi } }
+    nodeConfVolumeClaimTemplate:
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources: { requests: { storage: 1Gi } }
+---
+# TLS from cert-manager: the demo CA issues it, and its Secret carries the CA too.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: sessions-tls
+  namespace: redis
+spec:
+  secretName: sessions-tls
+  issuerRef: { kind: ClusterIssuer, name: demo-ca }
+  dnsNames:
+    - sessions
+    - sessions.redis
+    - sessions.redis.svc
+    - sessions.redis.svc.cluster.local
+---
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: Redis
+metadata:
+  name: sessions
+  namespace: redis
+spec:
+  TLS:
+    ca: ca.crt
+    cert: tls.crt
+    key: tls.key
+    secret: { secretName: sessions-tls }
+  # The image's entrypoint reads the CA from REDIS_TLS_CA_KEY; operator v0.26.0 sets only REDIS_TLS_CA_CERT.
+  env:
+    - name: REDIS_TLS_CA_KEY
+      value: /tls/ca.crt
+  podSecurityContext: { runAsUser: 1000, fsGroup: 1000 }
+  kubernetesConfig:
+    image: quay.io/opstree/redis:v8.2.9
+    imagePullPolicy: IfNotPresent
+    redisSecret: { name: redis-password, key: password }
+    resources:
+      requests: { cpu: 20m, memory: 32Mi }
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources: { requests: { storage: 1Gi } }
+---
+# Its volume asks for a storage class that does not exist, so its pod stays Pending.
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: Redis
+metadata:
+  name: legacy-store
+  namespace: redis
+spec:
+  podSecurityContext: { runAsUser: 1000, fsGroup: 1000 }
+  kubernetesConfig:
+    image: quay.io/opstree/redis:v8.2.9
+    imagePullPolicy: IfNotPresent
+  storage:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: no-such-class
+        accessModes: ["ReadWriteOnce"]
+        resources: { requests: { storage: 1Gi } }
+---
+# An image tag that does not exist: its pods never start.
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisReplication
+metadata:
+  name: broken-cache
+  namespace: redis
+spec:
+  clusterSize: 2
+  kubernetesConfig:
+    image: quay.io/opstree/redis:v9.9.999
+    imagePullPolicy: IfNotPresent
+  podSecurityContext: { runAsUser: 1000, fsGroup: 1000 }

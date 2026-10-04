@@ -1,0 +1,41 @@
+{
+  "name": "@freelens-addons/redis",
+  "version": "0.4.0",
+  "private": true,
+  "description": "Which Redis replications, clusters and standalones need attention, which node is master, and why one is stuck",
+  "license": "Apache-2.0",
+  "main": "out/main/index.js",
+  "renderer": "out/renderer/index.js",
+  "files": [
+    "out"
+  ],
+  "engines": {
+    "freelens": "^1.10.3",
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "electron-vite build",
+    "watch": "electron-vite build --watch",
+    "type:check": "tsc --noEmit && tsc --noEmit -p e2e/tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "vitest run --config e2e/vitest.config.ts"
+  },
+  "devDependencies": {
+    "@freelensapp/extensions": "^1.10.3",
+    "@freelensapp/kube-api": "^1.10.3",
+    "@freelensapp/kube-object": "^1.10.3",
+    "@types/node": "^24.0.0",
+    "@types/react": "^17.0.80",
+    "@vitest/coverage-v8": "^4.1.11",
+    "electron-vite": "^5.0.0",
+    "jsdom": "^27.4.0",
+    "mobx": "^6.13.0",
+    "mobx-react": "^9.1.0",
+    "react": "^17.0.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0",
+    "vitest": "^4.1.11"
+  }
+}
