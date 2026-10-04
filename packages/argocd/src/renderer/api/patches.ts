@@ -1,5 +1,5 @@
 import { AppProject } from "./app-project";
-import type { Application } from "./application";
+import { Application } from "./application";
 import { revisionsOfDeploy } from "./revisions";
 import type { SyncStrategy, SyncWindow } from "./types";
 
@@ -53,9 +53,9 @@ export function disableAutoSyncPatch() {
   return { spec: { syncPolicy: { automated: null } } };
 }
 
-/** Clearing `operation` is ArgoCD's terminate protocol; what it already applied stays. */
+/** As argocd-server's TerminateOperation: the operation stays; its phase tells the controller to stop. */
 export function terminatePatch() {
-  return { operation: null };
+  return { status: { operationState: { phase: "Terminating" } } };
 }
 
 export function revisionOfHistory(application: Application, historyId: number): string | undefined {
@@ -78,6 +78,19 @@ export function isFrozen(project: AppProject): boolean {
   return AppProject.getSyncWindows(project).some(
     (window) => window.description === FREEZE_DESCRIPTION,
   );
+}
+
+/** The frozen project an Application's sync would wait on, if any: ArgoCD accepts it and holds it. */
+export function frozenProjectOf(
+  application: Application,
+  projects: AppProject[],
+): string | undefined {
+  const name = Application.getProject(application);
+  const project = projects.find(
+    (each) => each.getName() === name && each.getNs() === application.getNs(),
+  );
+
+  return project && isFrozen(project) ? name : undefined;
 }
 
 export function frozenWindows(existing: SyncWindow[]): SyncWindow[] {

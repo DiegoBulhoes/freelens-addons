@@ -71,7 +71,7 @@ export function ApplicationMenuItem({ object, toolbar, onChanged }: ApplicationM
         <span className="title">Hard refresh</span>
       </MenuItem>
 
-      <MenuItem onClick={() => confirmAndSync(object)}>
+      <MenuItem onClick={() => void confirmAndSync(object)}>
         <Icon
           material="sync"
           interactive={toolbar}

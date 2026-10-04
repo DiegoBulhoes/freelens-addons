@@ -100,7 +100,7 @@ export function confirmEditImage(updater: ImageUpdater, location: ImageLocation)
       </>
     ),
     detail:
-      "The controller checks the rule again as soon as it is saved, and updates the Applications if the new settings allow a newer tag.",
+      "The controller checks the rule again as soon as it is saved, and moves the Applications to the newest tag the new settings allow, even one older than what they run now.",
     form: (
       <EditForm
         initial={draft}

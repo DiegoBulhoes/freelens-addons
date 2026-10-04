@@ -7,9 +7,10 @@ import {
   syncApplication,
   terminateSync,
 } from "../api/actions";
+import { AppProject } from "../api/app-project";
 import { Application } from "../api/application";
 import { copyToClipboard } from "../api/cli";
-import { isRiskyChoice, type SyncChoice } from "../api/patches";
+import { frozenProjectOf, isRiskyChoice, type SyncChoice } from "../api/patches";
 import { describeMissingPods } from "../api/workload-selection";
 import { getApplicationPods, openPodLogs } from "../api/workloads";
 import { confirmWrite, notifyDone } from "../components/confirm";
@@ -33,11 +34,29 @@ export async function refreshAndReport(application: Application, mode: RefreshMo
   }
 }
 
+// Read when asked: the Applications page does not load the projects' store.
+async function projectOf(application: Application): Promise<AppProject[]> {
+  try {
+    const project = await AppProject.getApi().get({
+      name: Application.getProject(application),
+      namespace: application.getNs(),
+    });
+
+    return project ? [project as AppProject] : [];
+  } catch {
+    return [];
+  }
+}
+
 /** The choice and the typed name reach `ok` through callbacks: ConfirmDialog copies its message's props. */
-export function confirmAndSync(application: Application): void {
+export async function confirmAndSync(application: Application): Promise<void> {
   const name = application.getName();
   const { total } = Application.getResourceRollup(application);
   let choice: SyncChoice = { prune: false, force: false };
+  const frozen = frozenProjectOf(application, await projectOf(application));
+  const held = frozen
+    ? ` Its project ${frozen} is frozen: ArgoCD will hold the sync until it is resumed.`
+    : "";
 
   confirmWrite({
     question: (
@@ -45,7 +64,7 @@ export function confirmAndSync(application: Application): void {
         Sync <b>{name}</b> to <b>{Application.getDestination(application)}</b>?
       </>
     ),
-    detail: `ArgoCD will apply what is in git. ${total} managed resource${total === 1 ? "" : "s"} may be affected.`,
+    detail: `ArgoCD will apply what is in git. ${total} managed resource${total === 1 ? "" : "s"} may be affected.${held}`,
     form: (onType) => (
       <SyncChoices
         typedName={name}
@@ -61,7 +80,11 @@ export function confirmAndSync(application: Application): void {
     ok: async () => {
       try {
         await syncApplication(application, choice);
-        notifyDone(`Sync started for ${name}${describeChoice(choice)}.`);
+        notifyDone(
+          frozen
+            ? `Sync of ${name} requested; it waits until ${frozen} is resumed.`
+            : `Sync started for ${name}${describeChoice(choice)}.`,
+        );
       } catch (error) {
         Notifications.checkedError(error, `Could not start a sync for ${name}`);
       }

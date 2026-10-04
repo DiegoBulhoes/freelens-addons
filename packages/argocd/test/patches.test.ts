@@ -4,6 +4,7 @@ import {
   disableAutoSyncPatch,
   FREEZE_DESCRIPTION,
   FREEZE_WINDOW,
+  frozenProjectOf,
   frozenWindows,
   isFrozen,
   isRiskyChoice,
@@ -18,7 +19,7 @@ import {
   windowsFor,
 } from "../src/renderer/api/patches";
 import type { SyncWindow } from "../src/renderer/api/types";
-import { application, appProjects, statusOf, variantOf } from "./fixtures";
+import { application, appProjects, projectVariantOf, statusOf, variantOf } from "./fixtures";
 
 describe("patches — what gets written", () => {
   it("asks for a refresh with the annotation the controller watches", () => {
@@ -58,8 +59,9 @@ describe("patches — what gets written", () => {
     expect(wasForced(undefined)).toBe(false);
   });
 
-  it("terminates by clearing the operation, not by writing a phase", () => {
-    expect(terminatePatch()).toEqual({ operation: null });
+  it("terminates by marking the operation Terminating, keeping the operation itself", () => {
+    // Clearing `operation` only stops the controller tracking it; the sync runs on to the end.
+    expect(terminatePatch()).toEqual({ status: { operationState: { phase: "Terminating" } } });
   });
 
   it("turns automated sync off with an explicit null", () => {
@@ -195,5 +197,18 @@ describe("which syncs ask for the Application's name", () => {
     expect(isRiskyChoice({ prune: false })).toBe(false);
     expect(isRiskyChoice({ prune: true, force: false })).toBe(true);
     expect(isRiskyChoice({ prune: false, force: true })).toBe(true);
+  });
+});
+
+describe("a sync held by a frozen project", () => {
+  it("names the project when its own freeze window is in it, and nothing otherwise", () => {
+    const app = application("helm-guestbook");
+    const frozen = projectVariantOf("demo", (data) => {
+      data.spec.syncWindows = frozenWindows([]);
+    });
+
+    expect(frozenProjectOf(app, [frozen])).toBe("demo");
+    expect(frozenProjectOf(app, appProjects())).toBeUndefined();
+    expect(frozenProjectOf(app, [])).toBeUndefined();
   });
 });
