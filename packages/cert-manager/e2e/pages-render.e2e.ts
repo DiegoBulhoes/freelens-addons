@@ -28,16 +28,13 @@ const PAGES: PageCheck[] = [
   },
   {
     id: "cert-manager-certificates",
-    expect: {
-      selector: ".CertManager-picker__detail .CertManager-page__headline",
-      matches: /\S/,
-    },
-    rows: ".CertManager-picker__item",
+    expect: { selector: ".CertManager-page__headline", matches: /^Certificates \d+ items?/ },
+    rows: '[data-section="cert-manager-certificates"] tbody tr',
   },
   {
     id: "cert-manager-issuers",
-    expect: { selector: ".CertManager-page__headline", matches: /issuers? (is|are)/ },
-    rows: ".CertManager-box",
+    expect: { selector: ".CertManager-page__subline", matches: /issuers? (is|are)/ },
+    rows: '[data-section="cert-manager-issuers"] tbody tr',
   },
   {
     id: "cert-manager-requests",

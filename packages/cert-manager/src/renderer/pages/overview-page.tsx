@@ -170,12 +170,14 @@ export const OverviewPage = observer(
                     key={`${item.certificate.getNs()}/${item.certificate.getName()}`}
                     className={`CertManager-row CertManager-row--${item.severity}`}
                     title={`Opens ${item.certificate.getName()} in the certificates page`}
-                    onClick={() =>
+                    onClick={(event) => {
+                      // Unprevented, the drawer this opens takes the click as outside and closes.
+                      event.preventDefault();
                       openCertificates({
                         namespace: item.certificate.getNs() ?? "",
                         name: item.certificate.getName(),
-                      })
-                    }
+                      });
+                    }}
                   >
                     <span className="CertManager-row__state">{item.headline}</span>
                     <span className="CertManager-row__main">

@@ -11,17 +11,20 @@ import {
   waitFor,
 } from "../../../build/e2e/freelens";
 
+const CERTIFICATE_ROWS = '[data-section="cert-manager-certificates"] tbody tr';
+const DRAWER = ".CertManagerObjectDrawer";
+
 const PAGES: [id: string, container: string][] = [
   ["cert-manager-overview", ".CertManager-page"],
-  ["cert-manager-certificates", ".CertManager-picker"],
+  ["cert-manager-certificates", ".CertManager-page"],
   ["cert-manager-issuers", ".CertManager-page"],
   ["cert-manager-unmanaged", ".CertManager-page"],
 ];
 
 const DESIGN: [id: string, ready: string][] = [
   ["cert-manager-overview", ".CertManager-row"],
-  ["cert-manager-certificates", ".CertManager-picker__detail .CertManager-row"],
-  ["cert-manager-issuers", ".CertManager-box"],
+  ["cert-manager-certificates", `${CERTIFICATE_ROWS}`],
+  ["cert-manager-issuers", '[data-section="cert-manager-issuers"] tbody tr'],
   ["cert-manager-requests", ".CertManagerRequests .TableRow"],
   ["cert-manager-unmanaged", '[data-section="served"] tbody tr'],
 ];
@@ -78,20 +81,31 @@ describe("how the cert-manager pages are laid out", () => {
     90_000,
   );
 
-  it("keeps a certificate's detail within its width, the long ACME reason included", async () => {
+  const openCertificate = async (predicate: string) => {
     await clickSidebar(session, frame, "cert-manager-certificates", "cert-manager");
     await waitFor(
-      "the picker",
-      async () => (await countOf(".CertManager-picker__item")) > 0 || undefined,
+      "the certificates",
+      async () => (await countOf(CERTIFICATE_ROWS)) > 0 || undefined,
     );
+    await session.evaluate(
+      `[...document.querySelectorAll(${JSON.stringify(CERTIFICATE_ROWS)})]
+         .find((each) => ${predicate})?.querySelector('td:nth-child(2)').click()`,
+      frame,
+    );
+  };
 
-    await session.evaluate("document.querySelector('.CertManager-picker__item').click()", frame);
+  it("keeps a certificate's drawer within its width, the long ACME reason included", async () => {
+    await openCertificate("/Not ready/.test(each.textContent)");
     await waitFor(
       "its chain",
-      async () => (await countOf(".CertManager-picker__detail .CertManager-row")) > 0 || undefined,
+      async () =>
+        (await countOf(`${DRAWER} [data-section="cert-manager-chain"] .CertManager-row`)) > 0 ||
+        undefined,
     );
 
-    expect(await overflowsSideways(session, frame, ".CertManager-picker__detail")).toBeLessThan(8);
+    expect(await overflowsSideways(session, frame, `${DRAWER} .CertManager-drawer`)).toBeLessThan(
+      8,
+    );
   }, 90_000);
 
   it("leaves the text of every clickable row where a reader expects it", async () => {
@@ -106,16 +120,6 @@ describe("how the cert-manager pages are laid out", () => {
         /^(left|start)$/,
       );
     }
-
-    await clickSidebar(session, frame, "cert-manager-certificates", "cert-manager");
-    await waitFor(
-      "the picker",
-      async () => (await countOf(".CertManager-picker__item")) > 0 || undefined,
-    );
-
-    expect(await computedStyle(session, frame, ".CertManager-picker__item", "text-align")).toMatch(
-      /^(left|start)$/,
-    );
   }, 90_000);
 
   it("takes its text colour from the host's theme rather than its own", async () => {
@@ -145,35 +149,21 @@ describe("how the cert-manager pages are laid out", () => {
         surface,
       );
     }
-
-    await clickSidebar(session, frame, "cert-manager-issuers", "cert-manager");
-    await waitFor("the issuers", async () => (await countOf(".CertManager-box")) > 0 || undefined);
-
-    expect(
-      await computedStyle(session, frame, ".CertManager-box:not(:hover)", "background-color"),
-    ).toBe(surface);
   }, 90_000);
 
   it("draws the validity bar's now and renewal marks on its track", async () => {
-    await clickSidebar(session, frame, "cert-manager-certificates", "cert-manager");
-    await waitFor(
-      "the picker",
-      async () => (await countOf(".CertManager-picker__item")) > 0 || undefined,
-    );
-    await session.evaluate(
-      `[...document.querySelectorAll('.CertManager-picker__item')]
-         .find((each) => /left$/.test(each.querySelector('.CertManager-picker__aside')?.textContent ?? ''))?.click()`,
-      frame,
+    await openCertificate(
+      "each.querySelector('.CertManager-status--ok') && each.textContent.includes(' left')",
     );
     await waitFor(
       "a validity bar",
-      async () => (await countOf(".CertManager-validity__now")) > 0 || undefined,
+      async () => (await countOf(`${DRAWER} .CertManager-validity__now`)) > 0 || undefined,
     );
 
     const placed = await session.evaluate<{ track: number[]; now: number; renewal: number }>(
       `(() => {
         const box = (selector) => document.querySelector(selector).getBoundingClientRect();
-        const track = box('.CertManager-validity__track');
+        const track = box('.CertManagerObjectDrawer .CertManager-validity__track');
         const centre = (selector) => { const b = box(selector); return b.left + b.width / 2; };
         return {
           track: [track.left, track.right],

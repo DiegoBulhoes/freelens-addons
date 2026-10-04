@@ -126,3 +126,76 @@ export function getUnmanagedSecrets(
       `${first.getNs()}/${first.getName()}`.localeCompare(`${second.getNs()}/${second.getName()}`),
     );
 }
+
+export interface TlsVerdict {
+  tone: "critical" | "warning" | "info" | "ok";
+  label: string;
+  reason: string;
+}
+
+export function servedVerdict(served: ServedTls): TlsVerdict {
+  const { tone, label } = SERVED_STATES[served.state];
+  const secret = `Secret ${served.secretName}`;
+  const reasons: Record<ServedState, string> = {
+    unmanaged: `No Certificate writes ${secret}. Nothing renews it: it is served until it expires.`,
+    missing: `${secret} does not exist and no Certificate would write it. The Ingress controller serves its default certificate instead.`,
+    pending: `Certificate ${served.certificate} will write ${secret}; it is still being issued.`,
+    managed: `Certificate ${served.certificate} writes ${secret} and renews it.`,
+  };
+
+  return { tone, label, reason: reasons[served.state] };
+}
+
+export function ingressesServing(secret: SecretLike, ingresses: IngressLike[]): string[] {
+  return ingresses
+    .filter(
+      (ingress) =>
+        ingress.getNs() === secret.getNs() &&
+        (ingress.spec?.tls ?? []).some((entry) => entry.secretName === secret.getName()),
+    )
+    .map((ingress) => ingress.getName())
+    .sort();
+}
+
+/** The cert-manager annotations a Secret keeps: the only ones read, and never its data. */
+export function annotationsOfInterest(secret: SecretLike): [string, string][] {
+  return Object.entries(secret.metadata.annotations ?? {})
+    .filter(([key, value]) => key.startsWith("cert-manager.io/") && value !== "")
+    .sort(([first], [second]) => first.localeCompare(second));
+}
+
+export function secretVerdict(
+  secret: SecretLike,
+  certificates: CertificateLike[],
+  ingresses: IngressLike[],
+): TlsVerdict {
+  const manager = managingCertificateOf(secret, certificates);
+
+  if (manager) {
+    return {
+      tone: "ok",
+      label: "Managed",
+      reason: `Certificate ${manager.getName()} writes it and renews it.`,
+    };
+  }
+
+  const named = secret.metadata.annotations?.[CERTIFICATE_NAME];
+  const why = named
+    ? `cert-manager wrote it for Certificate ${named}, which no longer exists in ${secret.getNs()}.`
+    : "No Certificate writes it, and no cert-manager annotation names one.";
+  const servedBy = ingressesServing(secret, ingresses);
+
+  if (servedBy.length > 0) {
+    return {
+      tone: "critical",
+      label: "Served, not renewed",
+      reason: `${why} ${servedBy.length === 1 ? "Ingress" : "Ingresses"} ${servedBy.join(", ")} ${servedBy.length === 1 ? "serves" : "serve"} it, and nothing renews it.`,
+    };
+  }
+
+  return {
+    tone: "info",
+    label: "Not served",
+    reason: `${why} No Ingress here serves it; another controller, such as the API server or a webhook, may keep it.`,
+  };
+}

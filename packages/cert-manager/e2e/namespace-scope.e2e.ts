@@ -124,67 +124,61 @@ describe("the namespace selector on the cert-manager pages", () => {
     expect(await textMatching(".CertManager-page__headline", COUNTED)).toMatch(COUNTED);
   }, 120_000);
 
-  it("empties the certificate picker the same way, and fills it again", async () => {
+  it("empties the certificates list the same way, and fills it again", async () => {
+    const rows = () =>
+      session.evaluate<number>(
+        `document.querySelectorAll('[data-section="cert-manager-certificates"] tbody tr').length`,
+        frame,
+      );
+
     await clickSidebar(session, frame, "cert-manager-certificates", "cert-manager");
-    await waitFor(
-      "the picker",
-      async () =>
-        (await session.evaluate<number>(
-          "document.querySelectorAll('.CertManager-picker__item').length",
-          frame,
-        )) || undefined,
-    );
+    await waitFor("the certificates", async () => (await rows()) || undefined);
 
     await selectNamespace(session, frame, EMPTY_NAMESPACE);
     expect(
-      await textMatching(".CertManager-picker__empty", /no Certificate in the namespaces/),
+      await textMatching(
+        '[data-section="cert-manager-certificates"] .CertManager-section__note',
+        /no Certificate in the namespaces/,
+      ),
     ).toBeTruthy();
 
     await selectAllNamespaces(session, frame);
     expect(
-      await waitFor(
-        "the picker to fill again",
-        async () =>
-          (await session.evaluate<number>(
-            "document.querySelectorAll('.CertManager-picker__item').length",
-            frame,
-          )) || undefined,
-      ),
+      await waitFor("the list to fill again", async () => (await rows()) || undefined),
     ).toBeGreaterThan(0);
   }, 120_000);
 
   it("keeps ClusterIssuers on the issuers page while narrowed, without their certificates", async () => {
+    const ISSUER_ROWS = '[data-section="cert-manager-issuers"] tbody tr';
+    const state = () =>
+      session.evaluate<{ rows: number; dependents: number; namespaced: number }>(
+        `(() => {
+          const rows = [...document.querySelectorAll(${JSON.stringify(ISSUER_ROWS)})];
+          return {
+            rows: rows.length,
+            dependents: rows.reduce((sum, row) => sum + Number(row.querySelector('.CertManager-table__number')?.textContent ?? 0), 0),
+            namespaced: rows.filter((row) => row.children[1]?.textContent.trim() === "Issuer").length,
+          };
+        })()`,
+        frame,
+      );
+
     await clickSidebar(session, frame, "cert-manager-issuers", "cert-manager");
-    await textMatching(".CertManager-page__headline", /issuers? (is|are)/);
+    await textMatching(".CertManager-page__subline", /issuers? (is|are)/);
 
     await selectNamespace(session, frame, EMPTY_NAMESPACE);
 
     const narrowed = await waitFor("the issuers page to narrow", async () => {
-      const state = await session.evaluate<{ boxes: number; chips: number; namespaced: number }>(
-        `({
-          boxes: document.querySelectorAll('.CertManager-box').length,
-          chips: document.querySelectorAll('.CertManager-box .CertManager-chip').length,
-          namespaced: [...document.querySelectorAll('.CertManager-box__meta')]
-            .filter((each) => each.textContent.startsWith("Issuer in")).length,
-        })`,
-        frame,
-      );
+      const now = await state();
 
-      return state.chips === 0 && state.namespaced === 0 ? state : undefined;
+      return now.dependents === 0 && now.namespaced === 0 ? now : undefined;
     });
 
-    expect(narrowed.boxes, "the ClusterIssuers went with the scope").toBeGreaterThan(0);
+    expect(narrowed.rows, "the ClusterIssuers went with the scope").toBeGreaterThan(0);
 
     await selectAllNamespaces(session, frame);
     expect(
-      await waitFor(
-        "the dependents back",
-        async () =>
-          (await session.evaluate<number>(
-            "document.querySelectorAll('.CertManager-box .CertManager-chip').length",
-            frame,
-          )) || undefined,
-      ),
+      await waitFor("the dependents back", async () => (await state()).dependents || undefined),
     ).toBeGreaterThan(0);
   }, 120_000);
 

@@ -15,6 +15,8 @@ interface CertificateStatus {
 }
 
 const SERVED_ROWS = '[data-section="served"] tbody tr';
+const CERTIFICATE_ROWS = '[data-section="cert-manager-certificates"] tbody tr';
+const ISSUER_ROWS = '[data-section="cert-manager-issuers"] tbody tr';
 
 interface IngressTls {
   spec?: { tls?: { secretName?: string }[] };
@@ -61,14 +63,14 @@ describe("the numbers the cert-manager pages show", () => {
     await openOverview();
     await clickByText(session, frame, "button.CertManager-card", label);
     await waitFor(
-      "the picker",
+      "the certificates list",
       async () =>
         (await session.evaluate<boolean>("location.pathname.endsWith('/certificates')", frame)) ||
         undefined,
     );
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    return countOf(".CertManager-picker__item");
+    return countOf(CERTIFICATE_ROWS);
   };
 
   it("counts the Certificates the cluster has", async () => {
@@ -140,11 +142,11 @@ describe("the numbers the cert-manager pages show", () => {
     const counted = await cardValue("Issuers not ready or missing");
 
     await clickSidebar(session, frame, "cert-manager-issuers", "cert-manager");
-    await waitFor("the issuers", async () => (await countOf(".CertManager-box")) > 0 || undefined);
+    await waitFor("the issuers", async () => (await countOf(ISSUER_ROWS)) > 0 || undefined);
 
     const listed =
-      (await countOf('.CertManager-box[data-state="failed"]')) +
-      (await countOf('.CertManager-box[data-state="missing"]'));
+      (await countOf(`${ISSUER_ROWS}[data-state="failed"]`)) +
+      (await countOf(`${ISSUER_ROWS}[data-state="missing"]`));
 
     expect(listed).toBe(counted);
   }, 120_000);

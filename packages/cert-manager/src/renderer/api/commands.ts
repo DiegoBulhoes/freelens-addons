@@ -47,3 +47,16 @@ export function commandsFor(
 
   return commands;
 }
+
+export function issuerCommands(
+  kind: "Issuer" | "ClusterIssuer",
+  name: string,
+  namespace?: string,
+): Command[] {
+  return [
+    {
+      label: `Its full status and events`,
+      command: `kubectl describe ${kind.toLowerCase()} ${name}${namespaceFlag(namespace)}`,
+    },
+  ];
+}

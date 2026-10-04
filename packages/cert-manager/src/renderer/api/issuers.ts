@@ -144,3 +144,97 @@ export function issuersHeadline(rows: IssuerRow[], missing: MissingIssuer[]): st
 
   return `${failing} of ${total} ${total === 1 ? "issuer" : "issuers"} ${failing === 1 ? "is" : "are"} not ready or missing`;
 }
+
+export function issuerKey(kind: string, namespace: string | undefined, name: string): string {
+  return `${kind}/${namespace ?? ""}/${name}`;
+}
+
+export interface IssuerEntry {
+  key: string;
+  kind: "Issuer" | "ClusterIssuer";
+  name: string;
+  namespace?: string;
+  /** Absent for one that certificates name and that does not exist. */
+  issuer?: IssuerLike;
+  type?: IssuerType;
+  state: { tone: "critical" | "ok"; label: string; reason: string };
+  dependents: CertificateLike[];
+}
+
+function certificatesCount(count: number): string {
+  return `${count} ${count === 1 ? "certificate" : "certificates"}`;
+}
+
+// Broken first, then named and missing, then ready: the order the page always had.
+export function getIssuerEntries(
+  index: IssuerIndex,
+  certificates: CertificateLike[],
+): IssuerEntry[] {
+  const rows = getIssuerRows(index, certificates);
+  const fromRow = (row: IssuerRow): IssuerEntry => {
+    const namespace = row.kind === "Issuer" ? row.issuer.getNs() : undefined;
+
+    return {
+      key: issuerKey(row.kind, namespace, row.issuer.getName()),
+      kind: row.kind,
+      name: row.issuer.getName(),
+      namespace,
+      issuer: row.issuer,
+      type: row.type,
+      state: {
+        ...issuerStatusOf(row),
+        reason:
+          row.message ??
+          (row.ready ? "Ready to sign." : "cert-manager reports it not ready, without a message."),
+      },
+      dependents: row.dependents,
+    };
+  };
+  const missing = getMissingIssuers(index, certificates).map(
+    (entry): IssuerEntry => ({
+      key: issuerKey(entry.kind, entry.namespace, entry.name),
+      kind: entry.kind,
+      name: entry.name,
+      namespace: entry.namespace,
+      state: {
+        tone: "critical",
+        label: "Missing",
+        reason: `Named by ${certificatesCount(entry.dependents.length)} and not found. Create it, or correct the name in the certificates that use it.`,
+      },
+      dependents: entry.dependents,
+    }),
+  );
+
+  return [
+    ...rows.filter((row) => !row.ready).map(fromRow),
+    ...missing,
+    ...rows.filter((row) => row.ready).map(fromRow),
+  ];
+}
+
+/** What the issuer is configured with, as name/value pairs; never a Secret's contents. */
+export function issuerSettings(issuer: IssuerLike): { term: string; value: string }[] {
+  const acme = issuer.spec.acme;
+  const settings: [string, string | undefined][] = acme
+    ? [
+        ["ACME server", acme.server],
+        ["Email", acme.email],
+        ["Account key Secret", acme.privateKeySecretRef?.name],
+        ["Account", issuer.status?.acme?.uri],
+      ]
+    : [["CA Secret", issuer.spec.ca?.secretName]];
+
+  return settings.flatMap(([term, value]) => (value ? [{ term, value }] : []));
+}
+
+/** The issuers page's route params for the issuer a certificate names; none for an external one. */
+export function issuerRouteOf(
+  certificate: CertificateLike,
+): { kind: string; namespace: string; name: string } | undefined {
+  const ref = certificate.spec.issuerRef;
+  const kind = issuerKindOf(ref);
+
+  if (kind === "External") return undefined;
+
+  return { kind, namespace: kind === "Issuer" ? (certificate.getNs() ?? "") : "", name: ref.name };
+}

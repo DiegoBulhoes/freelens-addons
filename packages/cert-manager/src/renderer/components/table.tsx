@@ -1,12 +1,22 @@
+import { Renderer } from "@freelensapp/extensions";
 import { type ReactNode, useState } from "react";
 
 import { nextSort, type Sort, sortRows } from "../api/table";
+
+const {
+  Component: { Checkbox },
+} = Renderer;
 
 export interface Column<Row> {
   title: string;
   className?: "CertManager-table__shrink" | "CertManager-table__fill" | "CertManager-table__number";
   cell: (row: Row) => ReactNode;
   sortValue?: (row: Row) => string | number | undefined;
+}
+
+export interface TableSelection {
+  ticked: ReadonlySet<string>;
+  toggle: (keys: string[], on: boolean) => void;
 }
 
 export interface TableProps<Row> {
@@ -16,19 +26,38 @@ export interface TableProps<Row> {
   onOpen?: (row: Row) => void;
   openTitle?: (row: Row) => string;
   stateOf?: (row: Row) => string;
+  selection?: TableSelection;
 }
 
-export function Table<Row>({ rows, columns, keyOf, onOpen, openTitle, stateOf }: TableProps<Row>) {
+export function Table<Row>({
+  rows,
+  columns,
+  keyOf,
+  onOpen,
+  openTitle,
+  stateOf,
+  selection,
+}: TableProps<Row>) {
   const [sort, setSort] = useState<Sort>();
 
   const shown = sortRows(rows, sort, (row, column) =>
     columns.find((each) => each.title === column)?.sortValue?.(row),
   );
+  const tickedShown = selection ? shown.filter((row) => selection.ticked.has(keyOf(row))) : [];
 
   return (
     <table className="CertManager-table">
       <thead>
         <tr>
+          {selection && (
+            <th className="CertManager-table__check">
+              <Checkbox
+                aria-label="Select every row shown"
+                value={tickedShown.length > 0 && tickedShown.length === shown.length}
+                onChange={(on: boolean) => selection.toggle(shown.map(keyOf), on)}
+              />
+            </th>
+          )}
           {columns.map((column) => (
             <th
               key={column.title}
@@ -57,28 +86,53 @@ export function Table<Row>({ rows, columns, keyOf, onOpen, openTitle, stateOf }:
         </tr>
       </thead>
       <tbody>
-        {shown.map((row) => (
-          <tr
-            key={keyOf(row)}
-            className={onOpen ? "CertManager-table__row--clickable" : undefined}
-            title={openTitle?.(row)}
-            data-state={stateOf?.(row)}
-            onClick={
-              onOpen
-                ? (event) => {
-                    event.preventDefault();
-                    onOpen(row);
-                  }
-                : undefined
-            }
-          >
-            {columns.map((column) => (
-              <td key={column.title} className={column.className}>
-                {column.cell(row)}
-              </td>
-            ))}
-          </tr>
-        ))}
+        {shown.map((row) => {
+          const key = keyOf(row);
+
+          return (
+            <tr
+              key={key}
+              className={
+                [
+                  onOpen ? "CertManager-table__row--clickable" : "",
+                  selection?.ticked.has(key) ? "CertManager-table__row--selected" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ") || undefined
+              }
+              title={openTitle?.(row)}
+              data-state={stateOf?.(row)}
+              // Unprevented, this click reaches the drawer's outside-click listener and closes it.
+              onClick={
+                onOpen
+                  ? (event) => {
+                      event.preventDefault();
+                      onOpen(row);
+                    }
+                  : undefined
+              }
+            >
+              {selection && (
+                <td
+                  className="CertManager-table__check"
+                  onClick={(event) => event.stopPropagation()}
+                  onKeyDown={(event) => event.stopPropagation()}
+                >
+                  <Checkbox
+                    aria-label={`Select ${key}`}
+                    value={selection.ticked.has(key)}
+                    onChange={(on: boolean) => selection.toggle([key], on)}
+                  />
+                </td>
+              )}
+              {columns.map((column) => (
+                <td key={column.title} className={column.className}>
+                  {column.cell(row)}
+                </td>
+              ))}
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
@@ -99,6 +153,7 @@ export function CellLink({
       className="CertManager-link"
       title={title}
       onClick={(event) => {
+        event.preventDefault();
         event.stopPropagation();
         onClick();
       }}

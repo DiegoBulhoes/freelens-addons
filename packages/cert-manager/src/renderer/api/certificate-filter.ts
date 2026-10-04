@@ -43,12 +43,8 @@ export function matchesFilter(
   }
 }
 
-export function matchesSearch(certificate: CertificateLike, text: string): boolean {
-  const needle = text.trim().toLowerCase();
-
-  if (!needle) return true;
-
-  const haystack = [
+export function certificateSearchTexts(certificate: CertificateLike): string[] {
+  return [
     certificate.getName(),
     certificate.getNs() ?? "",
     certificate.spec.secretName,
@@ -56,8 +52,14 @@ export function matchesSearch(certificate: CertificateLike, text: string): boole
     certificate.spec.issuerRef.name,
     ...(certificate.spec.dnsNames ?? []),
   ];
+}
 
-  return haystack.some((value) => value.toLowerCase().includes(needle));
+export function matchesSearch(certificate: CertificateLike, text: string): boolean {
+  const needle = text.trim().toLowerCase();
+
+  if (!needle) return true;
+
+  return certificateSearchTexts(certificate).some((value) => value.toLowerCase().includes(needle));
 }
 
 export function selectCertificates(

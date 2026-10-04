@@ -57,7 +57,7 @@ export interface CertificateRequestStatus {
 }
 
 export interface IssuerSpec {
-  acme?: { server?: string };
+  acme?: { server?: string; email?: string; privateKeySecretRef?: { name?: string } };
   ca?: { secretName?: string };
   selfSigned?: Record<string, unknown>;
   vault?: Record<string, unknown>;

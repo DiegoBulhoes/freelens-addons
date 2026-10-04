@@ -2,10 +2,14 @@ import { describe, expect, it } from "vitest";
 
 import {
   dependsOnBrokenIssuer,
+  getIssuerEntries,
   getIssuerRows,
   getMissingIssuers,
   isIssuerReady,
+  issuerKey,
   issuerKindOf,
+  issuerRouteOf,
+  issuerSettings,
   issuerStatusOf,
   issuersHeadline,
   issuerTypeOf,
@@ -248,5 +252,158 @@ describe("what the issuers page says", () => {
 
   it("reads one missing issuer out of one in the singular", () => {
     expect(issuersHeadline([], missing.slice(0, 1))).toBe("1 of 1 issuer is not ready or missing");
+  });
+});
+
+describe("the issuers list", () => {
+  const entries = getIssuerEntries(index, certificates());
+  const entryOf = (name: string) => {
+    const found = entries.find((each) => each.name === name);
+
+    if (!found) throw new Error(`no issuer entry named ${name}`);
+
+    return found;
+  };
+
+  it("lists the broken first, then the missing, then the ready", () => {
+    const order = entries.map((each) =>
+      each.issuer ? (each.state.tone === "ok" ? "ready" : "broken") : "missing",
+    );
+    const firstMissing = order.indexOf("missing");
+    const firstReady = order.indexOf("ready");
+
+    expect(order.slice(0, firstMissing).every((each) => each === "broken")).toBe(true);
+    expect(order.slice(firstMissing, firstReady).every((each) => each === "missing")).toBe(true);
+    expect(order.slice(firstReady).every((each) => each === "ready")).toBe(true);
+    expect(firstMissing).toBeGreaterThan(0);
+  });
+
+  it("keys a namespaced Issuer by its namespace, a ClusterIssuer without one", () => {
+    expect(entryOf("broken-ca")).toMatchObject({
+      key: "Issuer/demo/broken-ca",
+      kind: "Issuer",
+      namespace: "demo",
+      type: "CA",
+    });
+    expect(entryOf("demo-ca")).toMatchObject({
+      key: "ClusterIssuer//demo-ca",
+      namespace: undefined,
+    });
+    expect(issuerKey("ClusterIssuer", "", "demo-ca")).toBe(entryOf("demo-ca").key);
+  });
+
+  it("carries cert-manager's own message as the reason", () => {
+    expect(entryOf("broken-ca").state).toMatchObject({ tone: "critical", label: "ErrGetKeyPair" });
+    expect(entryOf("broken-ca").state.reason).toMatch(/no-such-secret/);
+    expect(entryOf("demo-ca").state).toEqual({
+      tone: "ok",
+      label: "Ready",
+      reason: "Signing CA verified",
+    });
+  });
+
+  it("says a ready issuer without a message is ready to sign", () => {
+    expect(entryOf("selfsigned").state.reason).toBe("Ready to sign.");
+  });
+
+  it("says a broken issuer without a message is reported not ready", () => {
+    const silent = variantOf(
+      index.issuers.find((each) => each.getName() === "broken-ca") as (typeof index.issuers)[0],
+      (raw) => {
+        delete raw.status.conditions[0].message;
+      },
+    );
+    const [entry] = getIssuerEntries({ issuers: [silent], clusterIssuers: [] }, []);
+
+    expect(entry?.state.reason).toMatch(/not ready, without a message/);
+  });
+
+  it("lists a named and missing issuer with the certificates that name it", () => {
+    const missing = entryOf("does-not-exist");
+
+    expect(missing.issuer).toBeUndefined();
+    expect(missing.type).toBeUndefined();
+    expect(missing.state).toMatchObject({ tone: "critical", label: "Missing" });
+    expect(missing.state.reason).toMatch(/^Named by 1 certificate and not found\./);
+    expect(missing.dependents.map((each) => each.getName())).toEqual(["orphan"]);
+  });
+
+  it("counts several certificates naming a missing issuer in the plural", () => {
+    const twice = [
+      ...certificates(),
+      variantOf(certificateNamed("web-tls"), (raw) => {
+        raw.spec.issuerRef = { kind: "ClusterIssuer", name: "does-not-exist" };
+      }),
+    ];
+    const missing = getIssuerEntries(index, twice).find((each) => each.name === "does-not-exist");
+
+    expect(missing?.state.reason).toMatch(/^Named by 2 certificates/);
+  });
+
+  it("puts each certificate under the issuer it names", () => {
+    expect(entryOf("demo-ca").dependents.map((each) => each.getName())).toContain("web-tls");
+  });
+});
+
+describe("what an issuer is configured with", () => {
+  const named = (name: string) => {
+    const found = [...index.issuers, ...index.clusterIssuers].find(
+      (each) => each.getName() === name,
+    );
+
+    if (!found) throw new Error(`no issuer named ${name}`);
+
+    return found;
+  };
+
+  it("shows an ACME issuer's server, account key Secret and registered account", () => {
+    const terms = issuerSettings(named("pebble")).map((each) => each.term);
+
+    expect(terms).toEqual(["ACME server", "Account key Secret", "Account"]);
+    expect(issuerSettings(named("pebble"))[0]?.value).toMatch(/^https:\/\/pebble/);
+  });
+
+  it("shows the email when one is set", () => {
+    const withEmail = variantOf(named("pebble"), (raw) => {
+      raw.spec.acme.email = "ops@example.com";
+    });
+
+    expect(issuerSettings(withEmail)).toContainEqual({ term: "Email", value: "ops@example.com" });
+  });
+
+  it("shows a CA issuer's Secret by name", () => {
+    expect(issuerSettings(named("demo-ca"))).toEqual([
+      { term: "CA Secret", value: "demo-ca-root" },
+    ]);
+  });
+
+  it("shows nothing for a self-signed issuer", () => {
+    expect(issuerSettings(named("selfsigned"))).toEqual([]);
+  });
+});
+
+describe("the issuer a certificate links to", () => {
+  it("is a ClusterIssuer by name alone", () => {
+    expect(issuerRouteOf(certificateNamed("web-tls"))).toEqual({
+      kind: "ClusterIssuer",
+      namespace: "",
+      name: "demo-ca",
+    });
+  });
+
+  it("is an Issuer in the certificate's namespace", () => {
+    expect(issuerRouteOf(certificateNamed("never-issued"))).toEqual({
+      kind: "Issuer",
+      namespace: "demo",
+      name: "broken-ca",
+    });
+  });
+
+  it("is none for an external issuer, which the issuers page does not list", () => {
+    const external = variantOf(certificateNamed("web-tls"), (raw) => {
+      raw.spec.issuerRef = { name: "pca", kind: "AWSPCAClusterIssuer", group: "awspca.example" };
+    });
+
+    expect(issuerRouteOf(external)).toBeUndefined();
   });
 });

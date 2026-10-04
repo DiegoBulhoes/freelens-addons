@@ -1,13 +1,17 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  annotationsOfInterest,
   getServedTls,
   getUnmanagedSecrets,
+  ingressesServing,
   isGap,
   managingCertificateOf,
   SERVED_STATES,
   secretSearchTexts,
+  secretVerdict,
   servedSearchTexts,
+  servedVerdict,
 } from "../src/renderer/api/unmanaged";
 import { certificateNamed, certificates, ingresses, tlsSecrets, variantOf } from "./fixtures";
 
@@ -182,5 +186,131 @@ describe("how the served list reads", () => {
     const [first] = getUnmanagedSecrets(tlsSecrets(), certificates());
 
     expect(first && secretSearchTexts(first)).toEqual([first?.getName(), first?.getNs()]);
+  });
+});
+
+describe("why a served entry is in its state", () => {
+  const served = getServedTls(ingresses(), tlsSecrets(), certificates());
+  const entryOf = (ingress: string) => {
+    const found = served.find((each) => each.ingress === ingress);
+
+    if (!found) throw new Error(`no served entry for ${ingress}`);
+
+    return found;
+  };
+
+  it("says nothing renews a Secret no Certificate writes", () => {
+    expect(servedVerdict(entryOf("unmanaged"))).toEqual({
+      tone: "critical",
+      label: "No Certificate",
+      reason:
+        "No Certificate writes Secret hand-made-tls. Nothing renews it: it is served until it expires.",
+    });
+  });
+
+  it("says a missing Secret leaves the controller's default certificate", () => {
+    const verdict = servedVerdict(entryOf("missing-secret"));
+
+    expect(verdict.tone).toBe("critical");
+    expect(verdict.reason).toMatch(/nowhere-tls does not exist.*default certificate/);
+  });
+
+  it("names the Certificate that renews a managed one", () => {
+    expect(servedVerdict(entryOf("managed"))).toMatchObject({
+      tone: "ok",
+      reason: "Certificate managed-tls writes Secret managed-tls and renews it.",
+    });
+  });
+
+  it("names the Certificate still issuing one that is pending", () => {
+    const writer = variantOf(certificateNamed("never-issued"), (raw) => {
+      raw.spec.secretName = "nowhere-tls";
+    });
+    const pending = getServedTls(ingresses(), tlsSecrets(), [...certificates(), writer]).find(
+      (each) => each.ingress === "missing-secret",
+    );
+
+    expect(pending && servedVerdict(pending)).toMatchObject({
+      tone: "warning",
+      reason: "Certificate never-issued will write Secret nowhere-tls; it is still being issued.",
+    });
+  });
+});
+
+describe("a TLS Secret's drawer", () => {
+  it("lists the Ingresses in its namespace that serve it", () => {
+    expect(ingressesServing(secretNamed("hand-made-tls"), ingresses())).toEqual(["unmanaged"]);
+    expect(ingressesServing(secretNamed("leftover-tls"), ingresses())).toEqual([]);
+  });
+
+  it("does not count an Ingress in another namespace serving a Secret of the same name", () => {
+    const elsewhere = variantOf(secretNamed("hand-made-tls"), (raw) => {
+      raw.metadata.namespace = "kube-system";
+    });
+
+    expect(ingressesServing(elsewhere, ingresses())).toEqual([]);
+  });
+
+  it("shows cert-manager's annotations only, sorted, the empty ones left out", () => {
+    const shown = annotationsOfInterest(secretNamed("managed-tls"));
+
+    expect(shown.length).toBeGreaterThan(0);
+    expect(shown.every(([key, value]) => key.startsWith("cert-manager.io/") && value !== "")).toBe(
+      true,
+    );
+    expect(shown.map(([key]) => key)).toEqual([...shown.map(([key]) => key)].sort());
+    expect(annotationsOfInterest(secretNamed("hand-made-tls"))).toEqual([]);
+  });
+
+  it("calls a served Secret no Certificate writes critical, naming who serves it", () => {
+    const verdict = secretVerdict(secretNamed("hand-made-tls"), certificates(), ingresses());
+
+    expect(verdict).toMatchObject({ tone: "critical", label: "Served, not renewed" });
+    expect(verdict.reason).toBe(
+      "No Certificate writes it, and no cert-manager annotation names one. Ingress unmanaged serves it, and nothing renews it.",
+    );
+  });
+
+  it("names every Ingress serving it, in the plural", () => {
+    const twice = [
+      ...ingresses(),
+      variantOf(
+        ingresses().find((each) => each.getName() === "unmanaged") as ReturnType<
+          typeof ingresses
+        >[0],
+        (raw) => {
+          raw.metadata.name = "unmanaged-too";
+        },
+      ),
+    ];
+
+    expect(secretVerdict(secretNamed("hand-made-tls"), certificates(), twice).reason).toMatch(
+      /Ingresses unmanaged, unmanaged-too serve it/,
+    );
+  });
+
+  it("calls an unserved one informational, since another controller may keep it", () => {
+    const verdict = secretVerdict(secretNamed("k3s-serving"), certificates(), ingresses());
+
+    expect(verdict).toMatchObject({ tone: "info", label: "Not served" });
+    expect(verdict.reason).toMatch(/another controller/);
+  });
+
+  it("names the deleted Certificate a leftover Secret was written for", () => {
+    const others = certificates().filter((each) => each.getName() !== "managed-tls");
+    const verdict = secretVerdict(secretNamed("managed-tls"), others, ingresses());
+
+    expect(verdict.reason).toMatch(
+      /^cert-manager wrote it for Certificate managed-tls, which no longer exists in demo\./,
+    );
+    expect(verdict.tone).toBe("critical");
+  });
+
+  it("says a managed one is renewed by its Certificate", () => {
+    expect(secretVerdict(secretNamed("web-tls"), certificates(), ingresses())).toEqual({
+      tone: "ok",
+      label: "Managed",
+      reason: "Certificate web-tls writes it and renews it.",
+    });
   });
 });

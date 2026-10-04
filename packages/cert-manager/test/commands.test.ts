@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { problemOf } from "../src/renderer/api/attention";
 import { type ChainInputs, chainOf, explanationOf } from "../src/renderer/api/chain";
-import { commandsFor } from "../src/renderer/api/commands";
+import { commandsFor, issuerCommands } from "../src/renderer/api/commands";
 import {
   certificateNamed,
   certificateRequests,
@@ -73,5 +73,19 @@ describe("the commands for a certificate", () => {
     });
 
     expect(commands).toHaveLength(1);
+  });
+});
+
+describe("an issuer's commands", () => {
+  it("describes a namespaced Issuer in its namespace", () => {
+    expect(issuerCommands("Issuer", "broken-ca", "demo").map((each) => each.command)).toEqual([
+      "kubectl describe issuer broken-ca -n demo",
+    ]);
+  });
+
+  it("describes a ClusterIssuer without a namespace", () => {
+    expect(issuerCommands("ClusterIssuer", "demo-ca").map((each) => each.command)).toEqual([
+      "kubectl describe clusterissuer demo-ca",
+    ]);
   });
 });

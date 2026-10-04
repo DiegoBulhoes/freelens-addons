@@ -2,14 +2,25 @@ import { describe, expect, it } from "vitest";
 
 import {
   certificateStatusOf,
+  certificateVerdict,
   compareByUrgency,
   getAttentionItems,
   headlineOf,
   problemOf,
   severityOf,
 } from "../src/renderer/api/attention";
+import { type ChainInputs, chainOf, explanationOf } from "../src/renderer/api/chain";
 import { ALARM_DAYS } from "../src/renderer/api/expiry";
-import { certificateNamed, certificates, fixtureNow } from "./fixtures";
+import {
+  certificateNamed,
+  certificateRequests,
+  certificates,
+  challenges,
+  fixtureNow,
+  issuerIndex,
+  orders,
+  variantOf,
+} from "./fixtures";
 
 const DAY = 24 * 60 * 60 * 1000;
 const now = fixtureNow();
@@ -139,6 +150,77 @@ describe("a certificate's state, as a dot and a word", () => {
     expect(certificateStatusOf(certificateNamed("ends-this-week"), now)).toEqual({
       label: "Ready",
       tone: "ok",
+    });
+  });
+});
+
+describe("the state a certificate's drawer opens with", () => {
+  const inputs: ChainInputs = {
+    index: issuerIndex(),
+    requests: certificateRequests(),
+    orders: orders(),
+    challenges: challenges(),
+  };
+  const verdictOf = (name: string) => {
+    const certificate = certificateNamed(name);
+
+    return certificateVerdict(certificate, explanationOf(chainOf(certificate, inputs)), now);
+  };
+
+  it("says a healthy one is ready, how long it has and when it renews", () => {
+    const verdict = verdictOf("web-tls");
+
+    expect(verdict).toMatchObject({ tone: "ok", label: "Ready" });
+    expect(verdict.reason).toMatch(/^Ready, \d+ \w+ left\. Renewal due in \d+ \w+\.$/);
+  });
+
+  it("leaves the renewal out when cert-manager has not set one", () => {
+    const bare = variantOf(certificateNamed("web-tls"), (raw) => {
+      delete raw.status.renewalTime;
+    });
+
+    expect(certificateVerdict(bare, undefined, now).reason).toMatch(/^Ready, \d+ \w+ left\.$/);
+  });
+
+  it("names a failing renewal, and the link in the chain that explains it", () => {
+    const verdict = verdictOf("renewal-stalls");
+
+    expect(verdict.tone).toBe("warning");
+    expect(verdict.label).toMatch(/renewal is failing/);
+    expect(verdict.reason).toMatch(/^Issuer flaky-ca: /);
+  });
+
+  it("calls one with nothing to serve critical", () => {
+    expect(verdictOf("orphan")).toMatchObject({
+      tone: "critical",
+      label: "Not ready: there is no certificate to serve.",
+    });
+  });
+
+  it("falls back to its Ready condition's message when no link explains it", () => {
+    const orphan = certificateNamed("orphan");
+    const message = orphan.status?.conditions?.find((each) => each.type === "Ready")?.message;
+
+    expect(message).toBeTruthy();
+    expect(certificateVerdict(orphan, undefined, now).reason).toBe(message);
+  });
+
+  it("says nothing explains it when nothing does", () => {
+    const silent = variantOf(certificateNamed("orphan"), (raw) => {
+      raw.status.conditions = [];
+    });
+
+    expect(certificateVerdict(silent, undefined, now).reason).toBe(
+      "Nothing in its chain says why.",
+    );
+  });
+
+  it("calls an expired one expired", () => {
+    const certificate = certificateNamed("ends-this-week");
+
+    expect(certificateVerdict(certificate, undefined, now + ALARM_DAYS * DAY)).toMatchObject({
+      tone: "critical",
+      label: "Expired. Clients reject it.",
     });
   });
 });

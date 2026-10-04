@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Session } from "../../../build/e2e/cdp";
 import {
   clickSidebar,
+  drawerTitle,
   notificationSaying,
   openWorkbench,
   textOf,
@@ -10,6 +11,8 @@ import {
 } from "../../../build/e2e/freelens";
 
 // One `it`: a test per step would let the journey pass halfway.
+
+const DRAWER = ".CertManagerObjectDrawer";
 
 describe("a failing renewal, from the overview to the Secret", () => {
   let session: Session;
@@ -56,23 +59,23 @@ describe("a failing renewal, from the overview to the Secret", () => {
       return true;
     `);
 
-    const landed = await waitFor("the picker on it", async () => {
+    const landed = await waitFor("the certificates list on it", async () => {
       const path = await where();
 
       return path.includes(`name=${name}`) ? path : undefined;
     });
 
     expect(landed).toContain("/certificates");
-    expect(
-      await textOf(session, frame, ".CertManager-picker__detail .CertManager-page__headline"),
-    ).toBe(name);
-    expect(await textOf(session, frame, ".CertManager-banner__title")).toMatch(
+    await waitFor("its drawer", async () =>
+      (await drawerTitle(session, frame, DRAWER)) === `Certificate: ${name}` ? true : undefined,
+    );
+    expect(await textOf(session, frame, `${DRAWER} .CertManager-banner__title`)).toMatch(
       /renewal is failing/i,
     );
 
     const explains = await session.evaluate<{ kind: string; name: string }>(
       `(() => {
-        const link = document.querySelector('.CertManager-row[data-explains]');
+        const link = document.querySelector('${DRAWER} .CertManager-row[data-explains]');
         return {
           kind: link?.querySelector('.CertManager-row__name b')?.textContent.trim() ?? "",
           name: link?.querySelector('.CertManager-row__name code')?.textContent.trim() ?? "",
@@ -87,59 +90,62 @@ describe("a failing renewal, from the overview to the Secret", () => {
     const describe = `kubectl describe ${explains.kind.toLowerCase()} ${explains.name}`;
 
     await click(`
-      const texts = [...document.querySelectorAll('.CertManager-command__text')];
+      const texts = [...document.querySelectorAll('${DRAWER} .CertManager-command__text')];
       const at = texts.findIndex((each) => each.textContent.startsWith(${JSON.stringify(describe)}));
       if (at < 0) return false;
-      document.querySelectorAll('.CertManager-command .CertManager-icon-button')[at].click();
+      document.querySelectorAll('${DRAWER} .CertManager-command .CertManager-icon-button')[at].click();
       return true;
     `);
 
     expect(await notificationSaying(session, frame, describe)).toContain(describe);
 
     await click(`
-      const button = [...document.querySelectorAll('.CertManager-link')]
-        .find((each) => each.textContent.trim() === "All issuers");
-      if (!button) return false;
-      button.click();
+      const terms = [...document.querySelectorAll('${DRAWER} .CertManager-facts dt')];
+      const link = terms.find((each) => each.textContent === "Issuer")?.nextElementSibling?.querySelector('.CertManager-link');
+      if (!link) return false;
+      link.click();
       return true;
     `);
 
-    // By pathname: the picker's query is carried along to a page that ignores it.
+    // By pathname: the route also names the issuer.
     await waitFor(
       "the issuers page",
       async () =>
         (await session.evaluate<boolean>("location.pathname.endsWith('/issuers')", frame)) ||
         undefined,
     );
+    await waitFor(
+      "the issuer's drawer",
+      async () =>
+        (await countOf(`${DRAWER} [data-section="cert-manager-issuer"]`)) > 0 || undefined,
+    );
 
     await click(`
-      const dependent = [...document.querySelectorAll('.CertManager-box .CertManager-chip')]
-        .find((each) => each.firstElementChild?.textContent.trim() === ${JSON.stringify(name)});
+      const dependent = [...document.querySelectorAll('${DRAWER} [data-section="cert-manager-issuer-dependents"] .CertManager-row')]
+        .find((each) => each.querySelector('b')?.textContent.trim() === ${JSON.stringify(name)});
       if (!dependent) return false;
       dependent.click();
       return true;
     `);
 
-    await waitFor("the picker on it again", async () => {
-      const headline = await textOf(
-        session,
-        frame,
-        ".CertManager-picker__detail .CertManager-page__headline",
-      );
-
-      return headline === name ? headline : undefined;
-    });
+    await waitFor("its drawer again", async () =>
+      (await drawerTitle(session, frame, DRAWER)) === `Certificate: ${name}` ? true : undefined,
+    );
 
     // The details drawer cannot open from an extension page, so the list is narrowed to it.
     const secret = await session.evaluate<string>(
-      `[...document.querySelectorAll('.CertManager-facts dd .CertManager-link')][0]?.textContent.trim() ?? ""`,
+      `(() => {
+        const terms = [...document.querySelectorAll('${DRAWER} .CertManager-facts dt')];
+        return terms.find((each) => each.textContent === "Secret")?.nextElementSibling?.querySelector('.CertManager-link')?.textContent.trim() ?? "";
+      })()`,
       frame,
     );
 
     expect(secret, "the certificate's Secret is not a link").not.toBe("");
 
     await click(`
-      const link = document.querySelector('.CertManager-facts dd .CertManager-link');
+      const terms = [...document.querySelectorAll('${DRAWER} .CertManager-facts dt')];
+      const link = terms.find((each) => each.textContent === "Secret")?.nextElementSibling?.querySelector('.CertManager-link');
       if (!link) return false;
       link.click();
       return true;

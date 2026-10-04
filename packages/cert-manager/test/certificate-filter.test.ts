@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  certificateSearchTexts,
   FILTER_LABELS,
   isCertificateFilter,
   matchesFilter,
@@ -72,5 +73,13 @@ describe("what the picker lists", () => {
 
   it("is empty when the search finds nothing under the chip", () => {
     expect(selectCertificates(certificates(), "failing", "acme", now)).toEqual([]);
+  });
+});
+
+describe("what the list's search reads", () => {
+  it("is the name, namespace, Secret, issuer and every DNS name", () => {
+    const texts = certificateSearchTexts(certificateNamed("acme-web"));
+
+    expect(texts).toEqual(expect.arrayContaining(["acme-web", "demo", "pebble", "acme.demo.test"]));
   });
 });

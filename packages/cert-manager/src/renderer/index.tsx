@@ -3,7 +3,7 @@ import { computed } from "mobx";
 import { isInstalled } from "./api/installed";
 import { CertManagerIcon } from "./icons/cert-manager";
 import { CertificatesRoute, type CertificatesRouteParams } from "./pages/certificates-route";
-import { IssuersPage } from "./pages/issuers-page";
+import { IssuersPage, type IssuersPageParams } from "./pages/issuers-page";
 import { OverviewPage } from "./pages/overview-page";
 import { RequestsPage } from "./pages/requests-page";
 import { UnmanagedPage } from "./pages/unmanaged-page";
@@ -23,7 +23,7 @@ const installed = computed(() =>
 );
 
 export default class CertManagerRenderer extends Renderer.LensExtension {
-  override clusterPages = [
+  override clusterPages: Renderer.LensExtension["clusterPages"] = [
     {
       id: PAGES.overview,
       components: {
@@ -31,7 +31,7 @@ export default class CertManagerRenderer extends Renderer.LensExtension {
       },
     },
     {
-      // List and detail share this page, so the item stays lit for either.
+      // Naming a certificate opens its drawer on the list.
       id: PAGES.certificates,
       params: { namespace: "", name: "", filter: "" },
       components: {
@@ -42,8 +42,11 @@ export default class CertManagerRenderer extends Renderer.LensExtension {
     },
     {
       id: PAGES.issuers,
+      params: { kind: "", namespace: "", name: "" },
       components: {
-        Page: () => <IssuersPage extension={this} />,
+        Page: (props: { params?: IssuersPageParams }) => (
+          <IssuersPage params={props.params} extension={this} />
+        ),
       },
     },
     {

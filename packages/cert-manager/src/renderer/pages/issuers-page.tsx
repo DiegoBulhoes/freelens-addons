@@ -1,165 +1,140 @@
 import type { Renderer as RendererTypes } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
+import { useEffect, useState } from "react";
 
 import {
+  getIssuerEntries,
   getIssuerRows,
   getMissingIssuers,
+  type IssuerEntry,
   type IssuerIndex,
-  type IssuerRow,
-  issuerStatusOf,
+  issuerKey,
   issuersHeadline,
 } from "../api/issuers";
-import type { CertificateLike } from "../api/types";
-import { NamespaceFilter } from "../components/namespace-filter";
+import { type Column, ListPage } from "../components/list-page";
 import { Status } from "../components/status";
 import { CertManagerStyles } from "../components/styles";
 import { useCertManagerStores } from "../hooks/use-cert-manager-stores";
+import { IssuerDrawer } from "./drawers";
 
-export const IssuersPage = observer(({ extension }: { extension: RendererTypes.LensExtension }) => {
-  const stores = useCertManagerStores();
-
-  if (!stores.isReady) {
-    return (
-      <div className="CertManager CertManager-page">
-        <CertManagerStyles />
-        <p className="CertManager-section__note">Waiting for cert-manager's CRDs.</p>
-      </div>
-    );
-  }
-
-  const index: IssuerIndex = { issuers: stores.issuers, clusterIssuers: stores.clusterIssuers };
-  const rows = getIssuerRows(index, stores.certificates);
-  const missing = getMissingIssuers(index, stores.certificates);
-  const broken = rows.filter((row) => !row.ready);
-  const ready = rows.filter((row) => row.ready);
-
-  const open = (certificate: CertificateLike) =>
-    void extension.navigate("certificates", {
-      namespace: certificate.getNs() ?? "",
-      name: certificate.getName(),
-    });
-
-  const dependents = (certificates: CertificateLike[]) =>
-    certificates.length === 0 ? (
-      <span className="CertManager-muted">No certificate uses it.</span>
-    ) : (
-      <div className="CertManager-chips">
-        {certificates.map((certificate) => (
-          <button
-            type="button"
-            key={`${certificate.getNs()}/${certificate.getName()}`}
-            className="CertManager-chip"
-            title={`Opens ${certificate.getName()} in the certificates page`}
-            onClick={() => open(certificate)}
-          >
-            <span>{certificate.getName()}</span>
-            <span className="CertManager-chip__meta">{certificate.getNs()}</span>
-          </button>
-        ))}
-      </div>
-    );
-
-  const scope = (row: { kind: string; issuer: { getNs(): string | undefined } }) =>
-    row.kind === "ClusterIssuer" ? "ClusterIssuer" : `Issuer in ${row.issuer.getNs()}`;
-
-  const count = (certificates: CertificateLike[]) =>
-    `${certificates.length} ${certificates.length === 1 ? "certificate" : "certificates"}`;
-
-  return (
-    <div className="CertManager CertManager-page">
-      <CertManagerStyles />
-      <div className="CertManager-page__head">
-        <div>
-          <h1 className="CertManager-page__headline">{issuersHeadline(rows, missing)}</h1>
-          <p className="CertManager-page__subline">
-            Each issuer lists the certificates that stop renewing if it breaks. ClusterIssuers are
-            listed whatever namespaces are chosen; their certificates, only in those.
-          </p>
-        </div>
-        <div className="CertManager-page__actions">
-          <NamespaceFilter />
-        </div>
-      </div>
-
-      {rows.length + missing.length === 0 && (
-        <p className="CertManager-section__note">
-          No Issuer in the namespaces chosen and no ClusterIssuer, and no certificate there names
-          one.
-        </p>
-      )}
-
-      <div className="CertManager-list">
-        {broken.map((row) => (
-          <section
-            key={`${row.kind}/${row.issuer.getNs() ?? ""}/${row.issuer.getName()}`}
-            className="CertManager-box CertManager-box--critical"
-            data-state="failed"
-          >
-            <div className="CertManager-box__head">
-              <IssuerStatus row={row} />
-              <span className="CertManager-box__title">
-                <code>{row.issuer.getName()}</code>
-                <span className="CertManager-box__meta">
-                  {scope(row)} · {row.type}
-                </span>
-              </span>
-              <span className="CertManager-box__count">{count(row.dependents)}</span>
-            </div>
-            {row.message && <p className="CertManager-box__reason">{row.message}</p>}
-            {dependents(row.dependents)}
-          </section>
-        ))}
-
-        {missing.map((entry) => (
-          <section
-            key={`${entry.kind}/${entry.namespace ?? ""}/${entry.name}`}
-            className="CertManager-box CertManager-box--critical"
-            data-state="missing"
-          >
-            <div className="CertManager-box__head">
-              <Status tone="critical" label="Missing" />
-              <span className="CertManager-box__title">
-                <code>{entry.name}</code>
-                <span className="CertManager-box__meta">
-                  {entry.kind}
-                  {entry.namespace ? ` in ${entry.namespace}` : ""} · named and not found
-                </span>
-              </span>
-              <span className="CertManager-box__count">{count(entry.dependents)}</span>
-            </div>
-            <p className="CertManager-box__reason">
-              Create it, or correct the name in the certificates that use it.
-            </p>
-            {dependents(entry.dependents)}
-          </section>
-        ))}
-
-        {ready.map((row) => (
-          <section
-            key={`${row.kind}/${row.issuer.getNs() ?? ""}/${row.issuer.getName()}`}
-            className="CertManager-box CertManager-box--ok"
-            data-state="ready"
-          >
-            <div className="CertManager-box__head">
-              <IssuerStatus row={row} />
-              <span className="CertManager-box__title">
-                <code>{row.issuer.getName()}</code>
-                <span className="CertManager-box__meta">
-                  {scope(row)} · {row.type}
-                </span>
-              </span>
-              <span className="CertManager-box__count">{count(row.dependents)}</span>
-            </div>
-            {dependents(row.dependents)}
-          </section>
-        ))}
-      </div>
-    </div>
-  );
-});
-
-function IssuerStatus({ row }: { row: IssuerRow }) {
-  const status = issuerStatusOf(row);
-
-  return <Status tone={status.tone} label={status.label} />;
+export interface IssuersPageParams {
+  kind: { get(): string };
+  namespace: { get(): string };
+  name: { get(): string };
 }
+
+const STATE_OF = { critical: "failed", ok: "ready" } as const;
+
+export const IssuersPage = observer(
+  ({
+    params,
+    extension,
+  }: {
+    params?: IssuersPageParams;
+    extension: RendererTypes.LensExtension;
+  }) => {
+    const stores = useCertManagerStores();
+    const named = params?.name.get()
+      ? issuerKey(params.kind.get(), params.namespace.get(), params.name.get())
+      : "";
+    const [openKey, setOpenKey] = useState<string | undefined>(named || undefined);
+
+    // A certificate's issuer link names one: its drawer opens.
+    useEffect(() => {
+      if (named) setOpenKey(named);
+    }, [named]);
+
+    if (!stores.isReady) {
+      return (
+        <div className="CertManager CertManager-page">
+          <CertManagerStyles />
+          <p className="CertManager-section__note">Waiting for cert-manager's CRDs.</p>
+        </div>
+      );
+    }
+
+    const index: IssuerIndex = { issuers: stores.issuers, clusterIssuers: stores.clusterIssuers };
+    const rows = getIssuerRows(index, stores.certificates);
+    const missing = getMissingIssuers(index, stores.certificates);
+    const entries = getIssuerEntries(index, stores.certificates);
+    const failing = entries.some((entry) => entry.state.tone === "critical");
+
+    const columns: Column<IssuerEntry>[] = [
+      {
+        title: "Issuer",
+        className: "CertManager-table__shrink",
+        cell: (entry) => entry.name,
+        sortValue: (entry) => entry.name,
+      },
+      {
+        title: "Kind",
+        className: "CertManager-table__shrink",
+        cell: (entry) => entry.kind,
+        sortValue: (entry) => entry.kind,
+      },
+      {
+        title: "Namespace",
+        className: "CertManager-table__shrink",
+        cell: (entry) => entry.namespace ?? "—",
+        sortValue: (entry) => entry.namespace,
+      },
+      {
+        title: "Type",
+        className: "CertManager-table__shrink",
+        cell: (entry) => entry.type ?? "—",
+        sortValue: (entry) => entry.type,
+      },
+      {
+        title: "State",
+        className: "CertManager-table__shrink",
+        cell: (entry) => <Status tone={entry.state.tone} label={entry.state.label} />,
+        sortValue: (entry) => entry.state.label,
+      },
+      {
+        title: "Certificates",
+        className: "CertManager-table__number",
+        cell: (entry) => entry.dependents.length,
+        sortValue: (entry) => entry.dependents.length,
+      },
+      {
+        title: "Message",
+        className: "CertManager-table__fill",
+        cell: (entry) => <span className="CertManager-muted">{entry.state.reason}</span>,
+      },
+    ];
+
+    return (
+      <ListPage
+        title="Issuers"
+        subline={`${issuersHeadline(rows, missing)}. ClusterIssuers are listed whatever namespaces are chosen; their certificates, only in those.`}
+        alarm={failing}
+        section="cert-manager-issuers"
+        rows={entries}
+        columns={columns}
+        keyOf={(entry) => entry.key}
+        searchTexts={(entry) => [
+          entry.name,
+          entry.kind,
+          entry.namespace ?? "",
+          entry.type ?? "",
+          entry.state.label,
+          ...entry.dependents.map((certificate) => certificate.getName()),
+        ]}
+        stateOf={(entry) => (entry.issuer ? STATE_OF[entry.state.tone] : "missing")}
+        onOpen={(entry) => setOpenKey(entry.key)}
+        empty="No Issuer in the namespaces chosen and no ClusterIssuer, and no certificate there names one."
+      >
+        <IssuerDrawer
+          entry={entries.find((entry) => entry.key === openKey)}
+          onClose={() => setOpenKey(undefined)}
+          onOpenCertificate={(certificate) =>
+            void extension.navigate("certificates", {
+              namespace: certificate.getNs() ?? "",
+              name: certificate.getName(),
+            })
+          }
+        />
+      </ListPage>
+    );
+  },
+);

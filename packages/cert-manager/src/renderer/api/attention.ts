@@ -1,4 +1,13 @@
-import { conditionOf, isExpired, isReady, isRenewalOverdue, timeLeft } from "./expiry";
+import type { ChainLink } from "./chain";
+import {
+  conditionOf,
+  describeMoment,
+  describeTimeLeft,
+  isExpired,
+  isReady,
+  isRenewalOverdue,
+  timeLeft,
+} from "./expiry";
 import type { CertificateLike } from "./types";
 
 // Only what needs acting on. "Ends this month" is left to the cards: a healthy
@@ -35,6 +44,48 @@ export function certificateStatusOf(
   return problem
     ? { label: PROBLEMS[problem].headline, tone: PROBLEMS[problem].severity }
     : { label: "Ready", tone: "ok" };
+}
+
+const PROBLEM_SENTENCES: Record<Problem, string> = {
+  expired: "Expired. Clients reject it.",
+  "not-ready": "Not ready: there is no certificate to serve.",
+  "renewal-overdue":
+    "Still valid, but its renewal is failing. It will expire unless the cause is fixed.",
+};
+
+export interface CertificateVerdict {
+  tone: Severity | "ok";
+  label: string;
+  reason: string;
+}
+
+/** The drawer's banner: what is wrong, and the link in the chain that explains it. */
+export function certificateVerdict(
+  certificate: CertificateLike,
+  explanation: ChainLink | undefined,
+  now: number,
+): CertificateVerdict {
+  const problem = problemOf(certificate, now);
+
+  if (problem) {
+    return {
+      tone: PROBLEMS[problem].severity,
+      label: PROBLEM_SENTENCES[problem],
+      reason: explanation?.reason
+        ? `${explanation.kind} ${explanation.name}: ${explanation.reason}`
+        : (conditionOf(certificate, "Ready")?.message ?? "Nothing in its chain says why."),
+    };
+  }
+
+  const renewal = Date.parse(certificate.status?.renewalTime ?? "");
+
+  return {
+    tone: "ok",
+    label: "Ready",
+    reason: `Ready, ${describeTimeLeft(certificate, now)}.${
+      Number.isNaN(renewal) ? "" : ` Renewal due ${describeMoment(renewal, now)}.`
+    }`,
+  };
 }
 
 export interface AttentionItem {

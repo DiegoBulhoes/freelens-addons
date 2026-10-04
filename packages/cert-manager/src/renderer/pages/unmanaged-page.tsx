@@ -1,5 +1,4 @@
 import type { Renderer as RendererTypes } from "@freelensapp/extensions";
-import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 import { useState } from "react";
 
@@ -21,21 +20,21 @@ import { CertManagerStyles } from "../components/styles";
 import { CellLink, type Column, Table } from "../components/table";
 import { useCertManagerStores } from "../hooks/use-cert-manager-stores";
 import { useTlsInventory } from "../hooks/use-tls-inventory";
+import { openHostList, SecretDrawer, ServedDrawer } from "./drawers";
 
-const {
-  Navigation: { navigate },
-} = Renderer;
-
-// The details drawer cannot open from here, so the host's list is narrowed to the name.
-const openList = (path: string, name: string) =>
-  navigate(`${path}?search=${encodeURIComponent(name)}`);
+const servedKey = (entry: ServedTls) => `${entry.namespace}/${entry.ingress}/${entry.secretName}`;
+const secretKey = (secret: SecretLike) => `${secret.getNs()}/${secret.getName()}`;
 
 export const UnmanagedPage = observer(
   ({ extension }: { extension: RendererTypes.LensExtension }) => {
     const stores = useCertManagerStores();
     const tls = useTlsInventory();
     const [query, setQuery] = useState("");
+    const [openServed, setOpenServed] = useState<string>();
+    const [openSecret, setOpenSecret] = useState<string>();
     const now = Date.now();
+    const openCertificate = (namespace: string, name: string) =>
+      void extension.navigate("certificates", { namespace, name });
 
     const served = getServedTls(tls.ingresses, tls.secrets, stores.certificates);
     const gaps = served.filter(isGap);
@@ -71,7 +70,7 @@ export const UnmanagedPage = observer(
           entry.state === "managed" || entry.state === "unmanaged" ? (
             <CellLink
               title={`Opens the Secrets list narrowed to ${entry.secretName}`}
-              onClick={() => openList("/secrets", entry.secretName)}
+              onClick={() => openHostList("/secrets", entry.secretName)}
             >
               {entry.secretName}
             </CellLink>
@@ -87,12 +86,7 @@ export const UnmanagedPage = observer(
           entry.certificate ? (
             <CellLink
               title={`Opens ${entry.certificate} in the certificates page`}
-              onClick={() =>
-                void extension.navigate("certificates", {
-                  namespace: entry.namespace,
-                  name: entry.certificate ?? "",
-                })
-              }
+              onClick={() => openCertificate(entry.namespace, entry.certificate ?? "")}
             >
               {entry.certificate}
             </CellLink>
@@ -192,10 +186,15 @@ export const UnmanagedPage = observer(
             <Table
               rows={shownServed}
               columns={servedColumns}
-              keyOf={(entry) => `${entry.namespace}/${entry.ingress}/${entry.secretName}`}
+              keyOf={servedKey}
               stateOf={(entry) => entry.state}
-              openTitle={(entry) => `Opens the Ingresses list narrowed to ${entry.ingress}`}
-              onOpen={(entry) => openList("/ingresses", entry.ingress)}
+              openTitle={(entry) =>
+                `Opens ${entry.ingress}: why nothing renews its Secret, or what does`
+              }
+              onOpen={(entry) => {
+                setOpenSecret(undefined);
+                setOpenServed(servedKey(entry));
+              }}
             />
           )}
         </section>
@@ -224,12 +223,29 @@ export const UnmanagedPage = observer(
             <Table
               rows={shownSecrets}
               columns={secretColumns}
-              keyOf={(secret) => `${secret.getNs()}/${secret.getName()}`}
-              openTitle={(secret) => `Opens the Secrets list narrowed to ${secret.getName()}`}
-              onOpen={(secret) => openList("/secrets", secret.getName())}
+              keyOf={secretKey}
+              openTitle={(secret) =>
+                `Opens ${secret.getName()}: why it is unmanaged, and who serves it`
+              }
+              onOpen={(secret) => {
+                setOpenServed(undefined);
+                setOpenSecret(secretKey(secret));
+              }}
             />
           )}
         </section>
+
+        <ServedDrawer
+          served={served.find((entry) => servedKey(entry) === openServed)}
+          onClose={() => setOpenServed(undefined)}
+          onOpenCertificate={openCertificate}
+        />
+        <SecretDrawer
+          secret={unmanagedSecrets.find((secret) => secretKey(secret) === openSecret)}
+          certificates={stores.certificates}
+          ingresses={tls.ingresses}
+          onClose={() => setOpenSecret(undefined)}
+        />
       </div>
     );
   },

@@ -1,18 +1,31 @@
 import type { Renderer as RendererTypes } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+import { certificateStatusOf } from "../api/attention";
+import { renewalRefusal } from "../api/bulk";
 import {
   type CertificateFilter,
+  certificateSearchTexts,
   FILTER_LABELS,
   FILTER_TITLES,
   isCertificateFilter,
   selectCertificates,
 } from "../api/certificate-filter";
 import type { ChainInputs } from "../api/chain";
-import { CertificateDetail } from "../certificate/certificate-detail";
-import { CertificateList, certificateKey } from "../certificate/certificate-list";
-import { NamespaceFilter } from "../components/namespace-filter";
+import {
+  ALARM_DAYS,
+  describeMoment,
+  describeTimeLeft,
+  expiresWithin,
+  timeLeft,
+} from "../api/expiry";
+import type { CertificateLike } from "../api/types";
+import { CertificateDrawer } from "../certificate/certificate-drawer";
+import { renewOrThrow } from "../certificate/renew";
+import { bulkAction } from "../components/bulk";
+import { type Column, ListPage } from "../components/list-page";
+import { Status } from "../components/status";
 import { CertManagerStyles } from "../components/styles";
 import { useCertManagerStores } from "../hooks/use-cert-manager-stores";
 
@@ -21,6 +34,14 @@ export interface CertificatesRouteParams {
   name: { get(): string };
   filter: { get(): string };
 }
+
+const keyOf = (certificate: CertificateLike) => `${certificate.getNs()}/${certificate.getName()}`;
+
+const renewalOf = (certificate: CertificateLike) => {
+  const at = Date.parse(certificate.status?.renewalTime ?? "");
+
+  return Number.isNaN(at) ? undefined : at;
+};
 
 export const CertificatesRoute = observer(
   ({
@@ -35,7 +56,13 @@ export const CertificatesRoute = observer(
     const [filter, setFilter] = useState<CertificateFilter>(
       isCertificateFilter(requested) ? requested : "all",
     );
-    const [search, setSearch] = useState("");
+    const named = params?.name.get() ? `${params.namespace.get()}/${params.name.get()}` : "";
+    const [openKey, setOpenKey] = useState<string | undefined>(named || undefined);
+
+    // A link from another page names a certificate: its drawer opens.
+    useEffect(() => {
+      if (named) setOpenKey(named);
+    }, [named]);
 
     if (!stores.isReady) {
       return (
@@ -50,13 +77,8 @@ export const CertificatesRoute = observer(
     }
 
     const now = Date.now();
-    const shown = selectCertificates(stores.certificates, filter, search, now);
-    const namespace = params?.namespace.get() ?? "";
-    const name = params?.name.get() ?? "";
-    const fromRoute = stores.certificates.find(
-      (each) => each.getNs() === namespace && each.getName() === name,
-    );
-    const selected = fromRoute ?? shown[0];
+    const rows = selectCertificates(stores.certificates, filter, "", now);
+    const opened = stores.certificates.find((each) => keyOf(each) === openKey);
     const inputs: ChainInputs = {
       index: { issuers: stores.issuers, clusterIssuers: stores.clusterIssuers },
       requests: stores.requests,
@@ -64,69 +86,119 @@ export const CertificatesRoute = observer(
       challenges: stores.challenges,
     };
 
-    return (
-      <div className="CertManager CertManager-picker">
-        <CertManagerStyles />
+    const columns: Column<CertificateLike>[] = [
+      {
+        title: "Certificate",
+        className: "CertManager-table__shrink",
+        cell: (certificate) => certificate.getName(),
+        sortValue: (certificate) => certificate.getName(),
+      },
+      {
+        title: "Namespace",
+        className: "CertManager-table__shrink",
+        cell: (certificate) => certificate.getNs(),
+        sortValue: (certificate) => certificate.getNs(),
+      },
+      {
+        title: "State",
+        className: "CertManager-table__shrink",
+        cell: (certificate) => {
+          const status = certificateStatusOf(certificate, now);
 
-        <div className="CertManager-picker__side">
-          <div className="CertManager-section">
-            <NamespaceFilter />
-            <div className="CertManager-filters">
-              {(Object.keys(FILTER_LABELS) as CertificateFilter[]).map((key) => (
-                <button
-                  key={key}
-                  type="button"
-                  className="CertManager-filter"
-                  aria-pressed={filter === key}
-                  title={FILTER_TITLES[key]}
-                  onClick={() => setFilter(key)}
-                >
-                  {FILTER_LABELS[key]}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <input
-            className="CertManager-search"
-            type="search"
-            value={search}
-            placeholder={`Filter ${stores.certificates.length} certificates`}
-            aria-label="Search certificates"
-            onChange={(event) => setSearch(event.target.value)}
-          />
-
-          <CertificateList
-            certificates={shown}
-            selected={selected ? certificateKey(selected) : undefined}
-            now={now}
-            onSelect={(certificate) =>
-              void extension.navigate("certificates", {
-                namespace: certificate.getNs() ?? "",
-                name: certificate.getName(),
-                filter,
-              })
-            }
-          />
-        </div>
-
-        <div className="CertManager-picker__detail">
-          {selected ? (
-            <CertificateDetail
-              certificate={selected}
-              inputs={inputs}
-              now={now}
-              onOpenIssuers={() => void extension.navigate("issuers")}
-            />
+          return <Status tone={status.tone} label={status.label} />;
+        },
+        sortValue: (certificate) => certificateStatusOf(certificate, now).label,
+      },
+      {
+        title: "Issuer",
+        className: "CertManager-table__shrink",
+        cell: (certificate) => certificate.spec.issuerRef.name,
+        sortValue: (certificate) => certificate.spec.issuerRef.name,
+      },
+      {
+        title: "Expires",
+        className: "CertManager-table__shrink",
+        cell: (certificate) =>
+          expiresWithin(certificate, now, ALARM_DAYS) ? (
+            <span className="CertManager-text--warning">{describeTimeLeft(certificate, now)}</span>
           ) : (
-            <p className="CertManager-picker__empty">
-              {stores.certificates.length === 0
-                ? "There is no Certificate in the namespaces chosen in the selector."
-                : "Nothing matches that filter."}
-            </p>
-          )}
-        </div>
-      </div>
+            describeTimeLeft(certificate, now)
+          ),
+        sortValue: (certificate) => timeLeft(certificate, now),
+      },
+      {
+        title: "Renewal due",
+        className: "CertManager-table__shrink",
+        cell: (certificate) => {
+          const at = renewalOf(certificate);
+
+          return at === undefined ? "—" : describeMoment(at, now);
+        },
+        sortValue: renewalOf,
+      },
+      {
+        title: "Names",
+        className: "CertManager-table__fill",
+        cell: (certificate) =>
+          (certificate.spec.dnsNames ?? []).join(", ") || certificate.spec.commonName || "—",
+      },
+    ];
+
+    return (
+      <ListPage
+        title="Certificates"
+        subline="Worst first. A certificate opens with its validity, its issuance chain, why it is in its state and commands to copy."
+        section="cert-manager-certificates"
+        rows={rows}
+        columns={columns}
+        keyOf={keyOf}
+        searchTexts={certificateSearchTexts}
+        onOpen={(certificate) => setOpenKey(keyOf(certificate))}
+        empty={
+          stores.certificates.length === 0
+            ? "There is no Certificate in the namespaces chosen in the selector."
+            : "No certificate matches that filter."
+        }
+        filters={
+          <div className="CertManager-filters">
+            {(Object.keys(FILTER_LABELS) as CertificateFilter[]).map((key) => (
+              <button
+                key={key}
+                type="button"
+                className="CertManager-filter"
+                aria-pressed={filter === key}
+                title={FILTER_TITLES[key]}
+                onClick={() => setFilter(key)}
+              >
+                {FILTER_LABELS[key]}
+              </button>
+            ))}
+          </div>
+        }
+        selection={{
+          hint: "Renews each ticked certificate that can be renewed now; the rest are listed as skipped.",
+          actions: [
+            bulkAction<CertificateLike>({
+              label: "Renew",
+              done: "Requested renewal for",
+              kind: "certificate",
+              tooltip:
+                "Asks cert-manager to issue each ticked certificate again now; the current ones stay in use until then.",
+              nameOf: keyOf,
+              refuse: renewalRefusal(inputs),
+              run: renewOrThrow,
+            }),
+          ],
+        }}
+      >
+        <CertificateDrawer
+          certificate={opened}
+          inputs={inputs}
+          now={now}
+          onClose={() => setOpenKey(undefined)}
+          onOpenIssuer={(route) => void extension.navigate("issuers", route)}
+        />
+      </ListPage>
     );
   },
 );
