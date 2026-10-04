@@ -95,11 +95,16 @@ function addInto(into: SeveritySummary, more: SeveritySummary | undefined): Seve
   };
 }
 
-export function sortRows(rows: WorkloadRow[]): WorkloadRow[] {
-  const stateRank = { "never-looked": 0, "read-but-no-verdict": 1, scanned: 2 } as const;
+// Unjudged first: what nobody looked at is the bigger unknown.
+export const STATE_RANK: Record<CoverageState, number> = {
+  "never-looked": 0,
+  "read-but-no-verdict": 1,
+  scanned: 2,
+};
 
+export function sortRows(rows: WorkloadRow[]): WorkloadRow[] {
   return [...rows].sort((first, second) => {
-    if (first.state !== second.state) return stateRank[first.state] - stateRank[second.state];
+    if (first.state !== second.state) return STATE_RANK[first.state] - STATE_RANK[second.state];
 
     const byCritical = countOf(second.summary, "CRITICAL") - countOf(first.summary, "CRITICAL");
 

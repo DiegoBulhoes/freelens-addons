@@ -26,8 +26,12 @@ export function CoverageSection({
             type="button"
             key={`${entry.subject.namespace}/${entry.subject.kind}/${entry.subject.name}`}
             className={`Trivy-row Trivy-row--${COVERAGE_STATUS[entry.state].tone}`}
-            title="Opens this workload in Workloads"
-            onClick={() => onOpenWorkload(entry)}
+            title="Opens this workload's drawer in Workloads"
+            onClick={(event) => {
+              // Unprevented, the drawer this opens takes the click as outside and closes.
+              event.preventDefault();
+              onOpenWorkload(entry);
+            }}
           >
             <span className="Trivy-row__state">{COVERAGE_STATUS[entry.state].label}</span>
             <span className="Trivy-row__main">

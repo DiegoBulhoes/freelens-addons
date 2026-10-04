@@ -8,6 +8,7 @@ import {
   textOf,
   waitFor,
 } from "../../../build/e2e/freelens";
+import { column, openWorkloads, ROW } from "./workloads";
 
 const VULNERABILITY_REPORTS = "/apis/aquasecurity.github.io/v1alpha1/vulnerabilityreports";
 const SBOM_REPORTS = "/apis/aquasecurity.github.io/v1alpha1/sbomreports";
@@ -42,7 +43,7 @@ describe("what the Trivy pages say", () => {
       frame,
     );
 
-  it("knows as many workloads as the picker lists, and no more than there are reports", async () => {
+  it("knows as many workloads as the list shows, and no more than there are reports", async () => {
     type Report = { metadata: { labels?: Record<string, string> } };
     const subjects = (items: Report[]) =>
       new Set(
@@ -67,38 +68,32 @@ describe("what the Trivy pages say", () => {
       return value >= 0 ? value : undefined;
     });
 
-    await clickSidebar(session, frame, "trivy-workloads", "trivy");
+    const listed = await openWorkloads(session, frame);
 
-    const listed = await waitFor("the picker", async () => {
-      const rows = await countOf(".Trivy-picker__item");
-
-      return rows > 0 ? rows : undefined;
-    });
-
-    expect(listed, "the picker lists a different number than the overview counts").toBe(known);
+    expect(listed, "the list shows a different number than the overview counts").toBe(known);
+    expect(await countOf(ROW)).toBe(known);
 
     // Bounds, not equality: they hold however far the scanner has got.
     expect(known, "a judged workload is missing").toBeGreaterThanOrEqual(judged.size);
     expect(known, "a workload no report names").toBeLessThanOrEqual(reported.size);
   }, 150_000);
 
-  it("orders the picker by state, then by how bad it is", async () => {
-    await clickSidebar(session, frame, "trivy-workloads", "trivy");
-    await waitFor(
-      "the picker",
-      async () => (await countOf(".Trivy-picker__item")) > 0 || undefined,
-    );
+  it("orders the list by state, then by how bad it is, until a header is clicked", async () => {
+    await openWorkloads(session, frame);
 
-    const rows = await session.evaluate<{ state: string; critical: number; high: number }[]>(
-      `[...document.querySelectorAll('.Trivy-picker__item')].map((row) => ({
-         state: ({ "scanned": "scanned", "no verdict": "read-but-no-verdict", "not looked at": "never-looked" })[
-           (row.querySelector('.Trivy-picker__meta')?.textContent ?? "").split("·").pop().trim()
-         ] ?? "",
-         critical: Number.parseInt(row.querySelector('.Trivy-severity--CRITICAL')?.textContent ?? "0", 10),
-         high: Number.parseInt(row.querySelector('.Trivy-severity--HIGH')?.textContent ?? "0", 10),
-       }))`,
-      frame,
-    );
+    const states = await column(session, frame, "Coverage");
+    const criticals = await column(session, frame, "Critical");
+    const highs = await column(session, frame, "High");
+    const named = {
+      scanned: "scanned",
+      "no verdict": "read-but-no-verdict",
+      "not looked at": "never-looked",
+    };
+    const rows = states.map((state, at) => ({
+      state: named[state as keyof typeof named] ?? "",
+      critical: Number.parseInt(criticals[at] ?? "", 10) || 0,
+      high: Number.parseInt(highs[at] ?? "", 10) || 0,
+    }));
 
     expect(rows.length).toBeGreaterThan(1);
 

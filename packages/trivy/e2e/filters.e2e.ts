@@ -1,27 +1,18 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import type { Session } from "../../../build/e2e/cdp";
-import {
-  clickSidebar,
-  openWorkbench,
-  textOf,
-  typeInto,
-  waitFor,
-} from "../../../build/e2e/freelens";
+import { openWorkbench, textOf, typeInto, waitFor } from "../../../build/e2e/freelens";
+import { column, EMPTY, openWorkloads, ROW, SEARCH } from "./workloads";
 
 // The needle is read from the page: a cluster name would be a fixture that expires.
 
-const ROW = ".Trivy-picker__item";
-
-describe("the Trivy workload picker filters", () => {
+describe("searching the Trivy workload list", () => {
   let session: Session;
   let frame: number;
 
   beforeAll(async () => {
     ({ session, frame } = await openWorkbench());
-
-    await clickSidebar(session, frame, "trivy-workloads", "trivy");
-    await waitFor("the workload list", async () => (await countOf(ROW)) > 0 || undefined);
+    await openWorkloads(session, frame);
   }, 180_000);
 
   afterAll(() => session?.close());
@@ -35,11 +26,11 @@ describe("the Trivy workload picker filters", () => {
 
   it("narrows the list to a name that is on it", async () => {
     const total = await countOf(ROW);
-    const name = await textOf(session, frame, `${ROW} .Trivy-picker__name`);
+    const [name] = await column(session, frame, "Workload");
 
-    expect(name.length, "no workload name to filter by").toBeGreaterThan(0);
+    expect(name, "no workload name to search for").toBeTruthy();
 
-    await typeInto(session, frame, ".Trivy-search", name);
+    await typeInto(session, frame, SEARCH, name as string);
 
     const remaining = await waitFor("the list to narrow", async () => {
       const rows = await countOf(ROW);
@@ -49,19 +40,20 @@ describe("the Trivy workload picker filters", () => {
 
     expect(remaining).toBeLessThanOrEqual(total);
 
+    // A name may match through its namespace or kind instead, so check every cell of the row.
     const shown = await session.evaluate<string[]>(
-      `[...document.querySelectorAll('${ROW} .Trivy-picker__name')].map((e) => e.textContent.trim())`,
+      `[...document.querySelectorAll(${JSON.stringify(ROW)})].map((row) => row.textContent)`,
       frame,
     );
 
-    for (const row of shown) expect(row).toContain(name);
+    for (const row of shown) expect(row.toLowerCase()).toContain((name as string).toLowerCase());
   });
 
   it("says so rather than showing a stale list when nothing matches", async () => {
-    await typeInto(session, frame, ".Trivy-search", "no-workload-is-called-this");
+    await typeInto(session, frame, SEARCH, "no-workload-is-called-this");
 
     const note = await waitFor("the empty note", async () => {
-      const text = await textOf(session, frame, ".Trivy-picker__empty");
+      const text = await textOf(session, frame, EMPTY);
 
       return text.length > 0 ? text : undefined;
     });
@@ -71,7 +63,7 @@ describe("the Trivy workload picker filters", () => {
   });
 
   it("brings the list back when the field is cleared", async () => {
-    await typeInto(session, frame, ".Trivy-search", "");
+    await typeInto(session, frame, SEARCH, "");
 
     const restored = await waitFor("the list to come back", async () => {
       const rows = await countOf(ROW);

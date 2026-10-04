@@ -1,3 +1,4 @@
+import type { CoverageState } from "./coverage";
 import {
   deduplicate,
   hasFix,
@@ -5,7 +6,7 @@ import {
   type PackageUpgrade,
   upgradesThatWouldFix,
 } from "./findings";
-import { addSummaries, rankOf } from "./severity";
+import { addSummaries, countOf, rankOf } from "./severity";
 import { containerOf, type SubjectBearing, subjectKey, subjectOf } from "./subjects";
 import type {
   ConfigAuditCheck,
@@ -14,6 +15,7 @@ import type {
   ReportSubject,
   Severity,
   SeveritySummary,
+  Tone,
   Vulnerability,
   VulnerabilityReportBody,
 } from "./types";
@@ -64,7 +66,7 @@ function reportsFor<Body>(reports: Reporting<Body>[], subject: ReportSubject) {
   });
 }
 
-function imageOf(body: VulnerabilityReportBody | undefined): string | undefined {
+export function imageOf(body: VulnerabilityReportBody | undefined): string | undefined {
   const artifact = body?.artifact;
 
   if (!artifact?.repository) return undefined;
@@ -72,10 +74,18 @@ function imageOf(body: VulnerabilityReportBody | undefined): string | undefined 
   return artifact.tag ? `${artifact.repository}:${artifact.tag}` : artifact.repository;
 }
 
-function osOf(body: VulnerabilityReportBody | undefined): string | undefined {
+export function osOf(body: VulnerabilityReportBody | undefined): string | undefined {
   if (!body?.os?.name) return undefined;
 
   return `${body.os.family ?? ""} ${body.os.name}`.trim();
+}
+
+export function scannerOf(body: VulnerabilityReportBody | undefined): string | undefined {
+  const scanner = body?.scanner;
+
+  if (!scanner?.version) return undefined;
+
+  return `${scanner.name ?? "Trivy"} ${scanner.version}`;
 }
 
 function containersOf(reports: Reporting<VulnerabilityReportBody>[]): ScannedContainer[] {
@@ -86,9 +96,7 @@ function containersOf(reports: Reporting<VulnerabilityReportBody>[]): ScannedCon
     registry: report.report?.registry?.server,
     operatingSystem: osOf(report.report),
     scannedAt: report.report?.updateTimestamp,
-    scanner: report.report?.scanner?.version
-      ? `${report.report.scanner.name ?? "Trivy"} ${report.report.scanner.version}`
-      : undefined,
+    scanner: scannerOf(report.report),
   }));
 }
 
@@ -147,4 +155,66 @@ export function summariseAction(report: WorkloadReport, floor: Severity = "HIGH"
     clearedCount: relevant.filter(hasFix).length,
     unfixableCount: relevant.filter((each) => !hasFix(each)).length,
   };
+}
+
+export function unfixableOf(report: WorkloadReport, floor: Severity = "HIGH"): Vulnerability[] {
+  return report.vulnerabilities.filter((each) => isAtLeast(each, floor) && !hasFix(each));
+}
+
+export interface WorkloadVerdict {
+  tone: Tone;
+  label: string;
+  reason: string;
+}
+
+const UNJUDGED: Record<Exclude<CoverageState, "scanned">, WorkloadVerdict> = {
+  "never-looked": {
+    tone: "critical",
+    label: "Not looked at",
+    reason:
+      "The scanner has not read this workload's images, so what they contain is unknown. No findings here does not mean it is clean.",
+  },
+  "read-but-no-verdict": {
+    tone: "warning",
+    label: "No verdict",
+    reason:
+      "The scanner read this workload's images and wrote no vulnerability report, so nobody judged them. No findings here does not mean it is clean.",
+  },
+};
+
+export function workloadVerdict(state: CoverageState, report: WorkloadReport): WorkloadVerdict {
+  if (state !== "scanned") return UNJUDGED[state];
+
+  const criticals = countOf(report.summary, "CRITICAL");
+  const worst = criticals + countOf(report.summary, "HIGH");
+
+  if (worst === 0) {
+    return { tone: "ok", label: "Scanned", reason: "Nothing critical or high was found." };
+  }
+
+  const action = summariseAction(report, "HIGH");
+
+  return {
+    tone: criticals > 0 ? "critical" : "warning",
+    label:
+      action.upgradeCount === 0
+        ? "No upgrade published for anything critical or high"
+        : `${action.upgradeCount} ${action.upgradeCount === 1 ? "upgrade clears" : "upgrades clear"} ${action.clearedCount} of ${worst} critical and high findings`,
+    reason:
+      action.unfixableCount > 0
+        ? `${action.unfixableCount} have no published fix, so no upgrade will clear them.`
+        : "Every critical and high finding here has a published fix.",
+  };
+}
+
+export function ticketText(report: WorkloadReport): string {
+  const { subject } = report;
+
+  return [
+    `${subject.name} (${subject.namespace}) — ${report.image ?? "no image reported"}`,
+    ...report.upgrades.map(
+      (upgrade) =>
+        `${upgrade.resource} ${upgrade.installedVersion} -> ${upgrade.fixedVersion} (clears ${upgrade.vulnerabilityCount})`,
+    ),
+  ].join("\n");
 }

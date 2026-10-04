@@ -5,12 +5,24 @@ import {
   clickByText,
   clickSidebar,
   notificationText,
+  openDrawer,
   openWorkbench,
   textOf,
   typeInto,
   waitFor,
 } from "../../../build/e2e/freelens";
-import { openScannedWorkload } from "./picker";
+import {
+  BODY,
+  CHIPS,
+  closeDrawer,
+  column,
+  DRAWER,
+  drawerTitle,
+  openRow,
+  openScannedWorkload,
+  openWorkloads,
+  ROW,
+} from "./workloads";
 
 // Coverage rows are not clicked: they exist only while a scan is pending.
 
@@ -40,64 +52,141 @@ describe("the controls on the Trivy pages", () => {
       frame,
     );
 
-  describe("the workload picker's filter chips", () => {
-    const SIDE = ".Trivy-picker__side .Trivy-filters";
-
+  describe("the workload list's filter chips", () => {
     beforeAll(async () => {
-      await clickSidebar(session, frame, "trivy-workloads", "trivy");
-      await waitFor(
-        "the picker",
-        async () => (await countOf(".Trivy-picker__item")) > 0 || undefined,
-      );
+      await openWorkloads(session, frame);
     }, 90_000);
 
     it("starts on All, and All is the widest", async () => {
-      expect(await activeChip(SIDE)).toBe("All");
+      expect(await activeChip(CHIPS)).toBe("All");
 
-      const all = await countOf(".Trivy-picker__item");
+      const all = await countOf(ROW);
 
       for (const chip of ["No verdict", "Findings"]) {
-        await clickByText(session, frame, `${SIDE} button`, chip);
+        await clickByText(session, frame, `${CHIPS} button`, chip);
 
-        expect(await activeChip(SIDE), `${chip} did not become the active chip`).toBe(chip);
+        expect(await activeChip(CHIPS), `${chip} did not become the active chip`).toBe(chip);
 
         // Compared with All, not a number: a number would be this cluster's contents.
-        expect(
-          await countOf(".Trivy-picker__item"),
-          `${chip} showed more than All`,
-        ).toBeLessThanOrEqual(all);
+        expect(await countOf(ROW), `${chip} showed more than All`).toBeLessThanOrEqual(all);
       }
 
-      await clickByText(session, frame, `${SIDE} button`, "All");
-      expect(await countOf(".Trivy-picker__item")).toBe(all);
+      await clickByText(session, frame, `${CHIPS} button`, "All");
+      expect(await countOf(ROW)).toBe(all);
     }, 90_000);
 
     it("shows under No verdict exactly the workloads All marks as unjudged", async () => {
-      const unjudged = () =>
-        session.evaluate<string[]>(
-          `[...document.querySelectorAll('.Trivy-picker__item')]
-             .filter((each) => !/· scanned$/.test(each.querySelector('.Trivy-picker__meta')?.textContent.trim() ?? ''))
-             .map((each) => each.querySelector('.Trivy-picker__name')?.textContent.trim())`,
-          frame,
-        );
+      const unjudged = async () => {
+        const names = await column(session, frame, "Workload");
+        const states = await column(session, frame, "Coverage");
 
-      await clickByText(session, frame, `${SIDE} button`, "All");
+        return names.filter((_, at) => states[at] !== "scanned");
+      };
+
+      await clickByText(session, frame, `${CHIPS} button`, "All");
       const expected = await unjudged();
 
       // Compared with the list, not non-empty: a fully scanned cluster has none.
-      await clickByText(session, frame, `${SIDE} button`, "No verdict");
+      await clickByText(session, frame, `${CHIPS} button`, "No verdict");
 
       try {
-        expect(await countOf(".Trivy-picker__item")).toBe(expected.length);
+        expect(await countOf(ROW)).toBe(expected.length);
         expect(await unjudged()).toEqual(expected);
       } finally {
-        await clickByText(session, frame, `${SIDE} button`, "All");
+        await clickByText(session, frame, `${CHIPS} button`, "All");
       }
+    }, 90_000);
+
+    it("sorts by criticals both ways, then back to its own order", async () => {
+      const original = await column(session, frame, "Workload");
+      const sortBy = () =>
+        clickByText(session, frame, ".Trivy-page--list .Trivy-table thead .Trivy-sort", "Critical");
+      // An unjudged workload has no count, and goes last either way.
+      const counts = async () =>
+        (await column(session, frame, "Critical")).filter((each) => each !== "—").map(Number);
+
+      await sortBy();
+      const ascending = await counts();
+
+      expect(ascending).toEqual([...ascending].sort((first, second) => first - second));
+
+      await sortBy();
+      const descending = await counts();
+
+      expect(descending).toEqual([...descending].sort((first, second) => second - first));
+      const cells = await column(session, frame, "Critical");
+
+      if (cells.includes("—")) expect(cells.at(-1), "an unjudged count sorted first").toBe("—");
+
+      await sortBy();
+      expect(await column(session, frame, "Workload")).toEqual(original);
+    }, 90_000);
+  });
+
+  describe("a row of the workload list", () => {
+    it("opens that workload's drawer, and another row switches it without closing", async () => {
+      await openWorkloads(session, frame);
+
+      const names = await column(session, frame, "Workload");
+
+      expect(names.length, "only one workload to switch to").toBeGreaterThan(1);
+
+      const kinds = await column(session, frame, "Kind");
+
+      await openRow(session, frame, 0);
+      expect(await drawerTitle(session, frame)).toBe(`${kinds[0]}: ${names[0]}`);
+
+      await openRow(session, frame, 1);
+      expect(await drawerTitle(session, frame)).toBe(`${kinds[1]}: ${names[1]}`);
+      expect(await countOf(BODY)).toBe(1);
+
+      await closeDrawer(session, frame);
+    }, 90_000);
+
+    it("holds more than the row: its state, its facts, its pods, containers and config", async () => {
+      await openScannedWorkload(session, frame);
+
+      expect(await countOf(`${BODY} .Trivy-banner, ${BODY} > p.Trivy-muted`)).toBe(1);
+
+      const facts = await session.evaluate<string[]>(
+        `[...document.querySelectorAll(${JSON.stringify(`${BODY} > .Trivy-facts > dt`)})].map((each) => each.textContent.trim())`,
+        frame,
+      );
+
+      expect(facts).toEqual(["Namespace", "Coverage", "Findings", "Fix published", "Last scan"]);
+
+      for (const section of [
+        "trivy-workload-findings",
+        "trivy-workload-pods",
+        "trivy-workload-containers",
+        "trivy-workload-config",
+      ]) {
+        expect(await countOf(`${BODY} [data-section="${section}"]`), `no ${section}`).toBe(1);
+      }
+
+      await closeDrawer(session, frame);
+    }, 90_000);
+
+    it("says an unjudged workload is not known to be clean, and lists no findings", async () => {
+      await openWorkloads(session, frame);
+
+      const states = await column(session, frame, "Coverage");
+      const index = states.findIndex((state) => state !== "scanned");
+
+      // A fully scanned cluster has none to open.
+      if (index < 0) return;
+
+      await openRow(session, frame, index);
+
+      expect(await textOf(session, frame, BODY)).toMatch(/does not mean it is clean/);
+      expect(await countOf(`${BODY} [data-section="trivy-workload-findings"]`)).toBe(0);
+
+      await closeDrawer(session, frame);
     }, 90_000);
   });
 
   describe("the overview's most exposed workloads", () => {
-    it("lists them by critical findings, and opens each on its detail", async () => {
+    it("lists them by critical findings, and opens each on its drawer", async () => {
       await clickSidebar(session, frame, "trivy-dashboard", "trivy");
       await waitFor("the list", async () => (await countOf(".Trivy-row")) > 0 || undefined);
 
@@ -127,36 +216,38 @@ describe("the controls on the Trivy pages", () => {
       expect(name).not.toBe("");
 
       expect(
-        await waitFor("that workload's detail", async () => {
-          const headline = await textOf(
-            session,
-            frame,
-            ".Trivy-picker__detail .Trivy-page__headline",
-          );
+        await waitFor("that workload's drawer", async () =>
+          (await drawerTitle(session, frame)).endsWith(`: ${name}`) ? true : undefined,
+        ),
+      ).toBe(true);
+      // The list is the page under it, not a page of its own.
+      expect(await countOf(ROW)).toBeGreaterThan(0);
 
-          return headline === name ? headline : undefined;
-        }),
-      ).toBe(name);
+      await closeDrawer(session, frame);
     }, 90_000);
   });
 
-  describe("the workload detail's views", () => {
-    const TABS = ".Trivy-picker__detail .Trivy-filters";
+  describe("the workload drawer's views", () => {
+    const TABS = `${BODY} [data-section="trivy-workload-findings"] .Trivy-filters`;
+    const TABLE = `${BODY} [data-section="trivy-workload-findings"] .Trivy-table`;
+    const TITLE = `${BODY} [data-section="trivy-workload-findings"] .Trivy-section__title`;
 
     beforeAll(async () => {
       await openScannedWorkload(session, frame);
     }, 90_000);
 
+    afterAll(async () => {
+      await closeDrawer(session, frame);
+    }, 30_000);
+
     it("opens on packages and switches to findings", async () => {
       expect(await activeChip(TABS)).toBe("By package");
-      expect(await textOf(session, frame, ".Trivy-picker__detail .Trivy-section__title")).toBe(
-        "Packages to upgrade",
-      );
+      expect(await textOf(session, frame, TITLE)).toBe("Packages to upgrade");
 
       await clickByText(session, frame, `${TABS} button`, "All ");
 
       const title = await waitFor("the findings title", async () => {
-        const text = await textOf(session, frame, ".Trivy-picker__detail .Trivy-section__title");
+        const text = await textOf(session, frame, TITLE);
 
         return text === "Findings" ? text : undefined;
       });
@@ -165,7 +256,7 @@ describe("the controls on the Trivy pages", () => {
 
       // Only the findings table has a CVE column.
       const columns = await session.evaluate<string[]>(
-        `[...document.querySelectorAll('.Trivy-picker__detail .Trivy-table thead th')]
+        `[...document.querySelectorAll(${JSON.stringify(`${TABLE} thead th`)})]
            .map((each) => each.textContent.trim())`,
         frame,
       );
@@ -175,15 +266,15 @@ describe("the controls on the Trivy pages", () => {
 
     it("narrows to what has no fix, and cannot show more than all of them", async () => {
       await clickByText(session, frame, `${TABS} button`, "All ");
-      const all = await countOf(".Trivy-picker__detail .Trivy-table tbody tr");
+      const all = await countOf(`${TABLE} tbody tr`);
 
       await clickByText(session, frame, `${TABS} button`, "No fix");
 
       expect(await activeChip(TABS)).toContain("No fix");
-      expect(await countOf(".Trivy-picker__detail .Trivy-table tbody tr")).toBeLessThanOrEqual(all);
+      expect(await countOf(`${TABLE} tbody tr`)).toBeLessThanOrEqual(all);
 
       const fixes = await session.evaluate<string[]>(
-        `[...document.querySelectorAll('.Trivy-picker__detail .Trivy-table tbody tr td:last-child')]
+        `[...document.querySelectorAll(${JSON.stringify(`${TABLE} tbody tr td:last-child`)})]
            .map((each) => each.textContent.trim())`,
         frame,
       );
@@ -191,8 +282,12 @@ describe("the controls on the Trivy pages", () => {
       for (const fix of fixes) expect(fix).toBe("none published");
     }, 90_000);
 
-    it("copies a ticket and says that it did", async () => {
-      await clickByText(session, frame, ".Trivy-picker__detail .Trivy-button", "Copy for a ticket");
+    it("copies a ticket from the title bar and says that it did", async () => {
+      await session.evaluate(
+        `[...(${openDrawer(DRAWER)}?.querySelectorAll('.drawer-title i.Icon') ?? [])]
+           .find((each) => !each.closest('.drawer-title-text') && each.textContent.trim() === "content_copy")?.click()`,
+        frame,
+      );
 
       // The clipboard needs a permission this frame lacks, so check the notification.
       expect(await notificationText(session, frame)).toMatch(/copied/i);
@@ -204,26 +299,24 @@ describe("the controls on the Trivy pages", () => {
       await clickSidebar(session, frame, "trivy-dashboard", "trivy");
       await waitFor("the cards", async () => (await countOf("button.Trivy-card")) > 0 || undefined);
       await clickByText(session, frame, "button.Trivy-card", label);
-      await waitFor(
-        "the picker",
-        async () => (await countOf(".Trivy-picker__item")) > 0 || undefined,
-      );
+      await waitFor("the workload list", async () => (await countOf(ROW)) > 0 || undefined);
     };
 
     it("opens Workloads on every workload from the count of them", async () => {
       await openFromCard("Workloads known");
 
-      expect(await activeChip(".Trivy-picker__side .Trivy-filters")).toBe("All");
+      expect(await activeChip(CHIPS)).toBe("All");
+      expect(await countOf(BODY), "a card opened a drawer").toBe(0);
     }, 90_000);
 
     it("opens Workloads on those with findings from a count of findings", async () => {
       await openFromCard("Critical, fix published");
 
       try {
-        expect(await activeChip(".Trivy-picker__side .Trivy-filters")).toBe("Findings");
+        expect(await activeChip(CHIPS)).toBe("Findings");
       } finally {
         // The page may stay mounted with its filter set.
-        await clickByText(session, frame, ".Trivy-picker__side .Trivy-filters button", "All");
+        await clickByText(session, frame, `${CHIPS} button`, "All");
       }
     }, 90_000);
   });
@@ -384,19 +477,14 @@ describe("the controls on the Trivy pages", () => {
     }, 90_000);
 
     it("links the failed config checks of a workload", async () => {
-      await clickSidebar(session, frame, "trivy-workloads", "trivy");
+      const rows = await openWorkloads(session, frame);
 
       const found = await waitFor("a workload with failed checks", async () => {
-        const count = await countOf(".Trivy-picker__item");
-
-        for (let at = 0; at < count; at += 1) {
-          await session.evaluate(
-            `document.querySelectorAll('.Trivy-picker__item')[${at}].click()`,
-            frame,
-          );
+        for (let at = 0; at < rows; at += 1) {
+          await openRow(session, frame, at);
           await new Promise((resolve) => setTimeout(resolve, 600));
 
-          const here = await links(".Trivy-picker__detail .Trivy-row");
+          const here = await links(`${BODY} [data-section="trivy-workload-config"] .Trivy-row`);
 
           if (here.length > 0) return here;
         }
@@ -405,6 +493,7 @@ describe("the controls on the Trivy pages", () => {
       });
 
       expectEachToName(found);
+      await closeDrawer(session, frame);
     }, 150_000);
   });
 });

@@ -17,12 +17,12 @@ const PHASE_TONE: Record<string, string> = {
   Pending: "warning",
 };
 
-export function PodList({ pods }: { pods: RunningPod[] }) {
+export function PodList({ pods, onLeave }: { pods: RunningPod[]; onLeave: () => void }) {
   return (
-    <section className="Trivy-section">
-      <h2 className="Trivy-section__title">
+    <section className="Trivy-section" data-section="trivy-workload-pods">
+      <h3 className="Trivy-section__title">
         {pods.length === 0 ? "Pods" : `${pods.length} ${pods.length === 1 ? "pod" : "pods"}`}
-      </h2>
+      </h3>
 
       {pods.length === 0 ? (
         <p className="Trivy-section__note">
@@ -40,7 +40,11 @@ export function PodList({ pods }: { pods: RunningPod[] }) {
                 "Opens the Pods list, narrowed to this pod",
                 ...interestingLabels(pod.labels),
               ].join("\n")}
-              onClick={() => openPod(pod)}
+              onClick={() => {
+                // Close the drawer before the page under it changes.
+                onLeave();
+                openPod(pod);
+              }}
             >
               <span className="Trivy-row__state">{pod.phase}</span>
               <span className="Trivy-row__main">

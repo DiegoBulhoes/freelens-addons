@@ -8,6 +8,7 @@ import {
   textOf,
   waitFor,
 } from "../../../build/e2e/freelens";
+import { ROW } from "./workloads";
 
 interface PageCheck {
   id: string;
@@ -21,7 +22,7 @@ const PAGES: PageCheck[] = [
   },
   {
     id: "trivy-workloads",
-    expect: { selector: ".Trivy-picker", matches: /\S/ },
+    expect: { selector: ".Trivy-page--list .Trivy-page__count", matches: /\d+ items?/ },
   },
   {
     id: "trivy-vulnerabilities",
@@ -64,7 +65,7 @@ describe("every page the Trivy extension registers renders", () => {
 
     for (const [id, selector] of [
       ["trivy-vulnerabilities", ".TableRow"],
-      ["trivy-workloads", ".Trivy-picker__item"],
+      ["trivy-workloads", ROW],
       ["trivy-rbac", ".Trivy-table tbody tr"],
     ] as const) {
       await clickSidebar(session, frame, id, "trivy");

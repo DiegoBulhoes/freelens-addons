@@ -1,16 +1,20 @@
 import { describe, expect, it } from "vitest";
 
 import { subjectKey } from "../src/renderer/api/subjects";
+import { searchRows, sortRows as sortByColumn } from "../src/renderer/api/table";
 import {
-  chooseSelected,
+  countIn,
   describeEmpty,
   FILTER_LABELS,
   FILTER_TITLES,
   isWorkloadFilter,
   matchesFilter,
-  matchesSearch,
+  rowOf,
   selectWorkloads,
+  type WorkloadColumn,
   type WorkloadFilter,
+  workloadSearchTexts,
+  workloadSortValue,
 } from "../src/renderer/api/workload-filter";
 import { getWorkloadRows, sortRows, type WorkloadRow } from "../src/renderer/api/workload-rows";
 import {
@@ -40,23 +44,25 @@ const row = (over: Partial<WorkloadRow> & { name: string }): WorkloadRow => ({
   secretCount: 0,
 });
 
+const search = (rows: WorkloadRow[], query: string) => searchRows(rows, query, workloadSearchTexts);
+
 describe("filtering the workload list", () => {
   it("keeps everything under the all filter", () => {
     const rows = clusterRows();
 
     expect(rows.length).toBeGreaterThan(1);
-    expect(selectWorkloads(rows, "all", "")).toHaveLength(rows.length);
+    expect(selectWorkloads(rows, "all")).toHaveLength(rows.length);
   });
 
   it("narrows to the unjudged, and every survivor really is one", () => {
-    const unjudged = selectWorkloads(clusterRows(), "unjudged", "");
+    const unjudged = selectWorkloads(clusterRows(), "unjudged");
 
     expect(unjudged.length).toBeGreaterThan(0);
     for (const each of unjudged) expect(each.state).not.toBe("scanned");
   });
 
   it("narrows to what has critical or high findings", () => {
-    const withFindings = selectWorkloads(clusterRows(), "withFindings", "");
+    const withFindings = selectWorkloads(clusterRows(), "withFindings");
 
     expect(withFindings.length).toBeGreaterThan(0);
     for (const each of withFindings) {
@@ -66,66 +72,10 @@ describe("filtering the workload list", () => {
     }
   });
 
-  it("searches the name, and finds a workload the cluster really has", () => {
-    const rows = clusterRows();
-    const target = rows[0] as WorkloadRow;
-
-    const found = selectWorkloads(rows, "all", target.subject.name);
-
-    expect(found.map((each) => subjectKey(each.subject))).toContain(subjectKey(target.subject));
-  });
-
-  it("searches the namespace too, not only the name", () => {
-    const rows = clusterRows();
-    const namespace = (rows[0] as WorkloadRow).subject.namespace;
-
-    const found = selectWorkloads(rows, "all", namespace);
-
-    expect(found.length).toBeGreaterThan(0);
-    for (const each of found) expect(subjectKey(each.subject)).toContain(namespace);
-  });
-
-  it("applies the filter and the search together rather than one of the two", () => {
-    const rows = [
-      row({ name: "web", state: "scanned", summary: { criticalCount: 1 } }),
-      row({ name: "web-two", state: "never-looked" }),
-    ];
-
-    // The search matches both; the filter has to still exclude one.
-    expect(selectWorkloads(rows, "unjudged", "web").map((each) => each.subject.name)).toEqual([
-      "web-two",
-    ]);
-  });
-});
-
-describe("filtering when nothing matches", () => {
-  it("returns nothing, rather than everything, for a search that matches no row", () => {
-    expect(selectWorkloads(clusterRows(), "all", "no-workload-is-called-this")).toEqual([]);
-  });
-
-  it("returns nothing from an empty list without throwing", () => {
-    expect(selectWorkloads([], "withFindings", "anything")).toEqual([]);
-  });
-
   it("finds nothing with findings when every row was judged clean", () => {
     const clean = [row({ name: "web" }), row({ name: "api" })];
 
-    expect(selectWorkloads(clean, "withFindings", "")).toEqual([]);
-  });
-});
-
-describe("filtering on input nobody expects", () => {
-  it("treats whitespace as no search at all", () => {
-    const rows = clusterRows();
-
-    expect(selectWorkloads(rows, "all", "   ")).toHaveLength(rows.length);
-  });
-
-  it("searches case-insensitively, in both directions", () => {
-    const target = (clusterRows()[0] as WorkloadRow).subject.name;
-
-    expect(matchesSearch(row({ name: target }), target.toUpperCase())).toBe(true);
-    expect(matchesSearch(row({ name: target.toUpperCase() }), target.toLowerCase())).toBe(true);
+    expect(selectWorkloads(clean, "withFindings")).toEqual([]);
   });
 
   it("answers every filter key without falling through", () => {
@@ -148,60 +98,137 @@ describe("filtering on input nobody expects", () => {
       true,
     );
   });
-});
-
-describe("choosing the workload the detail shows", () => {
-  it("shows the one the route names while it is in the list", () => {
-    const rows = clusterRows();
-    const named = (rows.at(-1) as WorkloadRow).subject;
-
-    expect(chooseSelected(rows, rows, named)).toBe(named);
-  });
-
-  it("keeps the route's choice when a filter hides it, since it is still in scope", () => {
-    const rows = clusterRows();
-    const named = (rows.at(-1) as WorkloadRow).subject;
-
-    expect(chooseSelected(rows, [], named)).toBe(named);
-  });
-
-  it("falls back to the first row shown once the namespace selector leaves it out", () => {
-    const rows = clusterRows();
-    const elsewhere = { namespace: "default", kind: "ReplicaSet", name: "gone" };
-
-    expect(chooseSelected(rows, rows, elsewhere)).toBe(rows[0]?.subject);
-    expect(chooseSelected([], [], elsewhere)).toBeUndefined();
-  });
-
-  it("opens on the first row shown when the route names nothing", () => {
-    const shown = selectWorkloads(clusterRows(), "withFindings", "");
-
-    expect(chooseSelected(clusterRows(), shown, undefined)).toBe(shown[0]?.subject);
-  });
-});
-
-describe("saying why the list is empty", () => {
-  it("blames the namespaces selected when nothing in them has a report", () => {
-    expect(describeEmpty(0, "all", "web")).toMatch(/selected namespaces/);
-  });
-
-  it("blames the search before the filter", () => {
-    expect(describeEmpty(3, "unjudged", "web")).toBe("Nothing matches the search.");
-  });
-
-  it("says what each filter found none of", () => {
-    expect(describeEmpty(3, "unjudged", "")).toBe(
-      "Every workload here has a vulnerability verdict.",
-    );
-    expect(describeEmpty(3, "withFindings", " ")).toBe(
-      "No workload here has a critical or high finding.",
-    );
-    expect(describeEmpty(3, "all", "")).toBe("Nothing matches that filter.");
-  });
 
   it("gives every filter a tooltip saying what it leaves", () => {
     for (const key of Object.keys(FILTER_LABELS) as WorkloadFilter[]) {
       expect(FILTER_TITLES[key]).toMatch(/^Shows /);
     }
+  });
+});
+
+describe("searching the workload list", () => {
+  it("finds a workload the cluster really has by its name", () => {
+    const rows = clusterRows();
+    const target = rows[0] as WorkloadRow;
+
+    expect(search(rows, target.subject.name).map((each) => subjectKey(each.subject))).toContain(
+      subjectKey(target.subject),
+    );
+  });
+
+  it("searches the namespace too, not only the name", () => {
+    const rows = clusterRows();
+    const namespace = (rows[0] as WorkloadRow).subject.namespace;
+    const found = search(rows, namespace);
+
+    expect(found.length).toBeGreaterThan(0);
+    for (const each of found) expect(subjectKey(each.subject)).toContain(namespace);
+  });
+
+  it("finds the unjudged by the words their coverage cell shows", () => {
+    const rows = clusterRows();
+    const found = search(rows, "no verdict");
+
+    expect(found.length).toBeGreaterThan(0);
+    for (const each of found) expect(each.state).toBe("read-but-no-verdict");
+  });
+
+  it("searches case-insensitively", () => {
+    const target = (clusterRows()[0] as WorkloadRow).subject.name;
+
+    expect(search([row({ name: target })], target.toUpperCase())).toHaveLength(1);
+  });
+
+  it("returns nothing, rather than everything, for a search that matches no row", () => {
+    expect(search(clusterRows(), "no-workload-is-called-this")).toEqual([]);
+  });
+});
+
+describe("sorting the workload list by a column", () => {
+  const byColumn = (rows: WorkloadRow[], column: WorkloadColumn) =>
+    sortByColumn(rows, { column, direction: "descending" }, (each, title) =>
+      workloadSortValue(each, title as WorkloadColumn),
+    );
+
+  it("puts the workload with the most criticals first, and the unjudged last", () => {
+    const sorted = byColumn(clusterRows(), "Critical");
+    const scanned = sorted.filter((each) => each.state === "scanned");
+    const criticals = scanned.map((each) => countIn(each, "Critical"));
+
+    expect(criticals.length).toBeGreaterThan(1);
+    expect([...criticals].sort((first, second) => second - first)).toEqual(criticals);
+    expect(sorted.slice(0, scanned.length)).toEqual(scanned);
+  });
+
+  it("knows no count for a workload nobody judged, rather than zero", () => {
+    const unjudged = row({ name: "web", state: "never-looked" });
+
+    for (const column of ["Critical", "High", "Other", "Fix published"] as const) {
+      expect(workloadSortValue(unjudged, column)).toBeUndefined();
+    }
+  });
+
+  it("counts everything below high as other, and the fixable apart", () => {
+    const one = {
+      ...row({
+        name: "web",
+        summary: { criticalCount: 1, highCount: 2, mediumCount: 3, lowCount: 4, unknownCount: 5 },
+      }),
+      fixableCount: 7,
+    };
+
+    expect(workloadSortValue(one, "Critical")).toBe(1);
+    expect(workloadSortValue(one, "High")).toBe(2);
+    expect(workloadSortValue(one, "Other")).toBe(12);
+    expect(workloadSortValue(one, "Fix published")).toBe(7);
+  });
+
+  it("sorts by the identity columns and by coverage, unjudged first", () => {
+    const first = clusterRows()[0] as WorkloadRow;
+
+    expect(workloadSortValue(first, "Workload")).toBe(first.subject.name);
+    expect(workloadSortValue(first, "Kind")).toBe(first.subject.kind);
+    expect(workloadSortValue(first, "Namespace")).toBe(first.subject.namespace);
+    expect(workloadSortValue(row({ name: "a", state: "never-looked" }), "Coverage")).toBeLessThan(
+      workloadSortValue(row({ name: "b", state: "scanned" }), "Coverage") as number,
+    );
+  });
+});
+
+describe("opening the workload a link names", () => {
+  it("finds the row the route names", () => {
+    const rows = clusterRows();
+    const named = rows.at(-1) as WorkloadRow;
+
+    expect(rowOf(rows, subjectKey(named.subject))).toBe(named);
+  });
+
+  it("opens it even when the filter hides its row", () => {
+    const rows = clusterRows();
+    const unjudged = rows.find((each) => each.state !== "scanned") as WorkloadRow;
+
+    expect(selectWorkloads(rows, "withFindings")).not.toContain(unjudged);
+    expect(rowOf(rows, subjectKey(unjudged.subject))).toBe(unjudged);
+  });
+
+  it("opens nothing once the namespace selector leaves it out, or when nothing is named", () => {
+    const rows = clusterRows();
+
+    expect(rowOf(rows, "default/ReplicaSet/gone")).toBeUndefined();
+    expect(rowOf(rows, undefined)).toBeUndefined();
+  });
+});
+
+describe("saying why the list is empty", () => {
+  it("blames the namespaces selected when nothing in them has a report", () => {
+    expect(describeEmpty(0, "unjudged")).toMatch(/selected namespaces/);
+  });
+
+  it("says what each filter found none of", () => {
+    expect(describeEmpty(3, "unjudged")).toBe("Every workload here has a vulnerability verdict.");
+    expect(describeEmpty(3, "withFindings")).toBe(
+      "No workload here has a critical or high finding.",
+    );
+    expect(describeEmpty(3, "all")).toBe("Nothing matches that filter.");
   });
 });

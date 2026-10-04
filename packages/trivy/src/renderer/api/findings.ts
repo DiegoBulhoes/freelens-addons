@@ -114,3 +114,7 @@ export function upgradesThatWouldFix(vulnerabilities: Vulnerability[]): PackageU
     return second.vulnerabilityCount - first.vulnerabilityCount;
   });
 }
+
+export function topFixable(vulnerabilities: Vulnerability[], limit: number): Vulnerability[] {
+  return sortBySeverity(deduplicate(vulnerabilities).filter(hasFix)).slice(0, limit);
+}

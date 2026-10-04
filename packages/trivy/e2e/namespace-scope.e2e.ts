@@ -11,6 +11,7 @@ import {
   textOf,
   waitFor,
 } from "../../../build/e2e/freelens";
+import { EMPTY as EMPTY_NOTE, ROW } from "./workloads";
 
 // Narrows before our pages mount: openWorkbench widens first, which hides the defect.
 // Twin of packages/argocd/e2e/namespace-scope.e2e.ts.
@@ -142,19 +143,16 @@ describe("the namespace selector on the Trivy screens", () => {
     expect(await headline(COUNTING)).toMatch(COUNTING);
   }, 120_000);
 
-  it("empties the workload picker and says why, then fills it again", async () => {
+  it("empties the workload list and says why, then fills it again", async () => {
     await clickSidebar(session, frame, "trivy-workloads", "trivy");
-    await waitFor(
-      "the picker",
-      async () => (await countOf(".Trivy-picker__item")) > 0 || undefined,
-    );
+    await waitFor("the workload list", async () => (await countOf(ROW)) > 0 || undefined);
 
     await selectNamespace(session, frame, EMPTY_NAMESPACE);
 
-    const note = await waitFor("the empty picker", async () => {
-      if ((await countOf(".Trivy-picker__item")) > 0) return undefined;
+    const note = await waitFor("the empty list", async () => {
+      if ((await countOf(ROW)) > 0) return undefined;
 
-      const text = await textOf(session, frame, ".Trivy-picker__empty");
+      const text = await textOf(session, frame, EMPTY_NOTE);
 
       return text.length > 0 ? text : undefined;
     });
@@ -164,8 +162,8 @@ describe("the namespace selector on the Trivy screens", () => {
     await selectAllNamespaces(session, frame);
 
     expect(
-      await waitFor("the picker to fill", async () => {
-        const rows = await countOf(".Trivy-picker__item");
+      await waitFor("the list to fill", async () => {
+        const rows = await countOf(ROW);
 
         return rows > 0 ? rows : undefined;
       }),

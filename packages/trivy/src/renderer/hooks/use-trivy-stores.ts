@@ -48,7 +48,11 @@ export function useTrivyStores(): TrivyStores {
       scope,
     ),
     isReady: Boolean(vulnerabilityStore),
-    hasLoaded: Boolean(vulnerabilityStore?.isLoaded && sbomStore?.isLoaded),
+    hasLoaded:
+      Boolean(vulnerabilityStore) &&
+      [vulnerabilityStore, configAuditStore, sbomStore, exposedSecretStore].every(
+        (store) => store?.isLoaded ?? true,
+      ),
     gaveUp,
   };
 }

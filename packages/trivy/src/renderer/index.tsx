@@ -2,6 +2,7 @@ import { Renderer } from "@freelensapp/extensions";
 import { computed } from "mobx";
 import { isInstalled } from "./api/installed";
 import { VulnerabilityReport } from "./api/reports";
+import { VulnerabilityReportDetails } from "./details/vulnerability-report-details";
 import { TrivyIcon } from "./icons/trivy";
 import { DashboardPage } from "./pages/dashboard-page";
 import { RbacPage } from "./pages/rbac-page";
@@ -21,6 +22,19 @@ const installed = computed(() =>
 );
 
 export default class TrivyRenderer extends Renderer.LensExtension {
+  override kubeObjectDetailItems = [
+    {
+      kind: VulnerabilityReport.kind,
+      apiVersions: VulnerabilityReport.crd.apiVersions,
+      priority: 10,
+      components: {
+        Details: (props: Renderer.Component.KubeObjectDetailsProps<VulnerabilityReport>) => (
+          <VulnerabilityReportDetails {...props} extension={this} />
+        ),
+      },
+    },
+  ];
+
   override clusterPages = [
     {
       id: PAGES.dashboard,
@@ -29,19 +43,19 @@ export default class TrivyRenderer extends Renderer.LensExtension {
       },
     },
     {
-      // List and detail share this page, so the sidebar item stays lit.
+      // A link opens a workload's drawer through these params.
       id: PAGES.workloads,
       params: { namespace: "", kind: "", name: "", filter: "" },
       components: {
         Page: (props: { params?: WorkloadsRouteParams }) => (
-          <WorkloadsRoute params={props.params} extension={this} />
+          <WorkloadsRoute params={props.params} />
         ),
       },
     },
     {
       id: PAGES.vulnerabilities,
       components: {
-        Page: () => <VulnerabilityReportsPage extension={this} />,
+        Page: () => <VulnerabilityReportsPage />,
       },
     },
     {

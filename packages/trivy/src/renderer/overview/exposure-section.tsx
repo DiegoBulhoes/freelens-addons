@@ -40,8 +40,12 @@ export function ExposureSection({
               type="button"
               key={subjectKey(row.subject)}
               className={`Trivy-row Trivy-row--${criticals > 0 ? "critical" : "warning"}`}
-              title="Opens this workload in Workloads, with the upgrades that clear its findings"
-              onClick={() => onOpenWorkload(row.subject)}
+              title="Opens this workload's drawer in Workloads, with the upgrades that clear its findings"
+              onClick={(event) => {
+                // Unprevented, the drawer this opens takes the click as outside and closes.
+                event.preventDefault();
+                onOpenWorkload(row.subject);
+              }}
             >
               <span className="Trivy-row__state">
                 {criticals > 0 ? `${criticals} critical` : `${highs} high`}

@@ -11,19 +11,17 @@ import {
   resolvedThemeColor,
   waitFor,
 } from "../../../build/e2e/freelens";
-import { openScannedWorkload } from "./picker";
+import { BODY, closeDrawer, DRAWER, openScannedWorkload, ROW } from "./workloads";
 
 const PAGES: [id: string, container: string][] = [
   ["trivy-dashboard", ".Trivy-page"],
-  ["trivy-workloads", ".Trivy-picker"],
+  ["trivy-workloads", ".Trivy-page--list"],
   ["trivy-rbac", ".Trivy-page"],
 ];
 
-const CLICKABLE_ROWS = [".Trivy-picker__item", ".Trivy-picker__detail button.Trivy-row"];
-
 const DESIGN: [id: string, ready: string][] = [
   ["trivy-dashboard", ".Trivy-card"],
-  ["trivy-workloads", ".Trivy-picker__detail .Trivy-table"],
+  ["trivy-workloads", ROW],
   ["trivy-rbac", ".Trivy-table tbody tr"],
   ["trivy-vulnerabilities", ".TrivyVulnerabilityReports .TableRow"],
 ];
@@ -41,8 +39,7 @@ describe("how the Trivy pages are laid out", () => {
   it.each(DESIGN)(
     "builds %s from the design standard",
     async (id, ready) => {
-      if (id === "trivy-workloads") await openScannedWorkload(session, frame);
-      else await clickSidebar(session, frame, id, "trivy");
+      await clickSidebar(session, frame, id, "trivy");
       await waitFor(`${id} to render`, async () =>
         (await session.evaluate<number>(
           `document.querySelectorAll(${JSON.stringify(ready)}).length`,
@@ -53,6 +50,31 @@ describe("how the Trivy pages are laid out", () => {
       );
 
       expect(await designViolations(session, frame, "Trivy")).toEqual([]);
+    },
+    90_000,
+  );
+
+  it.each(["By package", "No fix", "All "])(
+    "builds a workload's drawer from the design standard, on %s",
+    async (view) => {
+      await openScannedWorkload(session, frame);
+      await session.evaluate(
+        `[...document.querySelectorAll(${JSON.stringify(`${BODY} .Trivy-section__bar .Trivy-filter`)})]
+           .find((each) => each.textContent.includes(${JSON.stringify(view)}))?.click()`,
+        frame,
+      );
+      await waitFor(`${view} to be pressed`, async () =>
+        (await session.evaluate<boolean>(
+          `[...document.querySelectorAll(${JSON.stringify(`${BODY} .Trivy-filter[aria-pressed="true"]`)})]
+             .some((each) => each.textContent.includes(${JSON.stringify(view)}))`,
+          frame,
+        ))
+          ? true
+          : undefined,
+      );
+
+      expect(await designViolations(session, frame, "Trivy")).toEqual([]);
+      await closeDrawer(session, frame);
     },
     90_000,
   );
@@ -101,22 +123,29 @@ describe("how the Trivy pages are laid out", () => {
   );
 
   it("leaves the text of a clickable row where a reader expects it", async () => {
-    await clickSidebar(session, frame, "trivy-workloads", "trivy");
+    await clickSidebar(session, frame, "trivy-dashboard", "trivy");
     await waitFor(
-      "the picker",
+      "the overview's rows",
       async () =>
         (await session.evaluate<number>(
-          "document.querySelectorAll('.Trivy-picker__item').length",
+          "document.querySelectorAll('button.Trivy-row').length",
           frame,
         )) > 0 || undefined,
     );
 
-    for (const row of CLICKABLE_ROWS) {
-      const alignment = await computedStyle(session, frame, row, "text-align");
+    const alignment = await computedStyle(session, frame, "button.Trivy-row", "text-align");
 
-      // Must be the chosen value: center is a button's browser default.
-      expect(alignment, `${row} is aligned ${alignment}`).toMatch(/^(left|start)$/);
-    }
+    // Must be the chosen value: center is a button's browser default.
+    expect(alignment, `button.Trivy-row is aligned ${alignment}`).toMatch(/^(left|start)$/);
+  }, 90_000);
+
+  it("keeps a workload's drawer within its width", async () => {
+    await openScannedWorkload(session, frame);
+
+    const overflow = await overflowsSideways(session, frame, `${DRAWER} .Trivy-drawer`);
+
+    expect(overflow, `the drawer scrolls sideways by ${overflow}px`).toBeLessThan(8);
+    await closeDrawer(session, frame);
   }, 90_000);
 
   it("takes its text colour from the host's theme rather than its own", async () => {

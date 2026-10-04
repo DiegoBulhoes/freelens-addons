@@ -7,6 +7,7 @@ import {
   isAtLeast,
   sortBySeverity,
   tallyFixable,
+  topFixable,
   upgradesThatWouldFix,
 } from "../src/renderer/api/findings";
 import { addSummaries, countOf, rankOf, totalOf } from "../src/renderer/api/severity";
@@ -175,5 +176,24 @@ describe("findings shaped in ways the operator should not produce", () => {
     expect(addSummaries([{ criticalCount: 1 }, { criticalCount: 2 }])).toEqual({
       criticalCount: 3,
     });
+  });
+});
+
+describe("the worst findings that have a fix", () => {
+  it("takes from a real report only fixable findings, worst first, up to the limit", () => {
+    const top = topFixable(allVulnerabilities(), 10);
+
+    expect(top).toHaveLength(10);
+    for (const each of top) expect(hasFix(each)).toBe(true);
+    expect(sortBySeverity(top)).toEqual(top);
+    expect(top[0]?.severity).toBe("CRITICAL");
+  });
+
+  it("lists a finding emitted twice once", () => {
+    expect(topFixable([found(), found()], 10)).toHaveLength(1);
+  });
+
+  it("lists nothing when nothing has a fix", () => {
+    expect(topFixable([found({ fixedVersion: "" })], 10)).toEqual([]);
   });
 });

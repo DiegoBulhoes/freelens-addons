@@ -4,14 +4,22 @@ import { subjectOf } from "../src/renderer/api/subjects";
 import type { ReportSubject } from "../src/renderer/api/types";
 import {
   getWorkloadReport,
+  imageOf,
+  osOf,
+  scannerOf,
   summariseAction,
+  ticketText,
+  unfixableOf,
   upgradesClearing,
   type WorkloadReports,
+  workloadVerdict,
 } from "../src/renderer/api/workload-report";
+import { getWorkloadRows } from "../src/renderer/api/workload-rows";
 import {
   configAuditReports,
   exposedSecretReports,
   reportNamed,
+  sbomReports,
   vulnerabilityReports,
 } from "./fixtures";
 
@@ -260,5 +268,149 @@ describe("gathering from reports shaped oddly", () => {
     });
 
     expect(report.exposedSecretCount).toBe(3);
+  });
+});
+
+describe("the state a workload's drawer opens on", () => {
+  const rows = () =>
+    getWorkloadRows({
+      vulnerabilityReports: vulnerabilityReports(),
+      sbomReports: sbomReports(),
+      configAuditReports: configAuditReports(),
+      exposedSecretReports: exposedSecretReports(),
+    });
+
+  it("leads with the upgrades that clear a workload's criticals, and what none clears", () => {
+    const report = getWorkloadReport(web(), clusterReports());
+    const action = summariseAction(report, "HIGH");
+    const verdict = workloadVerdict("scanned", report);
+
+    expect(verdict.tone).toBe("critical");
+    expect(verdict.label).toMatch(
+      new RegExp(
+        `^${action.upgradeCount} upgrades clear ${action.clearedCount} of \\d+ critical and high findings$`,
+      ),
+    );
+    expect(verdict.reason).toContain(`${action.unfixableCount} have no published fix`);
+  });
+
+  it("does not call an unjudged workload clean, whichever way it is unjudged", () => {
+    const unjudged = rows().filter((row) => row.state !== "scanned");
+
+    expect(new Set(unjudged.map((row) => row.state)).size).toBeGreaterThan(0);
+
+    for (const row of unjudged) {
+      const verdict = workloadVerdict(row.state, getWorkloadReport(row.subject, clusterReports()));
+
+      expect(verdict.tone).not.toBe("ok");
+      expect(verdict.reason).toMatch(/does not mean it is clean/);
+    }
+
+    expect(workloadVerdict("never-looked", getWorkloadReport(web(), clusterReports())).tone).toBe(
+      "critical",
+    );
+    expect(
+      workloadVerdict("read-but-no-verdict", getWorkloadReport(web(), clusterReports())).tone,
+    ).toBe("warning");
+  });
+
+  const scannedWith = (vulnerabilities: unknown[], summary: Record<string, number>) =>
+    getWorkloadReport(
+      { namespace: "argocd", kind: "ReplicaSet", name: "web" },
+      {
+        vulnerability: [
+          {
+            getLabels: () => [
+              "trivy-operator.resource.namespace=argocd",
+              "trivy-operator.resource.kind=ReplicaSet",
+              "trivy-operator.resource.name=web",
+            ],
+            getOwnerRefs: () => [],
+            report: { summary, vulnerabilities } as never,
+          },
+        ],
+        configAudit: [],
+        exposedSecret: [],
+      },
+    );
+
+  it("calls a scanned workload with nothing critical or high fine", () => {
+    expect(workloadVerdict("scanned", scannedWith([], { lowCount: 2 }))).toMatchObject({
+      tone: "ok",
+      label: "Scanned",
+    });
+  });
+
+  it("warns, not alarms, on highs alone, and says when nothing has a fix", () => {
+    const verdict = workloadVerdict(
+      "scanned",
+      scannedWith([{ vulnerabilityID: "CVE-1", severity: "HIGH", fixedVersion: "" }], {
+        highCount: 1,
+      }),
+    );
+
+    expect(verdict.tone).toBe("warning");
+    expect(verdict.label).toBe("No upgrade published for anything critical or high");
+    expect(verdict.reason).toBe("1 have no published fix, so no upgrade will clear them.");
+  });
+
+  it("says so when every critical and high finding has a fix", () => {
+    const verdict = workloadVerdict(
+      "scanned",
+      scannedWith(
+        [{ vulnerabilityID: "CVE-1", resource: "zlib", severity: "HIGH", fixedVersion: "2" }],
+        { highCount: 1 },
+      ),
+    );
+
+    expect(verdict.label).toBe("1 upgrade clears 1 of 1 critical and high findings");
+    expect(verdict.reason).toBe("Every critical and high finding here has a published fix.");
+  });
+});
+
+describe("what a workload's drawer lists and copies", () => {
+  it("lists as unfixable only critical and high findings with no fix", () => {
+    const report = getWorkloadReport(web(), clusterReports());
+    const unfixable = unfixableOf(report, "HIGH");
+
+    expect(unfixable).toHaveLength(summariseAction(report, "HIGH").unfixableCount);
+    for (const each of unfixable) {
+      expect(each.fixedVersion ?? "").toBe("");
+      expect(["CRITICAL", "HIGH"]).toContain(each.severity);
+    }
+  });
+
+  it("copies one line naming the workload and its image, then one per upgrade", () => {
+    const report = getWorkloadReport(web(), clusterReports());
+    const lines = ticketText(report).split("\n");
+
+    expect(lines[0]).toBe(`${web().name} (${web().namespace}) — library/nginx:1.24.0`);
+    expect(lines).toHaveLength(report.upgrades.length + 1);
+    expect(lines[1]).toMatch(/^\S+ \S+ -> \S+ \(clears \d+\)$/);
+  });
+
+  it("says no image was reported rather than leaving a blank", () => {
+    const report = getWorkloadReport(
+      { namespace: "nowhere", kind: "Pod", name: "x" },
+      clusterReports(),
+    );
+
+    expect(ticketText(report)).toBe("x (nowhere) — no image reported");
+  });
+});
+
+describe("describing one report for the host's drawer", () => {
+  it("names the image, the base and the scanner of a real report", () => {
+    const body = reportNamed("replicaset-web-5774f6f6c7-web").report;
+
+    expect(imageOf(body)).toBe("library/nginx:1.24.0");
+    expect(osOf(body)).toBe("debian 11.9");
+    expect(scannerOf(body)).toMatch(/^Trivy \d+\.\d+/);
+  });
+
+  it("names no scanner when the report gives no version", () => {
+    expect(scannerOf(undefined)).toBeUndefined();
+    expect(scannerOf({ scanner: { name: "Trivy" } })).toBeUndefined();
+    expect(scannerOf({ scanner: { version: "0.1" } })).toBe("Trivy 0.1");
   });
 });

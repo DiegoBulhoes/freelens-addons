@@ -1,7 +1,7 @@
-import { countOf } from "./severity";
+import { COVERAGE_STATUS } from "./coverage";
+import { countOf, totalOf } from "./severity";
 import { subjectKey } from "./subjects";
-import type { ReportSubject } from "./types";
-import type { WorkloadRow } from "./workload-rows";
+import { STATE_RANK, type WorkloadRow } from "./workload-rows";
 
 export type WorkloadFilter = "all" | "unjudged" | "withFindings";
 
@@ -32,43 +32,71 @@ export function matchesFilter(row: WorkloadRow, filter: WorkloadFilter): boolean
   return true;
 }
 
-export function matchesSearch(row: WorkloadRow, searchText: string): boolean {
-  const needle = searchText.trim().toLowerCase();
-
-  if (needle === "") return true;
-
-  return subjectKey(row.subject).toLowerCase().includes(needle);
+export function selectWorkloads(rows: WorkloadRow[], filter: WorkloadFilter): WorkloadRow[] {
+  return rows.filter((row) => matchesFilter(row, filter));
 }
 
-export function selectWorkloads(
-  rows: WorkloadRow[],
-  filter: WorkloadFilter,
-  searchText: string,
-): WorkloadRow[] {
-  return rows.filter((row) => matchesFilter(row, filter) && matchesSearch(row, searchText));
+export function workloadSearchTexts(row: WorkloadRow): string[] {
+  return [
+    row.subject.namespace,
+    row.subject.kind,
+    row.subject.name,
+    COVERAGE_STATUS[row.state].label,
+  ];
 }
 
-// A routed workload out of scope falls back to the first row: its reports would read as none.
-export function chooseSelected(
-  rows: WorkloadRow[],
-  shown: WorkloadRow[],
-  fromRoute: ReportSubject | undefined,
-): ReportSubject | undefined {
-  if (fromRoute) {
-    const key = subjectKey(fromRoute);
+export type WorkloadColumn =
+  | "Workload"
+  | "Kind"
+  | "Namespace"
+  | "Coverage"
+  | "Critical"
+  | "High"
+  | "Other"
+  | "Fix published";
 
-    if (rows.some((row) => subjectKey(row.subject) === key)) return fromRoute;
+// Counts of an unjudged workload are unknown, not zero, so they sort last either way.
+export function workloadSortValue(
+  row: WorkloadRow,
+  column: WorkloadColumn,
+): string | number | undefined {
+  switch (column) {
+    case "Workload":
+      return row.subject.name;
+    case "Kind":
+      return row.subject.kind;
+    case "Namespace":
+      return row.subject.namespace;
+    case "Coverage":
+      return STATE_RANK[row.state];
+    default:
+      return row.state === "scanned" ? countIn(row, column) : undefined;
   }
-
-  return shown[0]?.subject;
 }
 
-export function describeEmpty(total: number, filter: WorkloadFilter, searchText: string): string {
+export function countIn(row: WorkloadRow, column: "Critical" | "High" | "Other" | "Fix published") {
+  const critical = countOf(row.summary, "CRITICAL");
+  const high = countOf(row.summary, "HIGH");
+
+  if (column === "Critical") return critical;
+  if (column === "High") return high;
+  if (column === "Other") return totalOf(row.summary) - critical - high;
+
+  return row.fixableCount;
+}
+
+// Looked up before the filter: a workload a link names opens even when a filter hides its row.
+export function rowOf(rows: WorkloadRow[], key: string | undefined): WorkloadRow | undefined {
+  if (!key) return undefined;
+
+  return rows.find((row) => subjectKey(row.subject) === key);
+}
+
+export function describeEmpty(total: number, filter: WorkloadFilter): string {
   if (total === 0) {
     return "No workload in the selected namespaces has a report from the Trivy operator.";
   }
 
-  if (searchText.trim() !== "") return "Nothing matches the search.";
   if (filter === "unjudged") return "Every workload here has a vulnerability verdict.";
   if (filter === "withFindings") return "No workload here has a critical or high finding.";
 

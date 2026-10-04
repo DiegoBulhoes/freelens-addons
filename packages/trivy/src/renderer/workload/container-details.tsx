@@ -13,10 +13,10 @@ export function ContainerDetails({
   if (containers.length === 0) return null;
 
   return (
-    <section className="Trivy-section">
-      <h2 className="Trivy-section__title">
+    <section className="Trivy-section" data-section="trivy-workload-containers">
+      <h3 className="Trivy-section__title">
         {containers.length === 1 ? "Container" : `${containers.length} containers`}
-      </h2>
+      </h3>
 
       <div className="Trivy-list">
         {containers.map((container, index) => (
