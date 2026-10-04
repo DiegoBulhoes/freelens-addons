@@ -83,6 +83,10 @@
   padding: var(--argocd-gap-md);
 }
 
+.ArgoCD-page--list > .ArgoCD-filters {
+  padding: 0 var(--argocd-gap-md) var(--argocd-gap-md);
+}
+
 .ArgoCD-page--list > .ArgoCD-section > .ArgoCD-section__note {
   padding: 0 var(--argocd-gap-md) var(--argocd-gap-md);
 }
@@ -345,6 +349,9 @@ button.ArgoCD-row__main {
 .ArgoCD-row__actions {
   flex: none;
   align-self: center;
+  display: flex;
+  align-items: center;
+  gap: var(--argocd-gap-xs);
 }
 
 /* ─── Boxes ─────────────────────────────────────────────────────────────── */
@@ -566,6 +573,17 @@ button.ArgoCD-chip:hover {
   line-height: 0;
   white-space: nowrap;
   text-align: right;
+}
+
+/* The first cell of a selectable row, holding the host's own Checkbox, as its lists do. */
+.ArgoCD-table__check {
+  width: 1%;
+  padding-right: 0;
+  line-height: 0;
+}
+
+.ArgoCD-table__row--selected td {
+  background: var(--tableBgcSelected, var(--argocd-surface-hover));
 }
 
 .ArgoCD-table__row--clickable {

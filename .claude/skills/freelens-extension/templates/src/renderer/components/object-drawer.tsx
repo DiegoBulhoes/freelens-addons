@@ -5,7 +5,7 @@ import type { Tone } from "./status";
 import { __Name__Styles } from "./styles";
 
 const {
-  Component: { Drawer, Icon },
+  Component: { Drawer, Icon, MenuActions, MenuItem },
 } = Renderer;
 
 export interface DrawerAction {
@@ -21,10 +21,12 @@ export interface ObjectDrawerProps {
   onClose: () => void;
   actions?: DrawerAction[];
   state?: { tone: Tone; label: string; reason: string };
+  /** `data-section`, for an e2e suite to find the body. */
+  section?: string;
   children: ReactNode;
 }
 
-// For what the host cannot list; a Kubernetes object uses the host's details drawer.
+// For anything opened from our pages; the host's details drawer only opens from its own lists.
 // Open it from a click that called preventDefault; close it before following a link in it.
 export function ObjectDrawer({
   open,
@@ -33,6 +35,7 @@ export function ObjectDrawer({
   onClose,
   actions = [],
   state,
+  section,
   children,
 }: ObjectDrawerProps) {
   return (
@@ -41,18 +44,22 @@ export function ObjectDrawer({
       open={open}
       title={`${kind}: ${name}`}
       onClose={onClose}
-      toolbar={actions.map((action) => (
-        <Icon
-          key={action.icon}
-          material={action.icon}
-          tooltip={action.title}
-          interactive
-          onClick={action.onClick}
-        />
-      ))}
+      // The host's own drawers put their actions in a toolbar MenuActions; its items carry the spacing.
+      toolbar={
+        actions.length > 0 && (
+          <MenuActions toolbar autoCloseOnSelect>
+            {actions.map((action) => (
+              <MenuItem key={action.icon} onClick={action.onClick}>
+                <Icon material={action.icon} tooltip={action.title} interactive />
+                <span className="title">{action.title}</span>
+              </MenuItem>
+            ))}
+          </MenuActions>
+        )
+      }
     >
       {open && (
-        <div className="__Name__ __Name__-drawer">
+        <div className="__Name__ __Name__-drawer" data-section={section}>
           <__Name__Styles />
           {state &&
             (state.tone === "ok" || state.tone === "info" ? (

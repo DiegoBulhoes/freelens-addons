@@ -42,6 +42,13 @@ This file holds only what those do not, plus the rules that must never be broken
 | vite stays on 7 | `electron-vite@5` declares `vite ^5 \|\| ^6 \|\| ^7` |
 | @types/node stays on 24 | The container's Node |
 
+## Consistent styles
+
+Before building or changing a screen, look at how the other extensions and the host's own lists
+draw the same thing, and match them. Reuse the host's components (`Checkbox`, `MenuActions`,
+`Drawer`, `ConfirmDialog`) rather than a native element, and the standard's components rather than
+new CSS. A difference from the others is a bug unless the user asked for it.
+
 ## Code comments
 
 As few as possible, one line each. Write one only when the reason is not visible in the code and

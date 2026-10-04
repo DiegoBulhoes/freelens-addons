@@ -83,6 +83,10 @@
   padding: var(--cert-manager-gap-md);
 }
 
+.CertManager-page--list > .CertManager-filters {
+  padding: 0 var(--cert-manager-gap-md) var(--cert-manager-gap-md);
+}
+
 .CertManager-page--list > .CertManager-section > .CertManager-section__note {
   padding: 0 var(--cert-manager-gap-md) var(--cert-manager-gap-md);
 }
@@ -345,6 +349,9 @@ button.CertManager-row__main {
 .CertManager-row__actions {
   flex: none;
   align-self: center;
+  display: flex;
+  align-items: center;
+  gap: var(--cert-manager-gap-xs);
 }
 
 /* ─── Boxes ─────────────────────────────────────────────────────────────── */
@@ -566,6 +573,17 @@ button.CertManager-chip:hover {
   line-height: 0;
   white-space: nowrap;
   text-align: right;
+}
+
+/* The first cell of a selectable row, holding the host's own Checkbox, as its lists do. */
+.CertManager-table__check {
+  width: 1%;
+  padding-right: 0;
+  line-height: 0;
+}
+
+.CertManager-table__row--selected td {
+  background: var(--tableBgcSelected, var(--cert-manager-surface-hover));
 }
 
 .CertManager-table__row--clickable {

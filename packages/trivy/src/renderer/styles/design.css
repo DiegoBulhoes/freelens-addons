@@ -83,6 +83,10 @@
   padding: var(--trivy-gap-md);
 }
 
+.Trivy-page--list > .Trivy-filters {
+  padding: 0 var(--trivy-gap-md) var(--trivy-gap-md);
+}
+
 .Trivy-page--list > .Trivy-section > .Trivy-section__note {
   padding: 0 var(--trivy-gap-md) var(--trivy-gap-md);
 }
@@ -345,6 +349,9 @@ button.Trivy-row__main {
 .Trivy-row__actions {
   flex: none;
   align-self: center;
+  display: flex;
+  align-items: center;
+  gap: var(--trivy-gap-xs);
 }
 
 /* ─── Boxes ─────────────────────────────────────────────────────────────── */
@@ -566,6 +573,17 @@ button.Trivy-chip:hover {
   line-height: 0;
   white-space: nowrap;
   text-align: right;
+}
+
+/* The first cell of a selectable row, holding the host's own Checkbox, as its lists do. */
+.Trivy-table__check {
+  width: 1%;
+  padding-right: 0;
+  line-height: 0;
+}
+
+.Trivy-table__row--selected td {
+  background: var(--tableBgcSelected, var(--trivy-surface-hover));
 }
 
 .Trivy-table__row--clickable {

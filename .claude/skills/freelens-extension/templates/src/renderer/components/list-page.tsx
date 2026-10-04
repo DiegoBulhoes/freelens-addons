@@ -4,10 +4,11 @@ import { type ReactNode, useState } from "react";
 
 import { describeCount, nextSort, type Sort, searchRows, sortRows } from "../api/table";
 import { NamespaceFilter } from "./namespace-filter";
+import { type SelectionAction, SelectionBar } from "./selection-bar";
 import { __Name__Styles } from "./styles";
 
 const {
-  Component: { MenuActions },
+  Component: { Checkbox, MenuActions },
 } = Renderer;
 
 export interface Column<Row> {
@@ -27,20 +28,40 @@ export interface ListPageProps<Row> {
   onOpen?: (row: Row) => void;
   menu?: (row: Row) => ReactNode;
   empty: string;
+  /** `data-section`, for an e2e suite to find the list. */
+  section?: string;
   /** From route params, as the host's lists read `?search=`. */
   initialQuery?: string;
   filters?: ReactNode;
+  /** The page's one action, after the namespace selector. */
+  action?: ReactNode;
+  /** Ticks rows and offers these actions on them; a cluster write types "confirm". */
+  selection?: { hint: string; actions: SelectionAction<Row>[] };
   children?: ReactNode;
 }
 
 function ListPageView<Row>(props: ListPageProps<Row>) {
   const [query, setQuery] = useState(props.initialQuery ?? "");
   const [sort, setSort] = useState<Sort>();
+  const [ticked, setTicked] = useState<ReadonlySet<string>>(new Set());
   const { columns, rows } = props;
 
   const shown = sortRows(searchRows(rows, query, props.searchTexts), sort, (row, column) =>
     columns.find((each) => each.title === column)?.sortValue?.(row),
   );
+  // Only what is on screen counts: a row searched away or deleted drops out of the selection.
+  const selected = shown.filter((row) => ticked.has(props.keyOf(row)));
+  const toggle = (keys: string[], on: boolean) =>
+    setTicked((before) => {
+      const next = new Set(before);
+
+      for (const key of keys) {
+        if (on) next.add(key);
+        else next.delete(key);
+      }
+
+      return next;
+    });
 
   return (
     <div className="__Name__ __Name__-page __Name__-page--list">
@@ -63,12 +84,22 @@ function ListPageView<Row>(props: ListPageProps<Row>) {
             onChange={(event) => setQuery(event.target.value)}
           />
           <NamespaceFilter />
+          {props.action}
         </div>
       </div>
 
       {props.filters}
 
-      <section className="__Name__-section" data-section="list">
+      {props.selection && (
+        <SelectionBar
+          getItems={() => shown}
+          pickOnlySelected={() => selected}
+          hint={props.selection.hint}
+          actions={props.selection.actions}
+        />
+      )}
+
+      <section className="__Name__-section" data-section={props.section ?? "list"}>
         {shown.length === 0 ? (
           <p className="__Name__-section__note">
             {query ? "Nothing matches the search." : props.empty}
@@ -77,6 +108,15 @@ function ListPageView<Row>(props: ListPageProps<Row>) {
           <table className="__Name__-table">
             <thead>
               <tr>
+                {props.selection && (
+                  <th className="__Name__-table__check">
+                    <Checkbox
+                      aria-label="Select every row shown"
+                      value={selected.length > 0 && selected.length === shown.length}
+                      onChange={(on: boolean) => toggle(shown.map(props.keyOf), on)}
+                    />
+                  </th>
+                )}
                 {columns.map((column) => (
                   <th
                     key={column.title}
@@ -109,7 +149,14 @@ function ListPageView<Row>(props: ListPageProps<Row>) {
               {shown.map((row) => (
                 <tr
                   key={props.keyOf(row)}
-                  className={props.onOpen ? "__Name__-table__row--clickable" : undefined}
+                  className={
+                    [
+                      props.onOpen ? "__Name__-table__row--clickable" : "",
+                      ticked.has(props.keyOf(row)) ? "__Name__-table__row--selected" : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ") || undefined
+                  }
                   // Unprevented, this click reaches the drawer's outside-click listener and closes it.
                   onClick={
                     props.onOpen
@@ -120,6 +167,19 @@ function ListPageView<Row>(props: ListPageProps<Row>) {
                       : undefined
                   }
                 >
+                  {props.selection && (
+                    <td
+                      className="__Name__-table__check"
+                      onClick={(event) => event.stopPropagation()}
+                      onKeyDown={(event) => event.stopPropagation()}
+                    >
+                      <Checkbox
+                        aria-label={`Select ${props.keyOf(row)}`}
+                        value={ticked.has(props.keyOf(row))}
+                        onChange={(on: boolean) => toggle([props.keyOf(row)], on)}
+                      />
+                    </td>
+                  )}
                   {columns.map((column) => (
                     <td key={column.title} className={column.className}>
                       {column.cell(row)}

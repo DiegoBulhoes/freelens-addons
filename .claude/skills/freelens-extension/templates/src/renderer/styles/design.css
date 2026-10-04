@@ -83,6 +83,10 @@
   padding: var(--__NAME__-gap-md);
 }
 
+.__Name__-page--list > .__Name__-filters {
+  padding: 0 var(--__NAME__-gap-md) var(--__NAME__-gap-md);
+}
+
 .__Name__-page--list > .__Name__-section > .__Name__-section__note {
   padding: 0 var(--__NAME__-gap-md) var(--__NAME__-gap-md);
 }
@@ -345,6 +349,9 @@ button.__Name__-row__main {
 .__Name__-row__actions {
   flex: none;
   align-self: center;
+  display: flex;
+  align-items: center;
+  gap: var(--__NAME__-gap-xs);
 }
 
 /* ─── Boxes ─────────────────────────────────────────────────────────────── */
@@ -566,6 +573,17 @@ button.__Name__-chip:hover {
   line-height: 0;
   white-space: nowrap;
   text-align: right;
+}
+
+/* The first cell of a selectable row, holding the host's own Checkbox, as its lists do. */
+.__Name__-table__check {
+  width: 1%;
+  padding-right: 0;
+  line-height: 0;
+}
+
+.__Name__-table__row--selected td {
+  background: var(--tableBgcSelected, var(--__NAME__-surface-hover));
 }
 
 .__Name__-table__row--clickable {
