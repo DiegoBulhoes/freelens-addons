@@ -1,6 +1,6 @@
 {
   "name": "@freelens-addons/redis",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Which Redis replications, clusters and standalones need attention, which node is master, and why one is stuck",
   "license": "Apache-2.0",
