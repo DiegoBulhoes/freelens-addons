@@ -354,6 +354,19 @@ button.ArgoCD-row__main {
   gap: var(--argocd-gap-xs);
 }
 
+/* A value to copy beside its button: the value wraps anywhere, so the button stays in view. */
+.ArgoCD-copyable {
+  display: flex;
+  align-items: center;
+  gap: var(--argocd-gap-sm);
+}
+
+.ArgoCD-copyable > code {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 /* ─── Boxes ─────────────────────────────────────────────────────────────── */
 
 .ArgoCD-box {

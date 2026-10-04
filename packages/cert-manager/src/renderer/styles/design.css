@@ -354,6 +354,19 @@ button.CertManager-row__main {
   gap: var(--cert-manager-gap-xs);
 }
 
+/* A value to copy beside its button: the value wraps anywhere, so the button stays in view. */
+.CertManager-copyable {
+  display: flex;
+  align-items: center;
+  gap: var(--cert-manager-gap-sm);
+}
+
+.CertManager-copyable > code {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 /* ─── Boxes ─────────────────────────────────────────────────────────────── */
 
 .CertManager-box {

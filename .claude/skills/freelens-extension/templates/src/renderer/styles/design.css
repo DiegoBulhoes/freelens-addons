@@ -354,6 +354,19 @@ button.__Name__-row__main {
   gap: var(--__NAME__-gap-xs);
 }
 
+/* A value to copy beside its button: the value wraps anywhere, so the button stays in view. */
+.__Name__-copyable {
+  display: flex;
+  align-items: center;
+  gap: var(--__NAME__-gap-sm);
+}
+
+.__Name__-copyable > code {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 /* ─── Boxes ─────────────────────────────────────────────────────────────── */
 
 .__Name__-box {

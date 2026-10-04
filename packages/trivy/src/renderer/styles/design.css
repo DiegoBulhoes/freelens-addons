@@ -354,6 +354,19 @@ button.Trivy-row__main {
   gap: var(--trivy-gap-xs);
 }
 
+/* A value to copy beside its button: the value wraps anywhere, so the button stays in view. */
+.Trivy-copyable {
+  display: flex;
+  align-items: center;
+  gap: var(--trivy-gap-sm);
+}
+
+.Trivy-copyable > code {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 /* ─── Boxes ─────────────────────────────────────────────────────────────── */
 
 .Trivy-box {
