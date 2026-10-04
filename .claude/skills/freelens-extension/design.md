@@ -29,7 +29,7 @@ Every extension looks like one product, and like Freelens. Components are in
 - Tones (`--colorError`, `--colorWarning`, `--colorInfo`, `--colorSuccess`) are edges or marks, never backgrounds.
 - Pressable means `<button>`, left-aligned.
 - State lives in `aria-pressed`, `aria-expanded`, `disabled`.
-- Never restyle a component in an extension. Change `design.css`, then run `scripts/sync-design.sh`.
+- Never restyle a component in an extension. Change `design.css`, then run `scripts/copy-design-standard.sh`.
 
 ## Navigation
 
@@ -105,6 +105,6 @@ Every write asks first (`confirm.tsx`). Message root: `P P-dialog`.
 
 ## Verifying
 
-- `sync-design.sh --check <dir>`: no stale copy.
+- `copy-design-standard.sh --check <dir>`: no stale copy.
 - `designViolations()` on every page; `dialogColourViolations()` with each dialog open (`harness/design.ts`).
 - Both themes (Preferences → App → Theme): pages, drawers, dialogs.

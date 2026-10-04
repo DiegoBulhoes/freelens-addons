@@ -8,7 +8,7 @@
 #   from-annotations reads its images from the Application's annotations.
 #   podinfo-chart    the podinfo update as Helm parameters.
 #
-# Ready=False lives in 41-image-updater-refused.yaml, which is not seeded.
+# Ready=False lives in image-updater-refused.yaml, which is not seeded.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

@@ -42,10 +42,10 @@ jobs:
 
       # Repeated from CI: a tag can be pushed from anywhere.
       - name: Verify the bundles
-        run: bash scripts/verify-bundles.sh
+        run: bash scripts/checks/verify-bundles.sh
 
       - name: Pack
-        run: bash scripts/pack.sh
+        run: bash scripts/release/package-extensions.sh
 
       - name: Verify the tarballs
         run: |

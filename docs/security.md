@@ -74,18 +74,18 @@ add an image.
 
 | Check | Blocks |
 |-------|--------|
-| Supply-chain policy (`scripts/verify-supply-chain.sh`), which guards the controls on this page | yes |
+| Supply-chain policy (`scripts/security/verify-supply-chain.sh`), which guards the controls on this page | yes |
 | Secret scan (gitleaks, full history) | yes |
 | Dependency CVEs (OSV against the lockfile) | yes |
 | Dockerfile lint (hadolint) | yes |
-| Bundle contract (`scripts/verify-bundles.sh`) | yes |
+| Bundle contract (`scripts/checks/verify-bundles.sh`) | yes |
 | Image CVEs (Trivy) | no |
 
 Trivy on the image reports without blocking because its CVEs are in Electron and Chromium, which
 only a Freelens release can fix.
 
 hadolint's DL3008 ("pin apt versions") is waived with `--ignore DL3008` in the workflow and in
-`scripts/scan.sh`, with the reason in a comment. Debian's archive keeps only the current version of
+`scripts/security/scan.sh`, with the reason in a comment. Debian's archive keeps only the current version of
 a package, so the base image digest pins the package set instead.
 
 ## Dependency updates
@@ -117,7 +117,7 @@ None runs here: `@freelensapp/extensions` is a devDependency for its types, and 
 extensions declare no runtime dependencies.
 
 When no fixed release exists, or none clears the age floor yet, the finding goes in
-`osv-scanner.toml` with a reason and an `effectiveUntil`. `scripts/verify-supply-chain.sh` fails
+`osv-scanner.toml` with a reason and an `effectiveUntil`. `scripts/security/verify-supply-chain.sh` fails
 on an exception missing either, and once an expiry passes.
 
 ## Credentials
@@ -131,7 +131,7 @@ on an exception missing either, and once an expiry passes.
 
 ```bash
 make check              # lint, typecheck, test, build, bundle contract, supply-chain policy
-bash scripts/scan.sh    # gitleaks, OSV, hadolint: the same digest-pinned images CI uses
+bash scripts/security/scan.sh    # gitleaks, OSV, hadolint: the same digest-pinned images CI uses
 ```
 
-Keep the digests in `scripts/scan.sh` in step with `.github/workflows/security.yaml`.
+Keep the digests in `scripts/security/scan.sh` in step with `.github/workflows/security.yaml`.

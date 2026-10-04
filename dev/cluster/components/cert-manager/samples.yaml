@@ -44,7 +44,7 @@ spec:
   ca:
     secretName: no-such-secret
 ---
-# seed-cluster.sh deletes this CA once renewal-stalls is issued: valid but failing to renew.
+# states.sh deletes this CA once renewal-stalls is issued: valid but failing to renew.
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:

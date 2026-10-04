@@ -116,12 +116,12 @@ cancelled; what they send is covered by the unit tests.
 ## Fixtures
 
 ```bash
-KUBECONFIG=/tmp/freelens-addons-k3s/kubeconfig.yaml scripts/export-fixtures.sh          # every package
-KUBECONFIG=/tmp/freelens-addons-k3s/kubeconfig.yaml scripts/export-fixtures.sh argocd   # one
+dev/cluster/cluster.sh fixtures          # every package
+dev/cluster/cluster.sh fixtures argocd   # one
 ```
 
-The script refuses any cluster whose node is not `freelens-addons-dev`, and sanitises what it
-writes. Read the diff before committing.
+It reads the dev k3s, refuses any other cluster, and sanitises what it
+writes (`dev/cluster/fixtures/sanitise.py`). Read the diff before committing.
 
 | Removed or replaced | Reason |
 |---------------------|--------|
@@ -138,7 +138,7 @@ writes. Read the diff before committing.
 | Rule | Why |
 |------|-----|
 | No mocks | The real classes catch shapes a stand-in would get wrong |
-| Never hand-write a fixture | Cause the state in `scripts/seed-cluster.sh` instead |
+| Never hand-write a fixture | Cause the state in the component's `dev/cluster/components/<name>/states.sh` instead |
 | Time-dependent code takes `now` | Tests pass `fixtureNow()`; cert-manager's reads `exported-at.json` |
 | A new test fails without its fix | Check by reverting the fix |
 | e2e sets up its own state | Freelens remembers sidebar groups and starts scoped to one namespace |

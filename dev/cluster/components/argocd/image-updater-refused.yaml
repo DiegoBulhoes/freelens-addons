@@ -1,14 +1,14 @@
 # A rule the controller refuses (Ready=False): filepath.Match rejects the pattern.
-# Not applied by seed-cluster.sh: on restart, v1.3.0 crash-loops while it exists.
+# Never applied by the seed: on restart, v1.3.0 crash-loops while it exists.
 # To export its fixture:
 #
-#   kubectl apply -f dev/cluster/41-image-updater-refused.yaml
+#   dev/cluster/cluster.sh kubectl apply -f dev/cluster/components/argocd/image-updater-refused.yaml
 #   (wait about two minutes)
-#   scripts/export-fixtures.sh argocd
-#   kubectl delete -f dev/cluster/41-image-updater-refused.yaml
+#   dev/cluster/cluster.sh fixtures argocd
+#   dev/cluster/cluster.sh kubectl delete -f dev/cluster/components/argocd/image-updater-refused.yaml
 #
 # If the controller restarted meanwhile, the delete hangs; clear the finalizer:
-#   kubectl -n argocd patch imageupdater bad-pattern --type json \
+#   dev/cluster/cluster.sh kubectl -n argocd patch imageupdater bad-pattern --type json \
 #     -p '[{"op":"remove","path":"/metadata/finalizers"}]'
 apiVersion: argocd-image-updater.argoproj.io/v1alpha1
 kind: ImageUpdater

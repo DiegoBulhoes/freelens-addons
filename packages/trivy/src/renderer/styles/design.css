@@ -1,5 +1,5 @@
 /*
- * The design standard. Edit it here and run the skill's scripts/sync-design.sh; never edit a copy.
+ * The design standard. Edit it here and run the skill's scripts/copy-design-standard.sh; never edit a copy.
  *
  * - Colours come from the host's theme; the one literal is a pressed filter's white.
  * - Content sits on --sidebarBackground: --layoutBackground equals it in the light theme.

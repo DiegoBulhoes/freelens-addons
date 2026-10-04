@@ -34,7 +34,7 @@ Build them with:
 ```bash
 docker compose -f dev/docker-compose.yml --project-directory . \
   run --rm --no-deps --entrypoint sh -w /workspace freelens \
-  -lc "pnpm run -r build && bash scripts/pack.sh"
+  -lc "pnpm run -r build && bash scripts/release/package-extensions.sh"
 ```
 
 ## Installing a release
@@ -130,5 +130,5 @@ extension has no UI. Every extension declares:
 "files": ["out"]
 ```
 
-`scripts/verify-bundles.sh` fails the build when it is missing, and the release workflow re-checks
+`scripts/checks/verify-bundles.sh` fails the build when it is missing, and the release workflow re-checks
 the packed tarball.

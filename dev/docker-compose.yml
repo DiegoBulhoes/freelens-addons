@@ -14,7 +14,7 @@ services:
       - --write-kubeconfig-mode=644
       - --write-kubeconfig=/output/kubeconfig.yaml
       - --tls-san=127.0.0.1
-      # Fixed: export-fixtures.sh checks it, and a hostname-named node is orphaned on recreate.
+      # Fixed: dev/cluster/cluster.sh checks it, and a hostname-named node is orphaned on recreate.
       - --node-name=freelens-addons-dev
       # Unreachable GC target: real FreeDiskSpaceFailed warnings for the ArgoCD overview.
       - --kubelet-arg=image-gc-high-threshold=1

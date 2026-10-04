@@ -39,7 +39,7 @@ If they disagree, follow the repository and tell the person.
 | `design.md` | The design standard. Read before drawing a screen |
 | `templates/` | A minimal extension: manifest, build, tests, pages, ready-made components |
 | `templates/src/renderer/styles/design.css` | The standard's components, with a `__Name__` prefix |
-| `scripts/sync-design.sh` | Writes `design.css` into every extension; `--check` fails on drift |
+| `scripts/copy-design-standard.sh` | Writes `design.css` into every extension; `--check` fails on drift |
 | `harness/design.ts`, `harness/cdp.ts` | `designViolations()`, `dialogColourViolations()` and the CDP client they run on |
 
 ## Read the repository first
@@ -132,7 +132,7 @@ Then adapt to the repository:
 - Shared build config: replace `electron.vite.config.ts` with its re-export; delete `vite/`.
 - Shared tsconfig: extend it; keep `node10` and `react-jsx`.
 - Existing `test/freelens-host.ts`: copy theirs.
-- `design.css`: run the repository's sync script, or `$SKILL/scripts/sync-design.sh <where extensions live>`.
+- `design.css`: run the repository's copy-design-standard.sh, or `$SKILL/scripts/copy-design-standard.sh <where extensions live>`.
 - Do not copy another extension's hooks or stores. Write what this one needs.
 
 **Check:** the manifest has `private`, `files`, `engines.freelens`, `main`, `renderer`. The directory holds only extensions.
@@ -221,7 +221,7 @@ Break what each new test guards and watch it fail. If a CSS mutation fails nothi
 ## Gates
 
 - Run what CI runs, locally, and the e2e suite.
-- `sync-design.sh --check` passes.
+- `copy-design-standard.sh --check` passes.
 - No bundle check? Verify by hand: `exports.default =` at the end, no `require("react")` or `require("@freelensapp/extensions")`.
 - Commit the repository's way. Default: semantic, English, one commit per concern.
 

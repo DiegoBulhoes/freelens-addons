@@ -25,7 +25,7 @@ import {
 } from "../src/renderer/api/image-updates";
 import { application, applications, imageUpdater, imageUpdaters } from "./fixtures";
 
-// Fixtures are the rules `dev/cluster/40-image-updater.yaml` seeds, as the controller left them.
+// Fixtures are the rules `dev/cluster/components/argocd/image-updater.yaml` seeds, as the controller left them.
 
 /** The newest check in the fixtures, used as `now`. */
 function checkedNow(): number {

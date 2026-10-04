@@ -1,6 +1,7 @@
 """Turns `kubectl get -o json` into a fixture safe to commit: host identifiers
 replaced in shape, secrets and credentials removed, unread bulk dropped, and
-`selfLink` filled in because the KubeObject constructor throws without it."""
+`selfLink` filled in because the KubeObject constructor throws without it.
+With --names-only, keeps only Secret names and cert-manager's annotations."""
 
 import ipaddress
 import json
@@ -26,28 +27,15 @@ REDACTED_DOMAINS = [
     if domain.strip()
 ]
 
-RESOURCE_PLURAL = {
-    "Application": "applications",
-    "AppProject": "appprojects",
-    "ApplicationSet": "applicationsets",
-    "Node": "nodes",
-    "Event": "events",
-    "VulnerabilityReport": "vulnerabilityreports",
-    "ConfigAuditReport": "configauditreports",
-    "ExposedSecretReport": "exposedsecretreports",
-    "SbomReport": "sbomreports",
-    "RbacAssessmentReport": "rbacassessmentreports",
-    "ClusterComplianceReport": "clustercompliancereports",
-    "ClusterRbacAssessmentReport": "clusterrbacassessmentreports",
-    # A wrong plural is a selfLink the KubeObject constructor rejects.
-    "Ingress": "ingresses",
-}
+# Every other kind's plural is its lowercase name plus "s"; a wrong one is a selfLink the
+# KubeObject constructor rejects.
+IRREGULAR_PLURAL = {"Ingress": "ingresses"}
 
 
 def self_link_for(item: dict) -> str:
     api_version = item.get("apiVersion", "v1")
     metadata = item.get("metadata", {})
-    plural = RESOURCE_PLURAL.get(item.get("kind", ""), item.get("kind", "").lower() + "s")
+    plural = IRREGULAR_PLURAL.get(item.get("kind", ""), item.get("kind", "").lower() + "s")
     prefix = "/api" if "/" not in api_version else "/apis"
     namespace = metadata.get("namespace")
     scope = f"/namespaces/{namespace}" if namespace else ""
@@ -169,12 +157,11 @@ def sanitise(item: dict, seen: dict[str, str]) -> dict:
         for key in ("certificate", "ca"):
             item.get("status", {}).pop(key, None)
 
+    # ACME credentials: challenge tokens and keys, the account's key hash and email.
     if item.get("kind") == "Order":
         item.get("spec", {}).pop("request", None)
         item.get("status", {}).pop("certificate", None)
 
-    # ACME credentials: challenge tokens and keys, the account's key hash and email.
-    if item.get("kind") == "Order":
         for authorization in item.get("status", {}).get("authorizations") or []:
             for challenge in authorization.get("challenges") or []:
                 if isinstance(challenge, dict):
@@ -219,8 +206,33 @@ def sanitise(item: dict, seen: dict[str, str]) -> dict:
     return walk(item, seen)
 
 
+def names_only(document: dict) -> dict:
+    return {
+        "items": [
+            {
+                "metadata": {
+                    "name": secret["metadata"]["name"],
+                    "namespace": secret["metadata"]["namespace"],
+                    "annotations": {
+                        key: value
+                        for key, value in (secret["metadata"].get("annotations") or {}).items()
+                        if key.startswith("cert-manager.io/")
+                    },
+                }
+            }
+            for secret in document["items"]
+        ]
+    }
+
+
 def main() -> None:
     document = json.load(sys.stdin)
+
+    # Secrets as the extensions read them: names and cert-manager's annotations, never a value.
+    if sys.argv[1:] == ["--names-only"]:
+        print(json.dumps(names_only(document), indent=2))
+        return
+
     seen: dict[str, str] = {}
     document["items"] = [sanitise(item, seen) for item in document.get("items", [])]
     document.pop("metadata", None)

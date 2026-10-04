@@ -7,7 +7,7 @@ import { AppProject } from "../src/renderer/api/app-project";
 import { Application } from "../src/renderer/api/application";
 import { ImageUpdater } from "../src/renderer/api/image-updater";
 
-// Real cluster contents from `scripts/export-fixtures.sh`, built through the real `KubeObject` subclasses.
+// Real cluster contents from `dev/cluster/cluster.sh fixtures`, built through the real `KubeObject` subclasses.
 
 function load<T>(name: string, build: (item: never) => T): T[] {
   const path = resolve(__dirname, "fixtures", `${name}.json`);

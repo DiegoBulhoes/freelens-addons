@@ -2,7 +2,7 @@
 # Fails when a supply-chain control is weakened or removed. Do not edit it to make a build pass.
 set -uo pipefail
 
-cd "$(dirname "${BASH_SOURCE[0]}")/.."
+cd "$(dirname "${BASH_SOURCE[0]}")/../.."
 
 # 15 days, in minutes.
 readonly REQUIRED_RELEASE_AGE=21600

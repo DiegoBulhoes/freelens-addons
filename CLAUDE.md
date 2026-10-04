@@ -24,7 +24,7 @@ This file holds only what those do not, plus the rules that must never be broken
 | Hand-write a fixture, or export one from any cluster but the dev k3s | [docs/testing.md](docs/testing.md) |
 | Mock a store; lower the 95% coverage or widen its exclusions | [docs/testing.md](docs/testing.md) |
 | Add a test that passes without its fix; let an e2e suite inherit state | [docs/testing.md](docs/testing.md) |
-| Edit a package's `styles/design.css`; edit the standard and run `scripts/sync-design.sh` | [design.md](.claude/skills/freelens-extension/design.md) |
+| Edit a package's `styles/design.css`; edit the standard and run `scripts/checks/copy-design-standard.sh` | [design.md](.claude/skills/freelens-extension/design.md) |
 | Read Secrets through `secretsStore` | below |
 | Put screenshots or cluster-specific figures in docs | below |
 

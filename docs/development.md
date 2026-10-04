@@ -49,7 +49,9 @@ read-only. If something fails, see [Reading logs](#reading-logs).
 | `make cluster-down` | Stop it and delete its data |
 
 It is a compose service behind the `cluster` profile, so `make up` never starts it. Its image is
-pinned by digest. `scripts/seed-cluster.sh` applies the manifests in `dev/cluster/` in order:
+pinned by digest. Each component has a directory in `dev/cluster/components/` with an `install.sh`, its samples and,
+when needed, a `states.sh`; `dev/cluster/cluster.sh install` runs them in order, or only the ones named
+([dev/cluster/README.md](../dev/cluster/README.md)):
 
 | Component | Purpose |
 |-----------|---------|
@@ -68,8 +70,8 @@ Rules for changing the seed:
 - Install with `kubectl apply --server-side`. ArgoCD's ApplicationSet CRD is too large for a
   client-side apply.
 - Every test fixture comes from this cluster, because the repository is public.
-  `scripts/export-fixtures.sh` refuses any cluster whose node is not `freelens-addons-dev`. A state
-  the tests need goes into the seed, never into a hand-written fixture.
+  `dev/cluster/cluster.sh fixtures` refuses any cluster whose node is not `freelens-addons-dev`. A state
+  the tests need goes into the component's `states.sh`, never into a hand-written fixture.
 - The sample TLS Secrets hold placeholders. `Warning: tls: failed to find any PEM data` on apply is
   expected.
 
@@ -207,13 +209,13 @@ half appear here. The renderer half's `console.log` goes to Chromium's devtools 
 ```bash
 make test               # the tests on their own
 make check              # what CI runs: lint, typecheck, test, build, bundle contract, design copies, supply-chain policy
-bash scripts/scan.sh    # the scanners: secrets, dependency CVEs, Dockerfiles
+bash scripts/security/scan.sh    # the scanners: secrets, dependency CVEs, Dockerfiles
 ```
 
 | Failure | What to do |
 |---------|------------|
 | `verify-bundles.sh` | The bundle would not load: `.default` is not a class, or a host module was bundled |
-| `sync-design.sh --check` | A package's `styles/design.css` differs from the standard. Edit `.claude/skills/freelens-extension/templates/src/renderer/styles/design.css`, then run `bash scripts/sync-design.sh` |
+| `copy-design-standard.sh --check` | A package's `styles/design.css` differs from the standard. Edit `.claude/skills/freelens-extension/templates/src/renderer/styles/design.css`, then run `bash scripts/checks/copy-design-standard.sh` |
 | Coverage | Add a case for the new branch. Do not lower the threshold. See [testing](testing.md) |
 | `verify-supply-chain.sh` | A supply-chain control was weakened. Fix the cause, not the check. See [security](security.md) |
 
@@ -237,7 +239,7 @@ The Makefile already does this.
 | `make cluster-down` | Destroy it, volume included |
 | `make kubectl ARGS="..."` | kubectl on the dev k3s, refused on any other cluster |
 | `make e2e` | The end-to-end suite, against a running Freelens |
-| `bash scripts/scan.sh` | Secret, dependency and Dockerfile scanners |
+| `bash scripts/security/scan.sh` | Secret, dependency and Dockerfile scanners |
 | `dc logs -f freelens` | Follow the container logs |
 | `dc down -v` | Stop everything and discard Freelens' saved state |
 | `dc run --rm --no-deps --entrypoint sh -w /workspace freelens -lc "pnpm run lint:fix"` | Apply Biome's safe fixes |

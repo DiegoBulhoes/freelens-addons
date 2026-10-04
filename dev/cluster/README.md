@@ -8,29 +8,37 @@ A disposable k3s cluster to develop the extensions against. The kubeconfig is wr
 | `make cluster` | Start k3s and install what the extensions read |
 | `make cluster-down` | Stop it and delete its data |
 
+## cluster.sh
+
+Everything that touches this cluster goes through `cluster.sh`, which refuses any other.
+
+| Command | What it does |
+|---------|--------------|
+| `cluster.sh install` | Installs every component in `components/`, in order. `make cluster` runs it |
+| `cluster.sh install redis` | Installs only that component |
+| `cluster.sh kubectl ARGS...` | kubectl on this cluster. `make kubectl ARGS="..."` runs it |
+| `cluster.sh fixtures [package...]` | Writes the test fixtures, through `fixtures/sanitise.py` ([testing](../../docs/testing.md#fixtures)) |
+
 ## What gets installed
 
-`scripts/seed-cluster.sh` installs these at pinned release tags, then applies the manifests below in order.
+One directory per component, under `components/`:
 
-| Component | Why |
-|-----------|-----|
-| ArgoCD | Read by the ArgoCD extension |
-| Trivy operator | Writes the reports the Trivy extension reads |
-| cert-manager | Read by the cert-manager extension |
-| Argo CD Image Updater | Its rules feed the Image Updater page |
-| CloudNativePG and its Barman Cloud plugin | Read by the CloudNativePG extension |
-| MongoDB Controllers for Kubernetes | Read by the MongoDB extension |
-| redis-operator | Read by the Redis extension |
+| File | What it does |
+|------|--------------|
+| `install.sh` | Installs the operator at a pinned version (at its top) and applies the samples, with the helpers in `cluster.sh` |
+| `*.yaml` | The samples it applies, in each state the pages render |
+| `states.sh` | States no manifest can declare, caused after the install. Not every component has one |
 
-| Manifest | Contents |
-|----------|----------|
-| `00-namespaces.yaml` | Namespaces |
-| `10-workloads.yaml` | Sample workloads, running as root with no limits, for Trivy to flag |
-| `20-argocd-applications.yaml` | Sample Applications: one synced, one unresolvable, one with automated sync off |
-| `25-pebble.yaml` | Pebble, a test ACME server for cert-manager |
-| `30-cert-manager.yaml` | Issuers and Certificates in each state the pages render |
-| `40-image-updater.yaml` | Image Updater rules in each state the page ranks, against public registries |
-| `50-cnpg.yaml` | RustFS as the S3 store, and Postgres clusters, backups, schedules, poolers, managed roles, a tablespace, publications and subscriptions in each state the pages rank, and one server certificate from cert-manager. The seed then switches one over, hibernates another, creates the replicated table and pauses replay on one replica |
-| `60-mongodb.yaml` | MongoDB replica sets in each state the pages rank: healthy with a preferred primary, with an arbiter on the previous series, a volume that cannot bind, a user whose password Secret is missing, a version with no image, and TLS from a cert-manager certificate |
-| `70-redis.yaml` | A replication watched by sentinels, a sharded cluster, a standalone with TLS from cert-manager, one whose volume cannot bind and one whose image does not exist |
-| `41-image-updater-refused.yaml` | A rule the controller refuses (Ready=False). Not seeded, since it makes the controller crash-loop; applied by hand only to export that fixture (steps in its header) |
+| Directory | Installs | Samples | States |
+|-----------|----------|---------|--------|
+| `workloads/` | Nothing | Workloads in `demo`, running as root with no limits, for Trivy to flag | — |
+| `argocd/` | ArgoCD and Argo CD Image Updater | Applications (one synced, one unresolvable, one with automated sync off); Image Updater rules in each state the page ranks | A deploy history with two revisions, and drift |
+| `trivy/` | Trivy operator | — | `web` rolls once its SBOM exists, so an old ReplicaSet keeps it |
+| `cert-manager/` | cert-manager and Pebble, a test ACME server | Issuers and Certificates in each state the pages render | `flaky-ca` loses its key, so one certificate stops renewing |
+| `cnpg/` | CloudNativePG and its Barman Cloud plugin | RustFS as the S3 store; Postgres clusters, backups, schedules, poolers, managed roles, a tablespace, publications and subscriptions; one server certificate from cert-manager | The replicated table, a switchover, a hibernated cluster, a replica that stopped replaying |
+| `mongodb/` | MongoDB Controllers for Kubernetes | Replica sets: healthy with a preferred primary, an arbiter on the previous series, a volume that cannot bind, a user whose password Secret is missing, a version with no image, TLS from cert-manager | — |
+| `redis/` | redis-operator | A replication watched by sentinels, a sharded cluster, a standalone with TLS from cert-manager, one whose volume cannot bind, one whose image does not exist | — |
+
+`argocd/image-updater-refused.yaml` is a rule the controller refuses (Ready=False). It is never
+applied, since it makes the controller crash-loop; apply it by hand only to export that fixture
+(steps in its header).

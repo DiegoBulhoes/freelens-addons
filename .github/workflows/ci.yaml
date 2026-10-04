@@ -53,10 +53,10 @@ jobs:
         run: pnpm run -r build
 
       - name: Verify extension bundles
-        run: bash scripts/verify-bundles.sh
+        run: bash scripts/checks/verify-bundles.sh
 
       - name: Verify the design standard
-        run: bash scripts/sync-design.sh --check
+        run: bash scripts/checks/copy-design-standard.sh --check
 
   images:
     name: Container images

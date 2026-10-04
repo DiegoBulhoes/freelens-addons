@@ -45,14 +45,14 @@ cluster:
 	  kubectl get nodes -o name 2>/dev/null | grep -q .; do sleep 2; done
 	KUBECONFIG=$(DEV_KUBECONFIG_DIR)/kubeconfig.yaml \
 	  kubectl wait --for=condition=Ready node --all --timeout=180s
-	DEV_KUBECONFIG_DIR=$(DEV_KUBECONFIG_DIR) bash scripts/seed-cluster.sh
+	DEV_KUBECONFIG_DIR=$(DEV_KUBECONFIG_DIR) bash dev/cluster/cluster.sh install
 	@echo
 	@echo "Set KUBECONFIG_PATH in .env to $(DEV_KUBECONFIG_DIR)/kubeconfig.yaml, then 'make up'."
 
 # kubectl on the dev k3s only; refuses any other cluster. make kubectl ARGS="-n mongodb get pods"
 .PHONY: kubectl
 kubectl:
-	@DEV_KUBECONFIG_DIR=$(DEV_KUBECONFIG_DIR) bash scripts/dev-kubectl.sh $(ARGS)
+	@DEV_KUBECONFIG_DIR=$(DEV_KUBECONFIG_DIR) bash dev/cluster/cluster.sh kubectl $(ARGS)
 
 # The kubeconfig is root-owned in sticky /tmp, so the container removes it.
 .PHONY: cluster-down
@@ -77,9 +77,9 @@ e2e: .env
 .PHONY: check
 check:
 	$(DEV) "pnpm run lint && pnpm run -r type:check && pnpm run -r test:coverage && pnpm run -r build"
-	@bash scripts/verify-bundles.sh
-	@bash scripts/sync-design.sh --check
-	@bash scripts/verify-supply-chain.sh
+	@bash scripts/checks/verify-bundles.sh
+	@bash scripts/checks/copy-design-standard.sh --check
+	@bash scripts/security/verify-supply-chain.sh
 
 .env: .env.example
 	@if [ ! -f .env ]; then \

@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # Writes the skill's design.css into every extension under the given directory; --check fails on drift.
 # The prefix comes from each extension's <Name>Styles component.
-# Usage: sync-design.sh [--check] <directory holding the extensions>
+# Usage: copy-design-standard.sh [--check] <directory holding the extensions>
 set -uo pipefail
 
 SKILL=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 TEMPLATE="${SKILL}/templates/src/renderer/styles/design.css"
 CHECK=0
 [[ "${1:-}" == "--check" ]] && { CHECK=1; shift; }
-ROOT=${1:?usage: sync-design.sh [--check] <directory holding the extensions>}
+ROOT=${1:?usage: copy-design-standard.sh [--check] <directory holding the extensions>}
 
 FAIL=0
 ok()  { printf '  \033[32m✓\033[0m %s\n' "$*"; }
