@@ -29,6 +29,7 @@ export function useLoadedStores(
     setGaveUp(false);
     let retryTimer: ReturnType<typeof setTimeout> | undefined;
     let cancelled = false;
+    let unsubscribers: (() => void)[] = [];
 
     const loadUntilReady = async () => {
       if (cancelled) return;
@@ -44,8 +45,17 @@ export function useLoadedStores(
 
       attempts += 1;
 
+      if (cancelled) return;
+
+      if (loaded.every((store) => store.isLoaded)) {
+        // Only now: subscribe() watches from the list's resource version, and before the list
+        // returns it has none, so it opens no watch at all and the page never updates.
+        unsubscribers = loaded.map((store) => store.subscribe());
+
+        return;
+      }
+
       // Retry only while something has never loaded.
-      if (cancelled || loaded.every((store) => store.isLoaded)) return;
 
       if (attempts >= MAX_LOAD_ATTEMPTS) {
         setGaveUp(true);
@@ -57,9 +67,6 @@ export function useLoadedStores(
     };
 
     void loadUntilReady();
-
-    // subscribe() waits for the namespaces loadAll() sets, so on its own it waits forever.
-    const unsubscribers = loaded.map((store) => store.subscribe());
 
     return () => {
       cancelled = true;

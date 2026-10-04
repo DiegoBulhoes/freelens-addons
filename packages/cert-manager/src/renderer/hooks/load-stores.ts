@@ -25,6 +25,7 @@ export function useLoadedStores(stores: (LoadableStore | undefined)[], scope = "
     setGaveUp(false);
     let retryTimer: ReturnType<typeof setTimeout> | undefined;
     let cancelled = false;
+    let unsubscribers: (() => void)[] = [];
 
     const loadUntilReady = async () => {
       if (cancelled) return;
@@ -44,7 +45,13 @@ export function useLoadedStores(stores: (LoadableStore | undefined)[], scope = "
       if (cancelled) return;
 
       // Retry only while something has never loaded: the cluster still connecting.
-      if (loaded.every((store) => store.isLoaded)) return;
+      if (loaded.every((store) => store.isLoaded)) {
+        // Only now: subscribe() watches from the list's resource version, and before the list
+        // returns it has none, so it opens no watch at all and the page never updates.
+        unsubscribers = loaded.map((store) => store.subscribe());
+
+        return;
+      }
 
       if (attempts >= MAX_LOAD_ATTEMPTS) {
         setGaveUp(true);
@@ -56,9 +63,6 @@ export function useLoadedStores(stores: (LoadableStore | undefined)[], scope = "
     };
 
     void loadUntilReady();
-
-    // subscribe() waits for the namespaces loadAll() sets, so on its own it waits forever.
-    const unsubscribers = loaded.map((store) => store.subscribe());
 
     return () => {
       cancelled = true;
