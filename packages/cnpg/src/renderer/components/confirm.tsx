@@ -72,7 +72,10 @@ export function confirmWrite(write: ConfirmWrite): void {
         return;
       }
 
-      await write.ok();
+      // Not awaited: the dialog would stay open, its button spinning, for as long as the write runs.
+      void write
+        .ok()
+        .catch((error: unknown) => Notifications.checkedError(error, "Could not finish"));
     },
   });
 }

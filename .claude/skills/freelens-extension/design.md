@@ -57,6 +57,7 @@ selector (`namespace-filter.tsx`), and one action.
 | An object and its children | `P-box` with `P-chips` |
 | Many objects by column | `P-table` |
 | Name/value pairs | `P-facts` |
+| A value to copy, with its button | `P-copyable` inside a fact |
 | What the page must say first | `P-banner` |
 | A state | `P-status` (`status.tsx`) |
 
@@ -75,7 +76,7 @@ selector (`namespace-filter.tsx`), and one action.
 - From our pages: `object-drawer.tsx`. Actions in the title bar through the host's toolbar `MenuActions`, as its own drawers do; destructive last.
 - What the drawer holds: the state with its cause in a banner, the facts, what belongs to the object (its runs, its instances, its children), commands to copy. More than the row, never a copy of it.
 - The opening click calls `preventDefault()`, or the drawer closes at once. Also on another page, when it navigates to a route that opens a drawer.
-- So does a menu item inside a drawer: the menu renders outside it, so its click counts as outside.
+- A menu item inside a drawer calls `event.nativeEvent.preventDefault()`: the menu renders outside the drawer, so its click counts as outside. Not `event.preventDefault()`: the menu then stays open.
 
 ## Dialogs
 
@@ -86,6 +87,7 @@ Every write asks first (`confirm.tsx`). Message root: `P P-dialog`.
 - Form values reach `ok` through callbacks.
 - Type the object's name for a delete, or an option that deletes or recreates.
 - Type `confirm` for a write to several objects. Nothing for writes that change nothing.
+- OK closes the dialog at once; the write runs after it and reports by notification. Never hold the dialog open while it runs.
 - After: a past-tense notification, with Undo when the reverse is one write.
 - Bulk on a host list: `selection-bar.tsx` in `renderFooter`.
 
