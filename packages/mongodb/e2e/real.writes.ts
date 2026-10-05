@@ -282,13 +282,18 @@ describe("MongoDB writes, checked in the cluster", () => {
     );
     await untilCluster("secure-rs to settle", () => settled("secure-rs"), 10 * 60_000);
 
-    // The seed has no statefulSet override; removing it rolls the pod once more.
+    // The seed's override has no restart annotation; removing it rolls the pod once more.
     await restore(
       session,
       frame,
       "PATCH",
       `${SETS}/secure-rs`,
-      [{ op: "remove", path: "/spec/statefulSet" }],
+      [
+        {
+          op: "remove",
+          path: "/spec/statefulSet/spec/template/metadata/annotations/mongodb.com~1restartedAt",
+        },
+      ],
       "application/json-patch+json",
     );
     await untilCluster("secure-rs to settle again", () => settled("secure-rs"), 10 * 60_000);

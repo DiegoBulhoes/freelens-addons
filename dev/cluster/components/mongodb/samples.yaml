@@ -41,6 +41,16 @@ spec:
         - name: readWriteAnyDatabase
           db: admin
       scramCredentialsSecretName: catalog-admin-scram
+  # Small requests: the whole seed has to fit a CI runner's four CPUs.
+  statefulSet:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: mongod
+              resources: { requests: { cpu: 25m, memory: 200M } }
+            - name: mongodb-agent
+              resources: { requests: { cpu: 25m, memory: 100M } }
 ---
 # Its only user's password Secret does not exist, so the operator stops before creating any pod.
 apiVersion: mongodbcommunity.mongodb.com/v1
@@ -64,6 +74,16 @@ spec:
         - name: read
           db: catalog
       scramCredentialsSecretName: reporting-scram
+  # Small requests: the whole seed has to fit a CI runner's four CPUs.
+  statefulSet:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: mongod
+              resources: { requests: { cpu: 25m, memory: 200M } }
+            - name: mongodb-agent
+              resources: { requests: { cpu: 25m, memory: 100M } }
 ---
 apiVersion: v1
 kind: Secret
@@ -98,6 +118,16 @@ spec:
         - name: userAdminAnyDatabase
           db: admin
       scramCredentialsSecretName: sessions-admin-scram
+  # Small requests: the whole seed has to fit a CI runner's four CPUs.
+  statefulSet:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: mongod
+              resources: { requests: { cpu: 25m, memory: 200M } }
+            - name: mongodb-agent
+              resources: { requests: { cpu: 25m, memory: 100M } }
 ---
 # Its volumes ask for a storage class that does not exist, so its pods stay Pending.
 apiVersion: mongodbcommunity.mongodb.com/v1
@@ -113,8 +143,16 @@ spec:
     authentication:
       modes: ["SCRAM"]
   users: []
+  # Small requests: the whole seed has to fit a CI runner's four CPUs.
   statefulSet:
     spec:
+      template:
+        spec:
+          containers:
+            - name: mongod
+              resources: { requests: { cpu: 25m, memory: 200M } }
+            - name: mongodb-agent
+              resources: { requests: { cpu: 25m, memory: 100M } }
       volumeClaimTemplates:
         - metadata:
             name: data-volume
@@ -139,6 +177,16 @@ spec:
     authentication:
       modes: ["SCRAM"]
   users: []
+  # Small requests: the whole seed has to fit a CI runner's four CPUs.
+  statefulSet:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: mongod
+              resources: { requests: { cpu: 25m, memory: 200M } }
+            - name: mongodb-agent
+              resources: { requests: { cpu: 25m, memory: 100M } }
 ---
 # TLS from cert-manager: the demo CA issues it, and its Secret carries the CA too.
 apiVersion: cert-manager.io/v1
@@ -189,3 +237,13 @@ spec:
         - name: clusterAdmin
           db: admin
       scramCredentialsSecretName: secure-admin-scram
+  # Small requests: the whole seed has to fit a CI runner's four CPUs.
+  statefulSet:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: mongod
+              resources: { requests: { cpu: 25m, memory: 200M } }
+            - name: mongodb-agent
+              resources: { requests: { cpu: 25m, memory: 100M } }
