@@ -20,7 +20,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "vitest run --config e2e/vitest.config.ts"
+    "test:e2e": "vitest run --config e2e/vitest.config.ts",
+    "test:e2e-writes": "vitest run --config e2e/writes.config.ts"
   },
   "devDependencies": {
     "@freelensapp/extensions": "^1.10.3",
