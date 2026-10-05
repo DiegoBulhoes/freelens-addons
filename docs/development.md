@@ -33,8 +33,9 @@ make up
    It lives under `/tmp` so it cannot be committed by accident.
 2. The first `make up` writes `.env` from the template with your UID and GID, then stops. Set
    `KUBECONFIG_PATH` to the kubeconfig. `.env` is git-ignored.
-3. The second `make up` builds every extension, starts Freelens and prints the noVNC URL. The
-   cluster and the extensions are picked up and enabled automatically.
+3. The second `make up` builds every extension and starts Freelens, on noVNC at
+   `http://localhost:6080/vnc.html?autoconnect=1&resize=scale`. The cluster and the extensions are
+   picked up and enabled automatically.
 4. Pick "All Namespaces" in any list page. Freelens starts scoped to `default` on every launch;
    `accessibleNamespaces` in `lens-cluster-store.json` narrows the options, not the selection.
 
@@ -207,8 +208,7 @@ half appear here. The renderer half's `console.log` goes to Chromium's devtools 
 ## Checks before pushing
 
 ```bash
-make test               # the tests on their own
-make check              # what CI runs: lint, typecheck, test, build, bundle contract, design copies, supply-chain policy
+make check              # CI's first four jobs: lint, typecheck, unit tests, build, with the policy checks
 bash scripts/security/scan.sh    # the scanners: secrets, dependency CVEs, Dockerfiles
 ```
 
@@ -227,18 +227,19 @@ The compose file is in `dev/`, so a raw compose command from the repository root
 alias dc='docker compose -f dev/docker-compose.yml --project-directory .'
 ```
 
-The Makefile already does this.
+The Makefile already does this. It holds only what the agent working here and CI run.
 
 | Command | What it does |
 |---------|--------------|
 | `make up` | Build the extensions, then start or restart Freelens |
 | `make down` | Stop the containers, keeping Freelens' saved state |
-| `make test` | The tests, with the coverage thresholds CI enforces |
-| `make check` | Everything CI runs except the scanners |
+| `make check` | CI's first four jobs: lint, typecheck, unit tests with their coverage thresholds, build |
 | `make cluster` | Bring up the k3s cluster and seed it |
 | `make cluster-down` | Destroy it, volume included |
 | `make kubectl ARGS="..."` | kubectl on the dev k3s, refused on any other cluster |
 | `make e2e` | The end-to-end suite, against a running Freelens |
+| `make e2e-writes` | Real writes through each extension on the dev k3s, checked in the cluster |
+| `make ci-local` | The CI workflow through act, beside the dev setup; `JOB=lint` for one job |
 | `bash scripts/security/scan.sh` | Secret, dependency and Dockerfile scanners |
 | `dc logs -f freelens` | Follow the container logs |
 | `dc down -v` | Stop everything and discard Freelens' saved state |

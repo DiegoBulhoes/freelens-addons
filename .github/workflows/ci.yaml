@@ -1,5 +1,8 @@
 name: CI
 
+# One chain, lightest first: each job runs only if the one before it passed. Pull requests stop
+# after the image; the end-to-end suites, about an hour, run on main and by hand.
+# `make ci-local` runs it on this machine through act, beside the dev setup.
 on:
   push:
     branches: [main]
@@ -13,63 +16,172 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Digest-pinned containers, never third-party actions. Keep in step with scripts/security/scan.sh.
 env:
-  # Commit SHAs, not tags: a tag can be moved.
-  CHECKOUT: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-  SETUP_NODE: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+  GITLEAKS: ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f # v8.30.1
+  OSV_SCANNER: ghcr.io/google/osv-scanner@sha256:afd838850ac1a0fcc15ff4a041dc9ba11123c3f0d2666217a5f0fcf9222b55fa # v2.6.0
+  HADOLINT: hadolint/hadolint@sha256:27086352fd5e1907ea2b934eb1023f217c5ae087992eb59fde121dce9c9ff21e # v2.14.0
+  TRIVY: aquasec/trivy@sha256:1c78ed1ef824ab8bb05b04359d186e4c1229d0b3e67005faacb54a7d71974f73 # 0.69.1
 
 jobs:
-  quality:
-    name: Lint, typecheck, test, build
+  lint:
+    name: 1. Lint
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
-
-      - name: Enable pnpm
-        run: corepack enable pnpm
-
+      - run: corepack enable pnpm
       # Also re-checks every entry against minimumReleaseAge.
-      - name: Install
-        run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint
+      - name: Design standard copies
+        run: bash scripts/checks/copy-design-standard.sh --check
+      - name: Supply-chain policy
+        run: bash scripts/security/verify-supply-chain.sh
 
-      - name: Lint
-        run: pnpm run lint
+  typecheck:
+    name: 2. Typecheck
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+      - run: corepack enable pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run -r type:check
 
-      - name: Typecheck
-        run: pnpm run -r type:check
+  test:
+    name: 3. Unit tests
+    needs: typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+      - run: corepack enable pnpm
+      - run: pnpm install --frozen-lockfile
+      # Fails under 95% coverage of each package's api/.
+      - run: pnpm run -r test:coverage
 
-      - name: Test
-        run: pnpm run -r test:coverage
-
-      - name: Build
-        run: pnpm run -r build
-
-      - name: Verify extension bundles
+  build:
+    name: 4. Build
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+      - run: corepack enable pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run -r build
+      - name: Extension bundles
         run: bash scripts/checks/verify-bundles.sh
 
-      - name: Verify the design standard
-        run: bash scripts/checks/copy-design-standard.sh --check
+  security:
+    name: 5. Security
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Full history: a removed secret is still in the objects.
+          fetch-depth: 0
+          persist-credentials: false
 
-  images:
-    name: Container images
+      - name: Secrets, in the whole history
+        run: |
+          docker run --rm -v "${PWD}:/repo:ro" "${GITLEAKS}" \
+            detect --source=/repo --redact --verbose --no-banner
+
+      # Fix with overrides in pnpm-workspace.yaml; osv-scanner.toml only for what cannot be fixed yet.
+      - name: Vulnerable dependencies
+        run: |
+          docker run --rm -v "${PWD}:/repo:ro" -w /repo "${OSV_SCANNER}" \
+            scan source --lockfile=/repo/pnpm-lock.yaml
+
+      # DL3008: the distributions keep only current apt versions; the base digest pins the set.
+      - name: Dockerfiles
+        run: |
+          for dockerfile in dev/freelens/Dockerfile dev/act/Dockerfile; do
+            docker run --rm -i "${HADOLINT}" hadolint --ignore DL3008 - < "${dockerfile}"
+          done
+
+  image:
+    name: 6. Freelens image
+    needs: security
     runs-on: ubuntu-latest
     timeout-minutes: 30
-
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       # Also checks FREELENS_SHA256 against the release.
-      - name: Build the image
-        run: docker build ./dev/freelens
+      - name: Build
+        run: docker build -t freelens-addons/freelens:ci ./dev/freelens
 
+      # Reports only: Electron and Chromium CVEs need a Freelens release to fix.
+      - name: Image CVEs
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            "${TRIVY}" image \
+              --severity HIGH,CRITICAL \
+              --ignore-unfixed \
+              --exit-code 0 \
+              --scanners vuln \
+              freelens-addons/freelens:ci
 
+  e2e:
+    name: 7–8. End-to-end, read then write
+    needs: image
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Configure
+        run: |
+          cp .env.example .env
+          sed -i "s|^KUBECONFIG_PATH=.*|KUBECONFIG_PATH=${DEV_KUBECONFIG_DIR:-/tmp/freelens-addons-k3s}/kubeconfig.yaml|; s|^USER_UID=.*|USER_UID=$(id -u)|; s|^USER_GID=.*|USER_GID=$(id -g)|" .env
+          # Only under make ci-local: another project and other ports, set last so they win.
+          env | grep -E '^(PROJECT|K3S_PORT|DEBUG_PORT|VNC_PORT|NOVNC_PORT|DEV_KUBECONFIG_DIR|USER_UID|USER_GID)=' >> .env || true
+          kubectl version --client
+
+      - name: Start the dev cluster
+        run: make cluster
+
+      - name: 7. Read-only end-to-end
+        run: make e2e
+
+      - name: 8. Real writes
+        run: make e2e-writes
+
+      - name: What Freelens and the cluster said
+        if: failure()
+        run: |
+          docker compose -p "${PROJECT:-freelens-addons}" -f dev/docker-compose.yml --project-directory . logs --tail=300 freelens
+          dev/cluster/cluster.sh kubectl get pods -A
+          dev/cluster/cluster.sh kubectl get events -A --field-selector type=Warning --sort-by=.lastTimestamp | tail -80

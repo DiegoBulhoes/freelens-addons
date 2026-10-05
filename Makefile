@@ -1,93 +1,75 @@
-# Everything runs in Docker.
+# For the agent working here and for CI; everything runs in Docker.
 
 SHELL := /bin/bash
 
-# --project-directory keeps `.` and .env meaning the repository root.
-COMPOSE := docker compose -f dev/docker-compose.yml --project-directory .
-DEV     := $(COMPOSE) run --rm --no-deps --entrypoint sh -w /workspace freelens -lc
-
 -include .env
-NOVNC_PORT ?= 6080
-NOVNC_URL  := http://localhost:$(NOVNC_PORT)/vnc.html?autoconnect=1&resize=scale
+# Other values let make ci-local run a second setup beside this one.
+PROJECT            ?= freelens-addons
+DEBUG_PORT         ?= 9222
+# Outside the repository, so the kubeconfig cannot be committed.
+DEV_KUBECONFIG_DIR ?= /tmp/freelens-addons-k3s
+export DEV_KUBECONFIG_DIR
 
-.DEFAULT_GOAL := up
+# --project-directory keeps `.` and .env meaning the repository root.
+COMPOSE := docker compose -p $(PROJECT) -f dev/docker-compose.yml --project-directory .
+DEV     := $(COMPOSE) run --rm --no-deps -e FREELENS_DEBUG_PORT=$(DEBUG_PORT) --entrypoint sh -w /workspace freelens -lc
+
+.PHONY: up down check cluster cluster-down kubectl e2e-freelens e2e e2e-writes ci-local
 
 # Restart, not just rebuild: Freelens caches the loaded bundle.
-.PHONY: up
 up: .env
 	$(DEV) "pnpm install && pnpm run -r build"
 	$(COMPOSE) up -d --build freelens
 	$(COMPOSE) restart freelens
-	@echo
-	@echo "Freelens is on $(NOVNC_URL)"
 
-.PHONY: down
 down:
 	$(COMPOSE) down
 
-.PHONY: test
-test:
-	$(DEV) "pnpm run -r test:coverage"
-
-# Outside the repository, so the kubeconfig cannot be committed.
-DEV_KUBECONFIG_DIR ?= /tmp/freelens-addons-k3s
-
-.PHONY: cluster
-cluster:
-	@mkdir -p $(DEV_KUBECONFIG_DIR)
-	DEV_KUBECONFIG_DIR=$(DEV_KUBECONFIG_DIR) $(COMPOSE) --profile cluster up -d k3s
-	@echo "waiting for the API server"
-	@until [ -r "$(DEV_KUBECONFIG_DIR)/kubeconfig.yaml" ]; do sleep 2; done
-	@until KUBECONFIG=$(DEV_KUBECONFIG_DIR)/kubeconfig.yaml kubectl get --raw=/readyz >/dev/null 2>&1; \
-	  do sleep 2; done
-	@# A ready API server says nothing about the CNI. `kubectl wait` on no node is an error.
-	@until KUBECONFIG=$(DEV_KUBECONFIG_DIR)/kubeconfig.yaml \
-	  kubectl get nodes -o name 2>/dev/null | grep -q .; do sleep 2; done
-	KUBECONFIG=$(DEV_KUBECONFIG_DIR)/kubeconfig.yaml \
-	  kubectl wait --for=condition=Ready node --all --timeout=180s
-	DEV_KUBECONFIG_DIR=$(DEV_KUBECONFIG_DIR) bash dev/cluster/cluster.sh install
-	@echo
-	@echo "Set KUBECONFIG_PATH in .env to $(DEV_KUBECONFIG_DIR)/kubeconfig.yaml, then 'make up'."
-
-# kubectl on the dev k3s only; refuses any other cluster. make kubectl ARGS="-n mongodb get pods"
-.PHONY: kubectl
-kubectl:
-	@DEV_KUBECONFIG_DIR=$(DEV_KUBECONFIG_DIR) bash dev/cluster/cluster.sh kubectl $(ARGS)
-
-# The kubeconfig is root-owned in sticky /tmp, so the container removes it.
-.PHONY: cluster-down
-cluster-down:
-	-DEV_KUBECONFIG_DIR=$(DEV_KUBECONFIG_DIR) $(COMPOSE) \
-	   run --rm --no-deps --entrypoint sh k3s -c 'rm -rf /output/..?* /output/.[!.]* /output/*'
-	DEV_KUBECONFIG_DIR=$(DEV_KUBECONFIG_DIR) $(COMPOSE) --profile cluster down -v k3s
-	-rmdir $(DEV_KUBECONFIG_DIR)
-
-.PHONY: e2e
-e2e: .env
-	$(DEV) "pnpm install && pnpm run -r build"
-	FREELENS_EXTRA_ARGS=--remote-debugging-port=9222 $(COMPOSE) up -d --build --force-recreate freelens
-	@echo "waiting for the debugging port"
-	@until curl -sf --max-time 2 http://localhost:9222/json/version >/dev/null; do sleep 2; done
-	@# One window: two suites at once would fight over it.
-	$(DEV) "pnpm -r --workspace-concurrency=1 run test:e2e"
-	@echo
-	@echo "Freelens still has its debugging port open. 'make up' puts it back."
-
-# What CI runs, minus the scanners.
-.PHONY: check
+# CI's first four jobs.
 check:
 	$(DEV) "pnpm run lint && pnpm run -r type:check && pnpm run -r test:coverage && pnpm run -r build"
-	@bash scripts/checks/verify-bundles.sh
-	@bash scripts/checks/copy-design-standard.sh --check
-	@bash scripts/security/verify-supply-chain.sh
+	bash scripts/checks/verify-bundles.sh
+	bash scripts/checks/copy-design-standard.sh --check
+	bash scripts/security/verify-supply-chain.sh
+
+cluster:
+	mkdir -p $(DEV_KUBECONFIG_DIR)
+	$(COMPOSE) --profile cluster up -d k3s
+	bash dev/cluster/cluster.sh install
+
+# The kubeconfig is root-owned in sticky /tmp, so the container removes it.
+cluster-down:
+	-$(COMPOSE) run --rm --no-deps --entrypoint sh k3s -c 'rm -rf /output/..?* /output/.[!.]* /output/*'
+	$(COMPOSE) --profile cluster down -v k3s
+	-rmdir $(DEV_KUBECONFIG_DIR)
+
+# Refuses any cluster but the dev k3s. make kubectl ARGS="-n mongodb get pods"
+kubectl:
+	@bash dev/cluster/cluster.sh kubectl $(ARGS)
+
+# Freelens with its debugging port, which the suites drive; make up closes it again.
+e2e-freelens: .env
+	$(DEV) "pnpm install && pnpm run -r build"
+	FREELENS_EXTRA_ARGS=--remote-debugging-port=$(DEBUG_PORT) $(COMPOSE) up -d --build --force-recreate freelens
+	until curl -sf --max-time 2 http://localhost:$(DEBUG_PORT)/json/version >/dev/null; do sleep 2; done
+
+# One package at a time: two suites would fight over the one window.
+e2e: e2e-freelens
+	$(DEV) "pnpm -r --workspace-concurrency=1 run test:e2e"
+
+e2e-writes: e2e-freelens
+	$(DEV) "pnpm -r --workspace-concurrency=1 run test:e2e-writes"
+
+# ci.yaml through act, as another project on other ports. JOB=lint for one job; KEEP=1 keeps its setup.
+ci-local:
+	docker build -t freelens-addons/act:local dev/act
+	mkdir -p /tmp/freelens-addons-act
+	docker run --rm --user $$(id -u):$$(id -g) --group-add $$(stat -c %g /var/run/docker.sock) \
+	  -v /var/run/docker.sock:/var/run/docker.sock -v "$(CURDIR)":/repo:ro \
+	  -v /tmp/freelens-addons-act:/tmp/freelens-addons-act \
+	  -e USER_UID=$$(id -u) -e USER_GID=$$(id -g) -e KEEP=$(KEEP) \
+	  freelens-addons/act:local ci-local $(JOB)
 
 .env: .env.example
-	@if [ ! -f .env ]; then \
-		cp .env.example .env; \
-		sed -i "s|^USER_UID=.*|USER_UID=$$(id -u)|; s|^USER_GID=.*|USER_GID=$$(id -g)|" .env; \
-		echo "Created .env. Set KUBECONFIG_PATH to your kubeconfig, then run 'make up' again."; \
-	fi
-	@if ! grep -qE '^KUBECONFIG_PATH=.+' .env; then \
-		echo "ERROR: KUBECONFIG_PATH is empty in .env. Set it to an absolute kubeconfig path."; \
-		exit 1; \
-	fi
+	@[[ -f .env ]] || { cp .env.example .env; sed -i "s|^USER_UID=.*|USER_UID=$$(id -u)|; s|^USER_GID=.*|USER_GID=$$(id -g)|" .env; }
+	@grep -qE '^KUBECONFIG_PATH=.+' .env || { echo "KUBECONFIG_PATH is empty in .env" >&2; exit 1; }

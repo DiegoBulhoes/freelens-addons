@@ -11,6 +11,8 @@ description: "Unit tests on real cluster objects, the end-to-end suite, fixtures
 - [Commands](#commands)
 - [Unit tests](#unit-tests)
 - [End-to-end](#end-to-end)
+- [Real writes](#real-writes)
+- [In CI](#in-ci)
 - [Fixtures](#fixtures)
 - [Rules](#rules)
 
@@ -21,21 +23,24 @@ flowchart LR
   F["fixtures<br/><i>exported from the dev k3s</i>"] --> U["unit tests<br/><i>api/ modules, no mocks</i>"]
   U --> C["coverage<br/><i>95% of src/renderer/api</i>"]
   W["running Freelens<br/><i>dev k3s</i>"] --> E["e2e<br/><i>CDP, read only</i>"]
+  W --> R["real writes<br/><i>checked in the cluster</i>"]
   B["verify-bundles.sh"] --> X["make check"]
   C --> X
 ```
 
 | Layer | Covers | Runs in |
 |-------|--------|---------|
-| Unit | Every decision in `src/renderer/api/` | `make test`, `make check`, CI |
+| Unit | Every decision in `src/renderer/api/` | `make check`, CI |
 | Bundle check | Manifests and bundles Freelens would skip | `make check`, CI |
-| End-to-end | Pages, controls, numbers, layout and design in the real app | `make e2e` (needs a cluster and a window) |
+| End-to-end | Pages, controls, numbers, layout and design in the real app | `make e2e` (needs a cluster and a window), CI on `main` |
+| Real writes | Each write done through the UI, its effect read back from the cluster | `make e2e-writes`, CI on `main` |
 
 ## Commands
 
 ```bash
-make test
+make check
 make e2e
+make e2e-writes
 ```
 
 Watch one package:
@@ -111,7 +116,49 @@ the Chrome DevTools Protocol, one package at a time.
 | `flow-pin.e2e.ts`, `flow-renewal.e2e.ts` | One flow each, start to end |
 
 Actions that write (Sync, Refresh, Undo, Delete, Renew) are pressed up to their confirmation and
-cancelled; what they send is covered by the unit tests.
+cancelled here; [real writes](#real-writes) press OK.
+
+## Real writes
+
+`make e2e-writes` runs each package's `e2e/*.writes.ts`: every write that deletes nothing is done
+through the UI, as a person would, and its effect is read back from the cluster through the window's
+own proxy. A test fails on what the cluster did, not on what the screen says.
+
+| Rule | Why |
+|------|-----|
+| Only the dev k3s | `openWorkbench` refuses any other cluster |
+| The write goes through the UI; the check through the API | `build/e2e/writes.ts`: `confirmDialog`, `clusterObject`, `untilCluster`, `execIn` |
+| Each test leaves the seed as it found it | Through the extension's own Undo or reverse action where there is one, `restore()` otherwise |
+| Delete and Destroy are left out | Nothing could put the object back as the seed made it |
+
+| Package | Writes |
+|---------|--------|
+| ArgoCD | Refresh, hard refresh, sync (one, ticked, frozen), terminate, roll back, freeze and resume, refresh all, Check now, image edit and update undo |
+| cert-manager | Renew, from the drawer and ticked |
+| CloudNativePG | Back up (three ways), reload, switchover, restart (rolling, replicas, one instance), hibernate and wake, maintenance window, schedules, poolers |
+| MongoDB | Switch primary, scale, restart a member, restart all, rolling restart |
+| Redis | Failover, scale (replication and sentinels), restart a pod, restart all, ticked restart |
+
+## In CI
+
+One workflow, `.github/workflows/ci.yaml`, lightest first; each job runs only if the one before
+it passed. `release.yaml` stays apart, on tags.
+
+```mermaid
+flowchart LR
+  L["1. Lint"] --> T["2. Typecheck"] --> U["3. Unit tests"] --> B["4. Build"]
+  B --> S["5. Security"] --> I["6. Freelens image"] --> E["7–8. E2E, read then write"]
+```
+
+| Job | Runs |
+|-----|------|
+| 1–6 | Every pull request and push |
+| 7–8 | Push to `main` and by hand: `make cluster`, `make e2e`, `make e2e-writes` on a fresh k3s. On a failure it prints Freelens' log, the pods and the cluster's warnings |
+
+`make ci-local` runs the same workflow through [act](https://github.com/nektos/act), in a container
+built from `dev/act/Dockerfile`, on a copy of the working tree, as another compose project on
+other ports, so the dev setup keeps running. `JOB=lint` runs one job; `KEEP=1` leaves its cluster
+and Freelens up.
 
 ## Fixtures
 

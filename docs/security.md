@@ -134,4 +134,4 @@ make check              # lint, typecheck, test, build, bundle contract, supply-
 bash scripts/security/scan.sh    # gitleaks, OSV, hadolint: the same digest-pinned images CI uses
 ```
 
-Keep the digests in `scripts/security/scan.sh` in step with `.github/workflows/security.yaml`.
+Keep the digests in `scripts/security/scan.sh` in step with `.github/workflows/ci.yaml`.

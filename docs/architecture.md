@@ -144,7 +144,7 @@ sourcemap per entrypoint.
 |-------|------|
 | Reloading | Freelens caches extension code and does not hot-reload it. `make up` builds and restarts |
 | noVNC session | A restart drops it; reload the browser tab |
-| noVNC URL | Use `resize=scale`. Xvfb has a fixed geometry, so `resize=remote` shows the desktop cropped. The URL `make up` prints uses `scale` |
+| noVNC URL | Use `resize=scale`. Xvfb has a fixed geometry, so `resize=remote` shows the desktop cropped. The documented URL uses `scale` |
 | `react-dom` global | The host exports `ReactDOM`. Upstream's `freelens-example-extension` maps it to `global.ReactDom`, which is `undefined`; this repository uses the correct name |
 | `build/` as a workspace package | pnpm 12.3.4 writes broken root-level symlinks for packages with a peer-dependency suffix, so `build/` owns `vite` and `electron-vite` |
 | Named volumes | A path absent from the image is created as root while the container runs unprivileged, so `~/.config/Freelens` and the pnpm and corepack caches are created and chowned at build time |

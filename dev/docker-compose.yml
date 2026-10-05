@@ -14,6 +14,8 @@ services:
       - --write-kubeconfig-mode=644
       - --write-kubeconfig=/output/kubeconfig.yaml
       - --tls-san=127.0.0.1
+      # Its own port, so a second cluster (make ci-local) can run beside the dev one.
+      - --https-listen-port=${K3S_PORT:-6443}
       # Fixed: dev/cluster/cluster.sh checks it, and a hostname-named node is orphaned on recreate.
       - --node-name=freelens-addons-dev
       # Unreachable GC target: real FreeDiskSpaceFailed warnings for the ArgoCD overview.
@@ -21,7 +23,7 @@ services:
       - --kubelet-arg=image-gc-low-threshold=0
     privileged: true
     ports:
-      - "127.0.0.1:6443:6443"
+      - "127.0.0.1:${K3S_PORT:-6443}:${K3S_PORT:-6443}"
     environment:
       K3S_TOKEN: ${K3S_TOKEN:-freelens-addons-dev}
     volumes:

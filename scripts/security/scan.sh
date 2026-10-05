@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Runs CI's scanners locally. Keep these digests in step with .github/workflows/security.yaml.
+# Runs CI's scanners locally. Keep these digests in step with .github/workflows/ci.yaml.
 set -uo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/../.."
@@ -23,8 +23,11 @@ docker run --rm -v "${PWD}:/repo:ro" -w /repo "${OSV_SCANNER}" \
 result "${PIPESTATUS[0]}"
 
 section "Dockerfiles"
-docker run --rm -i "${HADOLINT}" hadolint --ignore DL3008 - < dev/freelens/Dockerfile
-result "$?"
+status=0
+for dockerfile in dev/freelens/Dockerfile dev/act/Dockerfile; do
+  docker run --rm -i "${HADOLINT}" hadolint --ignore DL3008 - < "${dockerfile}" || status=1
+done
+result "${status}"
 
 printf '\n'
 [[ ${FAIL} -eq 0 ]] && echo "All scanners passed." || echo "A scanner reported findings." >&2

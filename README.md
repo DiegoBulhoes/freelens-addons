@@ -58,15 +58,11 @@ make up
 ```
 
 The first run writes `.env` and stops. Set `KUBECONFIG_PATH` in it and run again. The second run
-builds the extensions, starts Freelens on a virtual screen and prints a URL to open it in a browser.
-Run `make up` again after every change.
+builds the extensions and starts Freelens on a virtual screen, at
+`http://localhost:6080/vnc.html?autoconnect=1&resize=scale`. Run `make up` again after every change.
 
-| Command | What it does |
-|---------|--------------|
-| `make up` | Build, then start or restart |
-| `make down` | Stop |
-| `make test` | The test suites, with their coverage thresholds |
-| `make check` | What CI runs, minus the scanners |
+The Makefile is for the agent working here and for CI; its targets are listed in
+[docs/development.md](docs/development.md#commands).
 
 For a disposable cluster to develop against, see [dev/cluster/README.md](dev/cluster/README.md).
 The rest is in [docs/development.md](docs/development.md).

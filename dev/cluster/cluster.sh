@@ -10,6 +10,15 @@ set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 
 export KUBECONFIG="${DEV_KUBECONFIG_DIR:-/tmp/freelens-addons-k3s}/kubeconfig.yaml"
+
+# install also waits for a k3s just started: the kubeconfig, the API server, then a Ready node
+# (a ready API server says nothing about the CNI, and waiting on no node is an error).
+if [[ "${1:-}" == install ]]; then
+  timeout 300 bash -c "until [[ -r '${KUBECONFIG}' ]] && kubectl get --raw=/readyz >/dev/null 2>&1 \
+    && kubectl get nodes -o name 2>/dev/null | grep -q .; do sleep 2; done"
+  kubectl wait --for=condition=Ready node --all --timeout=180s
+fi
+
 [[ "$(kubectl get nodes -o jsonpath='{.items[*].metadata.name}')" == "freelens-addons-dev" ]] \
   || { echo "refusing: ${KUBECONFIG} is not the dev k3s" >&2; exit 1; }
 
