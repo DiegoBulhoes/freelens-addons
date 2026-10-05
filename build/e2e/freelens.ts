@@ -124,7 +124,8 @@ export async function openCluster(session: Session): Promise<void> {
 
   await waitFor("a cluster in the catalog", async () =>
     session.evaluate<boolean>(
-      "(() => { const row = [...document.querySelectorAll('[class*=TableRow]')][0];" +
+      // A fresh Freelens lists its own General entries first; the cluster is the KubernetesCluster row.
+      "(() => { const row = [...document.querySelectorAll('[class*=TableRow]')].find((each) => each.textContent.includes('KubernetesCluster'));" +
         " if (!row) return false; row.dispatchEvent(new MouseEvent('click', {bubbles: true}));" +
         " return true; })()",
     ),

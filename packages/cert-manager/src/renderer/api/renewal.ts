@@ -2,7 +2,7 @@ import type { ChainLink } from "./chain";
 import { isIssuing } from "./expiry";
 import type { CertificateLike, Condition } from "./types";
 
-// What `cmctl renew` does: set Issuing true. The Secret and key are untouched.
+// What `cmctl renew` does: set Issuing true. cert-manager reissues, with a new key under rotationPolicy Always.
 
 export const MANUAL_TRIGGER = {
   reason: "ManuallyTriggered",
