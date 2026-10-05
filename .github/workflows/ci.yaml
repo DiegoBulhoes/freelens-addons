@@ -184,4 +184,5 @@ jobs:
         run: |
           docker compose -p "${PROJECT:-freelens-addons}" -f dev/docker-compose.yml --project-directory . logs --tail=300 freelens
           dev/cluster/cluster.sh kubectl get pods -A
+          dev/cluster/cluster.sh kubectl get events -A --field-selector reason=FailedScheduling
           dev/cluster/cluster.sh kubectl get events -A --field-selector type=Warning --sort-by=.lastTimestamp | tail -80

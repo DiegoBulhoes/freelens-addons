@@ -7,6 +7,8 @@ echo "==> MongoDB Controllers for Kubernetes ${MCK_VERSION}"
 namespace mongodb
 apply_url "https://raw.githubusercontent.com/mongodb/mongodb-kubernetes/${MCK_VERSION}/public/crds.yaml" \
   "https://raw.githubusercontent.com/mongodb/mongodb-kubernetes/${MCK_VERSION}/public/mongodb-kubernetes.yaml"
+# It asks for half a CPU; the whole seed has to fit a CI runner's four.
+kubectl -n mongodb set resources deployment/mongodb-kubernetes-operator --requests=cpu=50m
 wait_deploy mongodb mongodb-kubernetes-operator
 
 echo "==> MongoDB replica sets"

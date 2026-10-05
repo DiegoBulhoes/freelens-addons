@@ -46,6 +46,12 @@ spec:
     spec:
       template:
         spec:
+          # The scheduler counts the largest init container too.
+          initContainers:
+            - name: mongod-posthook
+              resources: { requests: { cpu: 25m, memory: 50M } }
+            - name: mongodb-agent-readinessprobe
+              resources: { requests: { cpu: 25m, memory: 50M } }
           containers:
             - name: mongod
               resources: { requests: { cpu: 25m, memory: 200M } }
@@ -79,6 +85,12 @@ spec:
     spec:
       template:
         spec:
+          # The scheduler counts the largest init container too.
+          initContainers:
+            - name: mongod-posthook
+              resources: { requests: { cpu: 25m, memory: 50M } }
+            - name: mongodb-agent-readinessprobe
+              resources: { requests: { cpu: 25m, memory: 50M } }
           containers:
             - name: mongod
               resources: { requests: { cpu: 25m, memory: 200M } }
@@ -123,6 +135,12 @@ spec:
     spec:
       template:
         spec:
+          # The scheduler counts the largest init container too.
+          initContainers:
+            - name: mongod-posthook
+              resources: { requests: { cpu: 25m, memory: 50M } }
+            - name: mongodb-agent-readinessprobe
+              resources: { requests: { cpu: 25m, memory: 50M } }
           containers:
             - name: mongod
               resources: { requests: { cpu: 25m, memory: 200M } }
@@ -148,6 +166,12 @@ spec:
     spec:
       template:
         spec:
+          # The scheduler counts the largest init container too.
+          initContainers:
+            - name: mongod-posthook
+              resources: { requests: { cpu: 25m, memory: 50M } }
+            - name: mongodb-agent-readinessprobe
+              resources: { requests: { cpu: 25m, memory: 50M } }
           containers:
             - name: mongod
               resources: { requests: { cpu: 25m, memory: 200M } }
@@ -182,6 +206,12 @@ spec:
     spec:
       template:
         spec:
+          # The scheduler counts the largest init container too.
+          initContainers:
+            - name: mongod-posthook
+              resources: { requests: { cpu: 25m, memory: 50M } }
+            - name: mongodb-agent-readinessprobe
+              resources: { requests: { cpu: 25m, memory: 50M } }
           containers:
             - name: mongod
               resources: { requests: { cpu: 25m, memory: 200M } }
@@ -242,6 +272,12 @@ spec:
     spec:
       template:
         spec:
+          # The scheduler counts the largest init container too.
+          initContainers:
+            - name: mongod-posthook
+              resources: { requests: { cpu: 25m, memory: 50M } }
+            - name: mongodb-agent-readinessprobe
+              resources: { requests: { cpu: 25m, memory: 50M } }
           containers:
             - name: mongod
               resources: { requests: { cpu: 25m, memory: 200M } }
