@@ -10,14 +10,11 @@ minimumReleaseAgeStrict: true
 
 minimumReleaseAgeIgnoreMissingTime: false
 
-# Transitive packages with advisories, pinned forward rather than excepted.
+# Kept from before the rule: no override for a transitive advisory, which waits for
+# make deps-refresh or its parent's release (docs/security.md).
 overrides:
   dompurify: "3.4.14"
   decode-uri-component: "0.5.0"
-  brace-expansion: "1.1.21"
-  fast-uri: "3.1.8"
-  ip-address: "10.7.1"
-  moment: "2.31.0"
 
 # Lifecycle scripts are opt-in. electron and node-pty arrive only for their types;
 # the Electron in use is the one inside the Freelens container.
