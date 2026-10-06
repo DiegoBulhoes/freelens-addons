@@ -1,5 +1,6 @@
 import { builtinModules } from "node:module";
 import { defineConfig } from "electron-vite";
+import { firstPartyOnly } from "./first-party-only";
 import { globalExternals, MAIN_GLOBALS, RENDERER_GLOBALS } from "./global-externals";
 
 export interface ExtensionConfigOptions {
@@ -20,6 +21,8 @@ function cjsLib(entry: string, outDir: string) {
     emptyOutDir: true,
     sourcemap: true,
     minify: false,
+    // Bundled, so build/vite/first-party-only.ts sees and refuses it, not left to a runtime require.
+    externalizeDeps: false,
     lib: {
       entry,
       formats: ["cjs" as const],
@@ -48,14 +51,14 @@ export function defineExtensionConfig(options: ExtensionConfigOptions = {}) {
   return defineConfig({
     main: {
       define,
-      plugins: [globalExternals(MAIN_GLOBALS)],
+      plugins: [globalExternals(MAIN_GLOBALS), firstPartyOnly()],
       build: cjsLib(mainEntry, "out/main"),
     },
 
     // Renderer built in the `preload` slot: the `renderer` slot demands an index.html.
     preload: {
       define,
-      plugins: [globalExternals(RENDERER_GLOBALS)],
+      plugins: [globalExternals(RENDERER_GLOBALS), firstPartyOnly()],
       build: cjsLib(rendererEntry, "out/renderer"),
     },
   });

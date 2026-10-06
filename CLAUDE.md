@@ -18,7 +18,7 @@ This file holds only what those do not, plus the rules that must never be broken
 | Rule | Detail in |
 |------|-----------|
 | Run pnpm or Node on the host; everything runs in Docker | [docs/development.md](docs/development.md#commands) |
-| Lower the 15-day age floor, add a third-party GitHub Action, silence a vulnerability without a reason and `effectiveUntil`, or edit `verify-supply-chain.sh` to make a build pass | [docs/security.md](docs/security.md) |
+| Lower the 15-day age floor; add a third-party GitHub Action; add an `osv-scanner.toml` entry without a `reason` and an expiry, or for a version instead of an advisory; add an override for a transitive advisory; edit `verify-supply-chain.sh`, `osv-direct.sh` or `first-party-only.ts` to make a build pass | [docs/security.md](docs/security.md) |
 | Make Trivy on the Freelens image blocking | [docs/security.md](docs/security.md) |
 | Propose an npm or GitHub Packages registry unless the user raises it | [docs/distribution.md](docs/distribution.md) |
 | Hand-write a fixture, or export one from any cluster but the dev k3s | [docs/testing.md](docs/testing.md) |

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Runs CI's scanners locally. Keep these digests in step with .github/workflows/ci.yaml.
+# Runs CI's scanners locally. Keep these digests in step with .github/workflows/ci.yaml and
+# release.yaml; verify-supply-chain.sh compares the OSV one, and the Makefile reads it from here.
 set -uo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/../.."
@@ -18,9 +19,8 @@ docker run --rm -v "${PWD}:/repo:ro" "${GITLEAKS}" \
 result "${PIPESTATUS[0]}"
 
 section "Dependencies"
-docker run --rm -v "${PWD}:/repo:ro" -w /repo "${OSV_SCANNER}" \
-  scan source --lockfile=/repo/pnpm-lock.yaml 2>&1 | tail -5 | sed 's/^/  /'
-result "${PIPESTATUS[0]}"
+bash scripts/security/osv-direct.sh "${OSV_SCANNER}"
+result "$?"
 
 section "Dockerfiles"
 status=0

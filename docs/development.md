@@ -5,8 +5,8 @@ description: "Running the workbench, the development cluster, adding an extensio
 
 # Development
 
-Everything runs in Docker. The host needs only Docker: Node, pnpm, Freelens and the cluster run in
-containers.
+Everything runs in Docker. The host needs Docker, plus `jq` for the dependency scan in
+`make check` and `scripts/security/scan.sh`: Node, pnpm, Freelens and the cluster run in containers.
 
 ## Contents
 
@@ -130,7 +130,10 @@ compatibility:
 
 `files` is required. Without it the tarball ships no `renderer` and the extension does nothing.
 `verify-bundles.sh` fails on it. Keep `@freelensapp/extensions`, `react` and `mobx` in
-`devDependencies`: at runtime they are globals the host provides.
+`devDependencies`: at runtime they are globals the host provides. A bundle carries only the
+extension's own `src/`: importing an npm library, even its JSON or CSS (also through `@import`),
+fails the build (`build/vite/first-party-only.ts`), and a `package.json` with `dependencies` fails
+`verify-bundles.sh`, because [security](security.md#vulnerabilities) rests on it.
 
 `electron.vite.config.ts` is one line:
 
@@ -208,13 +211,15 @@ half appear here. The renderer half's `console.log` goes to Chromium's devtools 
 ## Checks before pushing
 
 ```bash
-make check              # CI's first four jobs: lint, typecheck, unit tests, build, with the policy checks
+make check              # CI's first four jobs: the dependency gate, lint, typecheck, unit tests, build, policy checks
 bash scripts/security/scan.sh    # the scanners: secrets, dependency CVEs, Dockerfiles
 ```
 
 | Failure | What to do |
 |---------|------------|
-| `verify-bundles.sh` | The bundle would not load: `.default` is not a class, or a host module was bundled |
+| `verify-bundles.sh` | The bundle would not load (`.default` is not a class, a host module was bundled), or it or `out/` holds something besides the extension's own `src/` |
+| `freelens-first-party-only` (build) | A bundle would carry an npm library's code, JSON or CSS. Remove the import; see [security](security.md#vulnerabilities) |
+| `osv-direct.sh` | Known malware, or a known vulnerability in a version chosen here. Fix the version, or add a dated `[[IgnoredVulns]]` with a reason. See [security](security.md#vulnerabilities) |
 | `copy-design-standard.sh --check` | A package's `styles/design.css` differs from the standard. Edit `.claude/skills/freelens-extension/templates/src/renderer/styles/design.css`, then run `bash scripts/checks/copy-design-standard.sh` |
 | Coverage | Add a case for the new branch. Do not lower the threshold. See [testing](testing.md) |
 | `verify-supply-chain.sh` | A supply-chain control was weakened. Fix the cause, not the check. See [security](security.md) |
@@ -234,6 +239,7 @@ The Makefile already does this. It holds only what the agent working here and CI
 | `make up` | Build the extensions, then start or restart Freelens |
 | `make down` | Stop the containers, keeping Freelens' saved state |
 | `make check` | CI's first four jobs: lint, typecheck, unit tests with their coverage thresholds, build |
+| `make deps-refresh` | Resolve the lockfile again within the ranges and the 15-day floor; monthly, and the fix for a transitive advisory |
 | `make cluster` | Bring up the k3s cluster and seed it |
 | `make cluster-down` | Destroy it, volume included |
 | `make kubectl ARGS="..."` | kubectl on the dev k3s, refused on any other cluster |

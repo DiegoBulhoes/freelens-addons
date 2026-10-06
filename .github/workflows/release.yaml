@@ -13,6 +13,10 @@ on:
 permissions:
   contents: read
 
+# Digest-pinned, as in ci.yaml. Keep in step with scripts/security/scan.sh.
+env:
+  OSV_SCANNER: ghcr.io/google/osv-scanner@sha256:afd838850ac1a0fcc15ff4a041dc9ba11123c3f0d2666217a5f0fcf9222b55fa # v2.6.0
+
 jobs:
   release:
     name: Build and publish tarballs
@@ -26,6 +30,10 @@ jobs:
         with:
           ref: ${{ inputs.tag || github.ref }}
           persist-credentials: false
+
+      # A tag can be pushed from anywhere: the same gate as CI, before the install runs anything.
+      - name: Vulnerable dependencies and malware
+        run: bash scripts/security/osv-direct.sh "${OSV_SCANNER}"
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:

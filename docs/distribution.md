@@ -97,9 +97,10 @@ git tag v0.1.0 && git push origin v0.1.0
 
 | Step | Purpose |
 |------|---------|
+| Dependency malware and vulnerabilities (`osv-direct.sh`) | The same gate as CI, before the install runs anything. See [security](security.md#vulnerabilities) |
 | Install with the lockfile | Re-checks the 15-day age floor on every entry |
 | Build | Produces the bundles |
-| `verify-bundles.sh` | The loader contract CI asserts |
+| `verify-bundles.sh` | The loader contract CI asserts, and no code from outside each extension's `src/` |
 | Pack | Writes the `.tgz` files and `SHA256SUMS` |
 | Unpack each tarball again | Confirms both entrypoints are in the tarball |
 | Attach to a GitHub release | The tarballs and `SHA256SUMS` |

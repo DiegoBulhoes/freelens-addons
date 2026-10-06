@@ -43,7 +43,7 @@ operator, CloudNativePG, MongoDB Controllers for Kubernetes or the redis-operato
 
 ## Developing
 
-You need Docker and a kubeconfig. Node, pnpm and Freelens run inside the container.
+You need Docker, `jq` and a kubeconfig. Node, pnpm and Freelens run inside the container.
 
 ```mermaid
 flowchart LR

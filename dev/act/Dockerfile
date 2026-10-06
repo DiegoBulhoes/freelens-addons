@@ -17,7 +17,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # The CLI talks to the host's daemon through its socket; nothing here runs dockerd.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      ca-certificates curl git make docker.io docker-compose-v2 \
+      ca-certificates curl git jq make docker.io docker-compose-v2 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=node /usr/local/bin/node /usr/local/bin/node

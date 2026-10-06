@@ -76,9 +76,9 @@ add an image.
 |-------|--------|
 | Supply-chain policy (`scripts/security/verify-supply-chain.sh`), which guards the controls on this page | yes |
 | Secret scan (gitleaks, full history) | yes |
-| Dependency CVEs (OSV against the lockfile) | yes |
+| Dependency malware and CVEs (OSV against the lockfile, `scripts/security/osv-direct.sh`), before any install | malware at any depth, and a version chosen here; a transitive CVE is a warning |
 | Dockerfile lint (hadolint) | yes |
-| Bundle contract (`scripts/checks/verify-bundles.sh`) | yes |
+| Bundles (`build/vite/first-party-only.ts` at build, `scripts/checks/verify-bundles.sh` after): the loader contract, and nothing outside each extension's `src/` | yes |
 | Image CVEs (Trivy) | no |
 
 Trivy on the image reports without blocking because its CVEs are in Electron and Chromium, which
@@ -90,8 +90,12 @@ a package, so the base image digest pins the package set instead.
 
 ## Dependency updates
 
-Updates are made by hand, with no bot. `pnpm update` resolves to the newest version older than 15
-days.
+Updates are made by hand, with no bot. `make deps-refresh` resolves the lockfile again: every
+dependency, transitive ones too, moves to the newest version its range allows and the 15-day floor
+admits, and only `pnpm-lock.yaml` changes. It resolves in a throwaway copy and promotes the new
+lockfile only if the gate passes, so a rejected one never reaches an install. Run it monthly; it is
+also how a transitive finding gets fixed. `pnpm update` is not used: under `minimumReleaseAgeStrict` it asks to write
+`minimumReleaseAgeExclude`, which the floor forbids.
 
 | Held back | Reason |
 |-----------|--------|
@@ -101,24 +105,49 @@ days.
 
 ## Vulnerabilities
 
-The OSV scan blocks on any finding. A transitive package with an advisory is pinned forward to the
-fixed version in `overrides` in `pnpm-workspace.yaml`:
+`scripts/security/osv-direct.sh` runs OSV-Scanner on the whole lockfile before anything installs
+it: first in CI, first in the release workflow, in `make check`, and in `make deps-refresh` between
+resolving and installing. It decides per finding:
+
+| Finding | Blocks |
+|---------|--------|
+| Known malware (`MAL-` advisory, or CWE-506), at any depth. Judged in a second pass without `osv-scanner.toml`, so no exception can hide it | yes |
+| A version this repository chooses: a `name@version` an importer of the lockfile declares (pnpm included, through `packageManager`), an override target, or `rollup` and `esbuild`, whose generated code ships in every bundle | yes |
+| Any other transitive development dependency | no, printed as a warning |
+| The scanner failing, printing no report, reading no package, or the importers reading as empty | yes |
+
+Why a transitive finding only warns: what users install carries no third-party code. A build fails
+when its module graph, its watched files (CSS reached by `@import` or `url()`) or its remaining
+`require()`s reach anything outside the extension's `src/` besides the host's globals, `electron`
+and Node's own modules (`build/vite/first-party-only.ts`). `verify-bundles.sh` fails a bundle whose
+source map does, an `out/` with any other file, and a `package.json` with runtime dependencies,
+which Freelens would install on each user's machine with no lockfile, floor or scan. Such a finding is in tooling, which does run here, at build and
+test time: vite, vitest and jsdom, and the host packages `build/vite/global-externals.ts` loads to
+list their exports. Malware there blocks; an ordinary advisory waits for the next
+`make deps-refresh`, or for its parent's release when the parent's range excludes the fix. No
+override is added for a transitive advisory: a list of pins nobody keeps is the cost this avoids.
+
+Two overrides from before that rule remain in `pnpm-workspace.yaml`; each makes its package a
+version chosen here, so a later advisory against it blocks:
 
 | Override | Arrived under |
 |----------|---------------|
-| `dompurify: 3.4.14` | `monaco-editor` pulled in 3.1.7 |
+| `dompurify: 3.4.14` | `monaco-editor` pins 3.1.7 |
 | `decode-uri-component: 0.5.0` | `query-string` pulled in 0.2.2 |
-| `brace-expansion: 1.1.21` | `minimatch` pulled in 1.1.18 |
-| `fast-uri: 3.1.8` | `ajv` pulled in 3.1.7 |
-| `ip-address: 10.7.1` | `socks` pulled in 10.7.0 |
-| `moment: 2.31.0` | `@freelensapp/*` and `chart.js` pulled in 2.30.1 |
 
-None runs here: `@freelensapp/extensions` is a devDependency for its types, and the built
-extensions declare no runtime dependencies.
-
-When no fixed release exists, or none clears the age floor yet, the finding goes in
-`osv-scanner.toml` with a reason and an `effectiveUntil`. `scripts/security/verify-supply-chain.sh` fails
-on an exception missing either, and once an expiry passes.
+A finding that blocks with no fixed release, or none past the age floor yet, goes in
+`osv-scanner.toml` as one `[[IgnoredVulns]]` per advisory, with a `reason` and an `ignoreUntil`;
+never per version, which would also hide what is published against it later.
+`scripts/security/verify-supply-chain.sh` reads `osv-scanner.toml` with a closed grammar (anything
+but those three keys in such tables fails), and fails on a `MAL-` exception and from an expiry day
+on. It reads every workflow as data, through a digest-pinned `yq`, and fails when a workflow that
+installs does not run the gate, when anything but `actions/checkout` runs before it, when the gate
+step or its job sets `if`, `continue-on-error`, `defaults`, `container` or anything besides `name`
+and `run`, when a job does not wait on the gate's job or can run after it failed, when
+`OSV_SCANNER` is set anywhere but the top-level `env` or to another digest than `scan.sh`'s, and
+when a `docker://` action is not pinned. It then runs the gate on probe lockfiles: malware, malware
+with an exception for it, a declared version, an override target, a bundler, and an ordinary
+transitive finding, which alone must pass.
 
 ## Credentials
 
@@ -130,8 +159,10 @@ on an exception missing either, and once an expiry passes.
 ## Running the checks locally
 
 ```bash
-make check              # lint, typecheck, test, build, bundle contract, supply-chain policy
+make check              # the dependency gate, lint, typecheck, test, build, bundles, supply-chain policy
 bash scripts/security/scan.sh    # gitleaks, OSV, hadolint: the same digest-pinned images CI uses
 ```
 
-Keep the digests in `scripts/security/scan.sh` in step with `.github/workflows/ci.yaml`.
+Both need Docker and `jq` on the host. Keep the digests in `scripts/security/scan.sh` in step with
+`.github/workflows/ci.yaml` and `.github/workflows/release.yaml`; the Makefile reads the OSV one
+from `scan.sh`, and `verify-supply-chain.sh` fails when the three differ.

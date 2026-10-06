@@ -10,11 +10,14 @@ DEBUG_PORT         ?= 9222
 DEV_KUBECONFIG_DIR ?= /tmp/freelens-addons-k3s
 export DEV_KUBECONFIG_DIR
 
+# The pinned OSV-Scanner, from the one script that keeps it outside the workflows.
+OSV_SCANNER := $(shell grep -oE 'ghcr\.io/google/osv-scanner@sha256:[0-9a-f]{64}' scripts/security/scan.sh)
+
 # --project-directory keeps `.` and .env meaning the repository root.
 COMPOSE := docker compose -p $(PROJECT) -f dev/docker-compose.yml --project-directory .
 DEV     := $(COMPOSE) run --rm --no-deps -e FREELENS_DEBUG_PORT=$(DEBUG_PORT) --entrypoint sh -w /workspace freelens -lc
 
-.PHONY: up down check cluster cluster-down kubectl e2e-freelens e2e e2e-writes ci-local
+.PHONY: up down check deps-refresh cluster cluster-down kubectl e2e-freelens e2e e2e-writes ci-local
 
 # Restart, not just rebuild: Freelens caches the loaded bundle.
 up: .env
@@ -25,12 +28,30 @@ up: .env
 down:
 	$(COMPOSE) down
 
-# CI's first four jobs.
+# CI's first four jobs, the dependency gate first.
 check:
-	$(DEV) "pnpm run lint && pnpm run -r type:check && pnpm run -r test:coverage && pnpm run -r build"
-	bash scripts/checks/verify-bundles.sh
+	bash scripts/security/osv-direct.sh "$(OSV_SCANNER)"
+	$(DEV) "pnpm install --frozen-lockfile && pnpm run lint && pnpm run -r type:check \
+	  && pnpm run -r test:coverage && pnpm run -r build && bash scripts/checks/verify-bundles.sh"
 	bash scripts/checks/copy-design-standard.sh --check
 	bash scripts/security/verify-supply-chain.sh
+
+# Resolves every dependency again, transitive ones too, to the newest its range allows and the
+# 15-day floor admits; only the lockfile changes. Monthly, and how a transitive finding gets fixed.
+# Resolved in a throwaway copy and promoted only if the gate passes, so a rejected lockfile never
+# reaches an install. Not pnpm update: under minimumReleaseAgeStrict it asks to write
+# minimumReleaseAgeExclude.
+deps-refresh: .env
+	rm -rf .deps-refresh
+	mkdir -p .deps-refresh
+	cp package.json pnpm-workspace.yaml $(wildcard osv-scanner.toml) .deps-refresh/
+	for manifest in build/package.json packages/*/package.json; do \
+	  mkdir -p ".deps-refresh/$$(dirname "$$manifest")" && cp "$$manifest" ".deps-refresh/$$manifest"; done
+	$(DEV) "cd .deps-refresh && pnpm install --lockfile-only"
+	bash scripts/security/osv-direct.sh "$(OSV_SCANNER)" .deps-refresh
+	cp .deps-refresh/pnpm-lock.yaml pnpm-lock.yaml
+	rm -rf .deps-refresh
+	$(DEV) "pnpm install --frozen-lockfile"
 
 cluster:
 	mkdir -p $(DEV_KUBECONFIG_DIR)

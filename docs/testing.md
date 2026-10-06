@@ -31,7 +31,7 @@ flowchart LR
 | Layer | Covers | Runs in |
 |-------|--------|---------|
 | Unit | Every decision in `src/renderer/api/` | `make check`, CI |
-| Bundle check | Manifests and bundles Freelens would skip | `make check`, CI |
+| Bundle check | Manifests and bundles Freelens would skip, and any code from outside each extension's `src/` | `make check`, CI, release |
 | End-to-end | Pages, controls, numbers, layout and design in the real app | `make e2e` (needs a cluster and a window), CI on `main` |
 | Real writes | Each write done through the UI, its effect read back from the cluster | `make e2e-writes`, CI on `main` |
 
@@ -146,8 +146,8 @@ it passed. `release.yaml` stays apart, on tags.
 
 ```mermaid
 flowchart LR
-  L["1. Lint"] --> T["2. Typecheck"] --> U["3. Unit tests"] --> B["4. Build"]
-  B --> S["5. Security"] --> I["6. Freelens image"] --> E["7–8. E2E, read then write"]
+  L["1. Dependencies and lint"] --> T["2. Typecheck"] --> U["3. Unit tests"] --> B["4. Build"]
+  B --> S["5. Secrets and Dockerfiles"] --> I["6. Freelens image"] --> E["7–8. E2E, read then write"]
 ```
 
 | Job | Runs |

@@ -1,23 +1,12 @@
-[[PackageOverrides]]
-name = "dompurify"
-ecosystem = "npm"
-version = "3.4.14"
-vulnerability.ignore = true
-effectiveUntil = 2026-10-08
-reason = "GHSA-p98j-92pf-mc4p is fixed in 3.4.16, published 2026-09-23; the 15-day age floor admits it on 2026-10-08. Then override dompurify to 3.4.16 and remove this. Arrives through @freelensapp/core, a devDependency for types; no extension bundles it."
+# One entry per advisory, never per version: a version-wide entry would also hide whatever is
+# published against it later. scripts/security/verify-supply-chain.sh requires both fields.
 
-[[PackageOverrides]]
-name = "braces"
-ecosystem = "npm"
-version = "3.0.3"
-vulnerability.ignore = true
-effectiveUntil = 2026-10-17
-reason = "GHSA-vfj7-8cjw-p6xm has no fixed release. Arrives through @freelensapp/core > tempy > del > globby > fast-glob > micromatch, a devDependency for types; never run by the build or bundled."
+[[IgnoredVulns]]
+id = "GHSA-p98j-92pf-mc4p"
+ignoreUntil = 2026-10-09
+reason = "dompurify 3.4.14, set by our override; fixed in 3.4.16, published 2026-09-23T15:29Z, which the 15-day floor admits from 2026-10-08T15:29Z. Then set the override to 3.4.16 and remove this."
 
-[[PackageOverrides]]
-name = "node-forge"
-ecosystem = "npm"
-version = "1.4.0"
-vulnerability.ignore = true
-effectiveUntil = 2026-10-17
-reason = "GHSA-86w9-cpqp-85rv has no fixed release. Arrives through @freelensapp/core > selfsigned, a devDependency for types; never run by the build or bundled."
+[[IgnoredVulns]]
+id = "GHSA-6688-9rhm-gjv2"
+ignoreUntil = 2026-10-09
+reason = "dompurify 3.4.14, set by our override; fixed in 3.4.16, published 2026-09-23T15:29Z, which the 15-day floor admits from 2026-10-08T15:29Z. Then set the override to 3.4.16 and remove this."

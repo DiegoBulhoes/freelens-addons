@@ -25,8 +25,9 @@ fresh_copy() {
   git -C /repo ls-files -z -co --exclude-standard --deduplicate \
     | tar -C /repo --null --ignore-failed-read -T - -cf - | tar -C "${SRC}" -xf -
   tar -C /repo -cf - .git | tar -C "${SRC}" -xf -
-  # act -j also runs a job's needs; the loop below already keeps that order, one job each time.
-  sed -i '/^    needs: /d' "${SRC}/.github/workflows/ci.yaml"
+  # act -j also runs a job's needs, and the loop below already keeps that order; the copy act runs
+  # sits outside .github/workflows, so the policy check still reads the real ci.yaml.
+  sed '/^    needs: /d' "${SRC}/.github/workflows/ci.yaml" >"${ROOT}/ci-act.yaml"
 }
 
 # Otherwise act asks which runner image to use.
@@ -46,7 +47,7 @@ run_job() {
   fresh_copy
   (
     cd "${SRC}"
-    act workflow_dispatch -W .github/workflows/ci.yaml -j "$1" \
+    act workflow_dispatch -W "${ROOT}/ci-act.yaml" -j "$1" \
       --pull=false --bind --network host --rm \
       --container-options "-v ${DEV_KUBECONFIG_DIR}:${DEV_KUBECONFIG_DIR}" \
       --env "PROJECT=${PROJECT}" --env "K3S_PORT=${K3S_PORT}" --env "DEBUG_PORT=${DEBUG_PORT}" \

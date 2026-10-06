@@ -31,3 +31,7 @@ Thumbs.db
 # Tooling caches
 .turbo/
 coverage/
+
+# Scratch for scripts/security/verify-supply-chain.sh and make deps-refresh.
+.osv-probe/
+.deps-refresh/
