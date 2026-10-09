@@ -132,7 +132,7 @@ version chosen here, so a later advisory against it blocks:
 
 | Override | Arrived under |
 |----------|---------------|
-| `dompurify: 3.4.14` | `monaco-editor` pins 3.1.7 |
+| `dompurify: 3.4.16` | `monaco-editor` pins 3.1.7 |
 | `decode-uri-component: 0.5.0` | `query-string` pulled in 0.2.2 |
 
 A finding that blocks with no fixed release, or none past the age floor yet, goes in
