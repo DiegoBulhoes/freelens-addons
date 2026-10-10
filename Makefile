@@ -9,6 +9,10 @@ DEBUG_PORT         ?= 9222
 # Outside the repository, so the kubeconfig cannot be committed.
 DEV_KUBECONFIG_DIR ?= /tmp/freelens-addons-k3s
 export DEV_KUBECONFIG_DIR
+# One extension: make cluster installs only what it needs, make e2e and e2e-writes run only its suites.
+PACKAGE ?=
+# A vitest file filter for make e2e, such as pages-render.
+FILES   ?=
 
 # The pinned OSV-Scanner, from the one script that keeps it outside the workflows.
 OSV_SCANNER := $(shell grep -oE 'ghcr\.io/google/osv-scanner@sha256:[0-9a-f]{64}' scripts/security/scan.sh)
@@ -16,6 +20,8 @@ OSV_SCANNER := $(shell grep -oE 'ghcr\.io/google/osv-scanner@sha256:[0-9a-f]{64}
 # --project-directory keeps `.` and .env meaning the repository root.
 COMPOSE := docker compose -p $(PROJECT) -f dev/docker-compose.yml --project-directory .
 DEV     := $(COMPOSE) run --rm --no-deps -e FREELENS_DEBUG_PORT=$(DEBUG_PORT) --entrypoint sh -w /workspace freelens -lc
+# -C fails on a mistyped name; -r goes one package at a time (one window) and on past a failure.
+E2E_RUN := $(if $(PACKAGE),pnpm -C packages/$(PACKAGE) run,pnpm -r --no-bail --workspace-concurrency=1 run)
 
 .PHONY: up down check deps-refresh cluster cluster-down kubectl e2e-freelens e2e e2e-writes ci-local
 
@@ -34,6 +40,7 @@ check:
 	$(DEV) "pnpm install --frozen-lockfile && pnpm run lint && pnpm run -r type:check \
 	  && pnpm run -r test:coverage && pnpm run -r build && bash scripts/checks/verify-bundles.sh"
 	bash scripts/checks/copy-design-standard.sh --check
+	bash scripts/checks/e2e-legs.sh
 	bash scripts/security/verify-supply-chain.sh
 
 # Resolves every dependency again, transitive ones too, to the newest its range allows and the
@@ -56,7 +63,7 @@ deps-refresh: .env
 cluster:
 	mkdir -p $(DEV_KUBECONFIG_DIR)
 	$(COMPOSE) --profile cluster up -d k3s
-	bash dev/cluster/cluster.sh install
+	bash dev/cluster/cluster.sh install $(if $(PACKAGE),--for $(PACKAGE))
 
 # The kubeconfig is root-owned in sticky /tmp, so the container removes it.
 cluster-down:
@@ -74,21 +81,21 @@ e2e-freelens: .env
 	FREELENS_EXTRA_ARGS=--remote-debugging-port=$(DEBUG_PORT) $(COMPOSE) up -d --build --force-recreate freelens
 	until curl -sf --max-time 2 http://localhost:$(DEBUG_PORT)/json/version >/dev/null; do sleep 2; done
 
-# One package at a time: two suites would fight over the one window.
 e2e: e2e-freelens
-	$(DEV) "pnpm -r --workspace-concurrency=1 run test:e2e"
+	$(DEV) "$(E2E_RUN) test:e2e $(FILES)"
 
+# --if-present: trivy has no writes.
 e2e-writes: e2e-freelens
-	$(DEV) "pnpm -r --workspace-concurrency=1 run test:e2e-writes"
+	$(DEV) "$(E2E_RUN) --if-present test:e2e-writes"
 
-# ci.yaml through act, as another project on other ports. JOB=lint for one job; KEEP=1 keeps its setup.
+# ci.yaml through act, as another project on other ports. JOB=lint, LEG=cnpg; KEEP=1 keeps the last setup.
 ci-local:
 	docker build -t freelens-addons/act:local dev/act
 	mkdir -p /tmp/freelens-addons-act
 	docker run --rm --user $$(id -u):$$(id -g) --group-add $$(stat -c %g /var/run/docker.sock) \
 	  -v /var/run/docker.sock:/var/run/docker.sock -v "$(CURDIR)":/repo:ro \
 	  -v /tmp/freelens-addons-act:/tmp/freelens-addons-act \
-	  -e USER_UID=$$(id -u) -e USER_GID=$$(id -g) -e KEEP=$(KEEP) \
+	  -e USER_UID=$$(id -u) -e USER_GID=$$(id -g) -e KEEP=$(KEEP) -e LEG=$(LEG) \
 	  freelens-addons/act:local ci-local $(JOB)
 
 .env: .env.example

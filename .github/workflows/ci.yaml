@@ -1,7 +1,7 @@
 name: CI
 
 # One chain, lightest first: each job runs only if the one before it passed. Pull requests stop
-# after the image; the end-to-end suites, about an hour, run on main and by hand.
+# after the image; the end-to-end legs, one runner and one k3s per extension, run on main and by hand.
 # `make ci-local` runs it on this machine through act, beside the dev setup.
 on:
   push:
@@ -45,6 +45,8 @@ jobs:
       - run: pnpm run lint
       - name: Design standard copies
         run: bash scripts/checks/copy-design-standard.sh --check
+      - name: E2E legs
+        run: bash scripts/checks/e2e-legs.sh
       - name: Supply-chain policy
         run: bash scripts/security/verify-supply-chain.sh
 
@@ -150,11 +152,19 @@ jobs:
               freelens-addons/freelens:ci
 
   e2e:
-    name: 7–8. End-to-end, read then write
+    name: 7–8. End-to-end, ${{ matrix.leg }}
     needs: image
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        # "all" is the smoke run: the full dev seed, every extension in one window, no writes.
+        leg: [argocd, cert-manager, cnpg, mongodb, redis, trivy, all]
+    env:
+      PACKAGE: ${{ matrix.leg != 'all' && matrix.leg || '' }}
+      FILES: ${{ matrix.leg == 'all' && 'pages-render' || '' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -169,13 +179,14 @@ jobs:
           kubectl version --client
 
       - name: Start the dev cluster
-        run: make cluster
+        run: make cluster PACKAGE="${PACKAGE}"
 
       - name: 7. Read-only end-to-end
-        run: make e2e
+        run: make e2e PACKAGE="${PACKAGE}" FILES="${FILES}"
 
       - name: 8. Real writes
-        run: make e2e-writes
+        if: matrix.leg != 'all'
+        run: make e2e-writes PACKAGE="${PACKAGE}"
 
       - name: What Freelens and the cluster said
         if: failure()
@@ -183,5 +194,7 @@ jobs:
           docker compose -p "${PROJECT:-freelens-addons}" -f dev/docker-compose.yml --project-directory . logs --tail=300 freelens
           dev/cluster/cluster.sh kubectl get pods -A
           dev/cluster/cluster.sh kubectl get events -A --field-selector reason=FailedScheduling
-          dev/cluster/cluster.sh kubectl -n trivy-system logs deployment/trivy-operator --tail=400 | grep -i error | tail -20
+          if [[ -z "${PACKAGE}" || "${PACKAGE}" == trivy ]]; then
+            dev/cluster/cluster.sh kubectl -n trivy-system logs deployment/trivy-operator --tail=400 | grep -i error | tail -20
+          fi
           dev/cluster/cluster.sh kubectl get events -A --field-selector type=Warning --sort-by=.lastTimestamp | tail -80

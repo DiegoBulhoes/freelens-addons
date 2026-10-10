@@ -28,8 +28,8 @@ make cluster
 make up
 ```
 
-1. `make cluster` starts a disposable k3s, installs ArgoCD, the Trivy operator and cert-manager,
-   applies sample workloads, and writes a kubeconfig to `/tmp/freelens-addons-k3s/kubeconfig.yaml`.
+1. `make cluster` starts a disposable k3s, installs the tool each extension reads with samples in
+   each state its pages render, and writes a kubeconfig to `/tmp/freelens-addons-k3s/kubeconfig.yaml`.
    It lives under `/tmp` so it cannot be committed by accident.
 2. The first `make up` writes `.env` from the template with your UID and GID, then stops. Set
    `KUBECONFIG_PATH` to the kubeconfig. `.env` is git-ignored.
@@ -46,23 +46,32 @@ read-only. If something fails, see [Reading logs](#reading-logs).
 
 | Command | What it does |
 |---------|--------------|
-| `make cluster` | Start k3s, install the operators, apply the samples |
+| `make cluster` | Start k3s and install every component |
+| `make cluster PACKAGE=cnpg` | Install only the components that package needs, as its [CI leg](testing.md#in-ci) does. Run `make cluster-down` first for a cluster with nothing else |
 | `make cluster-down` | Stop it and delete its data |
 
 It is a compose service behind the `cluster` profile, so `make up` never starts it. Its image is
-pinned by digest. Each component has a directory in `dev/cluster/components/` with an `install.sh`, its samples and,
-when needed, a `states.sh`; `dev/cluster/cluster.sh install` runs them in order, or only the ones named
-([dev/cluster/README.md](../dev/cluster/README.md)):
+pinned by digest. Each component has a directory in `dev/cluster/components/` with an `install.sh`,
+its samples and, when needed, a `states.sh` and a `settle.sh`
+([dev/cluster/README.md](../dev/cluster/README.md)). `dev/cluster/cluster.sh install` runs every
+component in order, `install <component...>` only those named, and `install --for <package>` the
+ones that package needs, from one map in `cluster.sh`.
 
-| Component | Purpose |
-|-----------|---------|
-| ArgoCD | Source for the ArgoCD extension |
-| Trivy operator | Writes the reports the Trivy extension reads |
-| cert-manager | Issues the certificates the cert-manager extension reads |
-| Pebble | Test ACME server, so cert-manager creates Orders and Challenges |
-| Sample workloads and Applications | Failing cases on purpose: Applications pointing at a missing path or branch, a Deployment that never becomes ready, one with a missing image the scanner cannot read, a ClusterRole that reads secrets cluster-wide |
-| Shapes the tests read | An app-of-apps, a multi-source Application (Helm chart plus git manifests), one pinned to a commit, sync waves |
-| Sample certificates, issuers and Ingresses | A certificate naming a missing issuer, one waiting on an issuer that is never ready, an ACME one stuck at its Challenge, an Ingress serving an unmanaged Secret, one naming a missing Secret |
+| Phase | Runs, for each component installed, in order | Does |
+|-------|----------------------------------------------|------|
+| Install | `install.sh`, then `states.sh` | Installs the tool at a pinned version, applies the samples, causes the states no manifest declares |
+| Settle | `settle.sh`, once every component is installed | Waits, and only waits, for asynchronous results the e2e suites read once and nothing else waits for |
+
+| Component | Purpose | In `--for` |
+|-----------|---------|------------|
+| `workloads` | Workloads in `demo` for Trivy to flag: running as root with no limits, one that never becomes ready, one with a missing image the scanner cannot read, a ClusterRole that reads secrets cluster-wide | `trivy` |
+| `argocd` | ArgoCD and Argo CD Image Updater. Applications failing on purpose (a missing path, revision or namespace) and the shapes the tests read: an app-of-apps, a multi-source Application (Helm chart plus git manifests), one pinned to a commit, sync waves | `argocd` |
+| `trivy` | The Trivy operator, which writes the reports the Trivy extension reads | `trivy` |
+| `cert-manager` | cert-manager and the `demo-ca` chain the other components' certificates come from | `cert-manager`, `cnpg`, `mongodb`, `redis` |
+| `cert-manager-samples` | Pebble, a test ACME server, so cert-manager creates Orders and Challenges. A certificate naming a missing issuer, one waiting on an issuer that is never ready, an ACME one stuck at its Challenge, an Ingress serving an unmanaged Secret, one naming a missing Secret | `cert-manager` |
+| `cnpg` | CloudNativePG and its Barman Cloud plugin, with Postgres clusters in each state | `cnpg` |
+| `mongodb` | MongoDB Controllers for Kubernetes, with replica sets in each state | `mongodb` |
+| `redis` | redis-operator, with replications, sentinels, clusters and standalones in each state | `redis` |
 
 Rules for changing the seed:
 
@@ -70,9 +79,14 @@ Rules for changing the seed:
   pinned one is often not the newest.
 - Install with `kubectl apply --server-side`. ArgoCD's ApplicationSet CRD is too large for a
   client-side apply.
+- A component that needs another (`cnpg` needs cert-manager's issuers) gets it through the `--for`
+  entry of every package that installs it, in install order. The full seed hides a missing one;
+  `make cluster PACKAGE=<name>` on a fresh cluster shows it.
+- `settle.sh` never changes the cluster. A state to cause goes into `states.sh`.
 - Every test fixture comes from this cluster, because the repository is public.
-  `dev/cluster/cluster.sh fixtures` refuses any cluster whose node is not `freelens-addons-dev`. A state
-  the tests need goes into the component's `states.sh`, never into a hand-written fixture.
+  `dev/cluster/cluster.sh fixtures` refuses any cluster but the dev k3s, and one missing a
+  component. A state the tests need goes into the component's `states.sh`, never into a
+  hand-written fixture.
 - The sample TLS Secrets hold placeholders. `Warning: tls: failed to find any PEM data` on apply is
   expected.
 
@@ -153,8 +167,20 @@ Then:
 1. Run `pnpm install --fix-lockfile`, not a plain `pnpm install`. A plain install leaves the peers
    unresolved, and `tsc` then reports *"this member cannot have an 'override' modifier because its
    containing class does not extend another class"* once per member.
-2. Run `make up`.
-3. Run `make check`. Its `verify-bundles.sh` rejects a manifest or bundle Freelens would skip.
+2. Give it a component in `dev/cluster/components/<name>/`, named in `COMPONENTS` in
+   `dev/cluster/cluster.sh` at its place in the install order, and a `--for <name>` entry in the
+   same file listing every component it needs, in that order.
+3. If a state its e2e suites read arrives asynchronously, wait for it in the component's
+   `settle.sh`.
+4. Add its leg to the matrix in `.github/workflows/ci.yaml` (`leg:` in job `e2e`).
+5. Run `make up`.
+6. Run `make check`. Its `verify-bundles.sh` rejects a manifest or bundle Freelens would skip, and
+   `e2e-legs.sh` fails until `packages/`, the `--for` entries and the legs name the same
+   extensions.
+7. Run its leg alone, beside the dev setup: `make ci-local JOB=e2e LEG=<name>`. On the dev
+   cluster instead: `make cluster-down`, `make cluster PACKAGE=<name>`, `make e2e PACKAGE=<name>`,
+   `make e2e-writes PACKAGE=<name>`; the fixtures need the full seed back (`make cluster-down`,
+   `make cluster`).
 
 ## Linking to a Kubernetes object
 
@@ -185,7 +211,7 @@ Check in this order.
 | Listed, never activated, no error | `.default` is not a class. The bundle should end in `exports.default =` |
 | Listed as incompatible | `engines.freelens` does not match the running version |
 | Loaded, page missing from the sidebar | Connect to a cluster first |
-| Connected, group still missing | The group shows only when the cluster has the tool's CRDs (`applications.argoproj.io`, `certificates.cert-manager.io`, or any Trivy report CRD). Without permission to list CRDs it stays hidden |
+| Connected, group still missing | The group shows only when the cluster has the tool's CRDs, the names in the package's `src/renderer/api/installed.ts`. Without permission to list CRDs it stays hidden |
 | Group at the bottom of the sidebar instead of at its `orderNumber` | The saved order in `lens-user-store.json` (`clusterPageMenuOrder`) wins, and a new group is saved at `9999`. Drag it, or edit that entry with Freelens stopped |
 
 ## Reading logs
@@ -221,6 +247,7 @@ bash scripts/security/scan.sh    # the scanners: secrets, dependency CVEs, Docke
 | `freelens-first-party-only` (build) | A bundle would carry an npm library's code, JSON or CSS. Remove the import; see [security](security.md#vulnerabilities) |
 | `osv-direct.sh` | Known malware, or a known vulnerability in a version chosen here. Fix the version, or add a dated `[[IgnoredVulns]]` with a reason. See [security](security.md#vulnerabilities) |
 | `copy-design-standard.sh --check` | A package's `styles/design.css` differs from the standard. Edit `.claude/skills/freelens-extension/templates/src/renderer/styles/design.css`, then run `bash scripts/checks/copy-design-standard.sh` |
+| `e2e-legs.sh` | A package has no CI leg or no `--for` entry in `cluster.sh`, or one of them names no package. Add or remove the entry it prints; see [adding an extension](#adding-an-extension) |
 | Coverage | Add a case for the new branch. Do not lower the threshold. See [testing](testing.md) |
 | `verify-supply-chain.sh` | A supply-chain control was weakened. Fix the cause, not the check. See [security](security.md) |
 
@@ -240,12 +267,12 @@ The Makefile already does this. It holds only what the agent working here and CI
 | `make down` | Stop the containers, keeping Freelens' saved state |
 | `make check` | CI's first four jobs: lint, typecheck, unit tests with their coverage thresholds, build |
 | `make deps-refresh` | Resolve the lockfile again within the ranges and the 15-day floor; monthly, and the fix for a transitive advisory |
-| `make cluster` | Bring up the k3s cluster and seed it |
+| `make cluster` | Bring up the k3s cluster and seed it; `PACKAGE=cnpg` for only what that package needs |
 | `make cluster-down` | Destroy it, volume included |
 | `make kubectl ARGS="..."` | kubectl on the dev k3s, refused on any other cluster |
-| `make e2e` | The end-to-end suite, against a running Freelens |
-| `make e2e-writes` | Real writes through each extension on the dev k3s, checked in the cluster |
-| `make ci-local` | The CI workflow through act, beside the dev setup; `JOB=lint` for one job |
+| `make e2e` | The end-to-end suite, against a running Freelens; `PACKAGE=cnpg` for one package, `FILES=layout` for the files whose path matches |
+| `make e2e-writes` | Real writes through each extension on the dev k3s, checked in the cluster; `PACKAGE=cnpg` for one package |
+| `make ci-local` | The CI workflow through act, beside the dev setup; `JOB=lint` for one job, `JOB=e2e LEG=cnpg` for one end-to-end leg |
 | `bash scripts/security/scan.sh` | Secret, dependency and Dockerfile scanners |
 | `dc logs -f freelens` | Follow the container logs |
 | `dc down -v` | Stop everything and discard Freelens' saved state |

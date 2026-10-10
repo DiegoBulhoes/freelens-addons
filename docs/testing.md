@@ -32,15 +32,19 @@ flowchart LR
 |-------|--------|---------|
 | Unit | Every decision in `src/renderer/api/` | `make check`, CI |
 | Bundle check | Manifests and bundles Freelens would skip, and any code from outside each extension's `src/` | `make check`, CI, release |
-| End-to-end | Pages, controls, numbers, layout and design in the real app | `make e2e` (needs a cluster and a window), CI on `main` |
-| Real writes | Each write done through the UI, its effect read back from the cluster | `make e2e-writes`, CI on `main` |
+| End-to-end | Pages, controls, numbers, layout and design in the real app | `make e2e` (needs a cluster and a window), CI on `main`, one leg per extension |
+| Real writes | Each write done through the UI, its effect read back from the cluster | `make e2e-writes`, CI on `main`, one leg per extension |
 
 ## Commands
 
 ```bash
 make check
-make e2e
+make e2e                            # every package, one at a time
 make e2e-writes
+make cluster PACKAGE=cnpg           # a k3s with only what cnpg reads
+make e2e PACKAGE=cnpg               # one package's suites
+make e2e PACKAGE=cnpg FILES=layout  # only its files whose path matches
+make e2e-writes PACKAGE=cnpg
 ```
 
 Watch one package:
@@ -94,7 +98,14 @@ expect(getAttentionItems([stuck], NOW)[0]?.headline).toBe("Sync stuck");
 ## End-to-end
 
 `make e2e` restarts Freelens with `--remote-debugging-port=9222` (loopback only) and drives it over
-the Chrome DevTools Protocol, one package at a time.
+the Chrome DevTools Protocol, one package at a time. Freelens always loads every extension; the
+variables narrow only the suites that run.
+
+| Variable | Runs |
+|----------|------|
+| none | Every package's suites, in turn; one package failing does not stop the next |
+| `PACKAGE=<name>` | One package's suites. They need only its own components: `make cluster-down`, then `make cluster PACKAGE=<name>`, gives the cluster its [CI leg](#in-ci) starts from |
+| `FILES=<filter>` | Only the files whose path contains the filter (vitest's), in each package that runs |
 
 | Path | Holds |
 |------|-------|
@@ -122,7 +133,8 @@ cancelled here; [real writes](#real-writes) press OK.
 
 `make e2e-writes` runs each package's `e2e/*.writes.ts`: every write that deletes nothing is done
 through the UI, as a person would, and its effect is read back from the cluster through the window's
-own proxy. A test fails on what the cluster did, not on what the screen says.
+own proxy. A test fails on what the cluster did, not on what the screen says. `PACKAGE=<name>` runs
+one package's; a package without writes (Trivy) is skipped.
 
 | Rule | Why |
 |------|-----|
@@ -147,18 +159,42 @@ it passed. `release.yaml` stays apart, on tags.
 ```mermaid
 flowchart LR
   L["1. Dependencies and lint"] --> T["2. Typecheck"] --> U["3. Unit tests"] --> B["4. Build"]
-  B --> S["5. Secrets and Dockerfiles"] --> I["6. Freelens image"] --> E["7–8. E2E, read then write"]
+  B --> S["5. Secrets and Dockerfiles"] --> I["6. Freelens image"]
+  subgraph E["7–8. End-to-end: one runner and one k3s per leg"]
+    A["argocd"]
+    C["cert-manager"]
+    N["cnpg"]
+    M["mongodb"]
+    R["redis"]
+    V["trivy"]
+    X["all<br/><i>smoke</i>"]
+  end
+  I --> A & C & N & M & R & V & X
 ```
 
 | Job | Runs |
 |-----|------|
 | 1–6 | Every pull request and push |
-| 7–8 | Push to `main` and by hand: `make cluster`, `make e2e`, `make e2e-writes` on a fresh k3s. On a failure it prints Freelens' log, the pods and the cluster's warnings |
+| 7–8 | Push to `main` and by hand, as a matrix: one leg per extension and the smoke leg, each on its own runner with a fresh k3s. A failing leg does not cancel the others. On a failure a leg prints Freelens' log, the pods, the cluster's warnings and, where Trivy is installed, the operator's errors |
+
+| Leg | `make cluster` installs | Suites |
+|-----|-------------------------|--------|
+| One per extension | Only that extension's components (`PACKAGE=<leg>`, the `--for` entry in `dev/cluster/cluster.sh`) | `make e2e` and `make e2e-writes` for that package |
+| `all` | The full seed, as `make cluster` installs it for development | Every package's `pages-render.e2e.ts` in one window; no writes |
+
+The smoke leg keeps the full seed working, since development and the fixtures use it, and opens
+every extension in one window, as a person who installs them all would.
+
+Job 1 runs `scripts/checks/e2e-legs.sh` (also in `make check`): the legs without `all`, the
+directories under `packages/` and the `--for` entries in `cluster.sh` must be the same set, so an
+extension cannot ship without its leg.
 
 `make ci-local` runs the same workflow through [act](https://github.com/nektos/act), in a container
 built from `dev/act/Dockerfile`, on a copy of the working tree, as another compose project on
-other ports, so the dev setup keeps running. `JOB=lint` runs one job; `KEEP=1` leaves its cluster
-and Freelens up.
+other ports, so the dev setup keeps running. `JOB=lint` runs one job. The e2e job runs its legs one
+at a time, stopping at the first that fails, each on a fresh copy with the k3s and Freelens' state
+removed before it whatever `KEEP` says; `JOB=e2e LEG=cnpg` runs one. `KEEP=1` leaves the last leg's
+cluster and Freelens up.
 
 ## Fixtures
 
@@ -167,8 +203,9 @@ dev/cluster/cluster.sh fixtures          # every package
 dev/cluster/cluster.sh fixtures argocd   # one
 ```
 
-It reads the dev k3s, refuses any other cluster, and sanitises what it
-writes (`dev/cluster/fixtures/sanitise.py`). Read the diff before committing.
+It reads the dev k3s, refuses any other cluster or one missing a component (seeded with
+`PACKAGE=`), and sanitises what it writes (`dev/cluster/fixtures/sanitise.py`). Read the diff
+before committing.
 
 | Removed or replaced | Reason |
 |---------------------|--------|
@@ -189,5 +226,7 @@ writes (`dev/cluster/fixtures/sanitise.py`). Read the diff before committing.
 | Time-dependent code takes `now` | Tests pass `fixtureNow()`; cert-manager's reads `exported-at.json` |
 | A new test fails without its fix | Check by reverting the fix |
 | e2e sets up its own state | Freelens remembers sidebar groups and starts scoped to one namespace |
+| No leg inherits state | Each leg seeds its own k3s and starts its own Freelens; `make ci-local` removes both before every leg |
+| A late state is waited for in the component's `settle.sh`, never with a longer timeout in a test | A leg starts its suites minutes after its seed; on the full seed, later components and earlier suites hide the race |
 | e2e follows a person's order | Narrow, look, widen, look |
 | Change a loading path, run every `namespace-scope.e2e.ts` | The hooks share one pattern |

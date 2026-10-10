@@ -3,7 +3,7 @@
 REDIS_OPERATOR_VERSION="v0.26.0"
 
 echo "==> redis-operator ${REDIS_OPERATOR_VERSION}"
-kubectl apply --server-side --force-conflicts \
+retry kubectl apply --server-side --force-conflicts \
   -k "github.com/OT-CONTAINER-KIT/redis-operator/config/default?ref=${REDIS_OPERATOR_VERSION}"
 # Its kustomize pins an older image and never pulls it.
 kubectl -n redis-operator-system set image deployment/redis-operator-redis-operator \

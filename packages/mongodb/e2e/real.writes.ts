@@ -232,11 +232,23 @@ describe("MongoDB writes, checked in the cluster", () => {
     for (const name of names) before[name] = startTime(await pod(name));
 
     await openSet("catalog-rs");
-    await clickByText(
-      session,
-      frame,
-      `${DRAWER} [data-section="mongodb-members"] button`,
-      "Restart all",
+    // The drawer reads the agents every 15s: until it sees them settled, Restart all refuses.
+    await waitFor(
+      "Restart all to be accepted",
+      async () => {
+        const open = await js<number>(`document.querySelectorAll(".ConfirmDialog").length`);
+
+        if (open > 0) return true;
+        await clickByText(
+          session,
+          frame,
+          `${DRAWER} [data-section="mongodb-members"] button`,
+          "Restart all",
+        );
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        return undefined;
+      },
+      60_000,
     );
     await confirmDialog(session, frame, "Restart 3", "catalog-rs");
     await notificationMatching(
@@ -256,6 +268,8 @@ describe("MongoDB writes, checked in the cluster", () => {
 
   it("restarts secure-rs from its list, ticked: the operator rolls its pod", async () => {
     const before = startTime(await pod("secure-rs-0"));
+
+    expect(before, "secure-rs-0 must exist before the restart").toBeGreaterThan(0);
 
     await clickSidebar(session, frame, "mongodb-clusters", "mongodb");
     await waitFor("rows", async () =>

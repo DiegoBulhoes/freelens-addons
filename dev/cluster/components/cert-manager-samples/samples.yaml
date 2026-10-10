@@ -1,39 +1,6 @@
 # Deliberately imperfect: each object below is one state the pages must render.
 # Names use `.test` (RFC 2606): nothing resolves.
 
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: selfsigned
-spec:
-  selfSigned: {}
----
-# A ClusterIssuer reads its CA from cert-manager's own namespace.
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: demo-ca-root
-  namespace: cert-manager
-spec:
-  isCA: true
-  commonName: demo-ca
-  secretName: demo-ca-root
-  duration: 8760h
-  privateKey:
-    algorithm: ECDSA
-    size: 256
-  issuerRef:
-    kind: ClusterIssuer
-    name: selfsigned
----
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: demo-ca
-spec:
-  ca:
-    secretName: demo-ca-root
----
 # Never ready: its Secret does not exist.
 apiVersion: cert-manager.io/v1
 kind: Issuer

@@ -10,7 +10,7 @@ description: |
   one look like the rest, even if they do not say "design".
 license: Apache-2.0
 metadata:
-  version: "2.4.0"
+  version: "2.5.0"
 ---
 
 # Freelens extension
@@ -59,6 +59,7 @@ Each finding changes what gets written.
 | `e2e/`, a CDP harness | Whether e2e tests are expected, with which helpers |
 | `Makefile`, compose files, `scripts/` | How to build and load into Freelens |
 | CI workflows | The gates to run locally |
+| A per-extension seed (`--for` in a cluster script), a CI `matrix:` of e2e legs | Entries the new extension needs |
 | An export script, `test/fixtures/` | Whether tests use real cluster objects |
 
 No extension yet: the templates are the start; names and paths still follow the repository.
@@ -193,8 +194,14 @@ const installed = computed(() =>
 - Use the repository's export script, or write one: `kubectl get <kind> -A -o json` through a sanitiser.
 - Never hand-write a fixture.
 - Seed the dev cluster with deliberately imperfect objects.
+- Seeded per extension (here: `dev/cluster/components/<name>/`, `cluster.sh install --for <name>`):
+  add the component, and the extension's `--for` entry naming every component it needs, in
+  install order.
+- A state the e2e suites read that arrives asynchronously: wait for it in the component's
+  `settle.sh`. It only waits; `states.sh` causes the state.
 
-**Check:** read the whole fixture diff. It is cluster contents.
+**Check:** read the whole fixture diff. It is cluster contents. A fresh cluster seeded with only
+the extension's `--for` entry shows every page's rows.
 
 ### 8. Docs
 
@@ -212,6 +219,7 @@ Diagrams, no screenshots, no cluster figures.
 - First e2e file: open every page, read something only data draws.
 - Then controls, contents, layout, a flow.
 - Layout: `designViolations` on every page; `dialogColourViolations` with each dialog open. Use the repository's copy or `harness/`.
+- E2E as a CI matrix (here: `leg:` in `.github/workflows/ci.yaml`): add the extension's leg. `scripts/checks/e2e-legs.sh` fails until the legs, `packages/` and the `--for` entries match.
 - No harness: say so.
 
 ### 10. Prove a test fails
@@ -220,7 +228,7 @@ Break what each new test guards and watch it fail. If a CSS mutation fails nothi
 
 ## Gates
 
-- Run what CI runs, locally, and the e2e suite.
+- Run what CI runs, locally, and the e2e suite, also as the extension's leg alone on a fresh cluster (here: `make ci-local JOB=e2e LEG=<name>`).
 - `copy-design-standard.sh --check` passes.
 - No bundle check? Verify by hand: `exports.default =` at the end, no `require("react")` or `require("@freelensapp/extensions")`.
 - Commit the repository's way. Default: semantic, English, one commit per concern.

@@ -210,6 +210,8 @@ describe("Redis writes, checked in the cluster", () => {
   it("restarts the standalone sessions from its list, ticked", async () => {
     const before = startTime(await pod("sessions-0"));
 
+    expect(before, "sessions-0 must exist before the restart").toBeGreaterThan(0);
+
     await clickSidebar(session, frame, "redis-standalones", "redis");
     await waitFor("rows", async () =>
       (await js<number>(

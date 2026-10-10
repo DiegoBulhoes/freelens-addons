@@ -122,22 +122,23 @@ export async function openCluster(session: Session): Promise<void> {
   await session.evaluate("location.pathname = '/catalog'");
   await new Promise((resolve) => setTimeout(resolve, 1500));
 
-  // The clusters tab: a fresh Freelens opens the catalog on every kind, its own entries first.
-  await session.evaluate(
-    `document.querySelector('[data-testid="entity.k8slens.dev/KubernetesCluster-tab"]')?.click()`,
-  );
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  await waitFor("a cluster in the catalog", async () =>
+  // A fresh Freelens answers before its catalog renders, and opens it on every kind, its own
+  // entries first: no row is clicked until the clusters tab is the selected one.
+  await waitFor("the catalog's clusters tab", async () =>
     session.evaluate<boolean>(
-      "(() => { const row = document.querySelector('[class*=TableRow]');" +
-        " if (!row) return false; row.dispatchEvent(new MouseEvent('click', {bubbles: true}));" +
-        " return true; })()",
+      "(() => { const tab = document.querySelector(" +
+        `'[data-testid="entity.k8slens.dev/KubernetesCluster-tab"]');` +
+        " if (!tab) return false; if (tab.className.includes('selected')) return true;" +
+        " tab.click(); return false; })()",
     ),
   );
 
   await waitFor("the cluster to open", async () =>
-    session.evaluate<boolean>("location.pathname.startsWith('/cluster/')"),
+    session.evaluate<boolean>(
+      "(() => { if (location.pathname.startsWith('/cluster/')) return true;" +
+        " const row = document.querySelector('[class*=TableRow]');" +
+        " row?.dispatchEvent(new MouseEvent('click', {bubbles: true})); return false; })()",
+    ),
   );
 }
 
