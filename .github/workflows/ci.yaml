@@ -1,7 +1,8 @@
 name: CI
 
 # One chain, lightest first: each job runs only if the one before it passed. Pull requests stop
-# after the image; the end-to-end legs, one runner and one k3s per extension, run on main and by hand.
+# after the image. On main and by hand, one end-to-end leg per extension, each on its own runner and
+# k3s, then the smoke run on the full seed.
 # `make ci-local` runs it on this machine through act, beside the dev setup.
 on:
   push:
@@ -29,20 +30,25 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       # Before any install runs a dependency's code: malware at any depth and known vulnerabilities
       # in what this repository chooses block; the rest warns (docs/security.md).
       - name: Vulnerable dependencies and malware
         run: bash scripts/security/osv-direct.sh "${OSV_SCANNER}"
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - name: Node, from .nvmrc
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
-      - run: corepack enable pnpm
+      - name: Enable pnpm
+        run: corepack enable pnpm
       # Also re-checks every entry against minimumReleaseAge.
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run lint
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm run lint
       - name: Design standard copies
         run: bash scripts/checks/copy-design-standard.sh --check
       - name: E2E legs
@@ -56,15 +62,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - name: Node, from .nvmrc
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
-      - run: corepack enable pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run -r type:check
+      - name: Enable pnpm
+        run: corepack enable pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm run -r type:check
 
   test:
     name: 3. Unit tests
@@ -72,16 +83,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - name: Node, from .nvmrc
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
-      - run: corepack enable pnpm
-      - run: pnpm install --frozen-lockfile
+      - name: Enable pnpm
+        run: corepack enable pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
       # Fails under 95% coverage of each package's api/.
-      - run: pnpm run -r test:coverage
+      - name: Unit tests
+        run: pnpm run -r test:coverage
 
   build:
     name: 4. Build
@@ -89,15 +105,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - name: Node, from .nvmrc
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
-      - run: corepack enable pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run -r build
+      - name: Enable pnpm
+        run: corepack enable pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Build
+        run: pnpm run -r build
       - name: Extension bundles
         run: bash scripts/checks/verify-bundles.sh
 
@@ -107,7 +128,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # Full history: a removed secret is still in the objects.
           fetch-depth: 0
@@ -131,7 +153,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -152,21 +175,20 @@ jobs:
               freelens-addons/freelens:ci
 
   e2e:
-    name: 7–8. End-to-end, ${{ matrix.leg }}
+    name: 7. End-to-end, ${{ matrix.leg }}
     needs: image
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
-        # "all" is the smoke run: the full dev seed, every extension in one window, no writes.
-        leg: [argocd, cert-manager, cnpg, mongodb, redis, trivy, all]
+        leg: [argocd, cert-manager, cnpg, mongodb, redis, trivy]
     env:
-      PACKAGE: ${{ matrix.leg != 'all' && matrix.leg || '' }}
-      FILES: ${{ matrix.leg == 'all' && 'pages-render' || '' }}
+      PACKAGE: ${{ matrix.leg }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -181,11 +203,10 @@ jobs:
       - name: Start the dev cluster
         run: make cluster PACKAGE="${PACKAGE}"
 
-      - name: 7. Read-only end-to-end
-        run: make e2e PACKAGE="${PACKAGE}" FILES="${FILES}"
+      - name: Read-only end-to-end
+        run: make e2e PACKAGE="${PACKAGE}"
 
-      - name: 8. Real writes
-        if: matrix.leg != 'all'
+      - name: Real writes
         run: make e2e-writes PACKAGE="${PACKAGE}"
 
       - name: What Freelens and the cluster said
@@ -194,7 +215,43 @@ jobs:
           docker compose -p "${PROJECT:-freelens-addons}" -f dev/docker-compose.yml --project-directory . logs --tail=300 freelens
           dev/cluster/cluster.sh kubectl get pods -A
           dev/cluster/cluster.sh kubectl get events -A --field-selector reason=FailedScheduling
-          if [[ -z "${PACKAGE}" || "${PACKAGE}" == trivy ]]; then
+          if [[ "${PACKAGE}" == trivy ]]; then
             dev/cluster/cluster.sh kubectl -n trivy-system logs deployment/trivy-operator --tail=400 | grep -i error | tail -20
           fi
+          dev/cluster/cluster.sh kubectl get events -A --field-selector type=Warning --sort-by=.lastTimestamp | tail -80
+
+  # The full seed that development and the fixtures use, with every extension in one window; no writes.
+  smoke:
+    name: 8. Smoke, every extension on the full seed
+    needs: e2e
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Configure
+        run: |
+          cp .env.example .env
+          sed -i "s|^KUBECONFIG_PATH=.*|KUBECONFIG_PATH=${DEV_KUBECONFIG_DIR:-/tmp/freelens-addons-k3s}/kubeconfig.yaml|; s|^USER_UID=.*|USER_UID=$(id -u)|; s|^USER_GID=.*|USER_GID=$(id -g)|" .env
+          # Only under make ci-local: another project and other ports, set last so they win.
+          env | grep -E '^(PROJECT|K3S_PORT|DEBUG_PORT|VNC_PORT|NOVNC_PORT|DEV_KUBECONFIG_DIR|USER_UID|USER_GID)=' >> .env || true
+          kubectl version --client
+
+      - name: Start the dev cluster
+        run: make cluster
+
+      - name: Every extension's pages
+        run: make e2e FILES=pages-render
+
+      - name: What Freelens and the cluster said
+        if: failure()
+        run: |
+          docker compose -p "${PROJECT:-freelens-addons}" -f dev/docker-compose.yml --project-directory . logs --tail=300 freelens
+          dev/cluster/cluster.sh kubectl get pods -A
+          dev/cluster/cluster.sh kubectl get events -A --field-selector reason=FailedScheduling
+          dev/cluster/cluster.sh kubectl -n trivy-system logs deployment/trivy-operator --tail=400 | grep -i error | tail -20
           dev/cluster/cluster.sh kubectl get events -A --field-selector type=Warning --sort-by=.lastTimestamp | tail -80

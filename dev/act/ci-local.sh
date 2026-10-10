@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Runs .github/workflows/ci.yaml through act, on a copy of the working tree, as another project
 # on other ports, so the dev setup beside it is left alone. `make ci-local` calls it.
-# Usage: ci-local [job]; every job, in order, when none is named. LEG=<leg> runs one e2e leg.
+# Usage: ci-local [job]; every job, in order, when none is named. LEG=<leg> runs one e2e leg,
+# and JOB=smoke the smoke run.
 
 set -euo pipefail
 
@@ -84,7 +85,12 @@ run_e2e() {
 # One job at a time, in the workflow's order, each on a fresh copy as on GitHub; --bind would
 # otherwise hand one job's node_modules to the next. Stops at the first that fails.
 run() {
-  if [[ "$1" == e2e ]]; then run_e2e; else run_job "$1"; fi
+  case "$1" in
+    e2e) run_e2e ;;
+    # After the legs: it must not inherit the last one's cluster.
+    smoke) remove_setup; run_job smoke ;;
+    *) run_job "$1" ;;
+  esac
 }
 
 if [[ -n "${JOB}" ]]; then

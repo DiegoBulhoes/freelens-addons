@@ -160,41 +160,42 @@ it passed. `release.yaml` stays apart, on tags.
 flowchart LR
   L["1. Dependencies and lint"] --> T["2. Typecheck"] --> U["3. Unit tests"] --> B["4. Build"]
   B --> S["5. Secrets and Dockerfiles"] --> I["6. Freelens image"]
-  subgraph E["7–8. End-to-end: one runner and one k3s per leg"]
+  subgraph E["7. End-to-end: one runner and one k3s per extension"]
     A["argocd"]
     C["cert-manager"]
     N["cnpg"]
     M["mongodb"]
     R["redis"]
     V["trivy"]
-    X["all<br/><i>smoke</i>"]
   end
-  I --> A & C & N & M & R & V & X
+  I --> A & C & N & M & R & V
+  A & C & N & M & R & V --> X["8. Smoke: every extension on the full seed"]
 ```
 
 | Job | Runs |
 |-----|------|
 | 1–6 | Every pull request and push |
-| 7–8 | Push to `main` and by hand, as a matrix: one leg per extension and the smoke leg, each on its own runner with a fresh k3s. A failing leg does not cancel the others. On a failure a leg prints Freelens' log, the pods, the cluster's warnings and, where Trivy is installed, the operator's errors |
+| 7 | Push to `main` and by hand, as a matrix: one leg per extension, each on its own runner with a fresh k3s. A failing leg does not cancel the others. On a failure a leg prints Freelens' log, the pods, the cluster's warnings and, on the Trivy leg, the operator's errors |
+| 8 | Once every leg of job 7 passed |
 
-| Leg | `make cluster` installs | Suites |
+| Job | `make cluster` installs | Suites |
 |-----|-------------------------|--------|
-| One per extension | Only that extension's components (`PACKAGE=<leg>`, the `--for` entry in `dev/cluster/cluster.sh`) | `make e2e` and `make e2e-writes` for that package |
-| `all` | The full seed, as `make cluster` installs it for development | Every package's `pages-render.e2e.ts` in one window; no writes |
+| 7, one leg per extension | Only that extension's components (`PACKAGE=<leg>`, the `--for` entry in `dev/cluster/cluster.sh`) | `make e2e` and `make e2e-writes` for that package |
+| 8, smoke | The full seed, as `make cluster` installs it for development | Every package's `pages-render.e2e.ts` in one window; no writes |
 
-The smoke leg keeps the full seed working, since development and the fixtures use it, and opens
+The smoke run keeps the full seed working, since development and the fixtures use it, and opens
 every extension in one window, as a person who installs them all would.
 
-Job 1 runs `scripts/checks/e2e-legs.sh` (also in `make check`): the legs without `all`, the
-directories under `packages/` and the `--for` entries in `cluster.sh` must be the same set, so an
-extension cannot ship without its leg.
+Job 1 runs `scripts/checks/e2e-legs.sh` (also in `make check`): the legs, the directories under
+`packages/` and the `--for` entries in `cluster.sh` must be the same set, so an extension cannot
+ship without its leg.
 
 `make ci-local` runs the same workflow through [act](https://github.com/nektos/act), in a container
 built from `dev/act/Dockerfile`, on a copy of the working tree, as another compose project on
 other ports, so the dev setup keeps running. `JOB=lint` runs one job. The e2e job runs its legs one
 at a time, stopping at the first that fails, each on a fresh copy with the k3s and Freelens' state
-removed before it whatever `KEEP` says; `JOB=e2e LEG=cnpg` runs one. `KEEP=1` leaves the last leg's
-cluster and Freelens up.
+removed before it whatever `KEEP` says; `JOB=e2e LEG=cnpg` runs one. `JOB=smoke` runs the smoke
+run, also from a clean setup. `KEEP=1` leaves the last cluster and Freelens up.
 
 ## Fixtures
 

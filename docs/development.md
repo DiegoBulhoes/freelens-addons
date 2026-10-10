@@ -272,7 +272,7 @@ The Makefile already does this. It holds only what the agent working here and CI
 | `make kubectl ARGS="..."` | kubectl on the dev k3s, refused on any other cluster |
 | `make e2e` | The end-to-end suite, against a running Freelens; `PACKAGE=cnpg` for one package, `FILES=layout` for the files whose path matches |
 | `make e2e-writes` | Real writes through each extension on the dev k3s, checked in the cluster; `PACKAGE=cnpg` for one package |
-| `make ci-local` | The CI workflow through act, beside the dev setup; `JOB=lint` for one job, `JOB=e2e LEG=cnpg` for one end-to-end leg |
+| `make ci-local` | The CI workflow through act, beside the dev setup; `JOB=lint` for one job, `JOB=e2e LEG=cnpg` for one end-to-end leg, `JOB=smoke` for the smoke run |
 | `bash scripts/security/scan.sh` | Secret, dependency and Dockerfile scanners |
 | `dc logs -f freelens` | Follow the container logs |
 | `dc down -v` | Stop everything and discard Freelens' saved state |

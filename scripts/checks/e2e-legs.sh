@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fails unless the e2e matrix legs in ci.yaml (but "all"), the packages and the keys of cluster.sh's
+# Fails unless the e2e matrix legs in ci.yaml, the packages and the keys of cluster.sh's
 # per-package map are the same names: a package without its leg would never run its suites in CI.
 set -euo pipefail
 
@@ -9,7 +9,7 @@ WORKFLOW=.github/workflows/ci.yaml
 CLUSTER=dev/cluster/cluster.sh
 FAIL=0
 
-legs=$(sed -nE 's/^ +leg: \[(.*)\]$/\1/p' "${WORKFLOW}" | tr ',' '\n' | tr -d ' ' | sed '/^all$/d; /^$/d')
+legs=$(sed -nE 's/^ +leg: \[(.*)\]$/\1/p' "${WORKFLOW}" | tr ',' '\n' | tr -d ' ' | sed '/^$/d')
 packages=$(for dir in packages/*/; do basename "${dir}"; done)
 entries=$(sed -nE '/^declare -A [A-Z_]+=\($/,/\)[[:space:]]*$/ s/^[[:space:]]*\[([^]]+)\]=.*/\1/p' "${CLUSTER}")
 
