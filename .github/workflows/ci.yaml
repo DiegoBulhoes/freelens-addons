@@ -218,6 +218,11 @@ jobs:
           if [[ "${PACKAGE}" == trivy ]]; then
             dev/cluster/cluster.sh kubectl -n trivy-system logs deployment/trivy-operator --tail=400 | grep -i error | tail -20
           fi
+          if [[ "${PACKAGE}" == redis ]]; then
+            dev/cluster/cluster.sh kubectl -n redis get pods --show-labels
+            dev/cluster/cluster.sh kubectl -n redis get redisreplications -o custom-columns=NAME:.metadata.name,MASTER:.status.masterNode
+            dev/cluster/cluster.sh kubectl -n redis-operator-system logs deployment/redis-operator-redis-operator --tail=100
+          fi
           dev/cluster/cluster.sh kubectl get events -A --field-selector type=Warning --sort-by=.lastTimestamp | tail -80
 
   # The full seed that development and the fixtures use, with every extension in one window; no writes.
