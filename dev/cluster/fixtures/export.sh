@@ -45,7 +45,34 @@ join_items() {
   python3 -c 'import json, sys; print(json.dumps({"items": [json.loads(line) for line in sys.stdin]}, indent=4))'
 }
 
+REFUSED_RULE=dev/cluster/components/argocd/image-updater-refused.yaml
+REFUSED_KIND=imageupdaters.argocd-image-updater.argoproj.io/bad-pattern
+
+# Deletes the refused rule; a controller restarted meanwhile leaves its finalizer, so that is cleared.
+remove_refused_rule() {
+  kubectl delete -f "${REFUSED_RULE}" --ignore-not-found --wait=false || true
+  if ! kubectl -n argocd wait --for=delete "${REFUSED_KIND}" --timeout=60s 2>/dev/null; then
+    kubectl -n argocd patch "${REFUSED_KIND}" --type merge -p '{"metadata":{"finalizers":null}}' || true
+    kubectl -n argocd wait --for=delete "${REFUSED_KIND}" --timeout=60s 2>/dev/null || true
+  fi
+  if kubectl -n argocd get "${REFUSED_KIND}" >/dev/null 2>&1; then
+    echo "refused rule still present: delete ${REFUSED_KIND} in argocd" >&2
+    return 1
+  fi
+}
+
 argocd() {
+  # The Ready=False fixture: present only while exported, removed however the export ends.
+  trap 'remove_refused_rule || exit 1' EXIT
+  trap 'exit 130' INT TERM
+  kubectl apply -f "${REFUSED_RULE}"
+  kubectl -n argocd wait --for=condition=Ready=False "${REFUSED_KIND}" --timeout=300s
+  argocd_save
+  trap - EXIT INT TERM
+  remove_refused_rule
+}
+
+argocd_save() {
   save applications.json applications.argoproj.io -A
   save app-projects.json appprojects.argoproj.io -A
   save application-sets.json applicationsets.argoproj.io -A

@@ -34,7 +34,6 @@ flowchart LR
 | `cluster.sh install --for cnpg` | Installs what that package needs, from `NEEDS`. `make cluster PACKAGE=cnpg` runs it |
 | `cluster.sh settle prometheus` | Runs that component's `settle.sh` again, for a state that expired |
 | `cluster.sh rejections` | Has the Prometheus operator emit its expired rejection Events again; `make e2e` runs it |
-| `cluster.sh kubectl ARGS...` | kubectl on this cluster, refused on any other |
 | `cluster.sh fixtures [package...]` | Writes the test fixtures, from a full install only ([testing](../../docs/testing.md#fixtures)) |
 
 ## What gets installed
@@ -61,8 +60,8 @@ One directory per component under `components/`:
 | `opentelemetry/` | `cert-manager` | OpenTelemetry Operator | Collectors, and workloads opted in to auto-instrumentation in each Coverage state, blocked ones included |
 | `prometheus/` | `cert-manager`, `opentelemetry` | Prometheus Operator, node-exporter | Instances, monitors and rules in each state the pages rank; a collector whose TargetAllocator selects monitors |
 
-`argocd/image-updater-refused.yaml` is never applied: it makes the controller crash-loop. Apply it
-by hand only to export that fixture (steps in its header).
+`argocd/image-updater-refused.yaml` is never seeded: it makes the controller crash-loop.
+`cluster.sh fixtures argocd` applies it for the export and removes it.
 
 ## States no manifest declares
 

@@ -5,7 +5,7 @@
 #   cluster.sh install --for PACKAGE     installs only what that package's e2e suites need
 #   cluster.sh settle component...       waits again for what those components' seeds declare
 #   cluster.sh rejections                has the Prometheus operator emit its expired rejections again
-#   cluster.sh kubectl ARGS...           kubectl on the dev k3s
+#   cluster.sh kubectl ARGS...           kubectl on the dev k3s; CI's failure diagnostics use it
 #   cluster.sh fixtures [package...]     writes the test fixtures, from a full install; read the diff
 
 set -euo pipefail
