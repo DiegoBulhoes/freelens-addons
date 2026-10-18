@@ -30,8 +30,9 @@ Thumbs.db
 
 # Tooling caches
 .turbo/
-coverage/
+# Vitest reports only: a source folder may be named coverage too.
+/packages/*/coverage/
 
-# Scratch for scripts/security/verify-supply-chain.sh and make deps-refresh.
+# Scratch for scripts/security/verify-supply-chain.sh and scripts/deps-refresh.sh.
 .osv-probe/
 .deps-refresh/
