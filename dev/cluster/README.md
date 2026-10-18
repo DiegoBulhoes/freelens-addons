@@ -34,7 +34,7 @@ flowchart LR
 | `cluster.sh install --for cnpg` | Installs what that package needs, from `NEEDS`. `make cluster PACKAGE=cnpg` runs it |
 | `cluster.sh settle prometheus` | Runs that component's `settle.sh` again, for a state that expired |
 | `cluster.sh rejections` | Has the Prometheus operator emit its expired rejection Events again; `make e2e` runs it |
-| `cluster.sh kubectl ARGS...` | kubectl on this cluster; `make kubectl ARGS="..."` runs it |
+| `cluster.sh kubectl ARGS...` | kubectl on this cluster, refused on any other |
 | `cluster.sh fixtures [package...]` | Writes the test fixtures, from a full install only ([testing](../../docs/testing.md#fixtures)) |
 
 ## What gets installed

@@ -154,10 +154,10 @@ flowchart LR
 `scripts/checks/e2e-legs.sh` fails unless the legs, `packages/` and the `NEEDS` map in
 `dev/cluster/cluster.sh` name the same extensions.
 
-`make ci-local` runs the workflow through [act](https://github.com/nektos/act) on a copy of the tree,
+`dev/act/run.sh` runs the workflow through [act](https://github.com/nektos/act) on a copy of the tree,
 as another compose project, so the dev setup keeps running.
 
-| Variable | Effect |
+| Variable (env) | Effect |
 |----------|--------|
 | `JOB=lint` | One job |
 | `JOB=e2e LEG=cnpg` | One leg; legs run one at a time, each from a clean setup |

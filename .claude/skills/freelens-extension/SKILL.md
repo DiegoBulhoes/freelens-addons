@@ -240,7 +240,7 @@ Break what each new test guards and watch it fail. If a CSS mutation fails nothi
 
 ## Gates
 
-- Run what CI runs, locally, and the e2e suite, also as the extension's leg alone on a fresh cluster (here: `make ci-local JOB=e2e LEG=<name>`).
+- Run what CI runs, locally, and the e2e suite, also as the extension's leg alone on a fresh cluster (here: `JOB=e2e LEG=<name> dev/act/run.sh`).
 - `copy-design-standard.sh --check` passes.
 - No bundle check? Verify by hand: `exports.default =` at the end, no `require("react")` or `require("@freelensapp/extensions")`.
 - Commit the repository's way. Default: semantic, English, one commit per concern.

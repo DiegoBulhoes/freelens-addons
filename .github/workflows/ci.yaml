@@ -3,7 +3,7 @@ name: CI
 # One chain, lightest first: each job runs only if the one before it passed. Pull requests stop
 # after the image. On main and by hand, one end-to-end leg per extension, each on its own runner and
 # k3s, then the smoke run on the full seed.
-# `make ci-local` runs it on this machine through act, beside the dev setup; release.yaml calls it
+# dev/act/run.sh runs it on this machine through act, beside the dev setup; release.yaml calls it
 # before it tags.
 on:
   push:
@@ -199,7 +199,7 @@ jobs:
         run: |
           cp .env.example .env
           sed -i "s|^KUBECONFIG_PATH=.*|KUBECONFIG_PATH=${DEV_KUBECONFIG_DIR:-/tmp/freelens-addons-k3s}/kubeconfig.yaml|; s|^USER_UID=.*|USER_UID=$(id -u)|; s|^USER_GID=.*|USER_GID=$(id -g)|" .env
-          # Only under make ci-local: another project and other ports, set last so they win.
+          # Only under dev/act/run.sh: another project and other ports, set last so they win.
           env | grep -E '^(PROJECT|K3S_PORT|DEBUG_PORT|VNC_PORT|NOVNC_PORT|DEV_KUBECONFIG_DIR|USER_UID|USER_GID)=' >> .env || true
           kubectl version --client
 
@@ -291,7 +291,7 @@ jobs:
         run: |
           cp .env.example .env
           sed -i "s|^KUBECONFIG_PATH=.*|KUBECONFIG_PATH=${DEV_KUBECONFIG_DIR:-/tmp/freelens-addons-k3s}/kubeconfig.yaml|; s|^USER_UID=.*|USER_UID=$(id -u)|; s|^USER_GID=.*|USER_GID=$(id -g)|" .env
-          # Only under make ci-local: another project and other ports, set last so they win.
+          # Only under dev/act/run.sh: another project and other ports, set last so they win.
           env | grep -E '^(PROJECT|K3S_PORT|DEBUG_PORT|VNC_PORT|NOVNC_PORT|DEV_KUBECONFIG_DIR|USER_UID|USER_GID)=' >> .env || true
           kubectl version --client
 

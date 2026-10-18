@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Runs .github/workflows/ci.yaml through act, on a copy of the working tree, as another project
-# on other ports, so the dev setup beside it is left alone. `make ci-local` calls it.
+# on other ports, so the dev setup beside it is left alone. dev/act/run.sh calls it.
 # Usage: ci-local [job]; every job, in order, when none is named. LEG=<leg> runs one e2e leg,
 # and JOB=smoke the smoke run.
 
@@ -46,8 +46,10 @@ echo "-P ubuntu-latest=${IMAGE}" > "${HOME}/.actrc"
 remove_setup() {
   echo "==> Removing ${PROJECT}"
   # On the command line, so a .env make copies from the template cannot point it at the dev setup.
+  (cd "${SRC}" && docker compose -p "${PROJECT}" -f dev/docker-compose.yml --project-directory . down) \
+    >/dev/null 2>&1 || true
   make -C "${SRC}" PROJECT="${PROJECT}" DEV_KUBECONFIG_DIR="${DEV_KUBECONFIG_DIR}" \
-    KUBECONFIG_PATH="${KUBECONFIG_PATH}" down cluster-down >/dev/null 2>&1 || true
+    KUBECONFIG_PATH="${KUBECONFIG_PATH}" cluster-down >/dev/null 2>&1 || true
   docker volume rm "${PROJECT}_freelens-state" "${PROJECT}_k3s-server" >/dev/null 2>&1 || true
   mkdir -p "${DEV_KUBECONFIG_DIR}"
 }

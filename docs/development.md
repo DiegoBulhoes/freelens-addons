@@ -70,7 +70,7 @@ Then:
    `dev/cluster/cluster.sh` ([dev/cluster/README.md](../dev/cluster/README.md)).
 3. Add its leg to the `e2e` matrix in `.github/workflows/ci.yaml`.
 4. Run `make up`, then `make check`.
-5. Run its leg alone: `make ci-local JOB=e2e LEG=<name>` ([testing](testing.md#in-ci)).
+5. Run its leg alone: `JOB=e2e LEG=<name> dev/act/run.sh` ([testing](testing.md#in-ci)).
 
 ## Linking to a Kubernetes object
 
@@ -132,14 +132,14 @@ alias dc='docker compose -f dev/docker-compose.yml --project-directory .'
 | Command | What it does |
 |---------|--------------|
 | `make up` | Build the extensions, then start or restart Freelens |
-| `make down` | Stop the containers, keeping Freelens' saved state |
 | `make check` | CI's first four jobs: dependency gate, lint, typecheck, unit tests with coverage, build, policy checks |
-| `make deps-refresh` | Resolve the lockfile again within the ranges and the floor; monthly, and the fix for a transitive advisory |
+| `bash scripts/deps-refresh.sh` | Resolve the lockfile again within the ranges and the floor; monthly, and the fix for a transitive advisory |
 | `make cluster`, `make cluster-down` | The dev k3s; see [dev/cluster/README.md](../dev/cluster/README.md) |
-| `make kubectl ARGS="..."` | kubectl on the dev k3s, refused on any other cluster |
+| `bash dev/cluster/cluster.sh kubectl ...` | kubectl on the dev k3s, refused on any other cluster |
 | `make e2e`, `make e2e-writes` | End-to-end suites and real writes; see [testing](testing.md#commands) |
-| `make ci-local` | The CI workflow through act, beside the dev setup; `JOB=` and `LEG=` narrow it |
+| `dev/act/run.sh` | The CI workflow through act, beside the dev setup; `JOB=` and `LEG=` narrow it |
 | `bash scripts/security/scan.sh` | Secret, dependency and Dockerfile scanners |
+| `dc down` | Stop the containers, keeping Freelens' saved state |
 | `dc logs -f freelens` | Follow the Freelens logs |
 | `dc down -v` | Stop everything and discard Freelens' saved state |
 | `dc run --rm --no-deps --entrypoint sh -w /workspace freelens -lc "pnpm run lint:fix"` | Apply Biome's safe fixes |

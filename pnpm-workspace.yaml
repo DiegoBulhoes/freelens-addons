@@ -11,7 +11,7 @@ minimumReleaseAgeStrict: true
 minimumReleaseAgeIgnoreMissingTime: false
 
 # Kept from before the rule: no override for a transitive advisory, which waits for
-# make deps-refresh or its parent's release (docs/security.md).
+# scripts/deps-refresh.sh or its parent's release (docs/security.md).
 overrides:
   dompurify: "3.4.16"
   decode-uri-component: "0.5.0"

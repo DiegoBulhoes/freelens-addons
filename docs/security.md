@@ -73,7 +73,7 @@ base image digest pins the package set.
 
 ## Dependency updates
 
-By hand, no bot. `make deps-refresh` resolves the lockfile again within the ranges and the floor,
+By hand, no bot. `scripts/deps-refresh.sh` resolves the lockfile again within the ranges and the floor,
 in a throwaway copy, and keeps it only if the gate passes. Run it monthly; it is also how a
 transitive advisory gets fixed. Never `pnpm update`: it asks to write `minimumReleaseAgeExclude`.
 
@@ -86,7 +86,7 @@ transitive advisory gets fixed. Never `pnpm update`: it asks to write `minimumRe
 ## Vulnerabilities
 
 `scripts/security/osv-direct.sh` scans the whole lockfile before anything installs it: in CI, in
-the release, in `make check` and in `make deps-refresh`.
+the release, in `make check` and in `scripts/deps-refresh.sh`.
 
 ```mermaid
 flowchart TD
