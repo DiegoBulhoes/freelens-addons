@@ -1,0 +1,978 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "addressType": "IPv4",
+      "apiVersion": "discovery.k8s.io/v1",
+      "endpoints": [
+        {
+          "addresses": [
+            "198.51.100.10"
+          ],
+          "conditions": {
+            "ready": true,
+            "serving": true,
+            "terminating": false
+          },
+          "nodeName": "freelens-addons-dev",
+          "targetRef": {
+            "kind": "Pod",
+            "name": "coredns-54996dc9b4-kdcrl",
+            "namespace": "kube-system",
+            "uid": "683e54c0-52fa-44cc-a7c6-0771629d0b82"
+          }
+        }
+      ],
+      "kind": "EndpointSlice",
+      "metadata": {
+        "annotations": {
+          "endpoints.kubernetes.io/last-change-trigger-time": "2026-10-12T15:33:27Z"
+        },
+        "creationTimestamp": "2026-10-04T20:27:58Z",
+        "generateName": "kube-dns-",
+        "generation": 30,
+        "labels": {
+          "endpointslice.kubernetes.io/managed-by": "endpointslice-controller.k8s.io",
+          "k8s-app": "kube-dns",
+          "kubernetes.io/cluster-service": "true",
+          "kubernetes.io/name": "CoreDNS",
+          "kubernetes.io/service-name": "kube-dns",
+          "objectset.rio.cattle.io/hash": "bce283298811743a0386ab510f2f67ef74240c57"
+        },
+        "name": "kube-dns-jv48h",
+        "namespace": "kube-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Service",
+            "name": "kube-dns",
+            "uid": "13c898c0-f5fa-455d-a605-8e370c90c1cc"
+          }
+        ],
+        "resourceVersion": "262263",
+        "selfLink": "/apis/discovery.k8s.io/v1/namespaces/kube-system/endpointslices/kube-dns-jv48h",
+        "uid": "baf5c4f2-8fd7-45d3-825c-2823c67b1e41"
+      },
+      "ports": [
+        {
+          "name": "dns",
+          "port": 53,
+          "protocol": "UDP"
+        },
+        {
+          "name": "dns-tcp",
+          "port": 53,
+          "protocol": "TCP"
+        },
+        {
+          "name": "metrics",
+          "port": 9153,
+          "protocol": "TCP"
+        }
+      ]
+    },
+    {
+      "addressType": "IPv4",
+      "apiVersion": "discovery.k8s.io/v1",
+      "endpoints": [
+        {
+          "addresses": [
+            "198.51.100.11"
+          ],
+          "conditions": {
+            "ready": true
+          },
+          "nodeName": "freelens-addons-dev",
+          "targetRef": {
+            "kind": "Node",
+            "name": "freelens-addons-dev",
+            "uid": "8907725d-af66-4a5d-887f-049ed93a2059"
+          }
+        }
+      ],
+      "kind": "EndpointSlice",
+      "metadata": {
+        "creationTimestamp": "2026-10-12T02:13:39Z",
+        "generateName": "kubelet-",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/managed-by": "prometheus-operator",
+          "app.kubernetes.io/name": "kubelet",
+          "endpointslice.kubernetes.io/managed-by": "endpointslicemirroring-controller.k8s.io",
+          "k8s-app": "kubelet",
+          "kubernetes.io/service-name": "kubelet"
+        },
+        "name": "kubelet-hz6fm",
+        "namespace": "kube-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Endpoints",
+            "name": "kubelet",
+            "uid": "b8d82182-2a6d-4e67-a8ec-5905eef1d430"
+          }
+        ],
+        "resourceVersion": "175935",
+        "selfLink": "/apis/discovery.k8s.io/v1/namespaces/kube-system/endpointslices/kubelet-hz6fm",
+        "uid": "5e4c3d53-5858-4e89-bb89-6a67cf5e58d5"
+      },
+      "ports": [
+        {
+          "name": "https-metrics",
+          "port": 10250,
+          "protocol": "TCP"
+        },
+        {
+          "name": "http-metrics",
+          "port": 10255,
+          "protocol": "TCP"
+        },
+        {
+          "name": "cadvisor",
+          "port": 4194,
+          "protocol": "TCP"
+        }
+      ]
+    },
+    {
+      "addressType": "IPv4",
+      "apiVersion": "discovery.k8s.io/v1",
+      "endpoints": [
+        {
+          "addresses": [
+            "198.51.100.12"
+          ],
+          "conditions": {
+            "ready": true,
+            "serving": true,
+            "terminating": false
+          },
+          "hostname": "alertmanager-seed-0",
+          "nodeName": "freelens-addons-dev",
+          "targetRef": {
+            "kind": "Pod",
+            "name": "alertmanager-seed-0",
+            "namespace": "monitoring",
+            "uid": "e41ddd58-38c8-408f-9cb8-f5313fdafb52"
+          }
+        }
+      ],
+      "kind": "EndpointSlice",
+      "metadata": {
+        "annotations": {
+          "endpoints.kubernetes.io/last-change-trigger-time": "2026-10-12T15:33:43Z"
+        },
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generateName": "alertmanager-operated-",
+        "generation": 12,
+        "labels": {
+          "app.kubernetes.io/managed-by": "prometheus-operator",
+          "endpointslice.kubernetes.io/managed-by": "endpointslice-controller.k8s.io",
+          "kubernetes.io/service-name": "alertmanager-operated",
+          "managed-by": "prometheus-operator",
+          "operated-alertmanager": "true",
+          "service.kubernetes.io/headless": ""
+        },
+        "name": "alertmanager-operated-fdg6d",
+        "namespace": "monitoring",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Service",
+            "name": "alertmanager-operated",
+            "uid": "e4e24a96-16b2-4115-a5d9-6d1e04a3b1e5"
+          }
+        ],
+        "resourceVersion": "263141",
+        "selfLink": "/apis/discovery.k8s.io/v1/namespaces/monitoring/endpointslices/alertmanager-operated-fdg6d",
+        "uid": "cdc31e92-5635-4371-b71b-88256203a981"
+      },
+      "ports": [
+        {
+          "name": "tcp-mesh",
+          "port": 9094,
+          "protocol": "TCP"
+        },
+        {
+          "name": "web",
+          "port": 9093,
+          "protocol": "TCP"
+        },
+        {
+          "name": "udp-mesh",
+          "port": 9094,
+          "protocol": "UDP"
+        }
+      ]
+    },
+    {
+      "addressType": "IPv4",
+      "apiVersion": "discovery.k8s.io/v1",
+      "endpoints": [
+        {
+          "addresses": [
+            "198.51.100.13"
+          ],
+          "conditions": {
+            "ready": true,
+            "serving": true,
+            "terminating": false
+          },
+          "hostname": "prometheus-seed-0",
+          "nodeName": "freelens-addons-dev",
+          "targetRef": {
+            "kind": "Pod",
+            "name": "prometheus-seed-0",
+            "namespace": "monitoring",
+            "uid": "54441552-5cd2-4e56-8a3d-82240094e488"
+          }
+        }
+      ],
+      "kind": "EndpointSlice",
+      "metadata": {
+        "annotations": {
+          "endpoints.kubernetes.io/last-change-trigger-time": "2026-10-12T15:33:53Z"
+        },
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generateName": "prometheus-operated-",
+        "generation": 12,
+        "labels": {
+          "app.kubernetes.io/managed-by": "prometheus-operator",
+          "endpointslice.kubernetes.io/managed-by": "endpointslice-controller.k8s.io",
+          "kubernetes.io/service-name": "prometheus-operated",
+          "managed-by": "prometheus-operator",
+          "operated-prometheus": "true",
+          "service.kubernetes.io/headless": ""
+        },
+        "name": "prometheus-operated-422r7",
+        "namespace": "monitoring",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Service",
+            "name": "prometheus-operated",
+            "uid": "056e65a4-7c61-4e09-b5c5-a3f0c78515e2"
+          }
+        ],
+        "resourceVersion": "263313",
+        "selfLink": "/apis/discovery.k8s.io/v1/namespaces/monitoring/endpointslices/prometheus-operated-422r7",
+        "uid": "02392995-ba36-4768-b8f9-4f189b410381"
+      },
+      "ports": [
+        {
+          "name": "web",
+          "port": 9090,
+          "protocol": "TCP"
+        }
+      ]
+    },
+    {
+      "addressType": "IPv4",
+      "apiVersion": "discovery.k8s.io/v1",
+      "endpoints": [
+        {
+          "addresses": [
+            "198.51.100.14"
+          ],
+          "conditions": {
+            "ready": false,
+            "serving": false,
+            "terminating": false
+          },
+          "nodeName": "freelens-addons-dev",
+          "targetRef": {
+            "kind": "Pod",
+            "name": "broken-collector-794c597d6c-nplfz",
+            "namespace": "otel-collectors",
+            "uid": "bdf1f966-0317-4c3d-9656-c8eb44980d8c"
+          }
+        }
+      ],
+      "kind": "EndpointSlice",
+      "metadata": {
+        "annotations": {
+          "endpoints.kubernetes.io/last-change-trigger-time": "2026-10-12T16:30:59Z"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generateName": "broken-collector-",
+        "generation": 263,
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.broken",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "broken-collector",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest",
+          "endpointslice.kubernetes.io/managed-by": "endpointslice-controller.k8s.io",
+          "kubernetes.io/service-name": "broken-collector",
+          "operator.opentelemetry.io/collector-service-type": "base"
+        },
+        "name": "broken-collector-d9x4d",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Service",
+            "name": "broken-collector",
+            "uid": "a8c35c6c-af27-46ca-a5f9-f8fefb182d3a"
+          }
+        ],
+        "resourceVersion": "281275",
+        "selfLink": "/apis/discovery.k8s.io/v1/namespaces/otel-collectors/endpointslices/broken-collector-d9x4d",
+        "uid": "5672e197-61e5-492e-a477-8f8d301d5bca"
+      },
+      "ports": [
+        {
+          "appProtocol": "grpc",
+          "name": "otlp-grpc",
+          "port": 4317,
+          "protocol": "TCP"
+        }
+      ]
+    },
+    {
+      "addressType": "IPv4",
+      "apiVersion": "discovery.k8s.io/v1",
+      "endpoints": [
+        {
+          "addresses": [
+            "198.51.100.14"
+          ],
+          "conditions": {
+            "ready": false,
+            "serving": false,
+            "terminating": false
+          },
+          "nodeName": "freelens-addons-dev",
+          "targetRef": {
+            "kind": "Pod",
+            "name": "broken-collector-794c597d6c-nplfz",
+            "namespace": "otel-collectors",
+            "uid": "bdf1f966-0317-4c3d-9656-c8eb44980d8c"
+          }
+        }
+      ],
+      "kind": "EndpointSlice",
+      "metadata": {
+        "annotations": {
+          "endpoints.kubernetes.io/last-change-trigger-time": "2026-10-12T16:30:59Z"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generateName": "broken-collector-headless-",
+        "generation": 263,
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.broken",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "broken-collector",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest",
+          "endpointslice.kubernetes.io/managed-by": "endpointslice-controller.k8s.io",
+          "kubernetes.io/service-name": "broken-collector-headless",
+          "operator.opentelemetry.io/collector-headless-service": "Exists",
+          "operator.opentelemetry.io/collector-service-type": "headless",
+          "service.kubernetes.io/headless": ""
+        },
+        "name": "broken-collector-headless-tx8nw",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Service",
+            "name": "broken-collector-headless",
+            "uid": "ead04964-ea46-470e-a2ad-de1a2aa58a43"
+          }
+        ],
+        "resourceVersion": "281271",
+        "selfLink": "/apis/discovery.k8s.io/v1/namespaces/otel-collectors/endpointslices/broken-collector-headless-tx8nw",
+        "uid": "0bf8eb9b-f31b-4f0c-907e-011fd5a62137"
+      },
+      "ports": [
+        {
+          "appProtocol": "grpc",
+          "name": "otlp-grpc",
+          "port": 4317,
+          "protocol": "TCP"
+        }
+      ]
+    },
+    {
+      "addressType": "IPv4",
+      "apiVersion": "discovery.k8s.io/v1",
+      "endpoints": [
+        {
+          "addresses": [
+            "198.51.100.14"
+          ],
+          "conditions": {
+            "ready": false,
+            "serving": false,
+            "terminating": false
+          },
+          "nodeName": "freelens-addons-dev",
+          "targetRef": {
+            "kind": "Pod",
+            "name": "broken-collector-794c597d6c-nplfz",
+            "namespace": "otel-collectors",
+            "uid": "bdf1f966-0317-4c3d-9656-c8eb44980d8c"
+          }
+        }
+      ],
+      "kind": "EndpointSlice",
+      "metadata": {
+        "annotations": {
+          "endpoints.kubernetes.io/last-change-trigger-time": "2026-10-12T16:30:59Z"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generateName": "broken-collector-monitoring-",
+        "generation": 263,
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.broken",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "broken-collector-monitoring",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest",
+          "endpointslice.kubernetes.io/managed-by": "endpointslice-controller.k8s.io",
+          "kubernetes.io/service-name": "broken-collector-monitoring",
+          "operator.opentelemetry.io/collector-monitoring-service": "Exists",
+          "operator.opentelemetry.io/collector-service-type": "monitoring"
+        },
+        "name": "broken-collector-monitoring-29cln",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Service",
+            "name": "broken-collector-monitoring",
+            "uid": "48cce79d-cb16-4880-8ae3-743680e2ba2d"
+          }
+        ],
+        "resourceVersion": "281273",
+        "selfLink": "/apis/discovery.k8s.io/v1/namespaces/otel-collectors/endpointslices/broken-collector-monitoring-29cln",
+        "uid": "11fac693-237a-4f54-911b-d7c1ebe4227f"
+      },
+      "ports": [
+        {
+          "name": "monitoring",
+          "port": 8888,
+          "protocol": "TCP"
+        }
+      ]
+    },
+    {
+      "addressType": "IPv4",
+      "apiVersion": "discovery.k8s.io/v1",
+      "endpoints": [
+        {
+          "addresses": [
+            "198.51.100.15"
+          ],
+          "conditions": {
+            "ready": true,
+            "serving": true,
+            "terminating": false
+          },
+          "nodeName": "freelens-addons-dev",
+          "targetRef": {
+            "kind": "Pod",
+            "name": "gateway-collector-77b5966cc9-tqklp",
+            "namespace": "otel-collectors",
+            "uid": "cfee6cc8-91c1-4ce3-83f6-48243a3dce2f"
+          }
+        }
+      ],
+      "kind": "EndpointSlice",
+      "metadata": {
+        "annotations": {
+          "endpoints.kubernetes.io/last-change-trigger-time": "2026-10-12T15:33:29Z"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generateName": "gateway-collector-",
+        "generation": 10,
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.gateway",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "gateway-collector",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest",
+          "endpointslice.kubernetes.io/managed-by": "endpointslice-controller.k8s.io",
+          "kubernetes.io/service-name": "gateway-collector",
+          "operator.opentelemetry.io/collector-service-type": "base"
+        },
+        "name": "gateway-collector-cddrq",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Service",
+            "name": "gateway-collector",
+            "uid": "3fc520b1-f1e2-44fe-94d0-35a10e950e01"
+          }
+        ],
+        "resourceVersion": "262854",
+        "selfLink": "/apis/discovery.k8s.io/v1/namespaces/otel-collectors/endpointslices/gateway-collector-cddrq",
+        "uid": "31fd0944-0e08-44d4-92cb-d09f0a643469"
+      },
+      "ports": [
+        {
+          "appProtocol": "grpc",
+          "name": "otlp-grpc",
+          "port": 4317,
+          "protocol": "TCP"
+        },
+        {
+          "appProtocol": "http",
+          "name": "otlp-http",
+          "port": 4318,
+          "protocol": "TCP"
+        }
+      ]
+    },
+    {
+      "addressType": "IPv4",
+      "apiVersion": "discovery.k8s.io/v1",
+      "endpoints": [
+        {
+          "addresses": [
+            "198.51.100.15"
+          ],
+          "conditions": {
+            "ready": true,
+            "serving": true,
+            "terminating": false
+          },
+          "nodeName": "freelens-addons-dev",
+          "targetRef": {
+            "kind": "Pod",
+            "name": "gateway-collector-77b5966cc9-tqklp",
+            "namespace": "otel-collectors",
+            "uid": "cfee6cc8-91c1-4ce3-83f6-48243a3dce2f"
+          }
+        }
+      ],
+      "kind": "EndpointSlice",
+      "metadata": {
+        "annotations": {
+          "endpoints.kubernetes.io/last-change-trigger-time": "2026-10-12T15:33:29Z"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generateName": "gateway-collector-headless-",
+        "generation": 10,
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.gateway",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "gateway-collector",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest",
+          "endpointslice.kubernetes.io/managed-by": "endpointslice-controller.k8s.io",
+          "kubernetes.io/service-name": "gateway-collector-headless",
+          "operator.opentelemetry.io/collector-headless-service": "Exists",
+          "operator.opentelemetry.io/collector-service-type": "headless",
+          "service.kubernetes.io/headless": ""
+        },
+        "name": "gateway-collector-headless-s4zf7",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Service",
+            "name": "gateway-collector-headless",
+            "uid": "e54906df-b7b4-48c8-909e-dc2581882389"
+          }
+        ],
+        "resourceVersion": "262852",
+        "selfLink": "/apis/discovery.k8s.io/v1/namespaces/otel-collectors/endpointslices/gateway-collector-headless-s4zf7",
+        "uid": "96cdf2b1-c44e-4036-b893-2e2f250e644a"
+      },
+      "ports": [
+        {
+          "appProtocol": "grpc",
+          "name": "otlp-grpc",
+          "port": 4317,
+          "protocol": "TCP"
+        },
+        {
+          "appProtocol": "http",
+          "name": "otlp-http",
+          "port": 4318,
+          "protocol": "TCP"
+        }
+      ]
+    },
+    {
+      "addressType": "IPv4",
+      "apiVersion": "discovery.k8s.io/v1",
+      "endpoints": [
+        {
+          "addresses": [
+            "198.51.100.15"
+          ],
+          "conditions": {
+            "ready": true,
+            "serving": true,
+            "terminating": false
+          },
+          "nodeName": "freelens-addons-dev",
+          "targetRef": {
+            "kind": "Pod",
+            "name": "gateway-collector-77b5966cc9-tqklp",
+            "namespace": "otel-collectors",
+            "uid": "cfee6cc8-91c1-4ce3-83f6-48243a3dce2f"
+          }
+        }
+      ],
+      "kind": "EndpointSlice",
+      "metadata": {
+        "annotations": {
+          "endpoints.kubernetes.io/last-change-trigger-time": "2026-10-12T15:33:29Z"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generateName": "gateway-collector-monitoring-",
+        "generation": 10,
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.gateway",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "gateway-collector-monitoring",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest",
+          "endpointslice.kubernetes.io/managed-by": "endpointslice-controller.k8s.io",
+          "kubernetes.io/service-name": "gateway-collector-monitoring",
+          "operator.opentelemetry.io/collector-monitoring-service": "Exists",
+          "operator.opentelemetry.io/collector-service-type": "monitoring"
+        },
+        "name": "gateway-collector-monitoring-78pwh",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Service",
+            "name": "gateway-collector-monitoring",
+            "uid": "f4b82482-b1f9-4a76-9ebf-a2910b706722"
+          }
+        ],
+        "resourceVersion": "262853",
+        "selfLink": "/apis/discovery.k8s.io/v1/namespaces/otel-collectors/endpointslices/gateway-collector-monitoring-78pwh",
+        "uid": "73a3b6da-9bc7-4830-b417-b9067c94590d"
+      },
+      "ports": [
+        {
+          "name": "monitoring",
+          "port": 8888,
+          "protocol": "TCP"
+        }
+      ]
+    },
+    {
+      "addressType": "IPv4",
+      "apiVersion": "discovery.k8s.io/v1",
+      "endpoints": [
+        {
+          "addresses": [
+            "198.51.100.16"
+          ],
+          "conditions": {
+            "ready": true,
+            "serving": true,
+            "terminating": false
+          },
+          "nodeName": "freelens-addons-dev",
+          "targetRef": {
+            "kind": "Pod",
+            "name": "scraper-collector-0",
+            "namespace": "otel-collectors",
+            "uid": "b25db037-58e6-4b4d-9046-1578b20ef38e"
+          }
+        }
+      ],
+      "kind": "EndpointSlice",
+      "metadata": {
+        "annotations": {
+          "endpoints.kubernetes.io/last-change-trigger-time": "2026-10-12T15:33:30Z"
+        },
+        "creationTimestamp": "2026-10-12T02:14:14Z",
+        "generateName": "scraper-collector-monitoring-",
+        "generation": 8,
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.scraper",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "scraper-collector-monitoring",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest",
+          "endpointslice.kubernetes.io/managed-by": "endpointslice-controller.k8s.io",
+          "kubernetes.io/service-name": "scraper-collector-monitoring",
+          "operator.opentelemetry.io/collector-monitoring-service": "Exists",
+          "operator.opentelemetry.io/collector-service-type": "monitoring"
+        },
+        "name": "scraper-collector-monitoring-fh974",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Service",
+            "name": "scraper-collector-monitoring",
+            "uid": "4a1ffeaa-bdd6-4a8c-a979-9b99bb57b18c"
+          }
+        ],
+        "resourceVersion": "262785",
+        "selfLink": "/apis/discovery.k8s.io/v1/namespaces/otel-collectors/endpointslices/scraper-collector-monitoring-fh974",
+        "uid": "9b30bedb-2ff7-4b78-a63b-00043ecf1423"
+      },
+      "ports": [
+        {
+          "name": "monitoring",
+          "port": 8888,
+          "protocol": "TCP"
+        }
+      ]
+    },
+    {
+      "addressType": "IPv4",
+      "apiVersion": "discovery.k8s.io/v1",
+      "endpoints": [
+        {
+          "addresses": [
+            "198.51.100.17"
+          ],
+          "conditions": {
+            "ready": true,
+            "serving": true,
+            "terminating": false
+          },
+          "nodeName": "freelens-addons-dev",
+          "targetRef": {
+            "kind": "Pod",
+            "name": "scraper-targetallocator-55fcf69557-ltxq5",
+            "namespace": "otel-collectors",
+            "uid": "22f09a96-3d02-4054-b4a7-9e93bfa8973a"
+          }
+        }
+      ],
+      "kind": "EndpointSlice",
+      "metadata": {
+        "annotations": {
+          "endpoints.kubernetes.io/last-change-trigger-time": "2026-10-12T15:33:30Z"
+        },
+        "creationTimestamp": "2026-10-12T02:14:14Z",
+        "generateName": "scraper-targetallocator-",
+        "generation": 11,
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-targetallocator",
+          "app.kubernetes.io/instance": "otel-collectors.scraper",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "scraper-targetallocator",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest",
+          "endpointslice.kubernetes.io/managed-by": "endpointslice-controller.k8s.io",
+          "kubernetes.io/service-name": "scraper-targetallocator"
+        },
+        "name": "scraper-targetallocator-nlhbh",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Service",
+            "name": "scraper-targetallocator",
+            "uid": "11424806-1880-4fcf-97f9-5eab90e94716"
+          }
+        ],
+        "resourceVersion": "262868",
+        "selfLink": "/apis/discovery.k8s.io/v1/namespaces/otel-collectors/endpointslices/scraper-targetallocator-nlhbh",
+        "uid": "3a93c742-0683-4d6c-b4ac-c5e46b9a0e2a"
+      },
+      "ports": [
+        {
+          "name": "targetallocation",
+          "port": 8080,
+          "protocol": "TCP"
+        }
+      ]
+    },
+    {
+      "addressType": "IPv4",
+      "apiVersion": "discovery.k8s.io/v1",
+      "endpoints": null,
+      "kind": "EndpointSlice",
+      "metadata": {
+        "annotations": {
+          "endpoints.kubernetes.io/last-change-trigger-time": "2026-10-12T16:34:10Z"
+        },
+        "creationTimestamp": "2026-10-12T16:34:10Z",
+        "generateName": "idle-",
+        "generation": 1,
+        "labels": {
+          "app": "idle",
+          "endpointslice.kubernetes.io/managed-by": "endpointslice-controller.k8s.io",
+          "kubernetes.io/service-name": "idle"
+        },
+        "name": "idle-l6ptv",
+        "namespace": "prom-apps",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Service",
+            "name": "idle",
+            "uid": "73671edf-74fb-45c3-9db7-b98e2dfda8a2"
+          }
+        ],
+        "resourceVersion": "282299",
+        "selfLink": "/apis/discovery.k8s.io/v1/namespaces/prom-apps/endpointslices/idle-l6ptv",
+        "uid": "75658755-7cd2-4bfd-9b6c-7eca4d44717f"
+      },
+      "ports": null
+    },
+    {
+      "addressType": "IPv4",
+      "apiVersion": "discovery.k8s.io/v1",
+      "endpoints": [
+        {
+          "addresses": [
+            "198.51.100.18"
+          ],
+          "conditions": {
+            "ready": false,
+            "serving": false,
+            "terminating": false
+          },
+          "hostname": "prometheus-no-image-0",
+          "nodeName": "freelens-addons-dev",
+          "targetRef": {
+            "kind": "Pod",
+            "name": "prometheus-no-image-0",
+            "namespace": "prom-broken",
+            "uid": "60b7992f-b9c4-4eed-b593-e3884f713a01"
+          }
+        }
+      ],
+      "kind": "EndpointSlice",
+      "metadata": {
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generateName": "prometheus-operated-",
+        "generation": 11,
+        "labels": {
+          "app.kubernetes.io/managed-by": "prometheus-operator",
+          "endpointslice.kubernetes.io/managed-by": "endpointslice-controller.k8s.io",
+          "kubernetes.io/service-name": "prometheus-operated",
+          "managed-by": "prometheus-operator",
+          "operated-prometheus": "true",
+          "service.kubernetes.io/headless": ""
+        },
+        "name": "prometheus-operated-gdcgk",
+        "namespace": "prom-broken",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Service",
+            "name": "prometheus-operated",
+            "uid": "c1361f25-fc3d-42a5-93d8-8a650d8d8713"
+          }
+        ],
+        "resourceVersion": "262531",
+        "selfLink": "/apis/discovery.k8s.io/v1/namespaces/prom-broken/endpointslices/prometheus-operated-gdcgk",
+        "uid": "56ee0095-0d3f-4e89-abeb-2d80f465ed08"
+      },
+      "ports": [
+        {
+          "name": "web",
+          "port": 9090,
+          "protocol": "TCP"
+        }
+      ]
+    },
+    {
+      "addressType": "IPv4",
+      "apiVersion": "discovery.k8s.io/v1",
+      "endpoints": [
+        {
+          "addresses": [
+            "198.51.100.19"
+          ],
+          "conditions": {
+            "ready": true,
+            "serving": true,
+            "terminating": false
+          },
+          "nodeName": "freelens-addons-dev",
+          "targetRef": {
+            "kind": "Pod",
+            "name": "prometheus-operator-65bdfd9bf9-wlbsw",
+            "namespace": "prometheus-operator",
+            "uid": "8aa44e23-df89-456a-8603-64f71d5c8073"
+          }
+        }
+      ],
+      "kind": "EndpointSlice",
+      "metadata": {
+        "annotations": {
+          "endpoints.kubernetes.io/last-change-trigger-time": "2026-10-12T16:33:59Z"
+        },
+        "creationTimestamp": "2026-10-12T02:13:29Z",
+        "generateName": "prometheus-operator-",
+        "generation": 25,
+        "labels": {
+          "app.kubernetes.io/component": "controller",
+          "app.kubernetes.io/name": "prometheus-operator",
+          "app.kubernetes.io/version": "0.93.1",
+          "endpointslice.kubernetes.io/managed-by": "endpointslice-controller.k8s.io",
+          "kubernetes.io/service-name": "prometheus-operator",
+          "service.kubernetes.io/headless": ""
+        },
+        "name": "prometheus-operator-t2cdg",
+        "namespace": "prometheus-operator",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Service",
+            "name": "prometheus-operator",
+            "uid": "3e328c7f-f8f0-4fee-ae39-b7308bb922e6"
+          }
+        ],
+        "resourceVersion": "282178",
+        "selfLink": "/apis/discovery.k8s.io/v1/namespaces/prometheus-operator/endpointslices/prometheus-operator-t2cdg",
+        "uid": "94fc51ad-7f70-4269-bc90-efbd0f3761bc"
+      },
+      "ports": [
+        {
+          "name": "http",
+          "port": 8080,
+          "protocol": "TCP"
+        }
+      ]
+    }
+  ],
+  "kind": "List"
+}

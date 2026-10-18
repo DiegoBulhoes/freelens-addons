@@ -1,0 +1,254 @@
+# Monitors in each state the Monitors page ranks; selected by scraper: prometheus, otel or agent.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: prom-self
+  namespace: monitoring
+  labels: { scraper: prometheus }
+spec:
+  selector:
+    matchLabels: { operated-prometheus: "true" }
+  endpoints:
+    - port: web
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: operator
+  namespace: monitoring
+  labels: { scraper: prometheus }
+spec:
+  namespaceSelector:
+    matchNames: [prometheus-operator]
+  selector:
+    matchLabels: { app.kubernetes.io/name: prometheus-operator }
+  endpoints:
+    - port: http
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: down-path
+  namespace: monitoring
+  labels: { scraper: prometheus }
+spec:
+  selector:
+    matchLabels: { operated-prometheus: "true" }
+  endpoints:
+    - port: web
+      path: /does-not-exist
+---
+# A timeout longer than its interval: the operator rejects it with an InvalidConfiguration Event.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: rejected
+  namespace: monitoring
+  labels: { scraper: prometheus }
+spec:
+  selector:
+    matchLabels: { operated-prometheus: "true" }
+  endpoints:
+    - port: web
+      interval: 10s
+      scrapeTimeout: 30s
+---
+# Selected only by the paused agent, so its drawer shows a source that was not read.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: paused-only
+  namespace: monitoring
+  labels: { scraper: agent }
+spec:
+  selector:
+    matchLabels: { operated-prometheus: "true" }
+  endpoints:
+    - port: web
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: orphan
+  namespace: prom-apps
+  labels: { scraper: nobody }
+spec:
+  namespaceSelector:
+    matchNames: [monitoring]
+  selector:
+    matchLabels: { operated-prometheus: "true" }
+  endpoints:
+    - port: web
+      # Unselected, so never used; the fixture export must redact them.
+      params: { token: [seed-fake-token] }
+      proxyUrl: http://seed:fake@proxy.example.test:3128
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: no-service
+  namespace: prom-apps
+  labels: { scraper: prometheus }
+spec:
+  selector:
+    matchLabels: { app: ghost }
+  endpoints:
+    - port: web
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: wrong-port
+  namespace: prom-apps
+  labels: { scraper: prometheus }
+spec:
+  namespaceSelector:
+    matchNames: [monitoring]
+  selector:
+    matchLabels: { operated-prometheus: "true" }
+  endpoints:
+    - port: metrics
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: excluded
+  namespace: prom-outside
+  labels: { scraper: prometheus }
+spec:
+  namespaceSelector:
+    matchNames: [monitoring]
+  selector:
+    matchLabels: { operated-prometheus: "true" }
+  endpoints:
+    - port: web
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: otel-self
+  namespace: prom-apps
+  labels: { scraper: otel }
+spec:
+  namespaceSelector:
+    matchNames: [otel-collectors]
+  selector:
+    matchLabels: { app.kubernetes.io/name: scraper-collector-monitoring }
+  endpoints:
+    - port: monitoring
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: prom-pods
+  namespace: prom-apps
+  labels: { scraper: prometheus }
+spec:
+  namespaceSelector:
+    matchNames: [monitoring]
+  selector:
+    matchLabels: { operator.prometheus.io/name: seed, app.kubernetes.io/name: prometheus }
+  podMetricsEndpoints:
+    - port: web
+---
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: static-self
+  namespace: prom-apps
+  labels: { scraper: prometheus }
+spec:
+  # Prometheus ignores it; the fixture export must redact it.
+  params: { token: [seed-fake-token] }
+  staticConfigs:
+    - targets: [prometheus-operated.monitoring.svc:9090]
+---
+# The operator keeps the kubelet Service (--kubelet-service); series the Usage page does not read are dropped.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kubelet
+  namespace: monitoring
+  labels: { scraper: prometheus }
+spec:
+  namespaceSelector:
+    matchNames: [kube-system]
+  selector:
+    matchLabels: { app.kubernetes.io/name: kubelet }
+  endpoints:
+    - port: https-metrics
+      path: /metrics/cadvisor
+      scheme: https
+      # k3s signs the kubelet's certificate with its own CA.
+      tlsConfig: { insecureSkipVerify: true }
+      bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+      honorLabels: true
+      honorTimestamps: false
+      metricRelabelings:
+        - action: drop
+          sourceLabels: [__name__]
+          regex: container_tasks_state|container_network_(tcp|udp)_usage_total|container_cpu_load_average_10s
+        - action: drop
+          sourceLabels: [__name__]
+          regex: container_spec_.*|container_blkio_device_usage_total|container_pressure_.*
+        - action: drop
+          sourceLabels: [__name__]
+          regex: container_memory_(failures|failcnt)_total|container_(file_descriptors|sockets|threads|threads_max|processes|ulimits_soft)
+        - action: drop
+          sourceLabels: [__name__]
+          regex: container_fs_(inodes|io|limit|read_seconds|write_seconds|reads_merged|writes_merged|sector).*
+    - port: https-metrics
+      path: /metrics
+      scheme: https
+      tlsConfig: { insecureSkipVerify: true }
+      bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+      honorLabels: true
+      metricRelabelings:
+        - action: keep
+          sourceLabels: [__name__]
+          regex: kubelet_volume_stats_(used|capacity|available)_bytes
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: node-exporter
+  namespace: monitoring
+  labels: { scraper: prometheus }
+spec:
+  selector:
+    matchLabels: { app.kubernetes.io/name: node-exporter }
+  podMetricsEndpoints:
+    - port: metrics
+      # The same node label as the kubelet's series.
+      relabelings:
+        - sourceLabels: [__meta_kubernetes_pod_node_name]
+          targetLabel: node
+      metricRelabelings:
+        - action: drop
+          sourceLabels: [__name__]
+          regex: node_scrape_collector_.*|node_cpu_guest_seconds_total|node_softnet_.*|node_schedstat_.*
+---
+# A Service whose selector matches no pod, as for an app scaled to zero: the port exists, no endpoint does.
+apiVersion: v1
+kind: Service
+metadata:
+  name: idle
+  namespace: prom-apps
+  labels: { app: idle }
+spec:
+  selector: { app: idle }
+  ports:
+    - name: web
+      port: 8080
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: no-endpoints
+  namespace: prom-apps
+  labels: { scraper: prometheus }
+spec:
+  selector:
+    matchLabels: { app: idle }
+  endpoints:
+    - port: web

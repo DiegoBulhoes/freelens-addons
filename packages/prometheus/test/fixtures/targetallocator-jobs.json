@@ -1,0 +1,13 @@
+{
+    "items": [
+        {
+            "namespace": "otel-collectors",
+            "collector": "scraper",
+            "jobs": {
+                "serviceMonitor/prom-apps/otel-self/0": {
+                    "_link": "/jobs/serviceMonitor%2Fprom-apps%2Fotel-self%2F0/targets"
+                }
+            }
+        }
+    ]
+}

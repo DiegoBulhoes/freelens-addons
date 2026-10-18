@@ -1,0 +1,161 @@
+{
+    "items": [
+        {
+            "namespace": "monitoring",
+            "pod": "prometheus-seed-0",
+            "targets": {
+                "data": {
+                    "activeTargets": [
+                        {
+                            "health": "up",
+                            "labels": {
+                                "container": "node-exporter",
+                                "endpoint": "metrics",
+                                "instance": "198.51.100.10:9100",
+                                "job": "monitoring/node-exporter",
+                                "namespace": "monitoring",
+                                "node": "freelens-addons-dev",
+                                "pod": "node-exporter-zwpw6"
+                            },
+                            "lastError": "",
+                            "lastScrape": "2026-10-12T16:35:13.815670343Z",
+                            "lastScrapeDuration": 0.120046447,
+                            "scrapeInterval": "30s",
+                            "scrapePool": "podMonitor/monitoring/node-exporter/0",
+                            "scrapeTimeout": "10s",
+                            "scrapeUrl": "http://198.51.100.10:9100/metrics"
+                        },
+                        {
+                            "health": "up",
+                            "labels": {
+                                "container": "prometheus",
+                                "endpoint": "web",
+                                "instance": "198.51.100.11:9090",
+                                "job": "prom-apps/prom-pods",
+                                "namespace": "monitoring",
+                                "pod": "prometheus-seed-0"
+                            },
+                            "lastError": "",
+                            "lastScrape": "2026-10-12T16:35:21.784655016Z",
+                            "lastScrapeDuration": 0.00682873,
+                            "scrapeInterval": "30s",
+                            "scrapePool": "podMonitor/prom-apps/prom-pods/0",
+                            "scrapeTimeout": "10s",
+                            "scrapeUrl": "http://198.51.100.11:9090/metrics"
+                        },
+                        {
+                            "health": "up",
+                            "labels": {
+                                "instance": "prometheus-operated.monitoring.svc:9090",
+                                "job": "scrapeConfig/prom-apps/static-self"
+                            },
+                            "lastError": "",
+                            "lastScrape": "2026-10-12T16:35:35.845979248Z",
+                            "lastScrapeDuration": 0.004953814,
+                            "scrapeInterval": "30s",
+                            "scrapePool": "scrapeConfig/prom-apps/static-self",
+                            "scrapeTimeout": "10s",
+                            "scrapeUrl": "http://prometheus-operated.monitoring.svc:9090/metrics"
+                        },
+                        {
+                            "health": "down",
+                            "labels": {
+                                "container": "prometheus",
+                                "endpoint": "web",
+                                "instance": "198.51.100.11:9090",
+                                "job": "prometheus-operated",
+                                "namespace": "monitoring",
+                                "pod": "prometheus-seed-0",
+                                "service": "prometheus-operated"
+                            },
+                            "lastError": "server returned HTTP status 404 Not Found",
+                            "lastScrape": "2026-10-12T16:35:23.676660175Z",
+                            "lastScrapeDuration": 0.000444944,
+                            "scrapeInterval": "30s",
+                            "scrapePool": "serviceMonitor/monitoring/down-path/0",
+                            "scrapeTimeout": "10s",
+                            "scrapeUrl": "http://198.51.100.11:9090/does-not-exist"
+                        },
+                        {
+                            "health": "up",
+                            "labels": {
+                                "endpoint": "https-metrics",
+                                "instance": "198.51.100.10:10250",
+                                "job": "kubelet",
+                                "namespace": "kube-system",
+                                "node": "freelens-addons-dev",
+                                "service": "kubelet"
+                            },
+                            "lastError": "",
+                            "lastScrape": "2026-10-12T16:35:11.248838706Z",
+                            "lastScrapeDuration": 0.200205715,
+                            "scrapeInterval": "30s",
+                            "scrapePool": "serviceMonitor/monitoring/kubelet/0",
+                            "scrapeTimeout": "10s",
+                            "scrapeUrl": "https://198.51.100.10:10250/metrics/cadvisor"
+                        },
+                        {
+                            "health": "up",
+                            "labels": {
+                                "endpoint": "https-metrics",
+                                "instance": "198.51.100.10:10250",
+                                "job": "kubelet",
+                                "namespace": "kube-system",
+                                "node": "freelens-addons-dev",
+                                "service": "kubelet"
+                            },
+                            "lastError": "",
+                            "lastScrape": "2026-10-12T16:35:37.603774845Z",
+                            "lastScrapeDuration": 0.228204366,
+                            "scrapeInterval": "30s",
+                            "scrapePool": "serviceMonitor/monitoring/kubelet/1",
+                            "scrapeTimeout": "10s",
+                            "scrapeUrl": "https://198.51.100.10:10250/metrics"
+                        },
+                        {
+                            "health": "up",
+                            "labels": {
+                                "container": "prometheus-operator",
+                                "endpoint": "http",
+                                "instance": "198.51.100.12:8080",
+                                "job": "prometheus-operator",
+                                "namespace": "prometheus-operator",
+                                "pod": "prometheus-operator-65bdfd9bf9-wlbsw",
+                                "service": "prometheus-operator"
+                            },
+                            "lastError": "",
+                            "lastScrape": "2026-10-12T16:35:39.077574107Z",
+                            "lastScrapeDuration": 0.002607332,
+                            "scrapeInterval": "30s",
+                            "scrapePool": "serviceMonitor/monitoring/operator/0",
+                            "scrapeTimeout": "10s",
+                            "scrapeUrl": "http://198.51.100.12:8080/metrics"
+                        },
+                        {
+                            "health": "up",
+                            "labels": {
+                                "container": "prometheus",
+                                "endpoint": "web",
+                                "instance": "198.51.100.11:9090",
+                                "job": "prometheus-operated",
+                                "namespace": "monitoring",
+                                "pod": "prometheus-seed-0",
+                                "service": "prometheus-operated"
+                            },
+                            "lastError": "",
+                            "lastScrape": "2026-10-12T16:35:24.448077739Z",
+                            "lastScrapeDuration": 0.004803544,
+                            "scrapeInterval": "30s",
+                            "scrapePool": "serviceMonitor/monitoring/prom-self/0",
+                            "scrapeTimeout": "10s",
+                            "scrapeUrl": "http://198.51.100.11:9090/metrics"
+                        }
+                    ],
+                    "droppedTargetCounts": null,
+                    "droppedTargets": []
+                },
+                "status": "success"
+            }
+        }
+    ]
+}

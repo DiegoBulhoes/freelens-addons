@@ -1,0 +1,230 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "PrometheusRule",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 1,
+        "labels": {
+          "rules": "prometheus"
+        },
+        "name": "always-firing",
+        "namespace": "prom-apps",
+        "resourceVersion": "176140",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/prom-apps/prometheusrules/always-firing",
+        "uid": "179a4943-b7f1-4e46-9779-17afb44323c6"
+      },
+      "spec": {
+        "groups": [
+          {
+            "name": "seed",
+            "rules": [
+              {
+                "alert": "SeedAlwaysFiring",
+                "annotations": {
+                  "summary": "Always fires"
+                },
+                "expr": "vector(1)",
+                "for": "0s",
+                "labels": {
+                  "severity": "warning"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "PrometheusRule",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:52Z",
+        "generation": 1,
+        "labels": {
+          "rules": "prometheus"
+        },
+        "name": "broken-rule",
+        "namespace": "prom-apps",
+        "resourceVersion": "222707",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/prom-apps/prometheusrules/broken-rule",
+        "uid": "2eafe779-1e5a-4fbd-bfcf-b606044f2dff"
+      },
+      "spec": {
+        "groups": [
+          {
+            "name": "broken",
+            "rules": [
+              {
+                "alert": "NeverParses",
+                "expr": "sum("
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "PrometheusRule",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T16:34:11Z",
+        "generation": 1,
+        "labels": {
+          "rules": "prometheus"
+        },
+        "name": "failing-rule",
+        "namespace": "prom-apps",
+        "resourceVersion": "282308",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/prom-apps/prometheusrules/failing-rule",
+        "uid": "0bc4fd3c-c534-4c73-97e1-bf0df657d18b"
+      },
+      "spec": {
+        "groups": [
+          {
+            "name": "seed-failing",
+            "rules": [
+              {
+                "alert": "SeedEvaluationFails",
+                "expr": "up + on() up"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "PrometheusRule",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T16:34:11Z",
+        "generation": 1,
+        "labels": {
+          "rules": "prometheus"
+        },
+        "name": "pending-rule",
+        "namespace": "prom-apps",
+        "resourceVersion": "282307",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/prom-apps/prometheusrules/pending-rule",
+        "uid": "4ba630e7-cc7b-48f4-82ed-070666c5b6e1"
+      },
+      "spec": {
+        "groups": [
+          {
+            "name": "seed-pending",
+            "rules": [
+              {
+                "alert": "SeedPending",
+                "annotations": {
+                  "summary": "Pending for a year before it fires"
+                },
+                "expr": "vector(1)",
+                "for": "1y",
+                "labels": {
+                  "severity": "info"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "PrometheusRule",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:52Z",
+        "generation": 1,
+        "labels": {
+          "rules": "prometheus"
+        },
+        "name": "recording",
+        "namespace": "prom-apps",
+        "resourceVersion": "176142",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/prom-apps/prometheusrules/recording",
+        "uid": "e49dfc01-c575-4367-945a-57457a508b51"
+      },
+      "spec": {
+        "groups": [
+          {
+            "name": "seed-recording",
+            "rules": [
+              {
+                "expr": "sum(up)",
+                "record": "seed:up:sum"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "PrometheusRule",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:52Z",
+        "generation": 1,
+        "labels": {
+          "rules": "mimir"
+        },
+        "name": "unselected-rule",
+        "namespace": "prom-apps",
+        "resourceVersion": "176143",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/prom-apps/prometheusrules/unselected-rule",
+        "uid": "387aa2b8-1023-4142-b53b-60dad0e5cdc3"
+      },
+      "spec": {
+        "groups": [
+          {
+            "name": "elsewhere",
+            "rules": [
+              {
+                "alert": "EvaluatedElsewhere",
+                "expr": "vector(1)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "PrometheusRule",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:52Z",
+        "generation": 1,
+        "labels": {
+          "rules": "prometheus"
+        },
+        "name": "excluded-rule",
+        "namespace": "prom-outside",
+        "resourceVersion": "176151",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/prom-outside/prometheusrules/excluded-rule",
+        "uid": "b07b19f2-c115-4105-ac13-622e0c144a8f"
+      },
+      "spec": {
+        "groups": [
+          {
+            "name": "outside",
+            "rules": [
+              {
+                "alert": "OutsideNamespace",
+                "expr": "vector(1)"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "kind": "List"
+}

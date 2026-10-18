@@ -1,0 +1,30 @@
+# The seed Prometheus selects monitors and rules only in namespaces with this label.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prometheus-operator
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+  labels:
+    seed.freelens/prometheus: "true"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prom-apps
+  labels:
+    seed.freelens/prometheus: "true"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prom-outside
+---
+# Apart, so its pod never joins the healthy instance's prometheus-operated Service.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prom-broken

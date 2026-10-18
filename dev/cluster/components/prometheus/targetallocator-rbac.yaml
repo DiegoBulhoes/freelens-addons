@@ -1,0 +1,61 @@
+# What the scraper collector's TargetAllocator reads; the OpenTelemetry operator creates only its ServiceAccount.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: scraper-targetallocator
+rules:
+  - apiGroups: [monitoring.coreos.com]
+    resources: [servicemonitors, podmonitors, probes, scrapeconfigs]
+    verbs: [get, list, watch]
+  - apiGroups: [""]
+    resources: [namespaces, services, endpoints, pods, nodes, nodes/metrics]
+    verbs: [get, list, watch]
+  - apiGroups: [""]
+    resources: [configmaps]
+    verbs: [get]
+  - apiGroups: [discovery.k8s.io]
+    resources: [endpointslices]
+    verbs: [get, list, watch]
+  - apiGroups: [networking.k8s.io]
+    resources: [ingresses]
+    verbs: [get, list, watch]
+  - nonResourceURLs: [/metrics, /api, /api/*, /apis, /apis/*]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: scraper-targetallocator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: scraper-targetallocator
+subjects:
+  - kind: ServiceAccount
+    name: scraper-targetallocator
+    namespace: otel-collectors
+---
+# Its Secret informer needs list and watch, which return values too; granted in otel-collectors only.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: scraper-targetallocator-secrets
+  namespace: otel-collectors
+rules:
+  - apiGroups: [""]
+    resources: [secrets]
+    verbs: [list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: scraper-targetallocator-secrets
+  namespace: otel-collectors
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: scraper-targetallocator-secrets
+subjects:
+  - kind: ServiceAccount
+    name: scraper-targetallocator
+    namespace: otel-collectors

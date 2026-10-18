@@ -1,0 +1,82 @@
+/* Domain only. Every shared component comes from design.css; nothing here restyles one. */
+
+/* A fix is YAML: its line breaks are its meaning. */
+.Prometheus-yaml {
+  white-space: pre-wrap;
+}
+
+/* Usage charts sit above the table, padded as the list page pads its filters. */
+.Prometheus-page--list > .Prometheus-charts,
+.Prometheus-page--list > .Prometheus-usage__notice {
+  margin: 0 var(--prometheus-gap-md) var(--prometheus-gap-md);
+}
+
+.Prometheus-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+  gap: var(--prometheus-gap-md);
+}
+
+/* A grid item shrinks below its canvas's width only with this. */
+.Prometheus-chart {
+  min-width: 0;
+}
+
+/* The canvas box sets the chart's height; the legend flows below, as on the host's resource charts. */
+.Prometheus-chart__canvas {
+  position: relative;
+}
+
+.Prometheus-chart__canvas .chart-container {
+  position: relative;
+  height: 200px;
+}
+
+/* The canvas's height, so a chart with no line keeps its place. */
+.Prometheus-chart__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}
+
+.Prometheus-chart__canvas .legend {
+  justify-content: center;
+}
+
+/* Selects and the range label differ in height; centre them on one line. */
+.Prometheus-usage__controls {
+  align-items: center;
+}
+
+.Prometheus-usage__window {
+  min-width: 10em;
+}
+
+/* As wide as the host's namespace selector, which caps its own parent at 300px. */
+.Prometheus-usage__choice {
+  min-width: 16em;
+  max-width: 300px;
+}
+
+.Prometheus-usage__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--prometheus-gap-sm);
+}
+
+.Prometheus-usage__cut {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
+.Prometheus-usage__cut--name {
+  max-width: 16em;
+}
+
+.Prometheus-usage__cut--namespace {
+  max-width: 11em;
+}

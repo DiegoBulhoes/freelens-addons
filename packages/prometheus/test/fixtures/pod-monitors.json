@@ -1,0 +1,88 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "PodMonitor",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 1,
+        "labels": {
+          "scraper": "prometheus"
+        },
+        "name": "node-exporter",
+        "namespace": "monitoring",
+        "resourceVersion": "176116",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/monitoring/podmonitors/node-exporter",
+        "uid": "8d0559fe-b307-4627-94d6-3c2051e1a9cc"
+      },
+      "spec": {
+        "podMetricsEndpoints": [
+          {
+            "metricRelabelings": [
+              {
+                "action": "drop",
+                "regex": "node_scrape_collector_.*|node_cpu_guest_seconds_total|node_softnet_.*|node_schedstat_.*",
+                "sourceLabels": [
+                  "__name__"
+                ]
+              }
+            ],
+            "port": "metrics",
+            "relabelings": [
+              {
+                "action": "replace",
+                "sourceLabels": [
+                  "__meta_kubernetes_pod_node_name"
+                ],
+                "targetLabel": "node"
+              }
+            ]
+          }
+        ],
+        "selector": {
+          "matchLabels": {
+            "app.kubernetes.io/name": "node-exporter"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "PodMonitor",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 1,
+        "labels": {
+          "scraper": "prometheus"
+        },
+        "name": "prom-pods",
+        "namespace": "prom-apps",
+        "resourceVersion": "176108",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/prom-apps/podmonitors/prom-pods",
+        "uid": "380d216e-be45-4e58-a2bf-58ed2ce58429"
+      },
+      "spec": {
+        "namespaceSelector": {
+          "matchNames": [
+            "monitoring"
+          ]
+        },
+        "podMetricsEndpoints": [
+          {
+            "port": "web"
+          }
+        ],
+        "selector": {
+          "matchLabels": {
+            "app.kubernetes.io/name": "prometheus",
+            "operator.prometheus.io/name": "seed"
+          }
+        }
+      }
+    }
+  ],
+  "kind": "List"
+}

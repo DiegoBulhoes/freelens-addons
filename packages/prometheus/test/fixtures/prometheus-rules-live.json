@@ -1,0 +1,141 @@
+{
+    "items": [
+        {
+            "namespace": "monitoring",
+            "pod": "prometheus-seed-0",
+            "rules": {
+                "data": {
+                    "groups": [
+                        {
+                            "evaluationTime": 0.000288418,
+                            "file": "/etc/prometheus/rules/prometheus-seed-rulefiles-0/prom-apps-always-firing-179a4943-b7f1-4e46-9779-17afb44323c6.yaml",
+                            "interval": 30,
+                            "lastEvaluation": "2026-10-12T16:35:19.747593442Z",
+                            "limit": 0,
+                            "name": "seed",
+                            "rules": [
+                                {
+                                    "alerts": [
+                                        {
+                                            "activeAt": "2026-10-12T15:33:49.74652175Z",
+                                            "annotations": {
+                                                "summary": "Always fires"
+                                            },
+                                            "labels": {
+                                                "alertname": "SeedAlwaysFiring",
+                                                "severity": "warning"
+                                            },
+                                            "state": "firing",
+                                            "value": "1e+00"
+                                        }
+                                    ],
+                                    "annotations": {
+                                        "summary": "Always fires"
+                                    },
+                                    "duration": 0,
+                                    "evaluationTime": 0.000265755,
+                                    "health": "ok",
+                                    "keepFiringFor": 0,
+                                    "labels": {
+                                        "severity": "warning"
+                                    },
+                                    "lastEvaluation": "2026-10-12T16:35:19.74761254Z",
+                                    "name": "SeedAlwaysFiring",
+                                    "query": "vector(1)",
+                                    "state": "firing",
+                                    "type": "alerting"
+                                }
+                            ]
+                        },
+                        {
+                            "evaluationTime": 0.000237945,
+                            "file": "/etc/prometheus/rules/prometheus-seed-rulefiles-0/prom-apps-failing-rule-0bc4fd3c-c534-4c73-97e1-bf0df657d18b.yaml",
+                            "interval": 30,
+                            "lastEvaluation": "2026-10-12T16:35:31.721026178Z",
+                            "limit": 0,
+                            "name": "seed-failing",
+                            "rules": [
+                                {
+                                    "alerts": [],
+                                    "annotations": {},
+                                    "duration": 0,
+                                    "evaluationTime": 0.000216456,
+                                    "health": "err",
+                                    "keepFiringFor": 0,
+                                    "labels": {},
+                                    "lastError": "found duplicate series for the match group {} on the right hand-side of the operation: [{__name__=\"up\", instance=\"prometheus-operated.monitoring.svc:9090\", job=\"scrapeConfig/prom-apps/static-self\"}, {__name__=\"up\", endpoint=\"https-metrics\", instance=\"198.51.100.10:10250\", job=\"kubelet\", namespace=\"kube-system\", node=\"freelens-addons-dev\", service=\"kubelet\"}];many-to-many matching not allowed: matching labels must be unique on one side",
+                                    "lastEvaluation": "2026-10-12T16:35:31.721044529Z",
+                                    "name": "SeedEvaluationFails",
+                                    "query": "up + on () up",
+                                    "state": "inactive",
+                                    "type": "alerting"
+                                }
+                            ]
+                        },
+                        {
+                            "evaluationTime": 0.000324371,
+                            "file": "/etc/prometheus/rules/prometheus-seed-rulefiles-0/prom-apps-pending-rule-4ba630e7-cc7b-48f4-82ed-070666c5b6e1.yaml",
+                            "interval": 30,
+                            "lastEvaluation": "2026-10-12T16:35:18.656203237Z",
+                            "limit": 0,
+                            "name": "seed-pending",
+                            "rules": [
+                                {
+                                    "alerts": [
+                                        {
+                                            "activeAt": "2026-10-12T16:35:18.655621318Z",
+                                            "annotations": {
+                                                "summary": "Pending for a year before it fires"
+                                            },
+                                            "labels": {
+                                                "alertname": "SeedPending",
+                                                "severity": "info"
+                                            },
+                                            "state": "pending",
+                                            "value": "1e+00"
+                                        }
+                                    ],
+                                    "annotations": {
+                                        "summary": "Pending for a year before it fires"
+                                    },
+                                    "duration": 31536000,
+                                    "evaluationTime": 0.000296067,
+                                    "health": "ok",
+                                    "keepFiringFor": 0,
+                                    "labels": {
+                                        "severity": "info"
+                                    },
+                                    "lastEvaluation": "2026-10-12T16:35:18.65622796Z",
+                                    "name": "SeedPending",
+                                    "query": "vector(1)",
+                                    "state": "pending",
+                                    "type": "alerting"
+                                }
+                            ]
+                        },
+                        {
+                            "evaluationTime": 0.000178671,
+                            "file": "/etc/prometheus/rules/prometheus-seed-rulefiles-0/prom-apps-recording-e49dfc01-c575-4367-945a-57457a508b51.yaml",
+                            "interval": 30,
+                            "lastEvaluation": "2026-10-12T16:35:27.017779768Z",
+                            "limit": 0,
+                            "name": "seed-recording",
+                            "rules": [
+                                {
+                                    "evaluationTime": 0.000158869,
+                                    "health": "ok",
+                                    "labels": {},
+                                    "lastEvaluation": "2026-10-12T16:35:27.017796412Z",
+                                    "name": "seed:up:sum",
+                                    "query": "sum(up)",
+                                    "type": "recording"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "status": "success"
+            }
+        }
+    ]
+}

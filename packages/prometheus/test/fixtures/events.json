@@ -1,0 +1,174 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "action": "SelectingConfigurationResources",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-12T16:34:09.925208Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "monitoring.coreos.com/v1",
+        "kind": "ServiceMonitor",
+        "name": "rejected",
+        "namespace": "monitoring",
+        "resourceVersion": "255123",
+        "uid": "89ac45c3-43e2-48e1-8544-34538fc4f36d"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "\"monitoring/rejected\" was rejected due to invalid configuration: endpoints[0]: scrapeTimeout \"30s\" greater than scrapeInterval \"10s\"",
+      "metadata": {
+        "creationTimestamp": "2026-10-12T16:34:09Z",
+        "name": "rejected.18ddd563763872e4",
+        "namespace": "monitoring",
+        "resourceVersion": "282279",
+        "selfLink": "/api/v1/namespaces/monitoring/events/rejected.18ddd563763872e4",
+        "uid": "66d21252-dc3b-4873-890e-6e0ea5debc99"
+      },
+      "reason": "InvalidConfiguration",
+      "related": {
+        "apiVersion": "monitoring.coreos.com/v1",
+        "kind": "Prometheus",
+        "name": "seed",
+        "namespace": "monitoring",
+        "resourceVersion": "282271",
+        "uid": "d61bbb27-4cc8-4622-a9e9-f04ddfe43b30"
+      },
+      "reportingComponent": "prometheus-controller",
+      "reportingInstance": "prometheus-controller-prometheus-operator-65bdfd9bf9-wlbsw",
+      "series": {
+        "count": 2,
+        "lastObservedTime": "2026-10-12T16:34:10.117584Z"
+      },
+      "source": {},
+      "type": "Warning"
+    },
+    {
+      "action": "SelectingConfigurationResources",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-12T16:34:10.225868Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "monitoring.coreos.com/v1",
+        "kind": "ServiceMonitor",
+        "name": "rejected",
+        "namespace": "monitoring",
+        "resourceVersion": "255123",
+        "uid": "89ac45c3-43e2-48e1-8544-34538fc4f36d"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "\"monitoring/rejected\" was rejected due to invalid configuration: endpoints[0]: scrapeTimeout \"30s\" greater than scrapeInterval \"10s\"",
+      "metadata": {
+        "creationTimestamp": "2026-10-12T16:34:10Z",
+        "name": "rejected.18ddd56388242002",
+        "namespace": "monitoring",
+        "resourceVersion": "282302",
+        "selfLink": "/api/v1/namespaces/monitoring/events/rejected.18ddd56388242002",
+        "uid": "fec10701-a338-4624-9dc9-16aaf8e3686d"
+      },
+      "reason": "InvalidConfiguration",
+      "related": {
+        "apiVersion": "monitoring.coreos.com/v1",
+        "kind": "Prometheus",
+        "name": "seed",
+        "namespace": "monitoring",
+        "resourceVersion": "282280",
+        "uid": "d61bbb27-4cc8-4622-a9e9-f04ddfe43b30"
+      },
+      "reportingComponent": "prometheus-controller",
+      "reportingInstance": "prometheus-controller-prometheus-operator-65bdfd9bf9-wlbsw",
+      "series": {
+        "count": 2,
+        "lastObservedTime": "2026-10-12T16:34:10.804662Z"
+      },
+      "source": {},
+      "type": "Warning"
+    },
+    {
+      "action": "SelectingPrometheusRuleResources",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-12T16:34:09.934008Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "monitoring.coreos.com/v1",
+        "kind": "PrometheusRule",
+        "name": "broken-rule",
+        "namespace": "prom-apps",
+        "resourceVersion": "222707",
+        "uid": "2eafe779-1e5a-4fbd-bfcf-b606044f2dff"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "PrometheusRule broken-rule was rejected due to invalid configuration: invalid rule",
+      "metadata": {
+        "creationTimestamp": "2026-10-12T16:34:09Z",
+        "name": "broken-rule.18ddd56376c58146",
+        "namespace": "prom-apps",
+        "resourceVersion": "282278",
+        "selfLink": "/api/v1/namespaces/prom-apps/events/broken-rule.18ddd56376c58146",
+        "uid": "56763727-dae9-4c35-8cf8-2dd42965cfe7"
+      },
+      "reason": "InvalidConfiguration",
+      "related": {
+        "apiVersion": "monitoring.coreos.com/v1",
+        "kind": "Prometheus",
+        "name": "seed",
+        "namespace": "monitoring",
+        "resourceVersion": "282271",
+        "uid": "d61bbb27-4cc8-4622-a9e9-f04ddfe43b30"
+      },
+      "reportingComponent": "prometheus-controller",
+      "reportingInstance": "prometheus-controller-prometheus-operator-65bdfd9bf9-wlbsw",
+      "series": {
+        "count": 2,
+        "lastObservedTime": "2026-10-12T16:34:10.117569Z"
+      },
+      "source": {},
+      "type": "Warning"
+    },
+    {
+      "action": "SelectingPrometheusRuleResources",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-12T16:34:10.228933Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "monitoring.coreos.com/v1",
+        "kind": "PrometheusRule",
+        "name": "broken-rule",
+        "namespace": "prom-apps",
+        "resourceVersion": "222707",
+        "uid": "2eafe779-1e5a-4fbd-bfcf-b606044f2dff"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "PrometheusRule broken-rule was rejected due to invalid configuration: invalid rule",
+      "metadata": {
+        "creationTimestamp": "2026-10-12T16:34:10Z",
+        "name": "broken-rule.18ddd5638852e299",
+        "namespace": "prom-apps",
+        "resourceVersion": "282303",
+        "selfLink": "/api/v1/namespaces/prom-apps/events/broken-rule.18ddd5638852e299",
+        "uid": "6268d752-743c-4738-999f-705c919b2791"
+      },
+      "reason": "InvalidConfiguration",
+      "related": {
+        "apiVersion": "monitoring.coreos.com/v1",
+        "kind": "Prometheus",
+        "name": "seed",
+        "namespace": "monitoring",
+        "resourceVersion": "282280",
+        "uid": "d61bbb27-4cc8-4622-a9e9-f04ddfe43b30"
+      },
+      "reportingComponent": "prometheus-controller",
+      "reportingInstance": "prometheus-controller-prometheus-operator-65bdfd9bf9-wlbsw",
+      "series": {
+        "count": 2,
+        "lastObservedTime": "2026-10-12T16:34:10.805386Z"
+      },
+      "source": {},
+      "type": "Warning"
+    }
+  ],
+  "kind": "List"
+}

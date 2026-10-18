@@ -1,0 +1,55 @@
+# node-exporter for node usage. Inside k3s-in-Docker its CPU and memory are the Docker host's.
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-exporter
+  namespace: monitoring
+  labels: { app.kubernetes.io/name: node-exporter }
+spec:
+  selector:
+    matchLabels: { app.kubernetes.io/name: node-exporter }
+  template:
+    metadata:
+      labels: { app.kubernetes.io/name: node-exporter }
+    spec:
+      hostNetwork: true
+      hostPID: true
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+      containers:
+        - name: node-exporter
+          image: quay.io/prometheus/node-exporter:v1.12.1
+          args:
+            - --path.rootfs=/host/root
+            - --path.sysfs=/host/sys
+            - --path.procfs=/host/proc
+            - --web.listen-address=:9100
+            - --no-collector.wifi
+            - --no-collector.hwmon
+            - --no-collector.btrfs
+            - --collector.netdev.device-exclude=^(veth.*|cni.*|flannel.*)$
+            # The default list less overlay, so the k3s container's root appears.
+            - --collector.filesystem.fs-types-exclude=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|erofs|sysfs|tracefs|tmpfs)$
+            # Every container's own overlay mount, and the files Docker binds into the k3s container.
+            - --collector.filesystem.mount-points-exclude=^/(dev|etc|proc|sys|run|var/lib/kubelet|var/lib/rancher/k3s/agent/containerd)($|/)
+          ports:
+            - name: metrics
+              containerPort: 9100
+          resources:
+            requests: { cpu: 10m, memory: 32Mi }
+            limits: { memory: 64Mi }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: [ALL] }
+          volumeMounts:
+            # No mount propagation: inside k3s-in-Docker / is not a shared mount.
+            - { name: root, mountPath: /host/root, readOnly: true }
+            - { name: sys, mountPath: /host/sys, readOnly: true }
+            - { name: proc, mountPath: /host/proc, readOnly: true }
+      volumes:
+        - { name: root, hostPath: { path: / } }
+        - { name: sys, hostPath: { path: /sys } }
+        - { name: proc, hostPath: { path: /proc } }

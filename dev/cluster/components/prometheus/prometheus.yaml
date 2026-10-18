@@ -1,0 +1,147 @@
+# A healthy Prometheus and its Alertmanager, one Prometheus whose image does not exist, and a paused agent.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+  namespace: monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: seed-prometheus
+rules:
+  - apiGroups: [""]
+    resources: [nodes, nodes/metrics, services, endpoints, pods]
+    verbs: [get, list, watch]
+  - apiGroups: [""]
+    resources: [configmaps]
+    verbs: [get]
+  - apiGroups: [discovery.k8s.io]
+    resources: [endpointslices]
+    verbs: [get, list, watch]
+  - apiGroups: [networking.k8s.io]
+    resources: [ingresses]
+    verbs: [get, list, watch]
+  - nonResourceURLs: [/metrics]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: seed-prometheus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: seed-prometheus
+subjects:
+  - kind: ServiceAccount
+    name: prometheus
+    namespace: monitoring
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: seed
+  namespace: monitoring
+spec:
+  # The operator v0.93.1 default.
+  version: v3.13.1
+  replicas: 1
+  serviceAccountName: prometheus
+  # As the TargetAllocator discovers; core v1 Endpoints is deprecated.
+  serviceDiscoveryRole: EndpointSlice
+  scrapeInterval: 30s
+  evaluationInterval: 30s
+  retention: 6h
+  # A volume, so the Usage page has a PVC to show.
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources:
+          requests: { storage: 1Gi }
+  resources:
+    requests: { cpu: 50m, memory: 192Mi }
+    limits: { memory: 768Mi }
+  serviceMonitorSelector:
+    matchLabels: { scraper: prometheus }
+  serviceMonitorNamespaceSelector:
+    matchLabels: { seed.freelens/prometheus: "true" }
+  podMonitorSelector:
+    matchLabels: { scraper: prometheus }
+  podMonitorNamespaceSelector:
+    matchLabels: { seed.freelens/prometheus: "true" }
+  scrapeConfigSelector:
+    matchLabels: { scraper: prometheus }
+  scrapeConfigNamespaceSelector:
+    matchLabels: { seed.freelens/prometheus: "true" }
+  ruleSelector:
+    matchLabels: { rules: prometheus }
+  ruleNamespaceSelector:
+    matchLabels: { seed.freelens/prometheus: "true" }
+  alerting:
+    alertmanagers:
+      - namespace: monitoring
+        name: alertmanager-operated
+        port: web
+      # No such Service: this entry discovers no Alertmanager.
+      - namespace: monitoring
+        name: alertmanager
+        port: web
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Alertmanager
+metadata:
+  name: seed
+  namespace: monitoring
+spec:
+  # The operator v0.93.1 default.
+  version: v0.33.1
+  replicas: 1
+  resources:
+    requests: { cpu: 10m, memory: 32Mi }
+    limits: { memory: 64Mi }
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: no-image
+  namespace: prom-broken
+spec:
+  version: v3.13.1
+  image: quay.io/prometheus/prometheus-freelens-missing:v3.13.1
+  replicas: 1
+  resources:
+    requests: { cpu: 10m, memory: 32Mi }
+  serviceMonitorSelector:
+    matchLabels: { scraper: none }
+  routePrefix: /prom
+  # Fake credentials it never sends, for the fixture export to prove it removes them.
+  remoteWrite:
+    - url: https://remote.example.test/api/v1/write?tenant=seed
+      headers: { X-Scope-OrgID: seed }
+      bearerToken: seed-fake-token
+      proxyUrl: http://seed:fake@proxy.example.test:3128
+  remoteRead:
+    - url: https://remote.example.test/api/v1/read?tenant=seed
+      headers: { X-Scope-OrgID: seed }
+      bearerToken: seed-fake-token
+  apiserverConfig:
+    host: https://kubernetes.default.svc
+    bearerToken: seed-fake-token
+---
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: PrometheusAgent
+metadata:
+  name: agent
+  namespace: monitoring
+spec:
+  paused: true
+  version: v3.13.1
+  serviceAccountName: prometheus
+  remoteWrite:
+    - url: https://remote.example.test/api/v1/write?tenant=seed
+      headers: { X-Scope-OrgID: seed }
+      bearerToken: seed-fake-token
+  serviceMonitorSelector:
+    matchLabels: { scraper: agent }

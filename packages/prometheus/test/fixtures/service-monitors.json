@@ -1,0 +1,449 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "ServiceMonitor",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 1,
+        "labels": {
+          "scraper": "prometheus"
+        },
+        "name": "down-path",
+        "namespace": "monitoring",
+        "resourceVersion": "176087",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/monitoring/servicemonitors/down-path",
+        "uid": "8deaa923-6e6f-415c-b667-15e559790c9f"
+      },
+      "spec": {
+        "endpoints": [
+          {
+            "path": "/does-not-exist",
+            "port": "web"
+          }
+        ],
+        "selector": {
+          "matchLabels": {
+            "operated-prometheus": "true"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "ServiceMonitor",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 2,
+        "labels": {
+          "scraper": "prometheus"
+        },
+        "name": "kubelet",
+        "namespace": "monitoring",
+        "resourceVersion": "178907",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/monitoring/servicemonitors/kubelet",
+        "uid": "60043e91-a858-4a27-9d46-943db67c894d"
+      },
+      "spec": {
+        "endpoints": [
+          {
+            "bearerTokenFile": "/var/run/secrets/kubernetes.io/serviceaccount/token",
+            "honorLabels": true,
+            "honorTimestamps": false,
+            "metricRelabelings": [
+              {
+                "action": "drop",
+                "regex": "container_tasks_state|container_network_(tcp|udp)_usage_total|container_cpu_load_average_10s",
+                "sourceLabels": [
+                  "__name__"
+                ]
+              },
+              {
+                "action": "drop",
+                "regex": "container_spec_.*|container_blkio_device_usage_total|container_pressure_.*",
+                "sourceLabels": [
+                  "__name__"
+                ]
+              },
+              {
+                "action": "drop",
+                "regex": "container_memory_(failures|failcnt)_total|container_(file_descriptors|sockets|threads|threads_max|processes|ulimits_soft)",
+                "sourceLabels": [
+                  "__name__"
+                ]
+              },
+              {
+                "action": "drop",
+                "regex": "container_fs_(inodes|io|limit|read_seconds|write_seconds|reads_merged|writes_merged|sector).*",
+                "sourceLabels": [
+                  "__name__"
+                ]
+              }
+            ],
+            "path": "/metrics/cadvisor",
+            "port": "https-metrics",
+            "scheme": "https",
+            "tlsConfig": {
+              "insecureSkipVerify": true
+            }
+          },
+          {
+            "bearerTokenFile": "/var/run/secrets/kubernetes.io/serviceaccount/token",
+            "honorLabels": true,
+            "metricRelabelings": [
+              {
+                "action": "keep",
+                "regex": "kubelet_volume_stats_(used|capacity|available)_bytes",
+                "sourceLabels": [
+                  "__name__"
+                ]
+              }
+            ],
+            "path": "/metrics",
+            "port": "https-metrics",
+            "scheme": "https",
+            "tlsConfig": {
+              "insecureSkipVerify": true
+            }
+          }
+        ],
+        "namespaceSelector": {
+          "matchNames": [
+            "kube-system"
+          ]
+        },
+        "selector": {
+          "matchLabels": {
+            "app.kubernetes.io/name": "kubelet"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "ServiceMonitor",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 1,
+        "labels": {
+          "scraper": "prometheus"
+        },
+        "name": "operator",
+        "namespace": "monitoring",
+        "resourceVersion": "176084",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/monitoring/servicemonitors/operator",
+        "uid": "ad97cf03-d899-43aa-98c8-487eda66a172"
+      },
+      "spec": {
+        "endpoints": [
+          {
+            "port": "http"
+          }
+        ],
+        "namespaceSelector": {
+          "matchNames": [
+            "prometheus-operator"
+          ]
+        },
+        "selector": {
+          "matchLabels": {
+            "app.kubernetes.io/name": "prometheus-operator"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "ServiceMonitor",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T18:11:23Z",
+        "generation": 1,
+        "labels": {
+          "scraper": "agent"
+        },
+        "name": "paused-only",
+        "namespace": "monitoring",
+        "resourceVersion": "319533",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/monitoring/servicemonitors/paused-only",
+        "uid": "2609b63f-3590-470b-a53b-508df8ab7ebd"
+      },
+      "spec": {
+        "endpoints": [
+          {
+            "port": "web"
+          }
+        ],
+        "selector": {
+          "matchLabels": {
+            "operated-prometheus": "true"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "ServiceMonitor",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 1,
+        "labels": {
+          "scraper": "prometheus"
+        },
+        "name": "prom-self",
+        "namespace": "monitoring",
+        "resourceVersion": "176083",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/monitoring/servicemonitors/prom-self",
+        "uid": "5d358b6b-c7b1-44d7-9b08-b9f683c1c1f1"
+      },
+      "spec": {
+        "endpoints": [
+          {
+            "port": "web"
+          }
+        ],
+        "selector": {
+          "matchLabels": {
+            "operated-prometheus": "true"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "ServiceMonitor",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 1,
+        "labels": {
+          "scraper": "prometheus"
+        },
+        "name": "rejected",
+        "namespace": "monitoring",
+        "resourceVersion": "312970",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/monitoring/servicemonitors/rejected",
+        "uid": "89ac45c3-43e2-48e1-8544-34538fc4f36d"
+      },
+      "spec": {
+        "endpoints": [
+          {
+            "interval": "10s",
+            "port": "web",
+            "scrapeTimeout": "30s"
+          }
+        ],
+        "selector": {
+          "matchLabels": {
+            "operated-prometheus": "true"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "ServiceMonitor",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T16:34:10Z",
+        "generation": 1,
+        "labels": {
+          "scraper": "prometheus"
+        },
+        "name": "no-endpoints",
+        "namespace": "prom-apps",
+        "resourceVersion": "282301",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/prom-apps/servicemonitors/no-endpoints",
+        "uid": "557e71a6-4795-467f-aada-458e654c3e6b"
+      },
+      "spec": {
+        "endpoints": [
+          {
+            "port": "web"
+          }
+        ],
+        "selector": {
+          "matchLabels": {
+            "app": "idle"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "ServiceMonitor",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 1,
+        "labels": {
+          "scraper": "prometheus"
+        },
+        "name": "no-service",
+        "namespace": "prom-apps",
+        "resourceVersion": "176097",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/prom-apps/servicemonitors/no-service",
+        "uid": "dde68387-3fd4-41cb-9d70-908951c1ccc4"
+      },
+      "spec": {
+        "endpoints": [
+          {
+            "port": "web"
+          }
+        ],
+        "selector": {
+          "matchLabels": {
+            "app": "ghost"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "ServiceMonitor",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 2,
+        "labels": {
+          "scraper": "nobody"
+        },
+        "name": "orphan",
+        "namespace": "prom-apps",
+        "resourceVersion": "222407",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/prom-apps/servicemonitors/orphan",
+        "uid": "6f5a46b7-b895-4678-b8f3-49afbeb51e74"
+      },
+      "spec": {
+        "endpoints": [
+          {
+            "params": {
+              "token": [
+                "redacted-by-fixture-export"
+              ]
+            },
+            "port": "web"
+          }
+        ],
+        "namespaceSelector": {
+          "matchNames": [
+            "monitoring"
+          ]
+        },
+        "selector": {
+          "matchLabels": {
+            "operated-prometheus": "true"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "ServiceMonitor",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 1,
+        "labels": {
+          "scraper": "otel"
+        },
+        "name": "otel-self",
+        "namespace": "prom-apps",
+        "resourceVersion": "176106",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/prom-apps/servicemonitors/otel-self",
+        "uid": "1d029a1f-d573-4e68-8e11-c7a74bca3437"
+      },
+      "spec": {
+        "endpoints": [
+          {
+            "port": "monitoring"
+          }
+        ],
+        "namespaceSelector": {
+          "matchNames": [
+            "otel-collectors"
+          ]
+        },
+        "selector": {
+          "matchLabels": {
+            "app.kubernetes.io/name": "scraper-collector-monitoring"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "ServiceMonitor",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 1,
+        "labels": {
+          "scraper": "prometheus"
+        },
+        "name": "wrong-port",
+        "namespace": "prom-apps",
+        "resourceVersion": "176099",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/prom-apps/servicemonitors/wrong-port",
+        "uid": "f2058d74-4e91-4f99-b45a-f3b78d3b10b8"
+      },
+      "spec": {
+        "endpoints": [
+          {
+            "port": "metrics"
+          }
+        ],
+        "namespaceSelector": {
+          "matchNames": [
+            "monitoring"
+          ]
+        },
+        "selector": {
+          "matchLabels": {
+            "operated-prometheus": "true"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "ServiceMonitor",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 1,
+        "labels": {
+          "scraper": "prometheus"
+        },
+        "name": "excluded",
+        "namespace": "prom-outside",
+        "resourceVersion": "176100",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/prom-outside/servicemonitors/excluded",
+        "uid": "7aecf143-615e-495e-98c1-ae4645164502"
+      },
+      "spec": {
+        "endpoints": [
+          {
+            "port": "web"
+          }
+        ],
+        "namespaceSelector": {
+          "matchNames": [
+            "monitoring"
+          ]
+        },
+        "selector": {
+          "matchLabels": {
+            "operated-prometheus": "true"
+          }
+        }
+      }
+    }
+  ],
+  "kind": "List"
+}

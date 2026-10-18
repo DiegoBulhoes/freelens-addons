@@ -1,0 +1,228 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "Prometheus",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 2,
+        "name": "seed",
+        "namespace": "monitoring",
+        "resourceVersion": "282280",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/monitoring/prometheuses/seed",
+        "uid": "d61bbb27-4cc8-4622-a9e9-f04ddfe43b30"
+      },
+      "spec": {
+        "alerting": {
+          "alertmanagers": [
+            {
+              "name": "alertmanager-operated",
+              "namespace": "monitoring",
+              "port": "web"
+            },
+            {
+              "name": "alertmanager",
+              "namespace": "monitoring",
+              "port": "web"
+            }
+          ]
+        },
+        "evaluationInterval": "30s",
+        "podMonitorNamespaceSelector": {
+          "matchLabels": {
+            "seed.freelens/prometheus": "true"
+          }
+        },
+        "podMonitorSelector": {
+          "matchLabels": {
+            "scraper": "prometheus"
+          }
+        },
+        "portName": "web",
+        "replicas": 1,
+        "resources": {
+          "limits": {
+            "memory": "768Mi"
+          },
+          "requests": {
+            "cpu": "50m",
+            "memory": "192Mi"
+          }
+        },
+        "retention": "6h",
+        "ruleNamespaceSelector": {
+          "matchLabels": {
+            "seed.freelens/prometheus": "true"
+          }
+        },
+        "ruleSelector": {
+          "matchLabels": {
+            "rules": "prometheus"
+          }
+        },
+        "scrapeConfigNamespaceSelector": {
+          "matchLabels": {
+            "seed.freelens/prometheus": "true"
+          }
+        },
+        "scrapeConfigSelector": {
+          "matchLabels": {
+            "scraper": "prometheus"
+          }
+        },
+        "scrapeInterval": "30s",
+        "serviceAccountName": "prometheus",
+        "serviceDiscoveryRole": "EndpointSlice",
+        "serviceMonitorNamespaceSelector": {
+          "matchLabels": {
+            "seed.freelens/prometheus": "true"
+          }
+        },
+        "serviceMonitorSelector": {
+          "matchLabels": {
+            "scraper": "prometheus"
+          }
+        },
+        "shards": 1,
+        "storage": {
+          "volumeClaimTemplate": {
+            "spec": {
+              "accessModes": [
+                "ReadWriteOnce"
+              ],
+              "resources": {
+                "requests": {
+                  "storage": "1Gi"
+                }
+              }
+            }
+          }
+        },
+        "version": "v3.13.1"
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-12T15:33:53Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "",
+            "status": "True",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T13:50:43Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "",
+            "status": "True",
+            "type": "Reconciled"
+          }
+        ],
+        "paused": false,
+        "replicas": 1,
+        "selector": "app.kubernetes.io/instance=seed,app.kubernetes.io/managed-by=prometheus-operator,app.kubernetes.io/name=prometheus,operator.prometheus.io/name=seed,prometheus=seed",
+        "shardStatuses": [
+          {
+            "availableReplicas": 1,
+            "replicas": 1,
+            "shardID": "0",
+            "unavailableReplicas": 0,
+            "updatedReplicas": 1
+          }
+        ],
+        "shards": 1,
+        "unavailableReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "Prometheus",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 2,
+        "name": "no-image",
+        "namespace": "prom-broken",
+        "resourceVersion": "263887",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/prom-broken/prometheuses/no-image",
+        "uid": "45137213-d94e-435b-a2ae-092e638bd119"
+      },
+      "spec": {
+        "apiserverConfig": {
+          "host": "https://kubernetes.default.svc"
+        },
+        "evaluationInterval": "30s",
+        "image": "quay.io/prometheus/prometheus-freelens-missing:v3.13.1",
+        "portName": "web",
+        "remoteRead": [
+          {
+            "url": "https://redacted-by-fixture-export.example.test/api/v1/read"
+          }
+        ],
+        "remoteWrite": [
+          {
+            "url": "https://redacted-by-fixture-export.example.test/api/v1/write"
+          }
+        ],
+        "replicas": 1,
+        "resources": {
+          "requests": {
+            "cpu": "10m",
+            "memory": "32Mi"
+          }
+        },
+        "routePrefix": "/prom",
+        "scrapeInterval": "30s",
+        "serviceMonitorSelector": {
+          "matchLabels": {
+            "scraper": "none"
+          }
+        },
+        "shards": 1,
+        "version": "v3.13.1"
+      },
+      "status": {
+        "availableReplicas": 0,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-12T02:13:51Z",
+            "message": "shard 0: pod prometheus-no-image-0: containers with unready status: [prometheus]",
+            "observedGeneration": 2,
+            "reason": "NoPodReady",
+            "status": "False",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T15:33:33Z",
+            "message": "No ServiceMonitor, PodMonitor, Probe, ScrapeConfig, and PrometheusRule have been selected.",
+            "observedGeneration": 2,
+            "reason": "NoSelectedResources",
+            "status": "True",
+            "type": "Reconciled"
+          }
+        ],
+        "paused": false,
+        "replicas": 1,
+        "selector": "app.kubernetes.io/instance=no-image,app.kubernetes.io/managed-by=prometheus-operator,app.kubernetes.io/name=prometheus,operator.prometheus.io/name=no-image,prometheus=no-image",
+        "shardStatuses": [
+          {
+            "availableReplicas": 0,
+            "replicas": 1,
+            "shardID": "0",
+            "unavailableReplicas": 1,
+            "updatedReplicas": 1
+          }
+        ],
+        "shards": 1,
+        "unavailableReplicas": 1,
+        "updatedReplicas": 1
+      }
+    }
+  ],
+  "kind": "List"
+}

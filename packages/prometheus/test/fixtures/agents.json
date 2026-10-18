@@ -1,0 +1,74 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "monitoring.coreos.com/v1alpha1",
+      "kind": "PrometheusAgent",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 2,
+        "name": "agent",
+        "namespace": "monitoring",
+        "resourceVersion": "227434",
+        "selfLink": "/apis/monitoring.coreos.com/v1alpha1/namespaces/monitoring/prometheusagents/agent",
+        "uid": "10429fbc-2473-4c81-a994-ef6adf78a994"
+      },
+      "spec": {
+        "paused": true,
+        "portName": "web",
+        "remoteWrite": [
+          {
+            "url": "https://redacted-by-fixture-export.example.test/api/v1/write"
+          }
+        ],
+        "scrapeInterval": "30s",
+        "serviceAccountName": "prometheus",
+        "serviceMonitorSelector": {
+          "matchLabels": {
+            "scraper": "agent"
+          }
+        },
+        "shards": 1,
+        "version": "v3.13.1"
+      },
+      "status": {
+        "availableReplicas": 0,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-12T02:13:51Z",
+            "message": "shard 0: statefulset monitoring/prom-agent-agent not found",
+            "observedGeneration": 2,
+            "reason": "StatefulSetNotFound",
+            "status": "False",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T02:17:45Z",
+            "message": "",
+            "observedGeneration": 2,
+            "reason": "",
+            "status": "True",
+            "type": "Reconciled"
+          }
+        ],
+        "paused": true,
+        "replicas": 0,
+        "selector": "app.kubernetes.io/instance=agent,app.kubernetes.io/managed-by=prometheus-operator,app.kubernetes.io/name=prometheus-agent,operator.prometheus.io/name=agent",
+        "shardStatuses": [
+          {
+            "availableReplicas": 0,
+            "replicas": 0,
+            "shardID": "0",
+            "unavailableReplicas": 0,
+            "updatedReplicas": 0
+          }
+        ],
+        "shards": 1,
+        "unavailableReplicas": 0,
+        "updatedReplicas": 0
+      }
+    }
+  ],
+  "kind": "List"
+}

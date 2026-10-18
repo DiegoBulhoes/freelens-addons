@@ -1,0 +1,26 @@
+{
+    "items": [
+        {
+            "namespace": "monitoring",
+            "pod": "prometheus-seed-0",
+            "scrapePools": {
+                "data": {
+                    "scrapePools": [
+                        "podMonitor/monitoring/node-exporter/0",
+                        "podMonitor/prom-apps/prom-pods/0",
+                        "scrapeConfig/prom-apps/static-self",
+                        "serviceMonitor/monitoring/down-path/0",
+                        "serviceMonitor/monitoring/kubelet/0",
+                        "serviceMonitor/monitoring/kubelet/1",
+                        "serviceMonitor/monitoring/operator/0",
+                        "serviceMonitor/monitoring/prom-self/0",
+                        "serviceMonitor/prom-apps/no-endpoints/0",
+                        "serviceMonitor/prom-apps/no-service/0",
+                        "serviceMonitor/prom-apps/wrong-port/0"
+                    ]
+                },
+                "status": "success"
+            }
+        }
+    ]
+}

@@ -1,0 +1,101 @@
+# Rules in each state the Rules page ranks. The seed Prometheus selects rules: prometheus.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: always-firing
+  namespace: prom-apps
+  labels: { rules: prometheus }
+spec:
+  groups:
+    - name: seed
+      rules:
+        - alert: SeedAlwaysFiring
+          expr: vector(1)
+          for: 0s
+          labels: { severity: warning }
+          annotations: { summary: Always fires }
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: recording
+  namespace: prom-apps
+  labels: { rules: prometheus }
+spec:
+  groups:
+    - name: seed-recording
+      rules:
+        - record: seed:up:sum
+          expr: sum(up)
+---
+# Selected by no instance, as when rules are evaluated elsewhere.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: unselected-rule
+  namespace: prom-apps
+  labels: { rules: mimir }
+spec:
+  groups:
+    - name: elsewhere
+      rules:
+        - alert: EvaluatedElsewhere
+          expr: vector(1)
+---
+# No admission webhook: the operator rejects it with an InvalidConfiguration Event.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: broken-rule
+  namespace: prom-apps
+  labels: { rules: prometheus }
+spec:
+  groups:
+    - name: broken
+      rules:
+        - alert: NeverParses
+          expr: sum(
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: excluded-rule
+  namespace: prom-outside
+  labels: { rules: prometheus }
+spec:
+  groups:
+    - name: outside
+      rules:
+        - alert: OutsideNamespace
+          expr: vector(1)
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: pending-rule
+  namespace: prom-apps
+  labels: { rules: prometheus }
+spec:
+  groups:
+    - name: seed-pending
+      rules:
+        - alert: SeedPending
+          expr: vector(1)
+          # Longer than any dev cluster lives, so it never fires.
+          for: 1y
+          labels: { severity: info }
+          annotations: { summary: Pending for a year before it fires }
+---
+# Parses, but fails every evaluation: up has more than one series on each side.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: failing-rule
+  namespace: prom-apps
+  labels: { rules: prometheus }
+spec:
+  groups:
+    - name: seed-failing
+      rules:
+        - alert: SeedEvaluationFails
+          expr: up + on() up

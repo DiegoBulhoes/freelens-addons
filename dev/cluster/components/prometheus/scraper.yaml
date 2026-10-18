@@ -1,0 +1,32 @@
+# A collector whose TargetAllocator hands it the monitors labelled scraper: otel, a common lab setup.
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: scraper
+  namespace: otel-collectors
+spec:
+  mode: statefulset
+  replicas: 1
+  resources:
+    requests: { cpu: 10m, memory: 64Mi }
+  targetAllocator:
+    enabled: true
+    resources:
+      requests: { cpu: 10m, memory: 32Mi }
+    prometheusCR:
+      enabled: true
+      scrapeInterval: 30s
+      serviceMonitorSelector:
+        matchLabels: { scraper: otel }
+      podMonitorSelector:
+        matchLabels: { scraper: otel }
+  config:
+    receivers:
+      prometheus:
+        config:
+          scrape_configs: []
+    exporters:
+      debug: {}
+    service:
+      pipelines:
+        metrics: { receivers: [prometheus], exporters: [debug] }

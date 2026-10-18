@@ -1,0 +1,899 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {
+          "objectset.rio.cattle.io/id": "",
+          "objectset.rio.cattle.io/owner-gvk": "k3s.cattle.io/v1, Kind=Addon",
+          "objectset.rio.cattle.io/owner-name": "coredns",
+          "objectset.rio.cattle.io/owner-namespace": "kube-system",
+          "prometheus.io/port": "9153",
+          "prometheus.io/scrape": "true"
+        },
+        "creationTimestamp": "2026-10-04T20:27:57Z",
+        "labels": {
+          "k8s-app": "kube-dns",
+          "kubernetes.io/cluster-service": "true",
+          "kubernetes.io/name": "CoreDNS",
+          "objectset.rio.cattle.io/hash": "bce283298811743a0386ab510f2f67ef74240c57"
+        },
+        "name": "kube-dns",
+        "namespace": "kube-system",
+        "resourceVersion": "378",
+        "selfLink": "/api/v1/namespaces/kube-system/services/kube-dns",
+        "uid": "13c898c0-f5fa-455d-a605-8e370c90c1cc"
+      },
+      "spec": {
+        "clusterIP": "198.51.100.10",
+        "clusterIPs": [
+          "198.51.100.10"
+        ],
+        "internalTrafficPolicy": "Cluster",
+        "ipFamilies": [
+          "IPv4"
+        ],
+        "ipFamilyPolicy": "SingleStack",
+        "ports": [
+          {
+            "name": "dns",
+            "port": 53,
+            "protocol": "UDP",
+            "targetPort": 53
+          },
+          {
+            "name": "dns-tcp",
+            "port": 53,
+            "protocol": "TCP",
+            "targetPort": 53
+          },
+          {
+            "name": "metrics",
+            "port": 9153,
+            "protocol": "TCP",
+            "targetPort": 9153
+          }
+        ],
+        "selector": {
+          "k8s-app": "kube-dns"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "creationTimestamp": "2026-10-12T02:13:39Z",
+        "labels": {
+          "app.kubernetes.io/managed-by": "prometheus-operator",
+          "app.kubernetes.io/name": "kubelet",
+          "k8s-app": "kubelet"
+        },
+        "name": "kubelet",
+        "namespace": "kube-system",
+        "resourceVersion": "175930",
+        "selfLink": "/api/v1/namespaces/kube-system/services/kubelet",
+        "uid": "2409cce2-c966-41f4-86f1-cc4960709751"
+      },
+      "spec": {
+        "clusterIP": "None",
+        "clusterIPs": [
+          "None"
+        ],
+        "internalTrafficPolicy": "Cluster",
+        "ipFamilies": [
+          "IPv4",
+          "IPv6"
+        ],
+        "ipFamilyPolicy": "RequireDualStack",
+        "ports": [
+          {
+            "name": "https-metrics",
+            "port": 10250,
+            "protocol": "TCP",
+            "targetPort": 10250
+          },
+          {
+            "name": "cadvisor",
+            "port": 4194,
+            "protocol": "TCP",
+            "targetPort": 4194
+          },
+          {
+            "name": "http-metrics",
+            "port": 10255,
+            "protocol": "TCP",
+            "targetPort": 10255
+          }
+        ],
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "labels": {
+          "app.kubernetes.io/managed-by": "prometheus-operator",
+          "managed-by": "prometheus-operator",
+          "operated-alertmanager": "true"
+        },
+        "name": "alertmanager-operated",
+        "namespace": "monitoring",
+        "ownerReferences": [
+          {
+            "apiVersion": "monitoring.coreos.com/v1",
+            "kind": "Alertmanager",
+            "name": "seed",
+            "uid": "5405e8f3-4cff-4d0d-86d5-71ac68732915"
+          }
+        ],
+        "resourceVersion": "176061",
+        "selfLink": "/api/v1/namespaces/monitoring/services/alertmanager-operated",
+        "uid": "e4e24a96-16b2-4115-a5d9-6d1e04a3b1e5"
+      },
+      "spec": {
+        "clusterIP": "None",
+        "clusterIPs": [
+          "None"
+        ],
+        "internalTrafficPolicy": "Cluster",
+        "ipFamilies": [
+          "IPv4"
+        ],
+        "ipFamilyPolicy": "SingleStack",
+        "ports": [
+          {
+            "name": "web",
+            "port": 9093,
+            "protocol": "TCP",
+            "targetPort": "web"
+          },
+          {
+            "name": "tcp-mesh",
+            "port": 9094,
+            "protocol": "TCP",
+            "targetPort": "mesh-tcp"
+          },
+          {
+            "name": "udp-mesh",
+            "port": 9094,
+            "protocol": "UDP",
+            "targetPort": "mesh-udp"
+          }
+        ],
+        "publishNotReadyAddresses": true,
+        "selector": {
+          "app.kubernetes.io/name": "alertmanager"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "labels": {
+          "app.kubernetes.io/managed-by": "prometheus-operator",
+          "managed-by": "prometheus-operator",
+          "operated-prometheus": "true"
+        },
+        "name": "prometheus-operated",
+        "namespace": "monitoring",
+        "ownerReferences": [
+          {
+            "apiVersion": "monitoring.coreos.com/v1",
+            "kind": "Prometheus",
+            "name": "seed",
+            "uid": "d61bbb27-4cc8-4622-a9e9-f04ddfe43b30"
+          }
+        ],
+        "resourceVersion": "176072",
+        "selfLink": "/api/v1/namespaces/monitoring/services/prometheus-operated",
+        "uid": "056e65a4-7c61-4e09-b5c5-a3f0c78515e2"
+      },
+      "spec": {
+        "clusterIP": "None",
+        "clusterIPs": [
+          "None"
+        ],
+        "internalTrafficPolicy": "Cluster",
+        "ipFamilies": [
+          "IPv4"
+        ],
+        "ipFamilyPolicy": "SingleStack",
+        "ports": [
+          {
+            "name": "web",
+            "port": 9090,
+            "protocol": "TCP",
+            "targetPort": "web"
+          }
+        ],
+        "selector": {
+          "app.kubernetes.io/name": "prometheus"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.broken",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "broken-collector",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest",
+          "operator.opentelemetry.io/collector-service-type": "base"
+        },
+        "name": "broken-collector",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "opentelemetry.io/v1beta1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "OpenTelemetryCollector",
+            "name": "broken",
+            "uid": "2297fee9-7b5f-459f-9a53-c6aa8aa0811a"
+          }
+        ],
+        "resourceVersion": "91380",
+        "selfLink": "/api/v1/namespaces/otel-collectors/services/broken-collector",
+        "uid": "a8c35c6c-af27-46ca-a5f9-f8fefb182d3a"
+      },
+      "spec": {
+        "clusterIP": "198.51.100.11",
+        "clusterIPs": [
+          "198.51.100.11"
+        ],
+        "internalTrafficPolicy": "Cluster",
+        "ipFamilies": [
+          "IPv4"
+        ],
+        "ipFamilyPolicy": "SingleStack",
+        "ports": [
+          {
+            "appProtocol": "grpc",
+            "name": "otlp-grpc",
+            "port": 4317,
+            "protocol": "TCP",
+            "targetPort": 4317
+          }
+        ],
+        "selector": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.broken",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/part-of": "opentelemetry"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {
+          "service.beta.openshift.io/serving-cert-secret-name": "broken-collector-headless-tls"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.broken",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "broken-collector",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest",
+          "operator.opentelemetry.io/collector-headless-service": "Exists",
+          "operator.opentelemetry.io/collector-service-type": "headless"
+        },
+        "name": "broken-collector-headless",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "opentelemetry.io/v1beta1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "OpenTelemetryCollector",
+            "name": "broken",
+            "uid": "2297fee9-7b5f-459f-9a53-c6aa8aa0811a"
+          }
+        ],
+        "resourceVersion": "91386",
+        "selfLink": "/api/v1/namespaces/otel-collectors/services/broken-collector-headless",
+        "uid": "ead04964-ea46-470e-a2ad-de1a2aa58a43"
+      },
+      "spec": {
+        "clusterIP": "None",
+        "clusterIPs": [
+          "None"
+        ],
+        "internalTrafficPolicy": "Cluster",
+        "ipFamilies": [
+          "IPv4"
+        ],
+        "ipFamilyPolicy": "SingleStack",
+        "ports": [
+          {
+            "appProtocol": "grpc",
+            "name": "otlp-grpc",
+            "port": 4317,
+            "protocol": "TCP",
+            "targetPort": 4317
+          }
+        ],
+        "selector": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.broken",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/part-of": "opentelemetry"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.broken",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "broken-collector-monitoring",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest",
+          "operator.opentelemetry.io/collector-monitoring-service": "Exists",
+          "operator.opentelemetry.io/collector-service-type": "monitoring"
+        },
+        "name": "broken-collector-monitoring",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "opentelemetry.io/v1beta1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "OpenTelemetryCollector",
+            "name": "broken",
+            "uid": "2297fee9-7b5f-459f-9a53-c6aa8aa0811a"
+          }
+        ],
+        "resourceVersion": "91394",
+        "selfLink": "/api/v1/namespaces/otel-collectors/services/broken-collector-monitoring",
+        "uid": "48cce79d-cb16-4880-8ae3-743680e2ba2d"
+      },
+      "spec": {
+        "clusterIP": "198.51.100.12",
+        "clusterIPs": [
+          "198.51.100.12"
+        ],
+        "internalTrafficPolicy": "Cluster",
+        "ipFamilies": [
+          "IPv4"
+        ],
+        "ipFamilyPolicy": "SingleStack",
+        "ports": [
+          {
+            "name": "monitoring",
+            "port": 8888,
+            "protocol": "TCP",
+            "targetPort": 8888
+          }
+        ],
+        "selector": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.broken",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/part-of": "opentelemetry"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.gateway",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "gateway-collector",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest",
+          "operator.opentelemetry.io/collector-service-type": "base"
+        },
+        "name": "gateway-collector",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "opentelemetry.io/v1beta1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "OpenTelemetryCollector",
+            "name": "gateway",
+            "uid": "216d5914-1d08-4759-8ee9-8b4c1a114f4d"
+          }
+        ],
+        "resourceVersion": "91342",
+        "selfLink": "/api/v1/namespaces/otel-collectors/services/gateway-collector",
+        "uid": "3fc520b1-f1e2-44fe-94d0-35a10e950e01"
+      },
+      "spec": {
+        "clusterIP": "198.51.100.13",
+        "clusterIPs": [
+          "198.51.100.13"
+        ],
+        "internalTrafficPolicy": "Cluster",
+        "ipFamilies": [
+          "IPv4"
+        ],
+        "ipFamilyPolicy": "SingleStack",
+        "ports": [
+          {
+            "appProtocol": "grpc",
+            "name": "otlp-grpc",
+            "port": 4317,
+            "protocol": "TCP",
+            "targetPort": 4317
+          },
+          {
+            "appProtocol": "http",
+            "name": "otlp-http",
+            "port": 4318,
+            "protocol": "TCP",
+            "targetPort": 4318
+          }
+        ],
+        "selector": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.gateway",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/part-of": "opentelemetry"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {
+          "service.beta.openshift.io/serving-cert-secret-name": "gateway-collector-headless-tls"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.gateway",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "gateway-collector",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest",
+          "operator.opentelemetry.io/collector-headless-service": "Exists",
+          "operator.opentelemetry.io/collector-service-type": "headless"
+        },
+        "name": "gateway-collector-headless",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "opentelemetry.io/v1beta1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "OpenTelemetryCollector",
+            "name": "gateway",
+            "uid": "216d5914-1d08-4759-8ee9-8b4c1a114f4d"
+          }
+        ],
+        "resourceVersion": "91346",
+        "selfLink": "/api/v1/namespaces/otel-collectors/services/gateway-collector-headless",
+        "uid": "e54906df-b7b4-48c8-909e-dc2581882389"
+      },
+      "spec": {
+        "clusterIP": "None",
+        "clusterIPs": [
+          "None"
+        ],
+        "internalTrafficPolicy": "Cluster",
+        "ipFamilies": [
+          "IPv4"
+        ],
+        "ipFamilyPolicy": "SingleStack",
+        "ports": [
+          {
+            "appProtocol": "grpc",
+            "name": "otlp-grpc",
+            "port": 4317,
+            "protocol": "TCP",
+            "targetPort": 4317
+          },
+          {
+            "appProtocol": "http",
+            "name": "otlp-http",
+            "port": 4318,
+            "protocol": "TCP",
+            "targetPort": 4318
+          }
+        ],
+        "selector": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.gateway",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/part-of": "opentelemetry"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.gateway",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "gateway-collector-monitoring",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest",
+          "operator.opentelemetry.io/collector-monitoring-service": "Exists",
+          "operator.opentelemetry.io/collector-service-type": "monitoring"
+        },
+        "name": "gateway-collector-monitoring",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "opentelemetry.io/v1beta1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "OpenTelemetryCollector",
+            "name": "gateway",
+            "uid": "216d5914-1d08-4759-8ee9-8b4c1a114f4d"
+          }
+        ],
+        "resourceVersion": "91351",
+        "selfLink": "/api/v1/namespaces/otel-collectors/services/gateway-collector-monitoring",
+        "uid": "f4b82482-b1f9-4a76-9ebf-a2910b706722"
+      },
+      "spec": {
+        "clusterIP": "198.51.100.14",
+        "clusterIPs": [
+          "198.51.100.14"
+        ],
+        "internalTrafficPolicy": "Cluster",
+        "ipFamilies": [
+          "IPv4"
+        ],
+        "ipFamilyPolicy": "SingleStack",
+        "ports": [
+          {
+            "name": "monitoring",
+            "port": 8888,
+            "protocol": "TCP",
+            "targetPort": 8888
+          }
+        ],
+        "selector": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.gateway",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/part-of": "opentelemetry"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "creationTimestamp": "2026-10-12T02:14:14Z",
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.scraper",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "scraper-collector-monitoring",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest",
+          "operator.opentelemetry.io/collector-monitoring-service": "Exists",
+          "operator.opentelemetry.io/collector-service-type": "monitoring"
+        },
+        "name": "scraper-collector-monitoring",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "opentelemetry.io/v1beta1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "OpenTelemetryCollector",
+            "name": "scraper",
+            "uid": "7914eedb-cef4-4a3d-a697-ef1d85626b05"
+          }
+        ],
+        "resourceVersion": "176457",
+        "selfLink": "/api/v1/namespaces/otel-collectors/services/scraper-collector-monitoring",
+        "uid": "4a1ffeaa-bdd6-4a8c-a979-9b99bb57b18c"
+      },
+      "spec": {
+        "clusterIP": "198.51.100.15",
+        "clusterIPs": [
+          "198.51.100.15"
+        ],
+        "internalTrafficPolicy": "Cluster",
+        "ipFamilies": [
+          "IPv4"
+        ],
+        "ipFamilyPolicy": "SingleStack",
+        "ports": [
+          {
+            "name": "monitoring",
+            "port": 8888,
+            "protocol": "TCP",
+            "targetPort": 8888
+          }
+        ],
+        "selector": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.scraper",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/part-of": "opentelemetry"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "creationTimestamp": "2026-10-12T02:14:14Z",
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-targetallocator",
+          "app.kubernetes.io/instance": "otel-collectors.scraper",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "scraper-targetallocator",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest"
+        },
+        "name": "scraper-targetallocator",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "opentelemetry.io/v1alpha1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "TargetAllocator",
+            "name": "scraper",
+            "uid": "6c4602c9-8cfe-48f0-98b8-8738f716f40d"
+          }
+        ],
+        "resourceVersion": "176481",
+        "selfLink": "/api/v1/namespaces/otel-collectors/services/scraper-targetallocator",
+        "uid": "11424806-1880-4fcf-97f9-5eab90e94716"
+      },
+      "spec": {
+        "clusterIP": "198.51.100.16",
+        "clusterIPs": [
+          "198.51.100.16"
+        ],
+        "internalTrafficPolicy": "Cluster",
+        "ipFamilies": [
+          "IPv4"
+        ],
+        "ipFamilyPolicy": "SingleStack",
+        "ports": [
+          {
+            "name": "targetallocation",
+            "port": 80,
+            "protocol": "TCP",
+            "targetPort": "http"
+          }
+        ],
+        "selector": {
+          "app.kubernetes.io/component": "opentelemetry-targetallocator",
+          "app.kubernetes.io/instance": "otel-collectors.scraper",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "scraper-targetallocator",
+          "app.kubernetes.io/part-of": "opentelemetry"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T16:34:10Z",
+        "labels": {
+          "app": "idle"
+        },
+        "name": "idle",
+        "namespace": "prom-apps",
+        "resourceVersion": "282298",
+        "selfLink": "/api/v1/namespaces/prom-apps/services/idle",
+        "uid": "73671edf-74fb-45c3-9db7-b98e2dfda8a2"
+      },
+      "spec": {
+        "clusterIP": "198.51.100.17",
+        "clusterIPs": [
+          "198.51.100.17"
+        ],
+        "internalTrafficPolicy": "Cluster",
+        "ipFamilies": [
+          "IPv4"
+        ],
+        "ipFamilyPolicy": "SingleStack",
+        "ports": [
+          {
+            "name": "web",
+            "port": 8080,
+            "protocol": "TCP",
+            "targetPort": 8080
+          }
+        ],
+        "selector": {
+          "app": "idle"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "labels": {
+          "app.kubernetes.io/managed-by": "prometheus-operator",
+          "managed-by": "prometheus-operator",
+          "operated-prometheus": "true"
+        },
+        "name": "prometheus-operated",
+        "namespace": "prom-broken",
+        "ownerReferences": [
+          {
+            "apiVersion": "monitoring.coreos.com/v1",
+            "kind": "Prometheus",
+            "name": "no-image",
+            "uid": "45137213-d94e-435b-a2ae-092e638bd119"
+          }
+        ],
+        "resourceVersion": "176133",
+        "selfLink": "/api/v1/namespaces/prom-broken/services/prometheus-operated",
+        "uid": "c1361f25-fc3d-42a5-93d8-8a650d8d8713"
+      },
+      "spec": {
+        "clusterIP": "None",
+        "clusterIPs": [
+          "None"
+        ],
+        "internalTrafficPolicy": "Cluster",
+        "ipFamilies": [
+          "IPv4"
+        ],
+        "ipFamilyPolicy": "SingleStack",
+        "ports": [
+          {
+            "name": "web",
+            "port": 9090,
+            "protocol": "TCP",
+            "targetPort": "web"
+          }
+        ],
+        "selector": {
+          "app.kubernetes.io/name": "prometheus"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "creationTimestamp": "2026-10-12T02:13:29Z",
+        "labels": {
+          "app.kubernetes.io/component": "controller",
+          "app.kubernetes.io/name": "prometheus-operator",
+          "app.kubernetes.io/version": "0.93.1"
+        },
+        "name": "prometheus-operator",
+        "namespace": "prometheus-operator",
+        "resourceVersion": "175769",
+        "selfLink": "/api/v1/namespaces/prometheus-operator/services/prometheus-operator",
+        "uid": "3e328c7f-f8f0-4fee-ae39-b7308bb922e6"
+      },
+      "spec": {
+        "clusterIP": "None",
+        "clusterIPs": [
+          "None"
+        ],
+        "internalTrafficPolicy": "Cluster",
+        "ipFamilies": [
+          "IPv4"
+        ],
+        "ipFamilyPolicy": "SingleStack",
+        "ports": [
+          {
+            "name": "http",
+            "port": 8080,
+            "protocol": "TCP",
+            "targetPort": "http"
+          }
+        ],
+        "selector": {
+          "app.kubernetes.io/component": "controller",
+          "app.kubernetes.io/name": "prometheus-operator"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    }
+  ],
+  "kind": "List"
+}

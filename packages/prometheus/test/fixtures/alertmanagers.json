@@ -1,0 +1,61 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "monitoring.coreos.com/v1",
+      "kind": "Alertmanager",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 1,
+        "name": "seed",
+        "namespace": "monitoring",
+        "resourceVersion": "263144",
+        "selfLink": "/apis/monitoring.coreos.com/v1/namespaces/monitoring/alertmanagers/seed",
+        "uid": "5405e8f3-4cff-4d0d-86d5-71ac68732915"
+      },
+      "spec": {
+        "portName": "web",
+        "replicas": 1,
+        "resources": {
+          "limits": {
+            "memory": "64Mi"
+          },
+          "requests": {
+            "cpu": "10m",
+            "memory": "32Mi"
+          }
+        },
+        "retention": "120h",
+        "version": "v0.33.1"
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-12T15:33:43Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "",
+            "status": "True",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T02:13:51Z",
+            "message": "",
+            "observedGeneration": 1,
+            "reason": "",
+            "status": "True",
+            "type": "Reconciled"
+          }
+        ],
+        "paused": false,
+        "replicas": 1,
+        "selector": "alertmanager=seed,app.kubernetes.io/instance=seed,app.kubernetes.io/managed-by=prometheus-operator,app.kubernetes.io/name=alertmanager",
+        "unavailableReplicas": 0,
+        "updatedReplicas": 1
+      }
+    }
+  ],
+  "kind": "List"
+}

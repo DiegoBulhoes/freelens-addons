@@ -1,0 +1,37 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "monitoring.coreos.com/v1alpha1",
+      "kind": "ScrapeConfig",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:51Z",
+        "generation": 2,
+        "labels": {
+          "scraper": "prometheus"
+        },
+        "name": "static-self",
+        "namespace": "prom-apps",
+        "resourceVersion": "222425",
+        "selfLink": "/apis/monitoring.coreos.com/v1alpha1/namespaces/prom-apps/scrapeconfigs/static-self",
+        "uid": "977862ec-8c6d-4763-8214-3184e9bfb21e"
+      },
+      "spec": {
+        "params": {
+          "token": [
+            "redacted-by-fixture-export"
+          ]
+        },
+        "staticConfigs": [
+          {
+            "targets": [
+              "prometheus-operated.monitoring.svc:9090"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "kind": "List"
+}
