@@ -1,12 +1,12 @@
-import type { AppProject } from "../api/app-project";
-import { type BulkOutcome, planFor, projectRefusal } from "../api/bulk";
-import type { SyncChoice } from "../api/patches";
+import type { AppProject } from "../api/projects/app-project";
+import { type BulkOutcome, planFor, projectRefusal } from "../api/writes/bulk";
+import type { SyncChoice } from "../api/writes/patches";
 import {
   applicationsOf,
   refreshProjectApplications,
   setFrozen,
   syncProjectApplications,
-} from "../api/project-actions";
+} from "../api/writes/project-actions";
 import { bulkAction, confirmBulk } from "./bulk";
 import { SelectionBar } from "./selection-bar";
 import { SyncChoices } from "./sync-choices";
@@ -14,13 +14,15 @@ import { SyncChoices } from "./sync-choices";
 const nameOf = (project: AppProject) => project.getName();
 const countApplications = (project: AppProject) => applicationsOf(project).length;
 
-/** A project counts as failed when any of its Applications did. */
-async function each(outcome: Promise<BulkOutcome>): Promise<void> {
-  const { failures } = await outcome;
+/** A project counts as failed when any of its Applications failed or was skipped. */
+async function throwOnApplicationFailures(outcome: Promise<BulkOutcome>): Promise<void> {
+  const { failures, skipped = [] } = await outcome;
+  const names = [
+    ...failures.map((failure) => failure.applicationName),
+    ...skipped.map((busy) => `${busy.applicationName} (operation running)`),
+  ];
 
-  if (failures.length > 0) {
-    throw new Error(failures.map((failure) => failure.applicationName).join(", "));
-  }
+  if (names.length > 0) throw new Error(names.join(", "));
 }
 
 interface ProjectSelectionActionsProps {
@@ -53,7 +55,7 @@ export function ProjectSelectionActions({
                 "ArgoCD compares each of their Applications with git again and applies nothing.",
               destructive: false,
               typed: false,
-              run: (project) => each(refreshProjectApplications(project)),
+              run: (project) => throwOnApplicationFailures(refreshProjectApplications(project)),
             }),
         },
         {
@@ -79,7 +81,8 @@ export function ProjectSelectionActions({
                 />
               ),
               destructive: true,
-              run: (project) => each(syncProjectApplications(project, choice)),
+              run: (project) =>
+                throwOnApplicationFailures(syncProjectApplications(project, choice)),
             });
           },
         },

@@ -1,0 +1,60 @@
+# One ApplicationSet that generates two small Applications, one whose generation always fails.
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: guestbooks
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - list:
+        elements:
+          - env: blue
+          - env: green
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+    applicationsSync: create-update
+  template:
+    metadata:
+      name: "guestbook-{{.env}}"
+    spec:
+      project: demo
+      source:
+        repoURL: https://github.com/argoproj/argocd-example-apps.git
+        targetRevision: HEAD
+        path: guestbook
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "guestbook-{{.env}}"
+      syncPolicy:
+        automated:
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+---
+# The template names a parameter no element has: ErrorOccurred stays True.
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: broken-template
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - list:
+        elements:
+          - env: red
+  template:
+    metadata:
+      name: "broken-{{.region}}"
+    spec:
+      project: demo
+      source:
+        repoURL: https://github.com/argoproj/argocd-example-apps.git
+        targetRevision: HEAD
+        path: guestbook
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "broken-{{.env}}"

@@ -1,11 +1,11 @@
 import { resolve } from "node:path";
 import { defineConfig } from "vitest/config";
 
-/** `@freelensapp/extensions` only exists inside Electron; tests get the same classes from `test/freelens-host.ts`. */
+/** `@freelensapp/extensions` only exists inside Electron; tests get the same classes from `test/support/freelens-host.ts`. */
 export default defineConfig({
   resolve: {
     alias: {
-      "@freelensapp/extensions": resolve(__dirname, "test/freelens-host.ts"),
+      "@freelensapp/extensions": resolve(__dirname, "test/support/freelens-host.ts"),
     },
   },
   test: {
@@ -18,12 +18,12 @@ export default defineConfig({
       include: ["src/renderer/api/**/*.ts"],
       // Store-access boundary: these only read stores or send patches; their decisions live in covered modules.
       exclude: [
-        "src/renderer/api/types.ts",
-        "src/renderer/api/cluster-health.ts",
-        "src/renderer/api/workloads.ts",
-        "src/renderer/api/actions.ts",
-        "src/renderer/api/project-actions.ts",
-        "src/renderer/api/image-updater-actions.ts",
+        "src/renderer/api/shared/types.ts",
+        "src/renderer/api/overview/cluster-health.ts",
+        "src/renderer/api/shared/workloads.ts",
+        "src/renderer/api/writes/actions.ts",
+        "src/renderer/api/writes/project-actions.ts",
+        "src/renderer/api/writes/image-updater-actions.ts",
       ],
       thresholds: {
         statements: 95,

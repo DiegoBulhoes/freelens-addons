@@ -1,13 +1,14 @@
 import { Renderer } from "@freelensapp/extensions";
 import { useState } from "react";
-import type { Application } from "../api/application";
-import type { ImageUpdater } from "../api/image-updater";
+import type { Application } from "../api/applications/application";
+import type { ImageUpdater } from "../api/image-updater/image-updater";
+import type { UpdateRow } from "../api/image-updater/image-updates";
 import {
   deleteRule,
   patchApplication,
   patchRule,
   restartController,
-} from "../api/image-updater-actions";
+} from "../api/writes/image-updater-actions";
 import {
   currentEdit,
   editImagePatch,
@@ -18,8 +19,7 @@ import {
   revertEditPatch,
   STRATEGIES,
   type UndoMode,
-} from "../api/image-updater-patches";
-import type { UpdateRow } from "../api/image-updates";
+} from "../api/writes/image-updater-patches";
 import { confirmWrite, notifyDone } from "../components/confirm";
 
 const {

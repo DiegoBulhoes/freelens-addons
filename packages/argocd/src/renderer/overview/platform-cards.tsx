@@ -1,5 +1,5 @@
-import type { Counts } from "../api/overview";
-import { StatCard } from "./stat-card";
+import type { Counts } from "../api/overview/overview";
+import { StatCard } from "../components/stat-card";
 
 export function PlatformCards({
   counts,
@@ -21,44 +21,45 @@ export function PlatformCards({
         <StatCard label="Projects" value={counts.projects} onOpen={() => onOpenProjects()} />
         <StatCard
           label="Synced"
-          value={counts.sync.Synced}
+          value={counts.byStatus.synced}
           onOpen={() => onOpenApplications("synced")}
         />
         <StatCard
           label="OutOfSync"
-          value={counts.sync.OutOfSync}
+          value={counts.byStatus.outofsync}
           tone="warning"
           onOpen={() => onOpenApplications("outofsync")}
         />
         <StatCard
           label="Healthy"
-          value={counts.health.Healthy}
+          value={counts.byStatus.healthy}
           onOpen={() => onOpenApplications("healthy")}
         />
         <StatCard
           label="Degraded"
-          value={counts.health.Degraded + counts.health.Missing}
+          value={counts.byStatus.degraded}
           tone="critical"
           onOpen={() => onOpenApplications("degraded")}
         />
         <StatCard
           label="Progressing"
-          value={counts.health.Progressing}
+          value={counts.byStatus.progressing}
           tone="info"
           onOpen={() => onOpenApplications("progressing")}
         />
         <StatCard
           label="No auto-sync"
-          value={counts.manualOnly}
+          value={counts.byStatus.manual}
           tone="info"
           onOpen={() => onOpenApplications("manual")}
         />
       </div>
 
-      {counts.manualOnly > 0 && (
+      {counts.byStatus.manual > 0 && (
         <p className="ArgoCD-section__note">
-          {counts.manualOnly} Application{counts.manualOnly === 1 ? "" : "s"} will not self-heal:
-          drift on {counts.manualOnly === 1 ? "it" : "them"} stays until someone syncs by hand.
+          {counts.byStatus.manual} Application{counts.byStatus.manual === 1 ? "" : "s"} will not
+          self-heal: drift on {counts.byStatus.manual === 1 ? "it" : "them"} stays until someone
+          syncs by hand.
         </p>
       )}
     </section>

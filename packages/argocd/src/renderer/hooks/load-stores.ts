@@ -1,51 +1,106 @@
 import { useEffect, useState } from "react";
 
+import {
+  addFailure,
+  afterPass,
+  type Failures,
+  failedNamespacesOf,
+  NO_FAILURES,
+  settleFailures,
+} from "../api/shared/store-state";
+
 /** 15 x 2s = 30s, to outlast a slow cluster connection. */
 const MAX_LOAD_ATTEMPTS = 15;
 const RETRY_DELAY_MS = 2000;
 
-interface LoadableStore {
-  loadAll(): Promise<unknown>;
+export interface LoadableStore {
+  loadAll(options: {
+    namespaces?: string[];
+    onLoadFailure: (error: unknown) => void;
+  }): Promise<unknown>;
   readonly isLoaded: boolean;
   subscribe(): () => void;
 }
 
-/**
- * Loads every store on every mount and scope change: the stores are shared with the host, and
- * isLoaded only says a list arrived once, under whatever scope was current then.
- */
-export function useLoadedStores(stores: (LoadableStore | undefined)[], scope = ""): boolean {
+export interface StoreEntry {
+  kind: string;
+  /** Undefined until Freelens registers the kind's API. */
+  store?: LoadableStore;
+}
+
+export interface LoadedStores {
+  gaveUp: boolean;
+  /** The scope this mount's own load completed for; undefined until it has. */
+  loadedFor?: string;
+  failures: Failures;
+}
+
+/** Loads on every mount and scope change, since isLoaded ignores scope; onLoadFailure stops one refused namespace emptying the shared store. */
+export function useLoadedStores(entries: StoreEntry[], scope = ""): LoadedStores {
   const [gaveUp, setGaveUp] = useState(false);
-  const ready = stores.every(Boolean);
+  const [loadedFor, setLoadedFor] = useState<string>();
+  const [failures, setFailures] = useState<Failures>(NO_FAILURES);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: the stores themselves are the identity; the array is fresh every render.
   useEffect(() => {
-    if (!ready) return;
+    const registered = entries.filter(
+      (entry): entry is StoreEntry & { store: LoadableStore } => entry.store !== undefined,
+    );
 
-    const loaded = stores as LoadableStore[];
+    if (registered.length === 0) return;
+
+    const namespaces = scope ? scope.split(",") : [];
+    const byKind = new Map(registered.map((entry) => [entry.kind, entry.store]));
     let attempts = 0;
-    setGaveUp(false);
+    let pending = registered.map((entry) => entry.kind);
     let retryTimer: ReturnType<typeof setTimeout> | undefined;
     let cancelled = false;
-    let unsubscribers: (() => void)[] = [];
+    const unsubscribers = new Map<string, () => void>();
+
+    setGaveUp(false);
+    setFailures(NO_FAILURES);
+    setLoadedFor(undefined);
 
     const loadUntilReady = async () => {
       if (cancelled) return;
 
-      // loadAll() swallows its failure, hence the retry.
-      await Promise.all(loaded.map((store) => store.loadAll()));
+      const failed = new Map<string, Set<string>>();
+
+      await Promise.all(
+        pending.map((kind) =>
+          byKind.get(kind)?.loadAll({
+            ...(namespaces.length > 0 ? { namespaces } : {}),
+            onLoadFailure: (error: unknown) => {
+              console.warn(`[argocd] could not list ${kind}s`, error);
+              addFailure(failed, kind, failedNamespacesOf(error, namespaces));
+            },
+          }),
+        ),
+      );
 
       attempts += 1;
 
       if (cancelled) return;
 
-      if (loaded.every((store) => store.isLoaded)) {
-        // Only now: subscribe() watches from the list's resource version, and before the list
-        // returns it has none, so it opens no watch at all and the page never updates.
-        unsubscribers = loaded.map((store) => store.subscribe());
+      const { subscribe, retry } = afterPass(
+        pending,
+        (kind) => Boolean(byKind.get(kind)?.isLoaded),
+        failed,
+      );
 
-        return;
+      for (const kind of subscribe) {
+        unsubscribers.get(kind)?.();
+        const store = byKind.get(kind);
+
+        if (store) unsubscribers.set(kind, store.subscribe());
       }
+
+      const retried = pending;
+
+      setFailures((before) => settleFailures(before, retried, failed));
+      if (registered.every((entry) => entry.store.isLoaded)) setLoadedFor(scope);
+
+      if (retry.length === 0) return;
 
       if (attempts >= MAX_LOAD_ATTEMPTS) {
         setGaveUp(true);
@@ -53,6 +108,7 @@ export function useLoadedStores(stores: (LoadableStore | undefined)[], scope = "
         return;
       }
 
+      pending = retry;
       retryTimer = setTimeout(() => void loadUntilReady(), RETRY_DELAY_MS);
     };
 
@@ -61,9 +117,9 @@ export function useLoadedStores(stores: (LoadableStore | undefined)[], scope = "
     return () => {
       cancelled = true;
       if (retryTimer) clearTimeout(retryTimer);
-      for (const unsubscribe of unsubscribers) unsubscribe();
+      for (const unsubscribe of unsubscribers.values()) unsubscribe();
     };
-  }, [ready, scope, ...stores]);
+  }, [scope, ...entries.map((entry) => entry.store)]);
 
-  return gaveUp;
+  return { gaveUp, loadedFor, failures };
 }

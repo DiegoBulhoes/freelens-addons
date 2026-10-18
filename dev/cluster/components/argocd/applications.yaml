@@ -14,6 +14,51 @@ spec:
     - group: "*"
       kind: "*"
 ---
+# Scoped on every axis, with roles and windows; no Application uses it, so the windows hold nothing.
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: restricted
+  namespace: argocd
+spec:
+  description: Scoped project for extension development
+  sourceRepos:
+    - https://github.com/argoproj/argocd-example-apps.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: restricted
+    - name: in-cluster
+      namespace: restricted-*
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  namespaceResourceBlacklist:
+    - group: ""
+      kind: ResourceQuota
+  roles:
+    - name: read-only
+      description: Read the project's Applications
+      policies:
+        - p, proj:restricted:read-only, applications, get, restricted/*, allow
+    - name: deployer
+      description: Sync the project's Applications
+      policies:
+        - p, proj:restricted:deployer, applications, sync, restricted/*, allow
+      groups:
+        - restricted-deployers
+  syncWindows:
+    - kind: allow
+      schedule: "0 22 * * *"
+      duration: 2h
+      applications: ["*"]
+      manualSync: true
+      timeZone: UTC
+    - kind: deny
+      schedule: "0 0 * * 6"
+      duration: 24h
+      namespaces: ["restricted"]
+      description: Weekend freeze
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

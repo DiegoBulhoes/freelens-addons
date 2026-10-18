@@ -1,5 +1,5 @@
 import { Renderer } from "@freelensapp/extensions";
-import type { ClusterPressure } from "../api/cluster-health";
+import type { ClusterPressure } from "../api/overview/cluster-health";
 
 const {
   Component: { Icon },

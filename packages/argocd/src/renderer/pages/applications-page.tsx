@@ -1,15 +1,36 @@
 import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
-
-import { Application, type ApplicationApi } from "../api/application";
+import { useEffect, useRef } from "react";
+import { Application, type ApplicationApi } from "../api/applications/application";
+import {
+  filterApplications,
+  governingProject,
+  isStatusFilter,
+  namedApplication,
+  STATUS_LABELS,
+} from "../api/applications/application-filters";
+import { AppProject } from "../api/projects/app-project";
+import { withinScope } from "../api/shared/namespace-scope";
+import { showDetailsAfterClick } from "../api/shared/open-details";
 import { SelectionActions } from "../components/selection-actions";
 import { HealthBadge, SyncBadge } from "../components/status";
 import { ArgoCDStyles } from "../components/styles";
 import { useKubeStore } from "../components/use-kube-store";
+import { useNamespaceScope } from "../hooks/use-namespace-scope";
 
 const {
   Component: { KubeObjectAge, KubeObjectListLayout, WithTooltip },
+  Navigation: { showDetails },
 } = Renderer;
+
+export const APPLICATIONS_PAGE = "applications";
+
+export function openProjectApplications(extension: Renderer.LensExtension, project: AppProject) {
+  void extension.navigate(APPLICATIONS_PAGE, {
+    project: project.getName(),
+    projectNamespace: project.getNs(),
+  });
+}
 
 const sortingCallbacks = {
   name: (object: Application) => object.getName(),
@@ -61,53 +82,48 @@ function renderRevision(object: Application) {
   );
 }
 
-const STATUS_FILTERS: Record<string, (object: Application) => boolean> = {
-  synced: (object) => Application.getSyncStatus(object) === "Synced",
-  outofsync: (object) => Application.getSyncStatus(object) === "OutOfSync",
-  healthy: (object) => Application.getHealthStatus(object) === "Healthy",
-  degraded: (object) =>
-    Application.getHealthStatus(object) === "Degraded" ||
-    Application.getHealthStatus(object) === "Missing",
-  progressing: (object) => Application.getHealthStatus(object) === "Progressing",
-  manual: (object) => !Application.isAutoSynced(object),
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  synced: "synced",
-  outofsync: "out of sync",
-  healthy: "healthy",
-  degraded: "degraded",
-  progressing: "progressing",
-  manual: "without auto-sync",
-};
-
 export interface ApplicationsPageProps {
   params?: {
     project: { get(): string };
+    projectNamespace: { get(): string };
     status: { get(): string };
     name: { get(): string };
+    namespace: { get(): string };
   };
 }
 
 export const ApplicationsPage = observer(({ params }: ApplicationsPageProps) => {
   const store = useKubeStore(() => Application.getStore<Application>());
-  const project = params?.project.get() ?? "";
-  const status = params?.status.get() ?? "";
-  const name = params?.name.get() ?? "";
-  const statusFilter = STATUS_FILTERS[status];
+  const projectStore = useKubeStore(() => AppProject.getStore<AppProject>());
+  const scope = useNamespaceScope();
+  const query = {
+    project: params?.project.get() ?? "",
+    projectNamespace: params?.projectNamespace.get() ?? "",
+    status: params?.status.get() ?? "",
+    name: params?.name.get() ?? "",
+    namespace: params?.namespace.get() ?? "",
+  };
+  const all = withinScope((store?.items ?? []) as Application[], scope);
+  const named = namedApplication(all, query);
+  const opened = useRef<string>();
+
+  // A link that names one Application opens its drawer, once, so it can still be closed.
+  useEffect(() => {
+    if (!named || opened.current === named.selfLink) return;
+
+    return showDetailsAfterClick(named.selfLink, (link) => {
+      opened.current = link;
+      showDetails(link);
+    });
+  }, [named]);
 
   // getStore() throws until Freelens has registered the CRD's API.
   if (!store) return null;
 
-  const all = store.items as Application[];
   const total = all.length;
-  const filtered = all.filter((object) => {
-    if (name && object.getName() !== name) return false;
-    if (project && Application.getProject(object) !== project) return false;
-    if (statusFilter && !statusFilter(object)) return false;
-
-    return true;
-  });
+  const governing = governingProject((projectStore?.items ?? []) as AppProject[], query);
+  const filtered = filterApplications(all, query, governing);
+  const { project, status } = query;
 
   return (
     <>
@@ -117,6 +133,8 @@ export const ApplicationsPage = observer(({ params }: ApplicationsPageProps) => 
         tableId="argoCDApplicationsTable"
         className="ArgoCDApplications"
         store={store}
+        // A project's link counts by its rules, so the list needs the project itself.
+        dependentStores={query.projectNamespace && projectStore ? [projectStore] : []}
         sortingCallbacks={sortingCallbacks}
         searchFilters={[
           (object: Application) => object.getSearchFields(),
@@ -125,13 +143,15 @@ export const ApplicationsPage = observer(({ params }: ApplicationsPageProps) => 
         renderHeaderTitle={[
           "ArgoCD Applications",
           project && `project ${project}`,
-          statusFilter && STATUS_LABELS[status],
+          isStatusFilter(status) && STATUS_LABELS[status],
         ]
           .filter(Boolean)
           .join(" · ")}
         // The host's count is of the whole store, not the filtered rows.
-        customizeHeader={({ info }) => ({
-          info: filtered.length === total ? info : `${filtered.length} of ${total}`,
+        // The whole header: a field left out is dropped, the namespace selector with it.
+        customizeHeader={(header) => ({
+          ...header,
+          info: filtered.length === total ? header.info : `${filtered.length} of ${total}`,
         })}
         // Not filterCallbacks: they run only while a matching filter is active, so alone do nothing.
         getItems={() => filtered}

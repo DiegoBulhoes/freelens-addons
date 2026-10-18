@@ -1,35 +1,30 @@
-import { AppProject } from "../api/app-project";
-import { Application } from "../api/application";
-import { scopeKey, withinScope } from "../api/namespace-scope";
-import { getOverviewState, type OverviewState } from "../api/store-state";
+import { Application } from "../api/applications/application";
+import { AppProject } from "../api/projects/app-project";
+import type { LoadState } from "../api/shared/store-state";
 import { useKubeStore } from "../components/use-kube-store";
-import { useLoadedStores } from "./load-stores";
-import { useNamespaceScope } from "./use-namespace-scope";
+import { useScopedStores } from "./use-scoped-stores";
 
 export interface ArgoCDStores {
   applications: Application[];
   projects: AppProject[];
   /** `loadAll` swallows failures, so an empty list alone can mean an unreachable cluster. */
-  state: OverviewState;
+  state: LoadState;
+  /** The namespaces whose Applications or projects were refused, when some answered. */
+  gap?: string;
 }
+
+const ARGOCD_KINDS = { Application: "Applications", AppProject: "AppProjects" } as const;
 
 export function useArgoCDStores(): ArgoCDStores {
   const applicationStore = useKubeStore(() => Application.getStore<Application>());
   const projectStore = useKubeStore(() => AppProject.getStore<AppProject>());
-  const scope = useNamespaceScope();
-  const gaveUp = useLoadedStores([applicationStore, projectStore], scopeKey(scope));
 
-  const applications = withinScope((applicationStore?.items ?? []) as Application[], scope);
+  const { primaryItems, secondaryItems, state, gap } = useScopedStores<Application, AppProject>(
+    { kind: "Application", store: applicationStore },
+    { kind: "AppProject", store: projectStore },
+    ARGOCD_KINDS,
+    [applicationStore],
+  );
 
-  return {
-    applications,
-    projects: withinScope((projectStore?.items ?? []) as AppProject[], scope),
-    state: getOverviewState({
-      registered: Boolean(applicationStore),
-      loaded: Boolean(applicationStore?.isLoaded),
-      failed: Boolean(applicationStore?.failedLoading),
-      itemCount: applications.length,
-      gaveUp,
-    }),
-  };
+  return { applications: primaryItems, projects: secondaryItems, state, gap };
 }

@@ -1,29 +1,24 @@
-import { Renderer } from "@freelensapp/extensions";
-
-import type { Application } from "../api/application";
-import { type BulkOutcome, describeOutcome, listNames, refreshEach, syncEach } from "../api/bulk";
-import type { RefreshMode, SyncChoice } from "../api/patches";
+import type { Application } from "../api/applications/application";
+import { describeRefresh, listNames, refreshEach, syncEach } from "../api/writes/bulk";
+import type { RefreshMode, SyncChoice } from "../api/writes/patches";
+import { notifyBulkOutcome } from "./bulk";
 import { confirmWrite } from "./confirm";
 import { SelectionBar } from "./selection-bar";
-import { describeChoice, SyncChoices } from "./sync-choices";
+import { describeSyncChoice, SyncChoices } from "./sync-choices";
 
-const {
-  Component: { Notifications },
-} = Renderer;
-
-function report(pastTenseVerb: string, outcome: BulkOutcome) {
-  const sentence = describeOutcome(pastTenseVerb, outcome);
-
-  if (outcome.failures.length === 0) Notifications.ok(sentence);
-  else Notifications.error(sentence);
-}
-
-// No confirmation: a refresh changes nothing in the cluster.
-async function refresh(targets: Application[], mode: RefreshMode) {
-  report(
-    mode === "hard" ? "Requested a hard refresh of" : "Requested a refresh of",
-    await refreshEach(targets, mode),
-  );
+function confirmRefresh(targets: Application[], mode: RefreshMode) {
+  confirmWrite({
+    ...describeRefresh(
+      targets.map((application) => application.getName()),
+      mode,
+    ),
+    destructive: false,
+    ok: async () =>
+      notifyBulkOutcome(
+        mode === "hard" ? "Requested a hard refresh of" : "Requested a refresh of",
+        await refreshEach(targets, mode),
+      ),
+  });
 }
 
 /** The choice reaches ok through a callback: the dialog copies its message's props. */
@@ -48,7 +43,10 @@ function confirmSync(targets: Application[]) {
     destructive: true,
     typed: () => "confirm",
     ok: async () =>
-      report(`Started a sync${describeChoice(choice)} on`, await syncEach(targets, choice)),
+      notifyBulkOutcome(
+        `Started a sync${describeSyncChoice(choice)} on`,
+        await syncEach(targets, choice),
+      ),
   });
 }
 
@@ -68,14 +66,14 @@ export function SelectionActions({ getItems, pickOnlySelected }: SelectionAction
         {
           label: "Refresh",
           tooltip:
-            "Asks ArgoCD to compare each one with git again. Changes nothing in the cluster.",
-          run: (targets) => void refresh(targets, "normal"),
+            "Asks ArgoCD to compare each one with git again. Changes nothing in the cluster. Asks first.",
+          run: (targets) => confirmRefresh(targets, "normal"),
         },
         {
           label: "Hard refresh",
           tooltip:
-            "Refreshes, and also drops the manifests ArgoCD has cached, so they are generated again.",
-          run: (targets) => void refresh(targets, "hard"),
+            "Refreshes, and also drops the manifests ArgoCD has cached, so they are generated again. Asks first.",
+          run: (targets) => confirmRefresh(targets, "hard"),
         },
         {
           label: "Sync",

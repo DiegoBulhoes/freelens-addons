@@ -1,21 +1,23 @@
 import { Renderer } from "@freelensapp/extensions";
 
-import { type SourceExposure, shortenRepo } from "../api/sources";
+import type { Application } from "../api/applications/application";
+import { type SourceExposure, shortenRepo } from "../api/applications/sources";
+import { ApplicationNames } from "./application-names";
 
 const {
   Component: { Icon },
 } = Renderer;
-
-const MAX_NAMES_SHOWN = 3;
 
 const MAX_GROUPS_SHOWN = 8;
 
 export function MovingTarget({
   exposure,
   onCopyNames,
+  onOpen,
 }: {
   exposure: SourceExposure;
   onCopyNames: (names: string[]) => void;
+  onOpen: (application: Application) => void;
 }) {
   return (
     <section className="ArgoCD-section">
@@ -45,21 +47,14 @@ export function MovingTarget({
               <td className="ArgoCD-table__shrink ArgoCD-mono">{group.targetRevision}</td>
               <td className="ArgoCD-table__fill">
                 <b>{group.applications.length}</b>
-                <span className="ArgoCD-muted">
-                  {": "}
-                  {group.applications
-                    .slice(0, 3)
-                    .map((application) => application.getName())
-                    .join(", ")}
-                  {group.applications.length > MAX_NAMES_SHOWN &&
-                    ` +${group.applications.length - MAX_NAMES_SHOWN}`}
-                </span>
+                {": "}
+                <ApplicationNames applications={group.applications} onOpen={onOpen} />
               </td>
               <td className="ArgoCD-table__shrink">
                 <button
                   type="button"
                   className="ArgoCD-icon-button"
-                  title="Copy the Application names"
+                  title="Copies the Application names"
                   onClick={() =>
                     onCopyNames(group.applications.map((application) => application.getName()))
                   }

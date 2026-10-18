@@ -1,7 +1,7 @@
 import { Renderer } from "@freelensapp/extensions";
 
-import { Application } from "../api/application";
-import type { AttentionItem } from "../api/overview";
+import { Application } from "../api/applications/application";
+import type { AttentionItem } from "../api/overview/overview";
 import { ApplicationMenuItem } from "../menus/application-menu";
 import { since } from "./elapsed";
 

@@ -1,41 +1,41 @@
 import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
-import { useState } from "react";
-import type { Application } from "../api/application";
+import { useMemo, useState } from "react";
+import type { Application } from "../api/applications/application";
 import {
   FILTER_LABELS,
   type FilterKey,
   isFilterKey,
-  pageOf,
-  selectAttentionItems,
-  sortPinnedFirst,
-} from "../api/attention-filter";
-import { type BulkOutcome, describeOutcome, listNames, refreshEach, syncEach } from "../api/bulk";
-import { copyToClipboard } from "../api/cli";
-import { groupDeploysByRevision } from "../api/insights";
-import { getAttentionItems, getCounts, getRecentDeploys, getRepeatedSyncs } from "../api/overview";
-import { readPreferences, writePreference } from "../api/preferences";
-import { getSourceExposure } from "../api/sources";
-import { describeHeadline, describeOverviewState } from "../api/store-state";
+  viewAttention,
+} from "../api/overview/attention-filter";
+import { deriveOverview, overviewMinute } from "../api/overview/dashboard";
+import { rememberLast } from "../api/shared/memo";
+import { pageOf } from "../api/shared/paging";
+import { readPreferences, writePreference } from "../api/shared/preferences";
+import { describeHeadline, describeLoadState } from "../api/shared/store-state";
+import { plural } from "../api/shared/text";
+import { controllerNamespaceOf } from "../api/shared/workload-selection";
 import {
   ARGOCD_COMPONENTS,
   type ArgoCDComponent,
-  controllerNamespaceOf,
   openComponentLogs,
-} from "../api/workloads";
+} from "../api/shared/workloads";
+import { type BulkOutcome, listNames, refreshEach, syncEach } from "../api/writes/bulk";
+import { notifyBulkOutcome } from "../components/bulk";
 import { confirmWrite } from "../components/confirm";
 import { NamespaceFilter } from "../components/namespace-filter";
 import { ArgoCDStyles } from "../components/styles";
 import { useArgoCDStores } from "../hooks/use-argocd-stores";
 import { useArgoCDUrl } from "../hooks/use-argocd-url";
 import { useClusterPressure } from "../hooks/use-cluster-pressure";
-import { useOperatorMarks } from "../hooks/use-operator-marks";
+import { usePins } from "../hooks/use-pins";
 import { AttentionSection } from "../overview/attention-section";
 import { ClusterPressureBanner } from "../overview/cluster-pressure-banner";
 import { MovingTarget } from "../overview/moving-target";
 import { PlatformCards } from "../overview/platform-cards";
 import { RecentRollouts } from "../overview/recent-rollouts";
 import { SyncingRepeatedly } from "../overview/syncing-repeatedly";
+import { APPLICATIONS_PAGE } from "./applications-page";
 
 const PAGE_SIZE = 8;
 
@@ -54,8 +54,8 @@ export interface DashboardPageProps {
 }
 
 export const DashboardPage = observer(({ extension }: DashboardPageProps) => {
-  const { applications, projects, state } = useArgoCDStores();
-  const { pinnedIds, reload: reloadMarks } = useOperatorMarks();
+  const { applications, projects, state, gap } = useArgoCDStores();
+  const { pinnedIds, reload: reloadPins } = usePins();
   const argoUrl = useArgoCDUrl(applications);
   const pressure = useClusterPressure();
 
@@ -64,15 +64,19 @@ export const DashboardPage = observer(({ extension }: DashboardPageProps) => {
   const [page, setPage] = useState(0);
   const [isWorking, setIsWorking] = useState(false);
 
-  const stateNote = describeOverviewState(state);
-  const counts = getCounts(applications, projects);
-  const attention = getAttentionItems(applications);
-  const criticalCount = attention.filter((item) => item.severity === "critical").length;
-
-  const ordered = sortPinnedFirst(
-    selectAttentionItems(attention, { filter, searchText: query, pinnedIds }),
-    pinnedIds,
+  const derive = useMemo(() => rememberLast(deriveOverview), []);
+  const stateNote = describeLoadState(state);
+  const { counts, attention, criticalCount, parents, cohorts, repeated, exposure } = derive(
+    applications,
+    projects,
+    overviewMinute(Date.now()),
   );
+
+  const { ordered, needingAttention } = viewAttention(attention, {
+    filter,
+    searchText: query,
+    pinnedIds,
+  });
 
   const currentPage = pageOf(ordered, page, PAGE_SIZE);
 
@@ -92,23 +96,26 @@ export const DashboardPage = observer(({ extension }: DashboardPageProps) => {
 
   const copyNames = async (names: string[]) => {
     try {
-      await copyToClipboard(names.join(" "));
-      Notifications.ok(`${names.length} Application name${names.length === 1 ? "" : "s"} copied.`);
+      await navigator.clipboard.writeText(names.join(" "));
+      Notifications.ok(`${plural(names.length, "Application name")} copied.`);
     } catch (error) {
       Notifications.checkedError(error, "Could not copy the Application names");
     }
   };
 
   const openApplications = (status?: string) => {
-    void extension.navigate("applications", status ? { status } : {});
+    void extension.navigate(APPLICATIONS_PAGE, status ? { status } : {});
   };
 
-  // The details drawer is not mounted on an extension page; the Applications list mounts it.
+  // Our pages mount no details drawer; the Applications list does, and opens this one.
   const openApplicationNamed = (application: Application) => {
-    void extension.navigate("applications", { name: application.getName() });
+    void extension.navigate(APPLICATIONS_PAGE, {
+      name: application.getName(),
+      namespace: application.getNs() ?? "",
+    });
   };
 
-  const applyFilter = (next: FilterKey) => {
+  const selectFilter = (next: FilterKey) => {
     setFilter(next);
     setPage(0);
     writePreference("attentionFilter", next);
@@ -150,19 +157,13 @@ export const DashboardPage = observer(({ extension }: DashboardPageProps) => {
         try {
           const result = await action(targets);
 
-          if (result.failures.length === 0) Notifications.ok(describeOutcome(past, result));
-          else Notifications.error(describeOutcome(past, result));
+          notifyBulkOutcome(past, result);
         } finally {
           setIsWorking(false);
         }
       },
     });
   };
-
-  const exposure = getSourceExposure(applications);
-  const deploys = getRecentDeploys(applications, 40);
-  const cohorts = groupDeploysByRevision(deploys);
-  const repeated = getRepeatedSyncs(applications);
 
   return (
     <div className="ArgoCD ArgoCD-page">
@@ -171,7 +172,7 @@ export const DashboardPage = observer(({ extension }: DashboardPageProps) => {
       <div className="ArgoCD-page__head">
         <div>
           <h1 className="ArgoCD-page__headline">
-            {describeHeadline(state, ordered.length, applications.length)}
+            {describeHeadline(state, needingAttention, applications.length)}
 
             <MenuActions
               toolbar={false}
@@ -203,6 +204,8 @@ export const DashboardPage = observer(({ extension }: DashboardPageProps) => {
             </p>
           )}
 
+          {gap && <p className="ArgoCD-page__subline ArgoCD-page__subline--alarm">{gap}</p>}
+
           {criticalCount > 0 && (
             <p className="ArgoCD-page__subline ArgoCD-page__subline--alarm">
               {criticalCount} {criticalCount === 1 ? "is" : "are"} degraded, stuck, failing to sync
@@ -221,29 +224,32 @@ export const DashboardPage = observer(({ extension }: DashboardPageProps) => {
 
       <ClusterPressureBanner pressures={pressure} />
 
-      <PlatformCards
-        counts={counts}
-        onOpenApplications={openApplications}
-        onOpenProjects={() => void extension.navigate("projects")}
-      />
+      {/* Zero counts and "no deploy yet" are claims only a loaded list can make. */}
+      {state === "ready" && (
+        <PlatformCards
+          counts={counts}
+          onOpenApplications={openApplications}
+          onOpenProjects={() => void extension.navigate("projects")}
+        />
+      )}
 
       {attention.length > 0 && (
         <AttentionSection
           attention={attention}
           ordered={ordered}
           currentPage={currentPage}
-          applications={applications}
+          parents={parents}
           filter={filter}
           searchText={query}
           pinnedIds={pinnedIds}
           isWorking={isWorking}
-          onFilterChange={applyFilter}
+          onFilterChange={selectFilter}
           onSearchChange={(text) => {
             setQuery(text);
             setPage(0);
           }}
           onPageChange={setPage}
-          onMarksChanged={reloadMarks}
+          onPinsChanged={reloadPins}
           onOpen={openApplicationNamed}
           onRefreshAll={() =>
             runBulkAction("Refresh", "Requested a refresh of", refreshEach, { destructive: false })
@@ -257,15 +263,19 @@ export const DashboardPage = observer(({ extension }: DashboardPageProps) => {
       {repeated.length > 0 && (
         <SyncingRepeatedly
           repeated={repeated}
-          onMarksChanged={reloadMarks}
+          onPinsChanged={reloadPins}
           onOpen={openApplicationNamed}
         />
       )}
 
-      <RecentRollouts cohorts={cohorts} />
+      {state === "ready" && <RecentRollouts cohorts={cohorts} onOpen={openApplicationNamed} />}
 
       {exposure.moving.length > 0 && (
-        <MovingTarget exposure={exposure} onCopyNames={(names) => void copyNames(names)} />
+        <MovingTarget
+          exposure={exposure}
+          onCopyNames={(names) => void copyNames(names)}
+          onOpen={openApplicationNamed}
+        />
       )}
     </div>
   );

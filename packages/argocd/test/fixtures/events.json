@@ -3,24 +3,494 @@
   "items": [
     {
       "apiVersion": "v1",
-      "count": 19,
+      "count": 1,
       "eventTime": null,
-      "firstTimestamp": "2026-10-02T22:26:24Z",
+      "firstTimestamp": "2026-10-18T02:31:30Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{argocd-server}",
+        "kind": "Pod",
+        "name": "argocd-server-8567f6cc96-ghbtp",
+        "namespace": "argocd",
+        "resourceVersion": "365164",
+        "uid": "d97d2baf-04cb-4c5c-a7e8-ac3d9a669ce6"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:30Z",
+      "message": "Readiness probe failed: Get \"http://198.51.100.10:8080/healthz\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "argocd-server-8567f6cc96-ghbtp.18df7ee303a78f0a",
+        "namespace": "argocd",
+        "resourceVersion": "488649",
+        "selfLink": "/api/v1/namespaces/argocd/events/argocd-server-8567f6cc96-ghbtp.18df7ee303a78f0a",
+        "uid": "765776af-6326-4338-a5d1-3e9046c4ca3d"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{manager}",
+        "kind": "Pod",
+        "name": "cnpg-controller-manager-9f5cd66db-cfh5c",
+        "namespace": "cnpg-system",
+        "resourceVersion": "432330",
+        "uid": "46871b81-a898-401c-b51d-a9b6af8ba711"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:24Z",
+      "message": "Readiness probe failed: Get \"https://198.51.100.11:9443/readyz\": net/http: request canceled (Client.Timeout exceeded while awaiting headers)",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:24Z",
+        "name": "cnpg-controller-manager-9f5cd66db-cfh5c.18df7ee1a628fbeb",
+        "namespace": "cnpg-system",
+        "resourceVersion": "488617",
+        "selfLink": "/api/v1/namespaces/cnpg-system/events/cnpg-controller-manager-9f5cd66db-cfh5c.18df7ee1a628fbeb",
+        "uid": "ee15569c-c627-4b1f-9d38-1f5ee454868f"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:30Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{manager}",
+        "kind": "Pod",
+        "name": "cnpg-controller-manager-9f5cd66db-cfh5c",
+        "namespace": "cnpg-system",
+        "resourceVersion": "432330",
+        "uid": "46871b81-a898-401c-b51d-a9b6af8ba711"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:30Z",
+      "message": "Liveness probe failed: Get \"https://198.51.100.11:9443/readyz\": net/http: request canceled while waiting for connection (Client.Timeout exceeded while awaiting headers)",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "cnpg-controller-manager-9f5cd66db-cfh5c.18df7ee32c13f131",
+        "namespace": "cnpg-system",
+        "resourceVersion": "488650",
+        "selfLink": "/api/v1/namespaces/cnpg-system/events/cnpg-controller-manager-9f5cd66db-cfh5c.18df7ee32c13f131",
+        "uid": "21ca39f7-656b-4d1e-9705-17099c2aab93"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "action": "Scheduling",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-18T00:08:03.473544Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "analytics-db-1-initdb-76zp7",
+        "namespace": "databases",
+        "resourceVersion": "4753",
+        "uid": "fd10d7b7-30e1-4629-896e-6da54e0121ae"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "0/1 nodes are available: pod has unbound immediate PersistentVolumeClaims. not found",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T00:08:03Z",
+        "name": "analytics-db-1-initdb-76zp7.18df770f1abd0ebe",
+        "namespace": "databases",
+        "resourceVersion": "490680",
+        "selfLink": "/api/v1/namespaces/databases/events/analytics-db-1-initdb-76zp7.18df770f1abd0ebe",
+        "uid": "392af878-9faf-4e3c-8f07-9bb1ed3be2cb"
+      },
+      "reason": "FailedScheduling",
+      "reportingComponent": "default-scheduler",
+      "reportingInstance": "default-scheduler-15faf5ee47ca",
+      "series": {
+        "count": 68,
+        "lastObservedTime": "2026-10-18T02:37:33.917122Z"
+      },
+      "source": {},
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 682,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T00:08:04Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "analytics-db-1",
+        "namespace": "databases",
+        "resourceVersion": "4742",
+        "uid": "e6b2adf6-3999-4066-9336-1cc7e0aee5fb"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:58:05Z",
+      "message": "storageclass.storage.k8s.io \"does-not-exist\" not found",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T00:08:04Z",
+        "name": "analytics-db-1.18df770f5b41c541",
+        "namespace": "databases",
+        "resourceVersion": "497140",
+        "selfLink": "/api/v1/namespaces/databases/events/analytics-db-1.18df770f5b41c541",
+        "uid": "75b0960b-00f2-4fb3-9098-e2496878ada2"
+      },
+      "reason": "ProvisioningFailed",
+      "reportingComponent": "persistentvolume-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "persistentvolume-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:35Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{postgres}",
+        "kind": "Pod",
+        "name": "audit-db-1",
+        "namespace": "databases",
+        "resourceVersion": "365546",
+        "uid": "890eb6fd-dcac-43e8-aada-5fb7931d2426"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:35Z",
+      "message": "Readiness probe failed: Get \"https://198.51.100.12:8000/readyz\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "audit-db-1.18df7ee42d90183a",
+        "namespace": "databases",
+        "resourceVersion": "488664",
+        "selfLink": "/api/v1/namespaces/databases/events/audit-db-1.18df7ee42d90183a",
+        "uid": "c46a6d73-85e3-41e2-a27c-59bd847bfb33"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:33Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{postgres}",
+        "kind": "Pod",
+        "name": "billing-db-1",
+        "namespace": "databases",
+        "resourceVersion": "365564",
+        "uid": "c982823d-3219-4e89-917c-2d0d224bb50a"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:33Z",
+      "message": "Liveness probe failed: Get \"https://198.51.100.13:8000/healthz\": net/http: request canceled while waiting for connection (Client.Timeout exceeded while awaiting headers)",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "billing-db-1.18df7ee3aab20a9e",
+        "namespace": "databases",
+        "resourceVersion": "488654",
+        "selfLink": "/api/v1/namespaces/databases/events/billing-db-1.18df7ee3aab20a9e",
+        "uid": "55721f4a-6fd2-4b69-b538-73040b2d2794"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:33Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{postgres}",
+        "kind": "Pod",
+        "name": "inventory-db-1",
+        "namespace": "databases",
+        "resourceVersion": "365446",
+        "uid": "5d041daa-a946-4cc8-a451-3879372179b7"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:33Z",
+      "message": "Readiness probe failed: Get \"https://198.51.100.14:8000/readyz\": write tcp 198.51.100.15:45402->198.51.100.14:8000: write: broken pipe",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "inventory-db-1.18df7ee3dcc5ea9c",
+        "namespace": "databases",
+        "resourceVersion": "488662",
+        "selfLink": "/api/v1/namespaces/databases/events/inventory-db-1.18df7ee3dcc5ea9c",
+        "uid": "12a2d083-5b58-4f11-9172-6ad629669a86"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:35Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{postgres}",
+        "kind": "Pod",
+        "name": "inventory-db-1",
+        "namespace": "databases",
+        "resourceVersion": "365446",
+        "uid": "5d041daa-a946-4cc8-a451-3879372179b7"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:35Z",
+      "message": "Liveness probe failed: Get \"https://198.51.100.14:8000/healthz\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "inventory-db-1.18df7ee429929728",
+        "namespace": "databases",
+        "resourceVersion": "488663",
+        "selfLink": "/api/v1/namespaces/databases/events/inventory-db-1.18df7ee429929728",
+        "uid": "d4393a0b-ee88-442e-ad6a-6aaf8c86d7cb"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 281,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T00:08:51Z",
+      "involvedObject": {
+        "apiVersion": "postgresql.cnpg.io/v1",
+        "kind": "Backup",
+        "name": "legacy-nightly-20261013010000",
+        "namespace": "databases",
+        "resourceVersion": "365684",
+        "uid": "c5672313-1a1b-45c3-8e8f-e7fc173fa07f"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:28:52Z",
+      "message": "Unknown cluster legacy-db, will retry in 30 seconds",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T00:08:51Z",
+        "name": "legacy-nightly-20261013010000.18df771a5c258300",
+        "namespace": "databases",
+        "resourceVersion": "487874",
+        "selfLink": "/api/v1/namespaces/databases/events/legacy-nightly-20261013010000.18df771a5c258300",
+        "uid": "eae5ced9-410e-408c-98ea-5c94daaf7b54"
+      },
+      "reason": "FindingCluster",
+      "reportingComponent": "cloudnative-pg-backup",
+      "reportingInstance": "",
+      "source": {
+        "component": "cloudnative-pg-backup"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 51,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:40Z",
+      "involvedObject": {
+        "apiVersion": "postgresql.cnpg.io/v1",
+        "kind": "Backup",
+        "name": "legacy-nightly-20261013010000",
+        "namespace": "databases",
+        "resourceVersion": "365684",
+        "uid": "c5672313-1a1b-45c3-8e8f-e7fc173fa07f"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:56:41Z",
+      "message": "Unknown cluster legacy-db, will retry in 30 seconds",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:40Z",
+        "name": "legacy-nightly-20261013010000.18df7ee57db1609e",
+        "namespace": "databases",
+        "resourceVersion": "496743",
+        "selfLink": "/api/v1/namespaces/databases/events/legacy-nightly-20261013010000.18df7ee57db1609e",
+        "uid": "0a8bba53-4464-42a6-86c7-d3a8e87b3727"
+      },
+      "reason": "FindingCluster",
+      "reportingComponent": "cloudnative-pg-backup",
+      "reportingInstance": "",
+      "source": {
+        "component": "cloudnative-pg-backup"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:33Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{postgres}",
+        "kind": "Pod",
+        "name": "orders-db-2",
+        "namespace": "databases",
+        "resourceVersion": "365585",
+        "uid": "cc2ed7a3-5707-411d-b4bb-e06f5ef49fe4"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:33Z",
+      "message": "Liveness probe failed: Get \"https://198.51.100.16:8000/healthz\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "orders-db-2.18df7ee3aab244c0",
+        "namespace": "databases",
+        "resourceVersion": "488658",
+        "selfLink": "/api/v1/namespaces/databases/events/orders-db-2.18df7ee3aab244c0",
+        "uid": "6212f3d1-8991-42b2-8a4e-4d5cc7766a28"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:33Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{postgres}",
+        "kind": "Pod",
+        "name": "orders-db-3",
+        "namespace": "databases",
+        "resourceVersion": "365623",
+        "uid": "c77ebd81-1f98-410c-9591-4d4711b58d35"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:33Z",
+      "message": "Readiness probe failed: Get \"https://198.51.100.17:8000/readyz\": net/http: request canceled (Client.Timeout exceeded while awaiting headers)",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "orders-db-3.18df7ee3b498b7ac",
+        "namespace": "databases",
+        "resourceVersion": "488653",
+        "selfLink": "/api/v1/namespaces/databases/events/orders-db-3.18df7ee3b498b7ac",
+        "uid": "fc366538-c4df-481a-811b-605ad63a5c44"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:33Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{postgres}",
+        "kind": "Pod",
+        "name": "orders-db-3",
+        "namespace": "databases",
+        "resourceVersion": "365623",
+        "uid": "c77ebd81-1f98-410c-9591-4d4711b58d35"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:33Z",
+      "message": "Liveness probe failed: Get \"https://198.51.100.17:8000/healthz\": write tcp 198.51.100.15:58350->198.51.100.17:8000: write: broken pipe",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "orders-db-3.18df7ee3c8719821",
+        "namespace": "databases",
+        "resourceVersion": "488660",
+        "selfLink": "/api/v1/namespaces/databases/events/orders-db-3.18df7ee3c8719821",
+        "uid": "deff833e-8a90-4386-b842-0d627669d31c"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 24,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T00:13:02Z",
       "involvedObject": {
         "apiVersion": "v1",
         "kind": "Node",
         "name": "freelens-addons-dev"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:01:24Z",
-      "message": "Insufficient free disk space on the node's image filesystem (40% of 1.8 TiB used). Failed to free sufficient space by deleting unused images (freed 0 bytes). Investigate disk usage, as it could be used by active images, logs, volumes, or other data.",
+      "lastTimestamp": "2026-10-18T02:53:07Z",
+      "message": "Insufficient free disk space on the node's image filesystem (48% of 1.8 TiB used). Failed to free sufficient space by deleting unused images (freed 0 bytes). Investigate disk usage, as it could be used by active images, logs, volumes, or other data.",
       "metadata": {
-        "creationTimestamp": "2026-10-02T22:26:24Z",
-        "name": "freelens-addons-dev.18dad6ce859c2692",
+        "creationTimestamp": "2026-10-18T00:13:02Z",
+        "name": "freelens-addons-dev.18df7754c4e1261a",
         "namespace": "default",
-        "resourceVersion": "312773",
-        "selfLink": "/api/v1/namespaces/default/events/freelens-addons-dev.18dad6ce859c2692",
-        "uid": "1e0a0f42-cb9a-4aa5-b1bb-d4ccc42fdde0"
+        "resourceVersion": "495596",
+        "selfLink": "/api/v1/namespaces/default/events/freelens-addons-dev.18df7754c4e1261a",
+        "uid": "f01c3d90-ddae-4eae-b3a5-026e15b3e527"
       },
       "reason": "FreeDiskSpaceFailed",
       "reportingComponent": "kubelet",
@@ -33,84 +503,24 @@
     },
     {
       "apiVersion": "v1",
-      "count": 19,
+      "count": 15,
       "eventTime": null,
-      "firstTimestamp": "2026-10-02T22:26:24Z",
+      "firstTimestamp": "2026-10-18T00:13:02Z",
       "involvedObject": {
         "apiVersion": "v1",
         "kind": "Node",
         "name": "freelens-addons-dev"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:01:24Z",
-      "message": "Insufficient free disk space on the node's image filesystem (40% of 1.8 TiB used). Failed to free sufficient space by deleting unused images (freed 0 bytes). Investigate disk usage, as it could be used by active images, logs, volumes, or other data.",
+      "lastTimestamp": "2026-10-18T02:08:06Z",
+      "message": "Insufficient free disk space on the node's image filesystem (48% of 1.8 TiB used). Failed to free sufficient space by deleting unused images (freed 0 bytes). Investigate disk usage, as it could be used by active images, logs, volumes, or other data.",
       "metadata": {
-        "creationTimestamp": "2026-10-02T22:26:24Z",
-        "name": "freelens-addons-dev.18dad6ce859ca2de",
+        "creationTimestamp": "2026-10-18T00:13:02Z",
+        "name": "freelens-addons-dev.18df7754c4e1b414",
         "namespace": "default",
-        "resourceVersion": "312775",
-        "selfLink": "/api/v1/namespaces/default/events/freelens-addons-dev.18dad6ce859ca2de",
-        "uid": "83d28b57-17fe-44d9-9be0-c1c5420551a2"
-      },
-      "reason": "ImageGCFailed",
-      "reportingComponent": "kubelet",
-      "reportingInstance": "freelens-addons-dev",
-      "source": {
-        "component": "kubelet",
-        "host": "freelens-addons-dev"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 7,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:06:24Z",
-      "involvedObject": {
-        "apiVersion": "v1",
-        "kind": "Node",
-        "name": "freelens-addons-dev"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:46:25Z",
-      "message": "Insufficient free disk space on the node's image filesystem (41% of 1.8 TiB used). Failed to free sufficient space by deleting unused images (freed 0 bytes). Investigate disk usage, as it could be used by active images, logs, volumes, or other data.",
-      "metadata": {
-        "creationTimestamp": "2026-10-03T00:06:24Z",
-        "name": "freelens-addons-dev.18dadc43a7b398d7",
-        "namespace": "default",
-        "resourceVersion": "316755",
-        "selfLink": "/api/v1/namespaces/default/events/freelens-addons-dev.18dadc43a7b398d7",
-        "uid": "c5454a3d-7e78-403f-b863-47c4c919d2db"
-      },
-      "reason": "FreeDiskSpaceFailed",
-      "reportingComponent": "kubelet",
-      "reportingInstance": "freelens-addons-dev",
-      "source": {
-        "component": "kubelet",
-        "host": "freelens-addons-dev"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 3,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:06:24Z",
-      "involvedObject": {
-        "apiVersion": "v1",
-        "kind": "Node",
-        "name": "freelens-addons-dev"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:16:25Z",
-      "message": "Insufficient free disk space on the node's image filesystem (41% of 1.8 TiB used). Failed to free sufficient space by deleting unused images (freed 0 bytes). Investigate disk usage, as it could be used by active images, logs, volumes, or other data.",
-      "metadata": {
-        "creationTimestamp": "2026-10-03T00:06:24Z",
-        "name": "freelens-addons-dev.18dadc43a7b3f752",
-        "namespace": "default",
-        "resourceVersion": "313837",
-        "selfLink": "/api/v1/namespaces/default/events/freelens-addons-dev.18dadc43a7b3f752",
-        "uid": "e113ebdf-6e20-43cc-b713-9e820c9f6ce8"
+        "resourceVersion": "480428",
+        "selfLink": "/api/v1/namespaces/default/events/freelens-addons-dev.18df7754c4e1b414",
+        "uid": "de73e82c-8d9d-48e0-bb98-35e8a48c07e5"
       },
       "reason": "ImageGCFailed",
       "reportingComponent": "kubelet",
@@ -125,22 +535,22 @@
       "apiVersion": "v1",
       "count": 1,
       "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:21:25Z",
+      "firstTimestamp": "2026-10-18T02:58:07Z",
       "involvedObject": {
         "apiVersion": "v1",
         "kind": "Node",
         "name": "freelens-addons-dev"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:21:25Z",
-      "message": "Insufficient free disk space on the node's image filesystem (41% of 1.8 TiB used). Failed to free sufficient space by deleting unused images (freed 95318761 bytes). Investigate disk usage, as it could be used by active images, logs, volumes, or other data.",
+      "lastTimestamp": "2026-10-18T02:58:07Z",
+      "message": "Insufficient free disk space on the node's image filesystem (48% of 1.8 TiB used). Failed to free sufficient space by deleting unused images (freed 63596482 bytes). Investigate disk usage, as it could be used by active images, logs, volumes, or other data.",
       "metadata": {
-        "creationTimestamp": "2026-10-03T00:21:25Z",
-        "name": "freelens-addons-dev.18dadd1542c0cd70",
+        "creationTimestamp": "2026-10-18T02:58:07Z",
+        "name": "freelens-addons-dev.18df805703c6dd41",
         "namespace": "default",
-        "resourceVersion": "314404",
-        "selfLink": "/api/v1/namespaces/default/events/freelens-addons-dev.18dadd1542c0cd70",
-        "uid": "a8b8e724-40ba-4697-829f-1accb6f275e8"
+        "resourceVersion": "497161",
+        "selfLink": "/api/v1/namespaces/default/events/freelens-addons-dev.18df805703c6dd41",
+        "uid": "8d609085-dc31-4f7d-860c-e471277b1c5f"
       },
       "reason": "FreeDiskSpaceFailed",
       "reportingComponent": "kubelet",
@@ -153,88 +563,28 @@
     },
     {
       "apiVersion": "v1",
-      "count": 1,
+      "count": 149,
       "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:21:25Z",
-      "involvedObject": {
-        "apiVersion": "v1",
-        "kind": "Node",
-        "name": "freelens-addons-dev"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:21:25Z",
-      "message": "Insufficient free disk space on the node's image filesystem (41% of 1.8 TiB used). Failed to free sufficient space by deleting unused images (freed 95318761 bytes). Investigate disk usage, as it could be used by active images, logs, volumes, or other data.",
-      "metadata": {
-        "creationTimestamp": "2026-10-03T00:21:25Z",
-        "name": "freelens-addons-dev.18dadd1542c162cc",
-        "namespace": "default",
-        "resourceVersion": "314405",
-        "selfLink": "/api/v1/namespaces/default/events/freelens-addons-dev.18dadd1542c162cc",
-        "uid": "66cb7d8a-c1cb-4704-bdc7-489cb72b6c50"
-      },
-      "reason": "ImageGCFailed",
-      "reportingComponent": "kubelet",
-      "reportingInstance": "freelens-addons-dev",
-      "source": {
-        "component": "kubelet",
-        "host": "freelens-addons-dev"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 1,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:31:25Z",
-      "involvedObject": {
-        "apiVersion": "v1",
-        "kind": "Node",
-        "name": "freelens-addons-dev"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:31:25Z",
-      "message": "Insufficient free disk space on the node's image filesystem (41% of 1.8 TiB used). Failed to free sufficient space by deleting unused images (freed 61445129 bytes). Investigate disk usage, as it could be used by active images, logs, volumes, or other data.",
-      "metadata": {
-        "creationTimestamp": "2026-10-03T00:31:25Z",
-        "name": "freelens-addons-dev.18dadda0fed357f0",
-        "namespace": "default",
-        "resourceVersion": "315521",
-        "selfLink": "/api/v1/namespaces/default/events/freelens-addons-dev.18dadda0fed357f0",
-        "uid": "ea8e010d-b285-4845-8788-336561a13345"
-      },
-      "reason": "FreeDiskSpaceFailed",
-      "reportingComponent": "kubelet",
-      "reportingInstance": "freelens-addons-dev",
-      "source": {
-        "component": "kubelet",
-        "host": "freelens-addons-dev"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 129,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-02T22:21:38Z",
+      "firstTimestamp": "2026-10-18T00:08:14Z",
       "involvedObject": {
         "apiVersion": "v1",
         "fieldPath": "spec.containers{broken}",
         "kind": "Pod",
-        "name": "broken-86d6fd94d-vk7nj",
+        "name": "broken-86d6fd94d-t8rsd",
         "namespace": "demo",
-        "resourceVersion": "307761",
-        "uid": "4a32d5f2-e40d-4f1e-994e-c67ec8f4c8bf"
+        "resourceVersion": "432422",
+        "uid": "f2fdf45a-fdf7-4c9f-b318-24cdf573fa8e"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:47:31Z",
-      "message": "Back-off restarting failed container broken in pod broken-86d6fd94d-vk7nj_demo(4a32d5f2-e40d-4f1e-994e-c67ec8f4c8bf)",
+      "lastTimestamp": "2026-10-18T02:58:54Z",
+      "message": "Back-off restarting failed container broken in pod broken-86d6fd94d-t8rsd_demo(f2fdf45a-fdf7-4c9f-b318-24cdf573fa8e)",
       "metadata": {
-        "creationTimestamp": "2026-10-02T22:21:38Z",
-        "name": "broken-86d6fd94d-vk7nj.18dad68bf6f942a9",
+        "creationTimestamp": "2026-10-18T00:08:14Z",
+        "name": "broken-86d6fd94d-t8rsd.18df7711c3662425",
         "namespace": "demo",
-        "resourceVersion": "316922",
-        "selfLink": "/api/v1/namespaces/demo/events/broken-86d6fd94d-vk7nj.18dad68bf6f942a9",
-        "uid": "6af67907-b38d-48be-b95d-dcd9892e92db"
+        "resourceVersion": "497411",
+        "selfLink": "/api/v1/namespaces/demo/events/broken-86d6fd94d-t8rsd.18df7711c3662425",
+        "uid": "ba277d2a-518b-4c47-9128-736f6406cfe6"
       },
       "reason": "BackOff",
       "reportingComponent": "kubelet",
@@ -247,27 +597,27 @@
     },
     {
       "apiVersion": "v1",
-      "count": 35,
+      "count": 40,
       "eventTime": null,
-      "firstTimestamp": "2026-10-02T22:21:32Z",
+      "firstTimestamp": "2026-10-18T00:08:14Z",
       "involvedObject": {
         "apiVersion": "cert-manager.io/v1",
         "kind": "Issuer",
         "name": "broken-ca",
         "namespace": "demo",
-        "resourceVersion": "11905",
-        "uid": "d2819c07-7cc2-4796-8ea6-685ab3333ca9"
+        "resourceVersion": "3594",
+        "uid": "4e981775-6fb9-4e7f-a83e-13efc1bb692d"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:46:47Z",
+      "lastTimestamp": "2026-10-18T02:58:29Z",
       "message": "Error getting keypair for CA issuer: secrets \"no-such-secret\" not found",
       "metadata": {
-        "creationTimestamp": "2026-10-02T22:21:32Z",
-        "name": "broken-ca.18dad68a8208824f",
+        "creationTimestamp": "2026-10-18T00:08:14Z",
+        "name": "broken-ca.18df7711a7a3e24a",
         "namespace": "demo",
-        "resourceVersion": "316786",
-        "selfLink": "/api/v1/namespaces/demo/events/broken-ca.18dad68a8208824f",
-        "uid": "df7a3e72-9209-49c7-b773-2056d23822f2"
+        "resourceVersion": "497283",
+        "selfLink": "/api/v1/namespaces/demo/events/broken-ca.18df7711a7a3e24a",
+        "uid": "166121db-3a7a-4a95-b65a-84c5d0c0f0e7"
       },
       "reason": "ErrGetKeyPair",
       "reportingComponent": "cert-manager-issuers",
@@ -279,27 +629,27 @@
     },
     {
       "apiVersion": "v1",
-      "count": 35,
+      "count": 60,
       "eventTime": null,
-      "firstTimestamp": "2026-10-02T22:21:32Z",
+      "firstTimestamp": "2026-10-18T00:08:14Z",
       "involvedObject": {
         "apiVersion": "cert-manager.io/v1",
         "kind": "Issuer",
         "name": "flaky-ca",
         "namespace": "demo",
-        "resourceVersion": "47200",
-        "uid": "ad4d09ed-3e8d-4c38-8ea7-4ed0a64ef3d8"
+        "resourceVersion": "366314",
+        "uid": "e8f334f1-42c9-47ab-aae9-c66df7f3d9af"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:46:47Z",
+      "lastTimestamp": "2026-10-18T02:56:12Z",
       "message": "Error getting keypair for CA issuer: secrets \"flaky-ca-key\" not found",
       "metadata": {
-        "creationTimestamp": "2026-10-02T22:21:32Z",
-        "name": "flaky-ca.18dad68a8208c021",
+        "creationTimestamp": "2026-10-18T00:08:14Z",
+        "name": "flaky-ca.18df7711a79f969b",
         "namespace": "demo",
-        "resourceVersion": "316787",
-        "selfLink": "/api/v1/namespaces/demo/events/flaky-ca.18dad68a8208c021",
-        "uid": "cd80051c-9b21-413e-9398-862eeb1e8535"
+        "resourceVersion": "496601",
+        "selfLink": "/api/v1/namespaces/demo/events/flaky-ca.18df7711a79f969b",
+        "uid": "ded4ba47-7bf3-44b9-8537-dd8927b885ef"
       },
       "reason": "ErrGetKeyPair",
       "reportingComponent": "cert-manager-issuers",
@@ -310,31 +660,61 @@
       "type": "Warning"
     },
     {
+      "action": "Scheduling",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-18T03:00:13.942311Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "guestbook-ui-6cbb7b6d85-nv2bk",
+        "namespace": "demo",
+        "resourceVersion": "497978",
+        "uid": "4b96b72a-1fc1-4f33-bc15-884348e6fe14"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "0/1 nodes are available: 1 Too many pods. no new claims to deallocate, preemption: 0/1 nodes are available: 1 No preemption victims found for incoming pod.",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T03:00:13Z",
+        "name": "guestbook-ui-6cbb7b6d85-nv2bk.18df80745aa8aef9",
+        "namespace": "demo",
+        "resourceVersion": "497980",
+        "selfLink": "/api/v1/namespaces/demo/events/guestbook-ui-6cbb7b6d85-nv2bk.18df80745aa8aef9",
+        "uid": "392c7cec-c5fd-40d0-8fef-9b3d3e6065cf"
+      },
+      "reason": "FailedScheduling",
+      "reportingComponent": "default-scheduler",
+      "reportingInstance": "default-scheduler-15faf5ee47ca",
+      "source": {},
+      "type": "Warning"
+    },
+    {
       "apiVersion": "v1",
       "count": 1,
       "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:48:56Z",
+      "firstTimestamp": "2026-10-18T03:00:25Z",
       "involvedObject": {
         "apiVersion": "v1",
-        "fieldPath": "spec.containers{guestbook-ui}",
+        "fieldPath": "spec.containers{helm-guestbook}",
         "kind": "Pod",
-        "name": "guestbook-ui-6cbb7b6d85-mlnjx",
+        "name": "helm-guestbook-77bb656876-fr8db",
         "namespace": "demo",
-        "resourceVersion": "317076",
-        "uid": "1180e393-45cb-47e6-acbe-14fd4dbbfdac"
+        "resourceVersion": "498157",
+        "uid": "afc94b08-6730-4d27-839f-3bd3b2e675c4"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:48:56Z",
-      "message": "Failed to pull image \"gcr.io/heptio-images/ks-guestbook-demo:0.2\": failed to pull and unpack image \"gcr.io/heptio-images/ks-guestbook-demo:0.2\": failed to resolve reference \"gcr.io/heptio-images/ks-guestbook-demo:0.2\": failed to authorize: failed to fetch anonymous token: unexpected status from GET request to https://gcr.io/v2/token?scope=repository%3Aheptio-images%2Fgcr.io%2Fks-guestbook-demo%3Apull&scope=repository%3Aheptio-images%2Fks-guestbook-demo%3Apull&service=gcr.io: 403 Forbidden",
+      "lastTimestamp": "2026-10-18T03:00:25Z",
+      "message": "Readiness probe failed: Get \"http://198.51.100.18:80/\": dial tcp 198.51.100.18:80: connect: connection refused",
       "metadata": {
-        "creationTimestamp": "2026-10-03T00:48:56Z",
-        "name": "guestbook-ui-6cbb7b6d85-mlnjx.18dade95d111f29e",
+        "creationTimestamp": "2026-10-18T03:00:25Z",
+        "name": "helm-guestbook-77bb656876-fr8db.18df807720a57d8f",
         "namespace": "demo",
-        "resourceVersion": "317150",
-        "selfLink": "/api/v1/namespaces/demo/events/guestbook-ui-6cbb7b6d85-mlnjx.18dade95d111f29e",
-        "uid": "804a091f-236c-4bdf-8e05-681551ecc727"
+        "resourceVersion": "498173",
+        "selfLink": "/api/v1/namespaces/demo/events/helm-guestbook-77bb656876-fr8db.18df807720a57d8f",
+        "uid": "e874d083-45fb-45f3-9330-1d9b54ab36d1"
       },
-      "reason": "Failed",
+      "reason": "Unhealthy",
       "reportingComponent": "kubelet",
       "reportingInstance": "freelens-addons-dev",
       "source": {
@@ -347,26 +727,60 @@
       "apiVersion": "v1",
       "count": 1,
       "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:48:56Z",
+      "firstTimestamp": "2026-10-18T02:31:32Z",
       "involvedObject": {
         "apiVersion": "v1",
-        "fieldPath": "spec.containers{guestbook-ui}",
+        "fieldPath": "spec.containers{helm-guestbook}",
         "kind": "Pod",
-        "name": "guestbook-ui-6cbb7b6d85-mlnjx",
+        "name": "helm-guestbook-77bb656876-mnslk",
         "namespace": "demo",
-        "resourceVersion": "317076",
-        "uid": "1180e393-45cb-47e6-acbe-14fd4dbbfdac"
+        "resourceVersion": "435726",
+        "uid": "e6ba6f59-72d3-4a7c-af55-ce5b556f9d68"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:48:56Z",
-      "message": "Error: ErrImagePull",
+      "lastTimestamp": "2026-10-18T02:31:32Z",
+      "message": "Liveness probe failed: Get \"http://198.51.100.19:80/\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
       "metadata": {
-        "creationTimestamp": "2026-10-03T00:48:56Z",
-        "name": "guestbook-ui-6cbb7b6d85-mlnjx.18dade95d114281b",
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "helm-guestbook-77bb656876-mnslk.18df7ee36fa44c34",
         "namespace": "demo",
-        "resourceVersion": "317151",
-        "selfLink": "/api/v1/namespaces/demo/events/guestbook-ui-6cbb7b6d85-mlnjx.18dade95d114281b",
-        "uid": "fa3e49ff-4cc7-442d-a3df-548eb7e5cbee"
+        "resourceVersion": "488652",
+        "selfLink": "/api/v1/namespaces/demo/events/helm-guestbook-77bb656876-mnslk.18df7ee36fa44c34",
+        "uid": "5d1940a4-903f-44b1-ad56-fe2eb68c41be"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 38,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T00:08:09Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{unscannable}",
+        "kind": "Pod",
+        "name": "unscannable-7d45447486-gsflj",
+        "namespace": "demo",
+        "resourceVersion": "432674",
+        "uid": "4a9bf544-4e87-4dca-aed1-359bde8fca36"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:58:19Z",
+      "message": "Failed to pull image \"registry.invalid/freelens-addons/nothing:1\": failed to pull and unpack image \"registry.invalid/freelens-addons/nothing:1\": failed to resolve reference \"registry.invalid/freelens-addons/nothing:1\": failed to do request: Head \"https://registry.invalid/v2/freelens-addons/nothing/manifests/1\": dial tcp: lookup registry.invalid: no such host",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:58:19Z",
+        "name": "unscannable-7d45447486-gsflj.18df77109c8b70dc",
+        "namespace": "demo",
+        "resourceVersion": "497231",
+        "selfLink": "/api/v1/namespaces/demo/events/unscannable-7d45447486-gsflj.18df77109c8b70dc",
+        "uid": "d55f1c4b-1d5f-40bc-8c1d-49523661e0ac"
       },
       "reason": "Failed",
       "reportingComponent": "kubelet",
@@ -379,28 +793,28 @@
     },
     {
       "apiVersion": "v1",
-      "count": 1,
+      "count": 725,
       "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:24:59Z",
+      "firstTimestamp": "2026-10-18T00:08:10Z",
       "involvedObject": {
         "apiVersion": "v1",
-        "fieldPath": "spec.containers{guestbook-ui}",
+        "fieldPath": "spec.containers{unscannable}",
         "kind": "Pod",
-        "name": "guestbook-ui-6cbb7b6d85-mnwqw",
+        "name": "unscannable-7d45447486-gsflj",
         "namespace": "demo",
-        "resourceVersion": "314860",
-        "uid": "0b98d199-6b7d-47fa-a491-0457db910b20"
+        "resourceVersion": "432674",
+        "uid": "4a9bf544-4e87-4dca-aed1-359bde8fca36"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:24:59Z",
-      "message": "Failed to pull image \"gcr.io/heptio-images/ks-guestbook-demo:0.2\": failed to pull and unpack image \"gcr.io/heptio-images/ks-guestbook-demo:0.2\": failed to resolve reference \"gcr.io/heptio-images/ks-guestbook-demo:0.2\": failed to authorize: failed to fetch anonymous token: unexpected status from GET request to https://gcr.io/v2/token?scope=repository%3Aheptio-images%2Fgcr.io%2Fks-guestbook-demo%3Apull&scope=repository%3Aheptio-images%2Fks-guestbook-demo%3Apull&service=gcr.io: 403 Forbidden",
+      "lastTimestamp": "2026-10-18T02:53:15Z",
+      "message": "Error: ImagePullBackOff",
       "metadata": {
-        "creationTimestamp": "2026-10-03T00:24:59Z",
-        "name": "guestbook-ui-6cbb7b6d85-mnwqw.18dadd4736a023cc",
+        "creationTimestamp": "2026-10-18T00:08:10Z",
+        "name": "unscannable-7d45447486-gsflj.18df7710c7ee76ed",
         "namespace": "demo",
-        "resourceVersion": "314935",
-        "selfLink": "/api/v1/namespaces/demo/events/guestbook-ui-6cbb7b6d85-mnwqw.18dadd4736a023cc",
-        "uid": "a56c293e-249b-4ea2-81c1-948db7d4d791"
+        "resourceVersion": "495662",
+        "selfLink": "/api/v1/namespaces/demo/events/unscannable-7d45447486-gsflj.18df7710c7ee76ed",
+        "uid": "910c9aa4-e5a1-4356-aee4-9c25b7abb133"
       },
       "reason": "Failed",
       "reportingComponent": "kubelet",
@@ -413,30 +827,62 @@
     },
     {
       "apiVersion": "v1",
-      "count": 1,
+      "count": 681,
       "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:24:59Z",
+      "firstTimestamp": "2026-10-18T00:08:18Z",
       "involvedObject": {
-        "apiVersion": "v1",
-        "fieldPath": "spec.containers{guestbook-ui}",
-        "kind": "Pod",
-        "name": "guestbook-ui-6cbb7b6d85-mnwqw",
-        "namespace": "demo",
-        "resourceVersion": "314860",
-        "uid": "0b98d199-6b7d-47fa-a491-0457db910b20"
+        "apiVersion": "autoscaling/v2",
+        "kind": "HorizontalPodAutoscaler",
+        "name": "podinfo",
+        "namespace": "image-updates",
+        "resourceVersion": "2061",
+        "uid": "9e4f6d8a-ab6e-418f-be51-14aae72ee1c5"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:24:59Z",
-      "message": "Error: ErrImagePull",
+      "lastTimestamp": "2026-10-18T02:58:22Z",
+      "message": "failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server could not find the requested resource (get pods.metrics.k8s.io)",
       "metadata": {
-        "creationTimestamp": "2026-10-03T00:24:59Z",
-        "name": "guestbook-ui-6cbb7b6d85-mnwqw.18dadd4736a1f38c",
-        "namespace": "demo",
-        "resourceVersion": "314936",
-        "selfLink": "/api/v1/namespaces/demo/events/guestbook-ui-6cbb7b6d85-mnwqw.18dadd4736a1f38c",
-        "uid": "a3f4d281-74e7-4d6e-aa38-382bf1585b04"
+        "creationTimestamp": "2026-10-18T00:08:18Z",
+        "name": "podinfo.18df7712a93f1b28",
+        "namespace": "image-updates",
+        "resourceVersion": "497247",
+        "selfLink": "/api/v1/namespaces/image-updates/events/podinfo.18df7712a93f1b28",
+        "uid": "be2bf07e-4bd2-4e9d-9556-9a68d4d8fced"
       },
-      "reason": "Failed",
+      "reason": "FailedGetResourceMetric",
+      "reportingComponent": "horizontal-pod-autoscaler",
+      "reportingInstance": "",
+      "source": {
+        "component": "horizontal-pod-autoscaler"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:28Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{coredns}",
+        "kind": "Pod",
+        "name": "coredns-54996dc9b4-kdcrl",
+        "namespace": "kube-system",
+        "resourceVersion": "432159",
+        "uid": "683e54c0-52fa-44cc-a7c6-0771629d0b82"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:28Z",
+      "message": "Readiness probe failed: Get \"http://198.51.100.20:8181/ready\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "coredns-54996dc9b4-kdcrl.18df7ee294a5f7b7",
+        "namespace": "kube-system",
+        "resourceVersion": "488638",
+        "selfLink": "/api/v1/namespaces/kube-system/events/coredns-54996dc9b4-kdcrl.18df7ee294a5f7b7",
+        "uid": "3381316d-a280-4474-8ffc-da6f95131c6d"
+      },
+      "reason": "Unhealthy",
       "reportingComponent": "kubelet",
       "reportingInstance": "freelens-addons-dev",
       "source": {
@@ -447,35 +893,33 @@
     },
     {
       "apiVersion": "v1",
-      "count": 1,
+      "count": 681,
       "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:19:08Z",
+      "firstTimestamp": "2026-10-18T00:08:18Z",
       "involvedObject": {
-        "apiVersion": "v1",
-        "fieldPath": "spec.containers{guestbook-ui}",
-        "kind": "Pod",
-        "name": "guestbook-ui-6cbb7b6d85-wn9b9",
-        "namespace": "demo",
-        "resourceVersion": "314066",
-        "uid": "c373eab4-2839-48ff-a333-27311ac1ce1b"
+        "apiVersion": "autoscaling/v2",
+        "kind": "HorizontalPodAutoscaler",
+        "name": "podinfo",
+        "namespace": "legacy-annotations",
+        "resourceVersion": "2059",
+        "uid": "234587de-1c94-4007-8ce5-2130f6f633b6"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:19:08Z",
-      "message": "Failed to pull image \"gcr.io/heptio-images/ks-guestbook-demo:0.2\": failed to pull and unpack image \"gcr.io/heptio-images/ks-guestbook-demo:0.2\": failed to resolve reference \"gcr.io/heptio-images/ks-guestbook-demo:0.2\": failed to authorize: failed to fetch anonymous token: unexpected status from GET request to https://gcr.io/v2/token?scope=repository%3Aheptio-images%2Fgcr.io%2Fks-guestbook-demo%3Apull&scope=repository%3Aheptio-images%2Fks-guestbook-demo%3Apull&service=gcr.io: 403 Forbidden",
+      "lastTimestamp": "2026-10-18T02:58:22Z",
+      "message": "failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server could not find the requested resource (get pods.metrics.k8s.io)",
       "metadata": {
-        "creationTimestamp": "2026-10-03T00:19:08Z",
-        "name": "guestbook-ui-6cbb7b6d85-wn9b9.18dadcf556fdcf9d",
-        "namespace": "demo",
-        "resourceVersion": "314138",
-        "selfLink": "/api/v1/namespaces/demo/events/guestbook-ui-6cbb7b6d85-wn9b9.18dadcf556fdcf9d",
-        "uid": "c69b7961-7fd1-4a5f-bad3-0c7896677d03"
+        "creationTimestamp": "2026-10-18T00:08:18Z",
+        "name": "podinfo.18df7712a940089b",
+        "namespace": "legacy-annotations",
+        "resourceVersion": "497248",
+        "selfLink": "/api/v1/namespaces/legacy-annotations/events/podinfo.18df7712a940089b",
+        "uid": "0af3a7cd-2323-43ef-ba2c-3468268661f7"
       },
-      "reason": "Failed",
-      "reportingComponent": "kubelet",
-      "reportingInstance": "freelens-addons-dev",
+      "reason": "FailedGetResourceMetric",
+      "reportingComponent": "horizontal-pod-autoscaler",
+      "reportingInstance": "",
       "source": {
-        "component": "kubelet",
-        "host": "freelens-addons-dev"
+        "component": "horizontal-pod-autoscaler"
       },
       "type": "Warning"
     },
@@ -483,28 +927,28 @@
       "apiVersion": "v1",
       "count": 1,
       "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:19:08Z",
+      "firstTimestamp": "2026-10-18T02:31:33Z",
       "involvedObject": {
         "apiVersion": "v1",
-        "fieldPath": "spec.containers{guestbook-ui}",
+        "fieldPath": "spec.containers{mongodb-agent}",
         "kind": "Pod",
-        "name": "guestbook-ui-6cbb7b6d85-wn9b9",
-        "namespace": "demo",
-        "resourceVersion": "314066",
-        "uid": "c373eab4-2839-48ff-a333-27311ac1ce1b"
+        "name": "orders-rs-0",
+        "namespace": "mongodb-apps",
+        "resourceVersion": "427788",
+        "uid": "6719856d-0c9e-4571-9d25-7606de28d58e"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:19:08Z",
-      "message": "Error: ErrImagePull",
+      "lastTimestamp": "2026-10-18T02:31:33Z",
+      "message": "Readiness probe failed: command timed out: \"/opt/scripts/readinessprobe\" timed out after 1s",
       "metadata": {
-        "creationTimestamp": "2026-10-03T00:19:08Z",
-        "name": "guestbook-ui-6cbb7b6d85-wn9b9.18dadcf5570028f3",
-        "namespace": "demo",
-        "resourceVersion": "314139",
-        "selfLink": "/api/v1/namespaces/demo/events/guestbook-ui-6cbb7b6d85-wn9b9.18dadcf5570028f3",
-        "uid": "646217eb-3699-417a-b09d-65e8d53c6fa5"
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "orders-rs-0.18df7ee3c6bb00ec",
+        "namespace": "mongodb-apps",
+        "resourceVersion": "488661",
+        "selfLink": "/api/v1/namespaces/mongodb-apps/events/orders-rs-0.18df7ee3c6bb00ec",
+        "uid": "811d2834-48f2-4ccc-8db4-185d549463cd"
       },
-      "reason": "Failed",
+      "reason": "Unhealthy",
       "reportingComponent": "kubelet",
       "reportingInstance": "freelens-addons-dev",
       "source": {
@@ -517,26 +961,60 @@
       "apiVersion": "v1",
       "count": 2,
       "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:25:02Z",
+      "firstTimestamp": "2026-10-18T02:31:33Z",
       "involvedObject": {
         "apiVersion": "v1",
-        "fieldPath": "spec.containers{helm-guestbook}",
+        "fieldPath": "spec.containers{mongodb-agent}",
         "kind": "Pod",
-        "name": "helm-guestbook-77bb656876-jrzm4",
-        "namespace": "demo",
-        "resourceVersion": "314978",
-        "uid": "f0b72f28-fd11-48f6-9108-498d07f81c68"
+        "name": "catalog-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "366195",
+        "uid": "75d94b4f-243d-4bbe-8432-627921a8a82c"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:25:02Z",
-      "message": "Readiness probe failed: Get \"http://198.51.100.10:80/\": dial tcp 198.51.100.10:80: connect: connection refused",
+      "lastTimestamp": "2026-10-18T02:49:50Z",
+      "message": "Readiness probe failed: command timed out: \"/opt/scripts/readinessprobe\" timed out after 1s",
       "metadata": {
-        "creationTimestamp": "2026-10-03T00:25:02Z",
-        "name": "helm-guestbook-77bb656876-jrzm4.18dadd47c7d442f1",
-        "namespace": "demo",
-        "resourceVersion": "314997",
-        "selfLink": "/api/v1/namespaces/demo/events/helm-guestbook-77bb656876-jrzm4.18dadd47c7d442f1",
-        "uid": "6dbe857e-065b-46c7-9763-200f8dcd33b2"
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "catalog-rs-0.18df7ee3b84c461e",
+        "namespace": "mongodb",
+        "resourceVersion": "494286",
+        "selfLink": "/api/v1/namespaces/mongodb/events/catalog-rs-0.18df7ee3b84c461e",
+        "uid": "2f3f759e-2f45-466a-aa73-944a385dba71"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 2,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:33Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "catalog-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "366192",
+        "uid": "945e69dd-51c1-472e-a671-03fd3aa96729"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:49:50Z",
+      "message": "Readiness probe failed: command timed out: \"/opt/scripts/readinessprobe\" timed out after 1s",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "catalog-rs-1.18df7ee3b8a82ee2",
+        "namespace": "mongodb",
+        "resourceVersion": "494285",
+        "selfLink": "/api/v1/namespaces/mongodb/events/catalog-rs-1.18df7ee3b8a82ee2",
+        "uid": "8a9d8607-b2e3-4995-95a9-a454bb7835c1"
       },
       "reason": "Unhealthy",
       "reportingComponent": "kubelet",
@@ -551,26 +1029,262 @@
       "apiVersion": "v1",
       "count": 1,
       "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:19:11Z",
+      "firstTimestamp": "2026-10-18T02:31:28Z",
       "involvedObject": {
         "apiVersion": "v1",
-        "fieldPath": "spec.containers{helm-guestbook}",
+        "fieldPath": "spec.containers{mongodb-agent}",
         "kind": "Pod",
-        "name": "helm-guestbook-77bb656876-qxk6w",
-        "namespace": "demo",
-        "resourceVersion": "314185",
-        "uid": "93e52d02-c532-4059-aead-45cba6452bce"
+        "name": "catalog-rs-2",
+        "namespace": "mongodb",
+        "resourceVersion": "366216",
+        "uid": "35dec43a-20c3-4514-a623-fade10a515c0"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:19:11Z",
-      "message": "Readiness probe failed: Get \"http://198.51.100.11:80/\": dial tcp 198.51.100.11:80: connect: connection refused",
+      "lastTimestamp": "2026-10-18T02:31:28Z",
+      "message": "Readiness probe failed: command timed out: \"/opt/scripts/readinessprobe\" timed out after 1s",
       "metadata": {
-        "creationTimestamp": "2026-10-03T00:19:11Z",
-        "name": "helm-guestbook-77bb656876-qxk6w.18dadcf6275da4c0",
-        "namespace": "demo",
-        "resourceVersion": "314199",
-        "selfLink": "/api/v1/namespaces/demo/events/helm-guestbook-77bb656876-qxk6w.18dadcf6275da4c0",
-        "uid": "38eceabd-684b-4b6e-85fa-9e042c0788c9"
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "catalog-rs-2.18df7ee298c28887",
+        "namespace": "mongodb",
+        "resourceVersion": "488643",
+        "selfLink": "/api/v1/namespaces/mongodb/events/catalog-rs-2.18df7ee298c28887",
+        "uid": "0612bd55-015c-43b6-b66d-f70eafea40a7"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 681,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T00:08:04Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "data-volume-legacy-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "7947",
+        "uid": "d5f70421-77f2-4e1f-a6f4-6b08ea039838"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:58:05Z",
+      "message": "storageclass.storage.k8s.io \"no-such-class\" not found",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T00:08:04Z",
+        "name": "data-volume-legacy-rs-0.18df770f5b5bba3e",
+        "namespace": "mongodb",
+        "resourceVersion": "497143",
+        "selfLink": "/api/v1/namespaces/mongodb/events/data-volume-legacy-rs-0.18df770f5b5bba3e",
+        "uid": "eb85fb4c-8348-4666-aa98-9b363d1269f1"
+      },
+      "reason": "ProvisioningFailed",
+      "reportingComponent": "persistentvolume-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "persistentvolume-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:26Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "ledger-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "459094",
+        "uid": "e58d823d-de6e-4cfb-836f-ea80e6964d24"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:26Z",
+      "message": "Readiness probe failed: command timed out: \"/opt/scripts/readinessprobe\" timed out after 1s",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "ledger-rs-0.18df7ee2120fe9c7",
+        "namespace": "mongodb",
+        "resourceVersion": "488637",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-0.18df7ee2120fe9c7",
+        "uid": "5e833197-a782-46fc-89a0-0a8ce499113d"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 2,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:25Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "ledger-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "459934",
+        "uid": "89b86450-358c-481f-9470-8dcc1d75e680"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:35Z",
+      "message": "Readiness probe failed: command timed out: \"/opt/scripts/readinessprobe\" timed out after 1s",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:34Z",
+        "name": "ledger-rs-1.18df7ee1dc5b3826",
+        "namespace": "mongodb",
+        "resourceVersion": "488665",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-1.18df7ee1dc5b3826",
+        "uid": "bd383ae8-edce-4182-9cce-b20ab522a890"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "action": "Scheduling",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-18T01:13:03.760805Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "ledger-rs-2",
+        "namespace": "mongodb",
+        "resourceVersion": "461565",
+        "uid": "4cba51e6-7d72-40c9-ac8a-ee44ba78311a"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "0/1 nodes are available: 1 Insufficient memory. no new claims to deallocate, preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:13:03Z",
+        "name": "ledger-rs-2.18df7a9b35f97799",
+        "namespace": "mongodb",
+        "resourceVersion": "490681",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-2.18df7a9b35f97799",
+        "uid": "3e1a97fb-5746-4d95-a662-039e2631cdf3"
+      },
+      "reason": "FailedScheduling",
+      "reportingComponent": "default-scheduler",
+      "reportingInstance": "default-scheduler-15faf5ee47ca",
+      "series": {
+        "count": 46,
+        "lastObservedTime": "2026-10-18T02:35:33.915618Z"
+      },
+      "source": {},
+      "type": "Warning"
+    },
+    {
+      "action": "Scheduling",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-18T00:08:03.474745Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "legacy-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "62822",
+        "uid": "717bd0f2-8f73-4a8d-9d7f-ab1abbbc1600"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "0/1 nodes are available: pod has unbound immediate PersistentVolumeClaims. not found",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T00:08:03Z",
+        "name": "legacy-rs-0.18df770f1acf3123",
+        "namespace": "mongodb",
+        "resourceVersion": "490678",
+        "selfLink": "/api/v1/namespaces/mongodb/events/legacy-rs-0.18df770f1acf3123",
+        "uid": "74f73dab-c536-48d9-97dd-69786d398404"
+      },
+      "reason": "FailedScheduling",
+      "reportingComponent": "default-scheduler",
+      "reportingInstance": "default-scheduler-15faf5ee47ca",
+      "series": {
+        "count": 68,
+        "lastObservedTime": "2026-10-18T02:37:33.918357Z"
+      },
+      "source": {},
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:28Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "secure-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "366356",
+        "uid": "5c7237a4-73af-45ca-abd2-ca9f342e9f3c"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:28Z",
+      "message": "Readiness probe failed: command timed out: \"/opt/scripts/readinessprobe\" timed out after 1s",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "secure-rs-0.18df7ee29de387df",
+        "namespace": "mongodb",
+        "resourceVersion": "488646",
+        "selfLink": "/api/v1/namespaces/mongodb/events/secure-rs-0.18df7ee29de387df",
+        "uid": "9f471984-4688-424f-b456-b9cd30aff3b4"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 2,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:25Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "sessions-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "366188",
+        "uid": "6f97fc4a-4735-4068-a3fb-f1eb73ee1953"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:35Z",
+      "message": "Readiness probe failed: command timed out: \"/opt/scripts/readinessprobe\" timed out after 1s",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:35Z",
+        "name": "sessions-rs-0.18df7ee1dccd16e7",
+        "namespace": "mongodb",
+        "resourceVersion": "488666",
+        "selfLink": "/api/v1/namespaces/mongodb/events/sessions-rs-0.18df7ee1dccd16e7",
+        "uid": "bc7ac48a-9fb7-4bc1-b582-93c61100c5ad"
       },
       "reason": "Unhealthy",
       "reportingComponent": "kubelet",
@@ -585,26 +1299,26 @@
       "apiVersion": "v1",
       "count": 1,
       "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:48:59Z",
+      "firstTimestamp": "2026-10-18T02:31:33Z",
       "involvedObject": {
         "apiVersion": "v1",
-        "fieldPath": "spec.containers{helm-guestbook}",
+        "fieldPath": "spec.containers{mongodb-agent}",
         "kind": "Pod",
-        "name": "helm-guestbook-77bb656876-wxf7x",
-        "namespace": "demo",
-        "resourceVersion": "317193",
-        "uid": "7159784e-7e1b-4747-8b0b-b3c0bffb2638"
+        "name": "sessions-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "366175",
+        "uid": "7753867b-27a0-4838-ac4c-8d3e1ea739a3"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:48:59Z",
-      "message": "Readiness probe failed: Get \"http://198.51.100.12:80/\": dial tcp 198.51.100.12:80: connect: connection refused",
+      "lastTimestamp": "2026-10-18T02:31:33Z",
+      "message": "Readiness probe failed: command timed out: \"/opt/scripts/readinessprobe\" timed out after 1s",
       "metadata": {
-        "creationTimestamp": "2026-10-03T00:48:59Z",
-        "name": "helm-guestbook-77bb656876-wxf7x.18dade968373d617",
-        "namespace": "demo",
-        "resourceVersion": "317207",
-        "selfLink": "/api/v1/namespaces/demo/events/helm-guestbook-77bb656876-wxf7x.18dade968373d617",
-        "uid": "250a7654-af67-46b9-a6e5-4d2fe8fcd174"
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "sessions-rs-1.18df7ee3c8339637",
+        "namespace": "mongodb",
+        "resourceVersion": "488659",
+        "selfLink": "/api/v1/namespaces/mongodb/events/sessions-rs-1.18df7ee3c8339637",
+        "uid": "fc1d0ffc-e81f-4110-83a3-d30f50161d4a"
       },
       "reason": "Unhealthy",
       "reportingComponent": "kubelet",
@@ -617,28 +1331,232 @@
     },
     {
       "apiVersion": "v1",
-      "count": 638,
+      "count": 1,
       "eventTime": null,
-      "firstTimestamp": "2026-10-02T22:21:32Z",
+      "firstTimestamp": "2026-10-18T02:31:28Z",
       "involvedObject": {
         "apiVersion": "v1",
-        "fieldPath": "spec.containers{unscannable}",
+        "fieldPath": "spec.containers{mongodb-agent}",
         "kind": "Pod",
-        "name": "unscannable-7d45447486-xscn9",
-        "namespace": "demo",
-        "resourceVersion": "307668",
-        "uid": "fd6eb015-ddd8-47df-9fed-2e1365258227"
+        "name": "sessions-rs-arb-0",
+        "namespace": "mongodb",
+        "resourceVersion": "366198",
+        "uid": "43abb002-3814-4e34-9233-b0b7ce8408ee"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:46:32Z",
+      "lastTimestamp": "2026-10-18T02:31:28Z",
+      "message": "Readiness probe failed: command timed out: \"/opt/scripts/readinessprobe\" timed out after 1s",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "sessions-rs-arb-0.18df7ee29def9ce6",
+        "namespace": "mongodb",
+        "resourceVersion": "488648",
+        "selfLink": "/api/v1/namespaces/mongodb/events/sessions-rs-arb-0.18df7ee29def9ce6",
+        "uid": "5e336d63-23cc-4b48-abc2-e52ca9d4955e"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:25Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "456619",
+        "uid": "25c6b447-e596-478b-803a-d2292711a0a2"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:25Z",
+      "message": "Readiness probe failed: command timed out: \"/opt/scripts/readinessprobe\" timed out after 1s",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:35Z",
+        "name": "upgrade-rs-0.18df7ee20917d3c0",
+        "namespace": "mongodb",
+        "resourceVersion": "488632",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-0.18df7ee20917d3c0",
+        "uid": "2a98dedb-1705-4c09-9305-1f68c23903e4"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 441,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:12:40Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongod}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "461080",
+        "uid": "a05b6e51-c3dd-45a4-a4a9-b0cf01691e91"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:52:43Z",
       "message": "Error: ImagePullBackOff",
       "metadata": {
-        "creationTimestamp": "2026-10-02T22:21:32Z",
-        "name": "unscannable-7d45447486-xscn9.18dad68a8deef6d3",
-        "namespace": "demo",
-        "resourceVersion": "316770",
-        "selfLink": "/api/v1/namespaces/demo/events/unscannable-7d45447486-xscn9.18dad68a8deef6d3",
-        "uid": "f5be8c70-b3df-4267-a64a-1404f10aa2a8"
+        "creationTimestamp": "2026-10-18T01:12:40Z",
+        "name": "upgrade-rs-1.18df7a95c7b674b1",
+        "namespace": "mongodb",
+        "resourceVersion": "495432",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a95c7b674b1",
+        "uid": "38d75a83-1065-4bb2-b4d1-ff5639e07cfb"
+      },
+      "reason": "Failed",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 961,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:13:42Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "461080",
+        "uid": "a05b6e51-c3dd-45a4-a4a9-b0cf01691e91"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:57:43Z",
+      "message": "(combined from similar events): Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T02:57:43.530Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T02:57:43.543Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T02:57:43.543Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:13:42Z",
+        "name": "upgrade-rs-1.18df7aa43e6f81ea",
+        "namespace": "mongodb",
+        "resourceVersion": "497038",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7aa43e6f81ea",
+        "uid": "7d6df2a3-49c0-4fbc-a5e6-d74eba7340e8"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "",
+      "reportingInstance": "",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 215,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T00:08:18Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{ta-container}",
+        "kind": "Pod",
+        "name": "allocator-targetallocator-dfdf4c696-ln58w",
+        "namespace": "otel-allocator",
+        "resourceVersion": "431756",
+        "uid": "df938fe6-f50d-4d61-9629-2532703d0a86"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:59:25Z",
+      "message": "Back-off restarting failed container ta-container in pod allocator-targetallocator-dfdf4c696-ln58w_otel-allocator(df938fe6-f50d-4d61-9629-2532703d0a86)",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T00:08:18Z",
+        "name": "allocator-targetallocator-dfdf4c696-ln58w.18df7712803a1982",
+        "namespace": "otel-allocator",
+        "resourceVersion": "497585",
+        "selfLink": "/api/v1/namespaces/otel-allocator/events/allocator-targetallocator-dfdf4c696-ln58w.18df7712803a1982",
+        "uid": "ee2fd376-0077-4298-b6b1-4762485c1858"
+      },
+      "reason": "BackOff",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 152,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T00:08:18Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{otc-container}",
+        "kind": "Pod",
+        "name": "broken-collector-794c597d6c-nplfz",
+        "namespace": "otel-collectors",
+        "resourceVersion": "432535",
+        "uid": "bdf1f966-0317-4c3d-9656-c8eb44980d8c"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:59:07Z",
+      "message": "Back-off restarting failed container otc-container in pod broken-collector-794c597d6c-nplfz_otel-collectors(bdf1f966-0317-4c3d-9656-c8eb44980d8c)",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T00:08:18Z",
+        "name": "broken-collector-794c597d6c-nplfz.18df77128024538b",
+        "namespace": "otel-collectors",
+        "resourceVersion": "497487",
+        "selfLink": "/api/v1/namespaces/otel-collectors/events/broken-collector-794c597d6c-nplfz.18df77128024538b",
+        "uid": "e9fcabf8-9d0d-466b-b2e3-f44c2fa6b8cb"
+      },
+      "reason": "BackOff",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 739,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T00:08:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{prometheus}",
+        "kind": "Pod",
+        "name": "prometheus-no-image-0",
+        "namespace": "prom-broken",
+        "resourceVersion": "431341",
+        "uid": "60b7992f-b9c4-4eed-b593-e3884f713a01"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:58:29Z",
+      "message": "Error: ImagePullBackOff",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T00:08:24Z",
+        "name": "prometheus-no-image-0.18df7713ef55b1c5",
+        "namespace": "prom-broken",
+        "resourceVersion": "497284",
+        "selfLink": "/api/v1/namespaces/prom-broken/events/prometheus-no-image-0.18df7713ef55b1c5",
+        "uid": "cccdcaed-8875-44f7-984e-5a0373a63331"
       },
       "reason": "Failed",
       "reportingComponent": "kubelet",
@@ -653,26 +1571,160 @@
       "apiVersion": "v1",
       "count": 1,
       "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:14:55Z",
+      "firstTimestamp": "2026-10-18T02:31:28Z",
       "involvedObject": {
         "apiVersion": "v1",
-        "fieldPath": "spec.containers{podinfod}",
+        "fieldPath": "spec.containers{manager}",
         "kind": "Pod",
-        "name": "podinfo-55b7f757c9-fmlbz",
-        "namespace": "image-updates",
-        "resourceVersion": "313336",
-        "uid": "f77dc58f-2548-4736-b458-d535280856ae"
+        "name": "redis-operator-redis-operator-67cf645ff-44cpp",
+        "namespace": "redis-operator-system",
+        "resourceVersion": "432359",
+        "uid": "85bde2c7-4381-4b77-a79d-592259907565"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:14:55Z",
-      "message": "Readiness probe errored and resulted in unknown state: rpc error: code = Canceled desc = context canceled",
+      "lastTimestamp": "2026-10-18T02:31:28Z",
+      "message": "Readiness probe failed: Get \"http://198.51.100.21:8081/readyz\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
       "metadata": {
-        "creationTimestamp": "2026-10-03T00:14:55Z",
-        "name": "podinfo-55b7f757c9-fmlbz.18dadcbaa3379c40",
-        "namespace": "image-updates",
-        "resourceVersion": "313705",
-        "selfLink": "/api/v1/namespaces/image-updates/events/podinfo-55b7f757c9-fmlbz.18dadcbaa3379c40",
-        "uid": "8aec2d55-aa9e-4dd5-b407-76ea069b57f0"
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "redis-operator-redis-operator-67cf645ff-44cpp.18df7ee2959cf496",
+        "namespace": "redis-operator-system",
+        "resourceVersion": "488641",
+        "selfLink": "/api/v1/namespaces/redis-operator-system/events/redis-operator-redis-operator-67cf645ff-44cpp.18df7ee2959cf496",
+        "uid": "7fbe8238-598c-4767-b394-33232befeed2"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 748,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T00:08:14Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{broken-cache}",
+        "kind": "Pod",
+        "name": "broken-cache-0",
+        "namespace": "redis",
+        "resourceVersion": "432582",
+        "uid": "ae7c2daf-c014-4372-9a07-1f7d1e9df70a"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:58:18Z",
+      "message": "Error: ImagePullBackOff",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T00:08:14Z",
+        "name": "broken-cache-0.18df7711c3be20b0",
+        "namespace": "redis",
+        "resourceVersion": "497226",
+        "selfLink": "/api/v1/namespaces/redis/events/broken-cache-0.18df7711c3be20b0",
+        "uid": "370f571e-f2f5-4086-a6cf-87363bc517a9"
+      },
+      "reason": "Failed",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "action": "Scheduling",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-18T00:08:03.474612Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "legacy-store-0",
+        "namespace": "redis",
+        "resourceVersion": "11509",
+        "uid": "f24bddf5-83ca-44df-94e5-66524952aa8d"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "0/1 nodes are available: pod has unbound immediate PersistentVolumeClaims. not found",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T00:08:03Z",
+        "name": "legacy-store-0.18df770f1acd2bf9",
+        "namespace": "redis",
+        "resourceVersion": "490679",
+        "selfLink": "/api/v1/namespaces/redis/events/legacy-store-0.18df770f1acd2bf9",
+        "uid": "b1218972-88ed-4591-b791-1ae1d2126e0a"
+      },
+      "reason": "FailedScheduling",
+      "reportingComponent": "default-scheduler",
+      "reportingInstance": "default-scheduler-15faf5ee47ca",
+      "series": {
+        "count": 68,
+        "lastObservedTime": "2026-10-18T02:37:33.918348Z"
+      },
+      "source": {},
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 682,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T00:08:04Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "legacy-store-legacy-store-0",
+        "namespace": "redis",
+        "resourceVersion": "11502",
+        "uid": "3282b813-be6c-49bc-90a6-39f57a11811b"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:58:05Z",
+      "message": "storageclass.storage.k8s.io \"no-such-class\" not found",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T00:08:04Z",
+        "name": "legacy-store-legacy-store-0.18df770f5b6cc821",
+        "namespace": "redis",
+        "resourceVersion": "497141",
+        "selfLink": "/api/v1/namespaces/redis/events/legacy-store-legacy-store-0.18df770f5b6cc821",
+        "uid": "d97cdc22-8d74-43c3-a600-78831d1e8162"
+      },
+      "reason": "ProvisioningFailed",
+      "reportingComponent": "persistentvolume-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "persistentvolume-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:33Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{sessions}",
+        "kind": "Pod",
+        "name": "sessions-0",
+        "namespace": "redis",
+        "resourceVersion": "364999",
+        "uid": "91ebf3ff-0d55-44ba-bc73-ac2eff318001"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:33Z",
+      "message": "Readiness probe failed: command timed out: \"sh -ec RESP=\\\"$(redis-cli -h $(hostname) -p ${REDIS_PORT} -a ${REDIS_PASSWORD} --tls --cert ${REDIS_TLS_CERT} --key ${REDIS_TLS_CERT_KEY} ${REDIS_TLS_CA_CERT:+--cacert} ${REDIS_TLS_CA_CERT} ping)\\\"\\n[ \\\"$RESP\\\" = \\\"PONG\\\" ]\" timed out after 1s",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "sessions-0.18df7ee3b8b05507",
+        "namespace": "redis",
+        "resourceVersion": "488657",
+        "selfLink": "/api/v1/namespaces/redis/events/sessions-0.18df7ee3b8b05507",
+        "uid": "844f8368-4365-47c2-ad94-5f910d4a8248"
       },
       "reason": "Unhealthy",
       "reportingComponent": "kubelet",
@@ -687,26 +1739,214 @@
       "apiVersion": "v1",
       "count": 1,
       "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:14:41Z",
+      "firstTimestamp": "2026-10-18T02:52:50Z",
       "involvedObject": {
-        "apiVersion": "v1",
-        "fieldPath": "spec.containers{podinfod}",
-        "kind": "Pod",
-        "name": "podinfo-55b7f757c9-z86fz",
-        "namespace": "image-updates",
-        "resourceVersion": "313389",
-        "uid": "63c8bccc-4169-4a28-9178-5baf3763fba7"
+        "apiVersion": "batch/v1",
+        "kind": "Job",
+        "name": "scan-vulnerabilityreport-5bd6d4c8f6",
+        "namespace": "trivy-system",
+        "resourceVersion": "495487",
+        "uid": "9eabc330-66a4-4fc0-ad79-b507fdeb31f8"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:14:41Z",
-      "message": "Readiness probe errored and resulted in unknown state: rpc error: code = Canceled desc = context canceled",
+      "lastTimestamp": "2026-10-18T02:52:50Z",
+      "message": "Job has reached the specified backoff limit",
       "metadata": {
-        "creationTimestamp": "2026-10-03T00:14:41Z",
-        "name": "podinfo-55b7f757c9-z86fz.18dadcb726934cbb",
-        "namespace": "image-updates",
-        "resourceVersion": "313649",
-        "selfLink": "/api/v1/namespaces/image-updates/events/podinfo-55b7f757c9-z86fz.18dadcb726934cbb",
-        "uid": "2d14ffd3-ebf1-4771-bcb7-53a91ada7f03"
+        "creationTimestamp": "2026-10-18T02:52:50Z",
+        "name": "scan-vulnerabilityreport-5bd6d4c8f6.18df800d37b8cc84",
+        "namespace": "trivy-system",
+        "resourceVersion": "495490",
+        "selfLink": "/api/v1/namespaces/trivy-system/events/scan-vulnerabilityreport-5bd6d4c8f6.18df800d37b8cc84",
+        "uid": "5c76bb5b-2bb5-4e53-815c-89980e55737c"
+      },
+      "reason": "BackoffLimitExceeded",
+      "reportingComponent": "job-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "job-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T03:00:23Z",
+      "involvedObject": {
+        "apiVersion": "batch/v1",
+        "kind": "Job",
+        "name": "scan-vulnerabilityreport-7b57f88cf6",
+        "namespace": "trivy-system",
+        "resourceVersion": "498124",
+        "uid": "8f41242f-a064-470b-b74c-385a21d45fe1"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T03:00:23Z",
+      "message": "Job has reached the specified backoff limit",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T03:00:23Z",
+        "name": "scan-vulnerabilityreport-7b57f88cf6.18df80769baf3069",
+        "namespace": "trivy-system",
+        "resourceVersion": "498128",
+        "selfLink": "/api/v1/namespaces/trivy-system/events/scan-vulnerabilityreport-7b57f88cf6.18df80769baf3069",
+        "uid": "1dbb5b08-0ac7-4256-96c7-75ae1897b059"
+      },
+      "reason": "BackoffLimitExceeded",
+      "reportingComponent": "job-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "job-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:53:10Z",
+      "involvedObject": {
+        "apiVersion": "batch/v1",
+        "kind": "Job",
+        "name": "scan-vulnerabilityreport-97bc9554f",
+        "namespace": "trivy-system",
+        "resourceVersion": "495615",
+        "uid": "4698b7e3-0997-4e09-becb-d986239c1bb2"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:53:10Z",
+      "message": "Job has reached the specified backoff limit",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:53:10Z",
+        "name": "scan-vulnerabilityreport-97bc9554f.18df8011e05740e0",
+        "namespace": "trivy-system",
+        "resourceVersion": "495618",
+        "selfLink": "/api/v1/namespaces/trivy-system/events/scan-vulnerabilityreport-97bc9554f.18df8011e05740e0",
+        "uid": "00826bc9-92de-4f2b-85d8-39b062ce10cb"
+      },
+      "reason": "BackoffLimitExceeded",
+      "reportingComponent": "job-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "job-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:53:45Z",
+      "involvedObject": {
+        "apiVersion": "batch/v1",
+        "kind": "Job",
+        "name": "scan-vulnerabilityreport-97bc9554f",
+        "namespace": "trivy-system",
+        "resourceVersion": "495875",
+        "uid": "fa498763-390d-4519-a91b-867b1ebe7098"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:53:45Z",
+      "message": "Job has reached the specified backoff limit",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:53:45Z",
+        "name": "scan-vulnerabilityreport-97bc9554f.18df8019e19a4ece",
+        "namespace": "trivy-system",
+        "resourceVersion": "495878",
+        "selfLink": "/api/v1/namespaces/trivy-system/events/scan-vulnerabilityreport-97bc9554f.18df8019e19a4ece",
+        "uid": "a5ea36cb-0f90-44a9-8045-0b3939592ba4"
+      },
+      "reason": "BackoffLimitExceeded",
+      "reportingComponent": "job-controller",
+      "reportingInstance": "",
+      "source": {
+        "component": "job-controller"
+      },
+      "type": "Warning"
+    },
+    {
+      "action": "Scheduling",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-18T02:51:57.736519Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "scan-vulnerabilityreport-98dd46d66-nm2z2",
+        "namespace": "trivy-system",
+        "resourceVersion": "495028",
+        "uid": "edb69a95-3c13-445c-ae8e-8b7c1f651e1a"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "0/1 nodes are available: 1 Too many pods. no new claims to deallocate, preemption: 0/1 nodes are available: 1 No preemption victims found for incoming pod.",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:51:57Z",
+        "name": "scan-vulnerabilityreport-98dd46d66-nm2z2.18df8000d27d352a",
+        "namespace": "trivy-system",
+        "resourceVersion": "495031",
+        "selfLink": "/api/v1/namespaces/trivy-system/events/scan-vulnerabilityreport-98dd46d66-nm2z2.18df8000d27d352a",
+        "uid": "9e4dd56b-9dc5-49da-803e-e82e6be8b196"
+      },
+      "reason": "FailedScheduling",
+      "reportingComponent": "default-scheduler",
+      "reportingInstance": "default-scheduler-15faf5ee47ca",
+      "source": {},
+      "type": "Warning"
+    },
+    {
+      "action": "Scheduling",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-18T03:00:13.958192Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "scan-vulnerabilityreport-d6dc5b54-lvs24",
+        "namespace": "trivy-system",
+        "resourceVersion": "497986",
+        "uid": "ae7031a3-e2c1-4015-bfe2-380d0903efb5"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "0/1 nodes are available: 1 Too many pods. no new claims to deallocate, preemption: 0/1 nodes are available: 1 No preemption victims found for incoming pod.",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T03:00:13Z",
+        "name": "scan-vulnerabilityreport-d6dc5b54-lvs24.18df80745b9b063d",
+        "namespace": "trivy-system",
+        "resourceVersion": "497987",
+        "selfLink": "/api/v1/namespaces/trivy-system/events/scan-vulnerabilityreport-d6dc5b54-lvs24.18df80745b9b063d",
+        "uid": "559639ef-af5d-4811-8a04-202e0d3029cc"
+      },
+      "reason": "FailedScheduling",
+      "reportingComponent": "default-scheduler",
+      "reportingInstance": "default-scheduler-15faf5ee47ca",
+      "source": {},
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T02:31:31Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{trivy-operator}",
+        "kind": "Pod",
+        "name": "trivy-operator-684f5ccfd6-495sz",
+        "namespace": "trivy-system",
+        "resourceVersion": "365260",
+        "uid": "f036cff9-ab2f-42f7-a965-91e32e763029"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:31:31Z",
+      "message": "Readiness probe failed: Get \"http://198.51.100.22:9090/readyz/\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T02:31:36Z",
+        "name": "trivy-operator-684f5ccfd6-495sz.18df7ee36baaa673",
+        "namespace": "trivy-system",
+        "resourceVersion": "488651",
+        "selfLink": "/api/v1/namespaces/trivy-system/events/trivy-operator-684f5ccfd6-495sz.18df7ee36baaa673",
+        "uid": "8d7eed9d-2726-42b8-a479-20d2ee6f2c3b"
       },
       "reason": "Unhealthy",
       "reportingComponent": "kubelet",
@@ -714,134 +1954,6 @@
       "source": {
         "component": "kubelet",
         "host": "freelens-addons-dev"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 121,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:14:14Z",
-      "involvedObject": {
-        "apiVersion": "autoscaling/v2",
-        "kind": "HorizontalPodAutoscaler",
-        "name": "podinfo",
-        "namespace": "image-updates",
-        "resourceVersion": "313383",
-        "uid": "9af8d0f4-efa5-4e36-b967-892465f423cd"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:44:15Z",
-      "message": "failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server could not find the requested resource (get pods.metrics.k8s.io)",
-      "metadata": {
-        "creationTimestamp": "2026-10-03T00:14:14Z",
-        "name": "podinfo.18dadcb111faf8a5",
-        "namespace": "image-updates",
-        "resourceVersion": "316494",
-        "selfLink": "/api/v1/namespaces/image-updates/events/podinfo.18dadcb111faf8a5",
-        "uid": "872bdb4f-0e61-406e-827e-7feb8e815009"
-      },
-      "reason": "FailedGetResourceMetric",
-      "reportingComponent": "horizontal-pod-autoscaler",
-      "reportingInstance": "",
-      "source": {
-        "component": "horizontal-pod-autoscaler"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 12,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:14:14Z",
-      "involvedObject": {
-        "apiVersion": "autoscaling/v2",
-        "kind": "HorizontalPodAutoscaler",
-        "name": "podinfo",
-        "namespace": "image-updates",
-        "resourceVersion": "313383",
-        "uid": "9af8d0f4-efa5-4e36-b967-892465f423cd"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:16:59Z",
-      "message": "invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server could not find the requested resource (get pods.metrics.k8s.io)",
-      "metadata": {
-        "creationTimestamp": "2026-10-03T00:14:14Z",
-        "name": "podinfo.18dadcb1121cedf8",
-        "namespace": "image-updates",
-        "resourceVersion": "313881",
-        "selfLink": "/api/v1/namespaces/image-updates/events/podinfo.18dadcb1121cedf8",
-        "uid": "3c4405aa-6dbe-43ba-8da8-78c0d5694250"
-      },
-      "reason": "FailedComputeMetricsReplicas",
-      "reportingComponent": "horizontal-pod-autoscaler",
-      "reportingInstance": "",
-      "source": {
-        "component": "horizontal-pod-autoscaler"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 101,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:22:33Z",
-      "involvedObject": {
-        "apiVersion": "autoscaling/v2",
-        "kind": "HorizontalPodAutoscaler",
-        "name": "podinfo",
-        "namespace": "legacy-annotations",
-        "resourceVersion": "314549",
-        "uid": "10fd65cd-affa-48b1-9b9c-c2e5d3f5f220"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:47:33Z",
-      "message": "failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server could not find the requested resource (get pods.metrics.k8s.io)",
-      "metadata": {
-        "creationTimestamp": "2026-10-03T00:22:33Z",
-        "name": "podinfo.18dadd2529ec55a4",
-        "namespace": "legacy-annotations",
-        "resourceVersion": "316926",
-        "selfLink": "/api/v1/namespaces/legacy-annotations/events/podinfo.18dadd2529ec55a4",
-        "uid": "dc1aff0a-b5f5-4122-a973-2e031ef1c7ae"
-      },
-      "reason": "FailedGetResourceMetric",
-      "reportingComponent": "horizontal-pod-autoscaler",
-      "reportingInstance": "",
-      "source": {
-        "component": "horizontal-pod-autoscaler"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 12,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-03T00:22:33Z",
-      "involvedObject": {
-        "apiVersion": "autoscaling/v2",
-        "kind": "HorizontalPodAutoscaler",
-        "name": "podinfo",
-        "namespace": "legacy-annotations",
-        "resourceVersion": "314549",
-        "uid": "10fd65cd-affa-48b1-9b9c-c2e5d3f5f220"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-03T00:25:18Z",
-      "message": "invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server could not find the requested resource (get pods.metrics.k8s.io)",
-      "metadata": {
-        "creationTimestamp": "2026-10-03T00:22:33Z",
-        "name": "podinfo.18dadd252a0a8472",
-        "namespace": "legacy-annotations",
-        "resourceVersion": "315026",
-        "selfLink": "/api/v1/namespaces/legacy-annotations/events/podinfo.18dadd252a0a8472",
-        "uid": "ed2e136b-dab3-4579-82bd-3aa05ec93962"
-      },
-      "reason": "FailedComputeMetricsReplicas",
-      "reportingComponent": "horizontal-pod-autoscaler",
-      "reportingInstance": "",
-      "source": {
-        "component": "horizontal-pod-autoscaler"
       },
       "type": "Warning"
     }

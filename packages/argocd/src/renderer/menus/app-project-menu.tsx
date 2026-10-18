@@ -1,17 +1,20 @@
 import { Renderer } from "@freelensapp/extensions";
 
-import type { AppProject } from "../api/app-project";
-import { type BulkOutcome, describeOutcome } from "../api/bulk";
-import type { SyncChoice } from "../api/patches";
+import type { AppProject } from "../api/projects/app-project";
+import { isFrozen } from "../api/projects/freeze";
+import { plural } from "../api/shared/text";
+import { projectRefusal } from "../api/writes/bulk";
+import type { SyncChoice } from "../api/writes/patches";
 import {
   applicationsOf,
-  isFrozen,
   refreshProjectApplications,
   setFrozen,
   syncProjectApplications,
-} from "../api/project-actions";
+} from "../api/writes/project-actions";
+import { notifyBulkOutcome } from "../components/bulk";
 import { confirmWrite, notifyDone } from "../components/confirm";
-import { describeChoice, SyncChoices } from "../components/sync-choices";
+import { describeSyncChoice, SyncChoices } from "../components/sync-choices";
+import { openProjectApplications } from "../pages/applications-page";
 
 const {
   Component: { Icon, MenuItem, Notifications },
@@ -22,17 +25,6 @@ export interface AppProjectMenuItemProps {
   toolbar?: boolean;
 }
 
-const APPLICATIONS_PAGE = "applications";
-
-function notifyOutcome(pastTenseVerb: string, outcome: BulkOutcome) {
-  const sentence = describeOutcome(pastTenseVerb, outcome);
-
-  if (outcome.failures.length === 0) Notifications.ok(sentence);
-  else Notifications.error(sentence);
-}
-
-const plural = (count: number) => `${count} Application${count === 1 ? "" : "s"}`;
-
 export function AppProjectMenuItem({
   object,
   toolbar,
@@ -41,16 +33,16 @@ export function AppProjectMenuItem({
   const name = object.getName();
   const applications = applicationsOf(object);
   const frozen = isFrozen(object);
+  // A dialog that would refresh or sync nothing is not offered.
+  const empty = projectRefusal("sync", () => applications.length)(object);
 
-  const viewApplications = () => {
-    void extension.navigate(APPLICATIONS_PAGE, { project: name });
-  };
+  const viewApplications = () => openProjectApplications(extension, object);
 
   const setFrozenAndReport = async (freeze: boolean) => {
     await setFrozen(object, freeze);
     notifyDone(
       freeze
-        ? `Froze deploys for ${name}: ArgoCD stopped syncing its ${plural(applications.length)}.`
+        ? `Froze deploys for ${name}: ArgoCD stopped syncing its ${plural(applications.length, "Application")}.`
         : `Resumed deploys for ${name}.`,
       {
         done: freeze ? `Resumed deploys for ${name}.` : `Froze deploys for ${name} again.`,
@@ -72,8 +64,8 @@ export function AppProjectMenuItem({
         </>
       ),
       detail: frozen
-        ? `ArgoCD will start reconciling its ${plural(applications.length)} again.`
-        : `A deny sync window is added to the project, so ArgoCD stops syncing its ${plural(applications.length)}, automated and manual alike, until it is resumed. Nothing already running is rolled back.`,
+        ? `ArgoCD will start reconciling its ${plural(applications.length, "Application")} again.`
+        : `A deny sync window is added to the project, so ArgoCD stops syncing its ${plural(applications.length, "Application")}, automated and manual alike, until it is resumed. Nothing already running is rolled back.`,
       label: frozen ? "Resume" : "Freeze",
       destructive: !frozen,
       ok: async () => {
@@ -99,7 +91,7 @@ export function AppProjectMenuItem({
       destructive: false,
       ok: async () => {
         try {
-          notifyOutcome("Requested a refresh of", await refreshProjectApplications(object));
+          notifyBulkOutcome("Requested a refresh of", await refreshProjectApplications(object));
         } catch (error) {
           Notifications.checkedError(error, `Could not refresh the Applications of ${name}`);
         }
@@ -130,8 +122,8 @@ export function AppProjectMenuItem({
       typed: () => "confirm",
       ok: async () => {
         try {
-          notifyOutcome(
-            `Started a sync${describeChoice(choice)} on`,
+          notifyBulkOutcome(
+            `Started a sync${describeSyncChoice(choice)} on`,
             await syncProjectApplications(object, choice),
           );
         } catch (error) {
@@ -165,20 +157,28 @@ export function AppProjectMenuItem({
         <span className="title">{frozen ? "Resume deploys" : "Freeze deploys"}</span>
       </MenuItem>
 
-      <MenuItem onClick={refreshAll}>
+      <MenuItem onClick={refreshAll} disabled={Boolean(empty)}>
         <Icon
           material="refresh"
           interactive={toolbar}
-          tooltip="Compares every Application of the project with git again. Changes nothing in the cluster"
+          tooltip={
+            empty
+              ? `Nothing to refresh: ${empty}`
+              : "Compares every Application of the project with git again. Changes nothing in the cluster. Asks first"
+          }
         />
         <span className="title">Refresh all</span>
       </MenuItem>
 
-      <MenuItem onClick={syncAll}>
+      <MenuItem onClick={syncAll} disabled={Boolean(empty)}>
         <Icon
           material="sync"
           interactive={toolbar}
-          tooltip="Applies git to every Application of the project. Asks you to type confirm"
+          tooltip={
+            empty
+              ? `Nothing to sync: ${empty}`
+              : "Applies git to every Application of the project. Asks you to type confirm"
+          }
         />
         <span className="title">Sync all</span>
       </MenuItem>

@@ -1,4 +1,4 @@
-import type { HealthStatusCode, SyncStatusCode } from "../api/types";
+import type { HealthStatusCode, SyncStatusCode } from "../api/shared/types";
 
 export function HealthBadge({ status, message }: { status: HealthStatusCode; message?: string }) {
   return (

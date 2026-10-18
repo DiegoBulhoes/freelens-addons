@@ -50,7 +50,7 @@ export function TypedField({
   );
 }
 
-/** Values reach `ok` through callbacks: the dialog copies plain-object props (test/dialog-state.test.ts). */
+/** Values reach `ok` through callbacks: the dialog copies plain-object props (test/shared/dialog-state.test.ts). */
 export function confirmWrite(write: ConfirmWrite): void {
   let typed = "";
   const onType = (text: string) => {

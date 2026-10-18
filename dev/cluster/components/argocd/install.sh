@@ -8,9 +8,9 @@ namespace argocd
 retry kubectl apply --server-side --force-conflicts -n argocd \
   -f "https://raw.githubusercontent.com/argoproj/argo-cd/${ARGOCD_VERSION}/manifests/install.yaml" \
   -f "https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/${IMAGE_UPDATER_VERSION}/config/install.yaml"
-wait_deploy argocd argocd-server argocd-image-updater-controller
+wait_deploy argocd argocd-server argocd-applicationset-controller argocd-image-updater-controller
 
-echo "==> Sample Applications and Image Updater rules"
+echo "==> Sample Applications, ApplicationSets and Image Updater rules"
 # The Applications deploy there without CreateNamespace.
 namespace demo
-apply applications.yaml image-updater.yaml
+apply applications.yaml application-sets.yaml image-updater.yaml

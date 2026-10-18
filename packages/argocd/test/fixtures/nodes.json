@@ -7,19 +7,19 @@
       "metadata": {
         "annotations": {
           "alpha.kubernetes.io/provided-node-ip": "198.51.100.10",
-          "flannel.alpha.coreos.com/backend-data": "{\"VNI\":1,\"VtepMAC\":\"26:c2:4f:55:31:77\"}",
+          "flannel.alpha.coreos.com/backend-data": "{\"VNI\":1,\"VtepMAC\":\"76:b1:98:b8:e1:46\"}",
           "flannel.alpha.coreos.com/backend-type": "vxlan",
           "flannel.alpha.coreos.com/kube-subnet-manager": "true",
           "flannel.alpha.coreos.com/public-ip": "198.51.100.10",
-          "k3s.io/hostname": "c4bd3b67d0bc",
+          "k3s.io/hostname": "15faf5ee47ca",
           "k3s.io/internal-ip": "198.51.100.10",
-          "k3s.io/node-args": "[\"server\",\"--disable\",\"traefik\",\"--disable\",\"metrics-server\",\"--disable\",\"servicelb\",\"--write-kubeconfig-mode\",\"644\",\"--write-kubeconfig\",\"/output/kubeconfig.yaml\",\"--tls-san\",\"127.0.0.1\",\"--node-name\",\"freelens-addons-dev\",\"--kubelet-arg\",\"image-gc-high-threshold=1\",\"--kubelet-arg\",\"image-gc-low-threshold=0\"]",
-          "k3s.io/node-config-hash": "KGXJ5FSAA3JV3ESRTWXX7JA6RFPE7CHQHYUGU6NZBH4HLVBCEWMQ====",
+          "k3s.io/node-args": "[\"server\",\"--disable\",\"traefik\",\"--disable\",\"metrics-server\",\"--disable\",\"servicelb\",\"--write-kubeconfig-mode\",\"644\",\"--write-kubeconfig\",\"/output/kubeconfig.yaml\",\"--tls-san\",\"127.0.0.1\",\"--https-listen-port\",\"6443\",\"--node-name\",\"freelens-addons-dev\",\"--kubelet-arg\",\"image-gc-high-threshold=1\",\"--kubelet-arg\",\"image-gc-low-threshold=0\"]",
+          "k3s.io/node-config-hash": "75DE5A2VZTNQMS34IITAJL5AZJ3RZNZPVDWEDB6NX7PKVQQGKRXA====",
           "k3s.io/node-env": "{\"K3S_TOKEN\":\"********\"}",
           "node.alpha.kubernetes.io/ttl": "0",
           "volumes.kubernetes.io/controller-managed-attach-detach": "true"
         },
-        "creationTimestamp": "2026-09-28T17:34:00Z",
+        "creationTimestamp": "2026-10-04T20:27:53Z",
         "finalizers": [
           "wrangler.cattle.io/node"
         ],
@@ -34,9 +34,9 @@
           "node.kubernetes.io/instance-type": "k3s"
         },
         "name": "freelens-addons-dev",
-        "resourceVersion": "316714",
+        "resourceVersion": "498258",
         "selfLink": "/api/v1/nodes/freelens-addons-dev",
-        "uid": "a811ed15-d1ff-4cae-8522-d4e4e540ebb7"
+        "uid": "8907725d-af66-4a5d-887f-049ed93a2059"
       },
       "spec": {
         "podCIDR": "198.51.100.11/24",
@@ -52,7 +52,7 @@
             "type": "InternalIP"
           },
           {
-            "address": "c4bd3b67d0bc",
+            "address": "15faf5ee47ca",
             "type": "Hostname"
           }
         ],
@@ -61,7 +61,7 @@
           "ephemeral-storage": "1911266929190",
           "hugepages-1Gi": "0",
           "hugepages-2Mi": "0",
-          "memory": "23755688Ki",
+          "memory": "23755680Ki",
           "pods": "110"
         },
         "capacity": {
@@ -69,37 +69,37 @@
           "ephemeral-storage": "1964706960Ki",
           "hugepages-1Gi": "0",
           "hugepages-2Mi": "0",
-          "memory": "23755688Ki",
+          "memory": "23755680Ki",
           "pods": "110"
         },
         "conditions": [
           {
-            "lastHeartbeatTime": "2026-10-03T00:45:56Z",
-            "lastTransitionTime": "2026-09-28T17:34:00Z",
+            "lastHeartbeatTime": "2026-10-18T03:00:41Z",
+            "lastTransitionTime": "2026-10-04T20:27:53Z",
             "message": "kubelet has sufficient memory available",
             "reason": "KubeletHasSufficientMemory",
             "status": "False",
             "type": "MemoryPressure"
           },
           {
-            "lastHeartbeatTime": "2026-10-03T00:45:56Z",
-            "lastTransitionTime": "2026-09-28T17:34:00Z",
+            "lastHeartbeatTime": "2026-10-18T03:00:41Z",
+            "lastTransitionTime": "2026-10-04T20:27:53Z",
             "message": "kubelet has no disk pressure",
             "reason": "KubeletHasNoDiskPressure",
             "status": "False",
             "type": "DiskPressure"
           },
           {
-            "lastHeartbeatTime": "2026-10-03T00:45:56Z",
-            "lastTransitionTime": "2026-09-28T17:34:00Z",
+            "lastHeartbeatTime": "2026-10-18T03:00:41Z",
+            "lastTransitionTime": "2026-10-04T20:27:53Z",
             "message": "kubelet has sufficient PID available",
             "reason": "KubeletHasSufficientPID",
             "status": "False",
             "type": "PIDPressure"
           },
           {
-            "lastHeartbeatTime": "2026-10-03T00:45:56Z",
-            "lastTransitionTime": "2026-09-28T17:34:00Z",
+            "lastHeartbeatTime": "2026-10-18T03:00:41Z",
+            "lastTransitionTime": "2026-10-04T20:27:53Z",
             "message": "kubelet is posting ready status",
             "reason": "KubeletReady",
             "status": "True",
@@ -123,10 +123,31 @@
         "images": [
           {
             "names": [
+              "quay.io/mongodb/mongodb-community-server@sha256:5500852ab0693ac56134cecf5ad45d3b81d25e4681f4f960a834e48cd34fe71b",
+              "quay.io/mongodb/mongodb-community-server:8.0.12-ubi8"
+            ],
+            "sizeBytes": 396685709
+          },
+          {
+            "names": [
+              "quay.io/mongodb/mongodb-community-server@sha256:93cb614460755d8fc733fac7680d931f2b8b7f519ccabb293f9a68a4d590cf28",
+              "quay.io/mongodb/mongodb-community-server:7.0.21-ubi8"
+            ],
+            "sizeBytes": 396562524
+          },
+          {
+            "names": [
               "gcr.io/google-samples/gb-frontend@sha256:a908df8486ff66f2c4daa0d3d8a2fa09846a1fc8efd65649c0109695c7c5cbff",
               "gcr.io/google-samples/gb-frontend:v5"
             ],
             "sizeBytes": 341206372
+          },
+          {
+            "names": [
+              "ghcr.io/cloudnative-pg/postgresql@sha256:42708a75345b7a48fdd9257b071830783a97fd228529196b6313187a7198e185",
+              "ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie"
+            ],
+            "sizeBytes": 274390648
           },
           {
             "names": [
@@ -137,6 +158,13 @@
           },
           {
             "names": [
+              "quay.io/mongodb/mongodb-agent@sha256:74b591fd5ec0e9ec9a80a54f9c9eee6bde03b7286b330ffae6386dfc2547c8a8",
+              "quay.io/mongodb/mongodb-agent:108.0.26.9062-1"
+            ],
+            "sizeBytes": 205446959
+          },
+          {
+            "names": [
               "quay.io/argoprojlabs/argocd-image-updater@sha256:cb009167015c6212ea21de55dd5734cf123d8b8e95f40ac09b1f1aa1839fad5b",
               "quay.io/argoprojlabs/argocd-image-updater:v1.3.0"
             ],
@@ -144,10 +172,37 @@
           },
           {
             "names": [
-              "docker.io/library/nginx@sha256:abe47724e466aeab9a345d8e46a221c2fa8953c7848bb4a3bd9976a7199f8cf2",
+              "docker.io/rustfs/rustfs@sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff"
+            ],
+            "sizeBytes": 109669715
+          },
+          {
+            "names": [
+              "ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar@sha256:06c78deca670525daa35fb1e5323159092785d11cf87b86217bdd5c679a41a84",
+              "ghcr.io/cloudnative-pg/plugin-barman-cloud-sidecar:v0.15.0"
+            ],
+            "sizeBytes": 108641911
+          },
+          {
+            "names": [
+              "quay.io/prometheus/prometheus@sha256:3c42b892cf723fa54d2f262c37a0e1f80aa8c8ddb1da7b9b0df9455a35a7f893",
+              "quay.io/prometheus/prometheus:v3.13.1"
+            ],
+            "sizeBytes": 106696067
+          },
+          {
+            "names": [
+              "quay.io/mongodb/mongodb-kubernetes@sha256:14d7c95972c52ddc62a41238d3a27ec8a1935b212d715a6e0d434772d9ac83c5",
+              "quay.io/mongodb/mongodb-kubernetes:1.12.0"
+            ],
+            "sizeBytes": 76634210
+          },
+          {
+            "names": [
+              "docker.io/library/nginx@sha256:332d0beea97cff8c0d5d27976c0778a4b00345b9d74c2feaaf8efde548314948",
               "docker.io/library/nginx:latest"
             ],
-            "sizeBytes": 63422407
+            "sizeBytes": 63899853
           },
           {
             "names": [
@@ -155,6 +210,20 @@
               "mirror.gcr.io/aquasec/trivy:0.74.0"
             ],
             "sizeBytes": 61124324
+          },
+          {
+            "names": [
+              "quay.io/mongodb/mongodb-kubernetes-operator-version-upgrade-post-start-hook@sha256:5d776a05cd8e2b897e441904126c198230294ebc3c03e6a8830b1c7d6c92af42",
+              "quay.io/mongodb/mongodb-kubernetes-operator-version-upgrade-post-start-hook:1.0.10"
+            ],
+            "sizeBytes": 59735866
+          },
+          {
+            "names": [
+              "quay.io/mongodb/mongodb-kubernetes-readinessprobe@sha256:75ff5bd1aebdb82776de008e96433ebe93a17b0a3a4be6cced270b76b67e0bb1",
+              "quay.io/mongodb/mongodb-kubernetes-readinessprobe:1.0.24"
+            ],
+            "sizeBytes": 59715964
           },
           {
             "names": [
@@ -179,10 +248,52 @@
           },
           {
             "names": [
+              "ghcr.io/cloudnative-pg/pgbouncer@sha256:e6ddfe22d845e603825e235dd8334b21ecd125abea2a2172478f556b8dee2bb8",
+              "ghcr.io/cloudnative-pg/pgbouncer:1.25.1"
+            ],
+            "sizeBytes": 47672635
+          },
+          {
+            "names": [
               "docker.io/library/python@sha256:2d97f6910b16bd338d3060f261f53f144965f755599aab1acda1e13cf1731b1b",
               "docker.io/library/python:3.9-slim"
             ],
             "sizeBytes": 44973445
+          },
+          {
+            "names": [
+              "ghcr.io/cloudnative-pg/plugin-barman-cloud@sha256:563c680fe7fda3466ca2b1f55a1397ed2ddc9e760360107dd7724f1959c1a536",
+              "ghcr.io/cloudnative-pg/plugin-barman-cloud:v0.15.0"
+            ],
+            "sizeBytes": 43498457
+          },
+          {
+            "names": [
+              "ghcr.io/open-telemetry/opentelemetry-operator/target-allocator@sha256:738933f2a9519a411d2af49b9e34956b1cf5d85de9484a3c59c80ad8f20698a8",
+              "ghcr.io/open-telemetry/opentelemetry-operator/target-allocator:0.158.0"
+            ],
+            "sizeBytes": 41905991
+          },
+          {
+            "names": [
+              "quay.io/prometheus/alertmanager@sha256:9e082985f56f4c8c9f724e18f2288c6708f472e56a5286b8863d080434ea065d",
+              "quay.io/prometheus/alertmanager:v0.33.1"
+            ],
+            "sizeBytes": 39808609
+          },
+          {
+            "names": [
+              "ghcr.io/cloudnative-pg/cloudnative-pg@sha256:a2701eb97cdd2a34b1fdb2cb51987f544b706e40bec72ae7146cd8580efefebb",
+              "ghcr.io/cloudnative-pg/cloudnative-pg:1.30.0"
+            ],
+            "sizeBytes": 37160203
+          },
+          {
+            "names": [
+              "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector@sha256:5b97e6e3550ec6e48a71dba6f6304d349a293af8df4ee1f51da67be94fce2ecd",
+              "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.158.0"
+            ],
+            "sizeBytes": 36478202
           },
           {
             "names": [
@@ -228,10 +339,45 @@
           },
           {
             "names": [
+              "quay.io/prometheus-operator/prometheus-operator@sha256:e52bb28fd41c98dd407c7a8cba8bdcfe7eabd7447e250afaf1fe7bb816dedbff",
+              "quay.io/prometheus-operator/prometheus-operator:v0.93.1"
+            ],
+            "sizeBytes": 20931128
+          },
+          {
+            "names": [
+              "ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator@sha256:d4789a6537fdbc69929dc9227900511224b2fe8e5a0938e604cc8ca56b07336e",
+              "ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator:0.158.0"
+            ],
+            "sizeBytes": 20865919
+          },
+          {
+            "names": [
               "quay.io/jetstack/cert-manager-webhook@sha256:a60e2dac46dbb8a7f3df95c54ce941012f54c2fe022f0ee55aaa1ab40ed957ae",
               "quay.io/jetstack/cert-manager-webhook:v1.21.2"
             ],
             "sizeBytes": 19827800
+          },
+          {
+            "names": [
+              "quay.io/opstree/redis-operator@sha256:1c6818e5e50553f9f3c1b91a8824ae5c1999a0c9416c794ca51431b7f0cb48c3",
+              "quay.io/opstree/redis-operator:v0.26.0"
+            ],
+            "sizeBytes": 18614859
+          },
+          {
+            "names": [
+              "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
+              "quay.io/opstree/redis:v8.2.9"
+            ],
+            "sizeBytes": 16721115
+          },
+          {
+            "names": [
+              "quay.io/opstree/redis-sentinel@sha256:38c615472337f56fd6db64d388aa4565af7046e14fb3f36f2893d8295ac0ffc3",
+              "quay.io/opstree/redis-sentinel:v8.2.9"
+            ],
+            "sizeBytes": 16719916
           },
           {
             "names": [
@@ -242,10 +388,31 @@
           },
           {
             "names": [
+              "quay.io/prometheus-operator/prometheus-config-reloader@sha256:428f088fe6fe07ab138bda92113664b04848a1dc408e4d3680a60ecdb55d1a65",
+              "quay.io/prometheus-operator/prometheus-config-reloader:v0.93.1"
+            ],
+            "sizeBytes": 14570918
+          },
+          {
+            "names": [
+              "quay.io/prometheus/node-exporter@sha256:1b4e4438faca4dd7e001dd445d161a4a2091b0fededa84093b3a8dfeae1f1be0",
+              "quay.io/prometheus/node-exporter:v1.12.1"
+            ],
+            "sizeBytes": 13412361
+          },
+          {
+            "names": [
               "quay.io/jetstack/cert-manager-cainjector@sha256:c85268c64f2e0e76684bf5fe8906caff34b82523561c6affe0fae3546bd87562",
               "quay.io/jetstack/cert-manager-cainjector:v1.21.2"
             ],
             "sizeBytes": 12400412
+          },
+          {
+            "names": [
+              "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python@sha256:be7d9c429a455f8e2f5f3e4a48078e28cfb0bf9731105213f2149e53e34b8ead",
+              "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.64b0"
+            ],
+            "sizeBytes": 11874175
           },
           {
             "names": [

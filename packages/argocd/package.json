@@ -2,7 +2,7 @@
   "name": "@freelens-addons/argocd",
   "version": "0.5.0",
   "private": true,
-  "description": "Browse ArgoCD Applications, AppProjects and ApplicationSets in Freelens",
+  "description": "Which ArgoCD Applications need attention and why, what each project allows and holds, what each ApplicationSet generates, and what Image Updater changed",
   "license": "Apache-2.0",
   "main": "out/main/index.js",
   "renderer": "out/renderer/index.js",

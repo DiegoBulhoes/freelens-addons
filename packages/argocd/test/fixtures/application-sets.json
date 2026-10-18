@@ -1,0 +1,194 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "argoproj.io/v1alpha1",
+      "kind": "ApplicationSet",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-18T03:00:01Z",
+        "generation": 1,
+        "name": "broken-template",
+        "namespace": "argocd",
+        "resourceVersion": "497758",
+        "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applicationsets/broken-template",
+        "uid": "15e10d91-30ea-4f61-8660-f6123d297d37"
+      },
+      "spec": {
+        "generators": [
+          {
+            "list": {
+              "elements": [
+                {
+                  "env": "red"
+                }
+              ]
+            }
+          }
+        ],
+        "goTemplate": true,
+        "goTemplateOptions": [
+          "missingkey=error"
+        ],
+        "template": {
+          "metadata": {
+            "name": "broken-{{.region}}"
+          },
+          "spec": {
+            "destination": {
+              "namespace": "broken-{{.env}}",
+              "server": "https://kubernetes.default.svc"
+            },
+            "project": "demo",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-18T03:00:01Z",
+            "message": "failed to execute go template broken-{{.region}}: template: base:1:9: executing \"base\" at <.region>: map has no entry for key \"region\"",
+            "reason": "RenderTemplateParamsError",
+            "status": "True",
+            "type": "ErrorOccurred"
+          },
+          {
+            "lastTransitionTime": "2026-10-18T03:00:01Z",
+            "message": "failed to execute go template broken-{{.region}}: template: base:1:9: executing \"base\" at <.region>: map has no entry for key \"region\"",
+            "reason": "ErrorOccurred",
+            "status": "False",
+            "type": "ParametersGenerated"
+          },
+          {
+            "lastTransitionTime": "2026-10-18T03:00:01Z",
+            "message": "failed to execute go template broken-{{.region}}: template: base:1:9: executing \"base\" at <.region>: map has no entry for key \"region\"",
+            "reason": "ErrorOccurred",
+            "status": "False",
+            "type": "ResourcesUpToDate"
+          }
+        ],
+        "health": {
+          "message": "failed to execute go template broken-{{.region}}: template: base:1:9: executing \"base\" at <.region>: map has no entry for key \"region\"",
+          "status": "Degraded"
+        }
+      }
+    },
+    {
+      "apiVersion": "argoproj.io/v1alpha1",
+      "kind": "ApplicationSet",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-18T03:00:01Z",
+        "generation": 1,
+        "name": "guestbooks",
+        "namespace": "argocd",
+        "resourceVersion": "497766",
+        "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applicationsets/guestbooks",
+        "uid": "7879206c-03cf-4c32-ace4-5b9701adf765"
+      },
+      "spec": {
+        "generators": [
+          {
+            "list": {
+              "elements": [
+                {
+                  "env": "blue"
+                },
+                {
+                  "env": "green"
+                }
+              ]
+            }
+          }
+        ],
+        "goTemplate": true,
+        "goTemplateOptions": [
+          "missingkey=error"
+        ],
+        "syncPolicy": {
+          "applicationsSync": "create-update",
+          "preserveResourcesOnDeletion": true
+        },
+        "template": {
+          "metadata": {
+            "name": "guestbook-{{.env}}"
+          },
+          "spec": {
+            "destination": {
+              "namespace": "guestbook-{{.env}}",
+              "server": "https://kubernetes.default.svc"
+            },
+            "project": "demo",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            },
+            "syncPolicy": {
+              "automated": {
+                "selfHeal": true
+              },
+              "syncOptions": [
+                "CreateNamespace=true"
+              ]
+            }
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-18T03:00:01Z",
+            "message": "All applications have been generated successfully",
+            "reason": "ApplicationSetUpToDate",
+            "status": "False",
+            "type": "ErrorOccurred"
+          },
+          {
+            "lastTransitionTime": "2026-10-18T03:00:01Z",
+            "message": "Successfully generated parameters for all Applications",
+            "reason": "ParametersGenerated",
+            "status": "True",
+            "type": "ParametersGenerated"
+          },
+          {
+            "lastTransitionTime": "2026-10-18T03:00:01Z",
+            "message": "All applications have been generated successfully",
+            "reason": "ApplicationSetUpToDate",
+            "status": "True",
+            "type": "ResourcesUpToDate"
+          }
+        ],
+        "health": {
+          "message": "All applications have been generated successfully",
+          "status": "Healthy"
+        },
+        "resources": [
+          {
+            "group": "argoproj.io",
+            "health": {},
+            "kind": "Application",
+            "name": "guestbook-blue",
+            "namespace": "argocd",
+            "version": "v1alpha1"
+          },
+          {
+            "group": "argoproj.io",
+            "health": {},
+            "kind": "Application",
+            "name": "guestbook-green",
+            "namespace": "argocd",
+            "version": "v1alpha1"
+          }
+        ],
+        "resourcesCount": 2
+      }
+    }
+  ],
+  "kind": "List"
+}

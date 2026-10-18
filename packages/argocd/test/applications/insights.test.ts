@@ -1,0 +1,329 @@
+import { describe, expect, it } from "vitest";
+
+import { Application } from "../../src/renderer/api/applications/application";
+
+import {
+  getChildrenOf,
+  getCompareUrl,
+  getParentOf,
+  groupDeploysByRevision,
+  indexParents,
+} from "../../src/renderer/api/applications/insights";
+import { getRecentDeploys } from "../../src/renderer/api/overview/overview";
+import { application, applications, statusOf, variantOf } from "../support/fixtures";
+
+describe("relationships the data holds but no single status shows", () => {
+  it("finds the app-of-apps that manages the others", () => {
+    const all = applications();
+    const parents = all.filter((candidate) => getChildrenOf(candidate, all).length > 0);
+
+    expect(parents.length).toBeGreaterThan(0);
+
+    const children = getChildrenOf(parents[0] as (typeof parents)[number], all);
+
+    expect(children.length).toBeGreaterThan(1);
+  });
+
+  it("finds the parent of a managed Application, and agrees with the child list", () => {
+    const all = applications();
+    const managed = all.find((candidate) => getParentOf(candidate, all) !== undefined);
+
+    expect(managed, "the fixtures should contain an app-of-apps layout").toBeDefined();
+
+    const parent = getParentOf(managed as (typeof all)[number], all);
+
+    expect(parent).toBeDefined();
+    expect(getChildrenOf(parent as (typeof all)[number], all)).toContain(managed);
+  });
+
+  it("groups a fleet-wide rollout into one event rather than many", () => {
+    const cohorts = groupDeploysByRevision(getRecentDeploys(applications(), 60));
+
+    expect(cohorts.length).toBeGreaterThan(0);
+    expect(cohorts.some((cohort) => cohort.entries.length > 1)).toBe(true);
+
+    for (let index = 1; index < cohorts.length; index += 1) {
+      expect(cohorts[index - 1]?.at).toBeGreaterThanOrEqual(cohorts[index]?.at ?? 0);
+    }
+  });
+
+  it("builds a compare link between the last two deploys", () => {
+    const withHistory = applications().filter(
+      (candidate) => getCompareUrl(candidate) !== undefined,
+    );
+
+    expect(
+      withHistory.length,
+      "the fixtures should contain two deploys of one repo",
+    ).toBeGreaterThan(0);
+
+    for (const candidate of withHistory) {
+      expect(getCompareUrl(candidate)).toMatch(
+        /^https:\/\/github\.com\/[^/]+\/[^/]+\/compare\/[0-9a-f]+\.\.\.[0-9a-f]+$/,
+      );
+    }
+  });
+});
+
+describe("relationships that are not there", () => {
+  it("reports no parent for an Application nothing manages", () => {
+    const all = applications();
+    const orphan = all.find((candidate) => getParentOf(candidate, all) === undefined);
+
+    expect(orphan).toBeDefined();
+    expect(getParentOf(orphan as (typeof all)[number], [])).toBeUndefined();
+  });
+
+  it("reports no children for an Application that manages none", () => {
+    expect(getChildrenOf(application("guestbook"), applications())).toEqual([]);
+  });
+
+  it("offers no compare link with fewer than two deploys", () => {
+    const single = variantOf("guestbook", (data) => {
+      statusOf(data).history = [{ id: 1, revision: "abc1234" }];
+    });
+
+    expect(getCompareUrl(single)).toBeUndefined();
+  });
+
+  it("offers no compare link when both deploys carry the same revision", () => {
+    const unchanged = variantOf("guestbook", (data) => {
+      statusOf(data).history = [
+        { id: 1, revision: "abc1234" },
+        { id: 2, revision: "abc1234" },
+      ];
+    });
+
+    expect(getCompareUrl(unchanged)).toBeUndefined();
+  });
+
+  it("offers no compare link for a host whose compare URL is unknown", () => {
+    const elsewhere = variantOf("guestbook", (data) => {
+      const source = data.spec.source as { repoURL?: string } | undefined;
+
+      if (source) source.repoURL = "https://git.example.test/org/repo.git";
+
+      statusOf(data).history = [
+        { id: 1, revision: "abc1234" },
+        { id: 2, revision: "def5678" },
+      ];
+    });
+
+    expect(getCompareUrl(elsewhere)).toBeUndefined();
+  });
+});
+
+describe("relationships given nonsense", () => {
+  it("does not claim an Application is its own parent", () => {
+    const all = applications();
+
+    for (const candidate of all) {
+      expect(getParentOf(candidate, all)).not.toBe(candidate);
+    }
+  });
+
+  it("groups deploys with no revision under a single placeholder", () => {
+    const cohorts = groupDeploysByRevision([
+      { application: application("guestbook"), id: 1, at: 2, revisions: [], by: "automated" },
+      { application: application("podinfo"), id: 1, at: 1, revisions: [], by: "automated" },
+    ]);
+
+    expect(cohorts).toHaveLength(1);
+    expect(cohorts[0]?.revision).toBe("—");
+    expect(cohorts[0]?.at).toBe(2);
+  });
+
+  it("prefers the git SHA over a chart version when a deploy carries both", () => {
+    const [cohort] = groupDeploysByRevision([
+      {
+        application: application("guestbook"),
+        id: 1,
+        at: 1,
+        revisions: ["9.9.9", "abcdef1234567"],
+        by: "automated",
+      },
+    ]);
+
+    expect(cohort?.revision).toBe("abcdef1234567");
+  });
+
+  it("builds a compare link from an ssh remote as well as an https one", () => {
+    for (const [repoURL, expected] of [
+      ["git@github.com:org/repo.git", "https://github.com/org/repo"],
+      ["https://gitlab.com/group/repo.git", "https://gitlab.com/group/repo"],
+    ] as const) {
+      const target = variantOf("guestbook", (data) => {
+        data.spec.sources = undefined;
+        data.spec.source = { repoURL, path: ".", targetRevision: "main" };
+        statusOf(data).history = [
+          { id: 1, revision: "aaaaaaa" },
+          { id: 2, revision: "bbbbbbb" },
+        ];
+      });
+
+      expect(getCompareUrl(target)).toBe(`${expected}/compare/aaaaaaa...bbbbbbb`);
+    }
+  });
+
+  it("matches a managed Application whose resource entry omits the namespace", () => {
+    const child = application("guestbook");
+    const parent = variantOf("apps", (data) => {
+      statusOf(data).resources = [{ kind: "Application", name: child.getName(), status: "Synced" }];
+    });
+
+    // ArgoCD omits the namespace when it is the Application's own.
+    expect(getChildrenOf(parent, [child])).toEqual([child]);
+    expect(getParentOf(child, [parent, child])).toBe(parent);
+  });
+
+  it("reads a multi-source history entry's revisions when building the link", () => {
+    const multi = variantOf("guestbook", (data) => {
+      data.spec.sources = undefined;
+      data.spec.source = {
+        repoURL: "https://github.com/org/repo.git",
+        path: ".",
+        targetRevision: "main",
+      };
+      statusOf(data).history = [
+        { id: 1, revisions: ["1111111", "v1"] },
+        { id: 2, revisions: ["2222222", "v2"] },
+      ];
+    });
+
+    expect(getCompareUrl(multi)).toBe("https://github.com/org/repo/compare/1111111...2222222");
+  });
+
+  it("offers no link for a repository URL it cannot turn into a web address", () => {
+    const bare = variantOf("guestbook", (data) => {
+      data.spec.sources = undefined;
+      data.spec.source = { repoURL: "github.com/org/repo", path: ".", targetRevision: "main" };
+      statusOf(data).history = [
+        { id: 1, revision: "aaaaaaa" },
+        { id: 2, revision: "bbbbbbb" },
+      ];
+    });
+
+    expect(getCompareUrl(bare)).toBeUndefined();
+  });
+
+  it("offers no compare link when neither deploy carries a git revision", () => {
+    const chartOnly = variantOf("guestbook", (data) => {
+      statusOf(data).history = [
+        { id: 1, revision: "1.2.3" },
+        { id: 2, revision: "1.2.4" },
+      ];
+    });
+
+    expect(getCompareUrl(chartOnly)).toBeUndefined();
+  });
+
+  it("returns nothing for an empty timeline", () => {
+    expect(groupDeploysByRevision([])).toEqual([]);
+  });
+});
+
+describe("the parent index against the scan it replaces", () => {
+  /** The linear scan, kept as the oracle for the index. */
+  function scanForParent(application: Application, all: Application[]): Application | undefined {
+    const name = application.getName();
+    const namespace = application.getNs();
+
+    return all.find((candidate) => {
+      if (candidate === application) return false;
+
+      return Application.getManagedResources(candidate).some(
+        (resource) =>
+          resource.kind === "Application" &&
+          resource.name === name &&
+          (resource.namespace ?? namespace) === namespace,
+      );
+    });
+  }
+
+  it("agrees with the scan for every Application in the cluster", () => {
+    const all = applications();
+
+    for (const application of all) {
+      expect(getParentOf(application, all)).toBe(scanForParent(application, all));
+    }
+  });
+
+  it("builds one index that answers every row, agreeing with the scan", () => {
+    const all = applications();
+    const index = indexParents(all);
+
+    for (const application of all) {
+      expect(index.parentOf(application)).toBe(scanForParent(application, all));
+    }
+
+    expect(all.some((application) => index.parentOf(application) !== undefined)).toBe(true);
+  });
+
+  it("gives every child of the app-of-apps its root as parent, and the root none", () => {
+    const all = applications();
+    const root = all.find((candidate) => candidate.getName() === "apps");
+
+    if (!root) throw new Error("the fixtures should contain the app-of-apps root");
+
+    const children = getChildrenOf(root, all);
+
+    expect(children.length, "the fixtures should contain an app-of-apps layout").toBeGreaterThan(0);
+
+    for (const child of children) expect(getParentOf(child, all)).toBe(root);
+
+    expect(getParentOf(root, all)).toBeUndefined();
+  });
+});
+
+describe("the parent index on resource entries the cluster has not produced", () => {
+  const childOf = (namespace: string | undefined) =>
+    variantOf("guestbook", (data) => {
+      data.metadata.namespace = namespace;
+      data.metadata.uid = `child-${namespace}`;
+      data.metadata.selfLink = `/apis/argoproj.io/v1alpha1/namespaces/${namespace}/applications/guestbook`;
+    });
+
+  const parentDeclaring = (resource: Record<string, unknown>) =>
+    variantOf("apps", (data) => {
+      statusOf(data).resources = [{ kind: "Application", name: "guestbook", ...resource }];
+    });
+
+  it("treats a null namespace the same way `??` does, not as a missing key", () => {
+    // `??` treats null like undefined, so a null namespace matches the child's own.
+    const child = childOf("argocd");
+    const parent = parentDeclaring({ namespace: null });
+
+    expect(indexParents([parent, child]).parentOf(child)).toBe(parent);
+  });
+
+  it("treats an absent namespace the same way", () => {
+    const child = childOf("argocd");
+    const parent = parentDeclaring({});
+
+    expect(indexParents([parent, child]).parentOf(child)).toBe(parent);
+  });
+
+  it("does not match a namespace that is present and different", () => {
+    const child = childOf("argocd");
+    const parent = parentDeclaring({ namespace: "somewhere-else" });
+
+    expect(indexParents([parent, child]).parentOf(child)).toBeUndefined();
+  });
+
+  it("does not match an empty name by truthiness", () => {
+    const child = childOf("argocd");
+    const parent = parentDeclaring({ name: "" });
+
+    expect(indexParents([parent, child]).parentOf(child)).toBeUndefined();
+  });
+
+  it("never reports an Application as its own parent", () => {
+    const selfReferential = variantOf("apps", (data) => {
+      statusOf(data).resources = [
+        { kind: "Application", name: "apps", namespace: "argocd", status: "Synced" },
+      ];
+    });
+
+    expect(indexParents([selfReferential]).parentOf(selfReferential)).toBeUndefined();
+  });
+});

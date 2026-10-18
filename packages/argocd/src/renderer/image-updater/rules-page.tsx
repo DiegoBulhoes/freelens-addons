@@ -1,22 +1,59 @@
 import type { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
-import { useState } from "react";
-import { deleteRule } from "../api/image-updater-actions";
-import { RULE_COLUMNS, RULE_SORT, ruleKey, ruleSearchTexts } from "../api/image-updater-tables";
-import { describeRulesState, type RuleRow, rankRules } from "../api/image-updates";
+import { useEffect, useState } from "react";
+import {
+  RULE_COLUMNS,
+  RULE_SORT,
+  ruleSearchTexts,
+} from "../api/image-updater/image-updater-tables";
+import { applyFilter, filterNamed } from "../api/image-updater/image-updates";
+import {
+  describeRulesState,
+  RULE_FILTERS,
+  type RuleFilter,
+  type RuleRow,
+  rankRules,
+} from "../api/image-updater/rule-health";
+import { keyFor, namedKey } from "../api/shared/identity";
+import { emptyText } from "../api/shared/store-state";
+import { deleteRule } from "../api/writes/image-updater-actions";
 import { bulkAction } from "../components/bulk";
+import { FilterChips } from "../components/filter-chips";
 import { type Column, ListPage } from "../components/list-page";
 import { Status } from "../components/status";
 import { useImageUpdaterStores } from "../hooks/use-image-updater-stores";
+import { APPLICATIONS_PAGE } from "../pages/applications-page";
+import { ago } from "./cells";
 import { RuleDrawer } from "./rule-drawer";
-import { ago } from "./shared";
 
-const keyOf = (row: RuleRow) => ruleKey(row.updater.getName(), row.updater.getNs());
+const keyOf = (row: RuleRow) => keyFor(row.updater.getName(), row.updater.getNs());
+
+export interface RulesParams {
+  name?: { get(): string };
+  namespace?: { get(): string };
+  filter?: { get(): string };
+}
+
+const FILTER_LABELS: Record<RuleFilter, string> = { attention: "Need attention" };
+const FILTER_TITLES: Record<RuleFilter, string> = {
+  attention: "Shows the rules that are failing or need a look",
+};
 
 export const ImageUpdaterRulesPage = observer(
-  ({ extension }: { extension: Renderer.LensExtension }) => {
-    const { updaters, applications, state } = useImageUpdaterStores();
-    const [selectedKey, setSelectedKey] = useState<string>();
+  ({ extension, params }: { extension: Renderer.LensExtension; params?: RulesParams }) => {
+    const { updaters, applications, state, gap } = useImageUpdaterStores();
+    const named = namedKey(params?.name?.get(), params?.namespace?.get());
+    const [selectedKey, setSelectedKey] = useState(named);
+    const requested = filterNamed(RULE_FILTERS, params?.filter?.get());
+    const [filter, setFilter] = useState<RuleFilter | undefined>(requested);
+
+    // The page stays mounted when a card names another filter.
+    useEffect(() => setFilter(requested), [requested]);
+
+    // A link elsewhere names a rule: its drawer opens, even with the page already mounted.
+    useEffect(() => {
+      if (named) setSelectedKey(named);
+    }, [named]);
     const now = Date.now();
 
     const ranked = rankRules(updaters, applications, now);
@@ -76,10 +113,22 @@ export const ImageUpdaterRulesPage = observer(
       <ListPage
         title="Image Updater rules"
         subline="A rule opens with its images, its last update and what can be done about it."
-        alarm={state === "unreachable" ? describeRulesState(state) : undefined}
-        note={state === "unreachable" ? undefined : describeRulesState(state)}
+        alarm={state === "unreachable" ? describeRulesState(state) : gap}
         section="image-updater-rules"
-        rows={ranked}
+        rows={applyFilter(ranked, RULE_FILTERS, filter)}
+        filters={
+          ranked.length > 0 && (
+            <FilterChips
+              filters={Object.keys(RULE_FILTERS) as RuleFilter[]}
+              labels={FILTER_LABELS}
+              titles={FILTER_TITLES}
+              counts={{ attention: applyFilter(ranked, RULE_FILTERS, "attention").length }}
+              current={filter}
+              onChange={setFilter}
+              section="image-updater-rule-filters"
+            />
+          )
+        }
         columns={columns}
         keyOf={keyOf}
         searchTexts={ruleSearchTexts}
@@ -100,7 +149,13 @@ export const ImageUpdaterRulesPage = observer(
             }),
           ],
         }}
-        empty="No ImageUpdater rules in the namespaces in scope."
+        empty={emptyText(
+          state,
+          describeRulesState,
+          ranked.length > 0
+            ? "No rule matches that filter."
+            : "No ImageUpdater rules in the namespaces in scope.",
+        )}
       >
         <RuleDrawer
           updater={selected?.updater}
@@ -109,7 +164,10 @@ export const ImageUpdaterRulesPage = observer(
           onClose={() => setSelectedKey(undefined)}
           onOpenApplication={(name) => {
             setSelectedKey(undefined);
-            void extension.navigate("applications", { name });
+            void extension.navigate(APPLICATIONS_PAGE, {
+              name,
+              namespace: selected?.updater.getNs() ?? "",
+            });
           }}
         />
       </ListPage>

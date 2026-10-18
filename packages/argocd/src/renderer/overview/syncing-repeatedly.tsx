@@ -1,7 +1,7 @@
 import { Renderer } from "@freelensapp/extensions";
 
-import type { Application } from "../api/application";
-import type { RepeatedSync } from "../api/overview";
+import type { Application } from "../api/applications/application";
+import type { RepeatedSync } from "../api/overview/overview";
 import { ApplicationMenuItem } from "../menus/application-menu";
 
 const {
@@ -10,11 +10,11 @@ const {
 
 export function SyncingRepeatedly({
   repeated,
-  onMarksChanged,
+  onPinsChanged,
   onOpen,
 }: {
   repeated: RepeatedSync[];
-  onMarksChanged: () => void;
+  onPinsChanged: () => void;
   onOpen: (application: Application) => void;
 }) {
   return (
@@ -45,7 +45,7 @@ export function SyncingRepeatedly({
             </span>
             <span className="ArgoCD-row__actions">
               <MenuActions toolbar={false} autoCloseOnSelect>
-                <ApplicationMenuItem object={entry.application} onChanged={onMarksChanged} />
+                <ApplicationMenuItem object={entry.application} onChanged={onPinsChanged} />
               </MenuActions>
             </span>
           </div>

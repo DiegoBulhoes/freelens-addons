@@ -6,16 +6,16 @@
       "kind": "ImageUpdater",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T00:22:23Z",
+        "creationTimestamp": "2026-10-18T03:00:39Z",
         "finalizers": [
           "resources-finalizer.argocd-image-updater.argoproj.io"
         ],
         "generation": 1,
         "name": "bad-pattern",
         "namespace": "argocd",
-        "resourceVersion": "317017",
+        "resourceVersion": "498249",
         "selfLink": "/apis/argocd-image-updater.argoproj.io/v1alpha1/namespaces/argocd/imageupdaters/bad-pattern",
-        "uid": "7f8783fb-82ed-4b9b-8901-df5ce60ff195"
+        "uid": "420f615d-e85e-4357-988c-c05aded3196b"
       },
       "spec": {
         "applicationRefs": [
@@ -35,7 +35,7 @@
         "applicationsMatched": 0,
         "conditions": [
           {
-            "lastTransitionTime": "2026-10-03T00:48:26Z",
+            "lastTransitionTime": "2026-10-18T03:00:39Z",
             "message": "Last check completed. Awaiting next cycle.",
             "observedGeneration": 1,
             "reason": "Idle",
@@ -43,7 +43,7 @@
             "type": "Reconciling"
           },
           {
-            "lastTransitionTime": "2026-10-03T00:22:23Z",
+            "lastTransitionTime": "2026-10-18T03:00:39Z",
             "message": "invalid application name pattern 'image-updates-[': syntax error in pattern",
             "observedGeneration": 1,
             "reason": "ReconcileError",
@@ -51,7 +51,7 @@
             "type": "Error"
           },
           {
-            "lastTransitionTime": "2026-10-03T00:22:23Z",
+            "lastTransitionTime": "2026-10-18T03:00:39Z",
             "message": "Reconciliation failed: invalid application name pattern 'image-updates-[': syntax error in pattern",
             "observedGeneration": 1,
             "reason": "ReconcileFailed",
@@ -60,7 +60,7 @@
           }
         ],
         "imagesManaged": 0,
-        "lastCheckedAt": "2026-10-03T00:48:26Z",
+        "lastCheckedAt": "2026-10-18T03:00:39Z",
         "observedGeneration": 1
       }
     },
@@ -69,16 +69,16 @@
       "kind": "ImageUpdater",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T00:22:02Z",
+        "creationTimestamp": "2026-10-04T20:28:59Z",
         "finalizers": [
           "resources-finalizer.argocd-image-updater.argoproj.io"
         ],
         "generation": 1,
         "name": "from-annotations",
         "namespace": "argocd",
-        "resourceVersion": "316988",
+        "resourceVersion": "497958",
         "selfLink": "/apis/argocd-image-updater.argoproj.io/v1alpha1/namespaces/argocd/imageupdaters/from-annotations",
-        "uid": "0a67e5ca-c7b7-47b1-a89b-b302ea4a4816"
+        "uid": "0cc68606-32db-47a0-9062-500c9db359d2"
       },
       "spec": {
         "applicationRefs": [
@@ -92,7 +92,7 @@
         "applicationsMatched": 1,
         "conditions": [
           {
-            "lastTransitionTime": "2026-10-03T00:48:13Z",
+            "lastTransitionTime": "2026-10-18T03:00:13Z",
             "message": "Last check completed. Awaiting next cycle.",
             "observedGeneration": 1,
             "reason": "Idle",
@@ -100,7 +100,7 @@
             "type": "Reconciling"
           },
           {
-            "lastTransitionTime": "2026-10-03T00:22:02Z",
+            "lastTransitionTime": "2026-10-12T15:33:53Z",
             "message": "No errors during last reconciliation.",
             "observedGeneration": 1,
             "reason": "NoErrors",
@@ -108,7 +108,7 @@
             "type": "Error"
           },
           {
-            "lastTransitionTime": "2026-10-03T00:22:02Z",
+            "lastTransitionTime": "2026-10-04T20:28:59Z",
             "message": "Reconciled 1 applications, 0 images updated.",
             "observedGeneration": 1,
             "reason": "ReconcileSucceeded",
@@ -117,7 +117,7 @@
           }
         ],
         "imagesManaged": 1,
-        "lastCheckedAt": "2026-10-03T00:48:13Z",
+        "lastCheckedAt": "2026-10-18T03:00:13Z",
         "observedGeneration": 1
       }
     },
@@ -126,16 +126,16 @@
       "kind": "ImageUpdater",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T00:15:30Z",
+        "creationTimestamp": "2026-10-04T20:28:59Z",
         "finalizers": [
           "resources-finalizer.argocd-image-updater.argoproj.io"
         ],
         "generation": 1,
         "name": "frontend-private",
         "namespace": "argocd",
-        "resourceVersion": "316921",
+        "resourceVersion": "497960",
         "selfLink": "/apis/argocd-image-updater.argoproj.io/v1alpha1/namespaces/argocd/imageupdaters/frontend-private",
-        "uid": "89cf237f-2a2c-4831-aa1e-846632d3d62c"
+        "uid": "a1f32ea1-2229-4446-8599-49fdc5446c65"
       },
       "spec": {
         "applicationRefs": [
@@ -169,7 +169,7 @@
         "applicationsMatched": 1,
         "conditions": [
           {
-            "lastTransitionTime": "2026-10-03T00:47:30Z",
+            "lastTransitionTime": "2026-10-18T03:00:13Z",
             "message": "Last check completed. Awaiting next cycle.",
             "observedGeneration": 1,
             "reason": "Idle",
@@ -177,7 +177,7 @@
             "type": "Reconciling"
           },
           {
-            "lastTransitionTime": "2026-10-03T00:15:30Z",
+            "lastTransitionTime": "2026-10-11T16:53:10Z",
             "message": "1 error(s) occurred during image update checks.",
             "observedGeneration": 1,
             "reason": "PartialErrors",
@@ -185,7 +185,7 @@
             "type": "Error"
           },
           {
-            "lastTransitionTime": "2026-10-03T00:15:30Z",
+            "lastTransitionTime": "2026-10-04T20:28:59Z",
             "message": "Reconciled 1 applications with 1 errors, 0 images updated.",
             "observedGeneration": 1,
             "reason": "ReconcileCompletedWithErrors",
@@ -194,7 +194,7 @@
           }
         ],
         "imagesManaged": 1,
-        "lastCheckedAt": "2026-10-03T00:47:30Z",
+        "lastCheckedAt": "2026-10-18T03:00:13Z",
         "observedGeneration": 1
       }
     },
@@ -203,16 +203,89 @@
       "kind": "ImageUpdater",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T00:18:16Z",
+        "creationTimestamp": "2026-10-12T18:56:18Z",
+        "finalizers": [
+          "resources-finalizer.argocd-image-updater.argoproj.io"
+        ],
+        "generation": 1,
+        "name": "git-pinned",
+        "namespace": "argocd",
+        "resourceVersion": "498000",
+        "selfLink": "/apis/argocd-image-updater.argoproj.io/v1alpha1/namespaces/argocd/imageupdaters/git-pinned",
+        "uid": "27e671e4-6ed6-4b8b-bfe3-702a93ad21f9"
+      },
+      "spec": {
+        "applicationRefs": [
+          {
+            "images": [
+              {
+                "alias": "podinfo",
+                "commonUpdateSettings": {
+                  "forceUpdate": false,
+                  "updateStrategy": "semver"
+                },
+                "imageName": "ghcr.io/stefanprodan/podinfo:6.13.x"
+              }
+            ],
+            "namePattern": "legacy-annotations",
+            "useAnnotations": false
+          }
+        ],
+        "writeBackConfig": {
+          "gitConfig": {
+            "branch": "main"
+          },
+          "method": "git:secret:argocd/no-such-git-creds"
+        }
+      },
+      "status": {
+        "applicationsMatched": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-18T03:00:14Z",
+            "message": "Last check completed. Awaiting next cycle.",
+            "observedGeneration": 1,
+            "reason": "Idle",
+            "status": "False",
+            "type": "Reconciling"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T18:56:19Z",
+            "message": "No errors during last reconciliation.",
+            "observedGeneration": 1,
+            "reason": "NoErrors",
+            "status": "False",
+            "type": "Error"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T18:56:19Z",
+            "message": "Reconciled 1 applications, 0 images updated.",
+            "observedGeneration": 1,
+            "reason": "ReconcileSucceeded",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "imagesManaged": 1,
+        "lastCheckedAt": "2026-10-18T03:00:14Z",
+        "observedGeneration": 1
+      }
+    },
+    {
+      "apiVersion": "argocd-image-updater.argoproj.io/v1alpha1",
+      "kind": "ImageUpdater",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T20:28:59Z",
         "finalizers": [
           "resources-finalizer.argocd-image-updater.argoproj.io"
         ],
         "generation": 1,
         "name": "plain-manifests",
         "namespace": "argocd",
-        "resourceVersion": "317015",
+        "resourceVersion": "498002",
         "selfLink": "/apis/argocd-image-updater.argoproj.io/v1alpha1/namespaces/argocd/imageupdaters/plain-manifests",
-        "uid": "c61f49e2-9c41-4b05-887f-fdbc9f813aa0"
+        "uid": "b7c2a05d-8189-425b-b700-a6fdbc194882"
       },
       "spec": {
         "applicationRefs": [
@@ -235,7 +308,7 @@
         "applicationsMatched": 0,
         "conditions": [
           {
-            "lastTransitionTime": "2026-10-03T00:48:26Z",
+            "lastTransitionTime": "2026-10-18T03:00:14Z",
             "message": "Last check completed. Awaiting next cycle.",
             "observedGeneration": 1,
             "reason": "Idle",
@@ -243,7 +316,7 @@
             "type": "Reconciling"
           },
           {
-            "lastTransitionTime": "2026-10-03T00:18:16Z",
+            "lastTransitionTime": "2026-10-04T20:28:59Z",
             "message": "No errors during last reconciliation.",
             "observedGeneration": 1,
             "reason": "NoErrors",
@@ -251,7 +324,7 @@
             "type": "Error"
           },
           {
-            "lastTransitionTime": "2026-10-03T00:18:16Z",
+            "lastTransitionTime": "2026-10-04T20:28:59Z",
             "message": "Reconciled 0 applications, 0 images updated.",
             "observedGeneration": 1,
             "reason": "ReconcileSucceeded",
@@ -260,7 +333,7 @@
           }
         ],
         "imagesManaged": 0,
-        "lastCheckedAt": "2026-10-03T00:48:26Z",
+        "lastCheckedAt": "2026-10-18T03:00:14Z",
         "observedGeneration": 1
       }
     },
@@ -269,16 +342,16 @@
       "kind": "ImageUpdater",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T00:45:09Z",
+        "creationTimestamp": "2026-10-04T20:28:59Z",
         "finalizers": [
           "resources-finalizer.argocd-image-updater.argoproj.io"
         ],
         "generation": 1,
         "name": "podinfo-chart",
         "namespace": "argocd",
-        "resourceVersion": "316815",
+        "resourceVersion": "498051",
         "selfLink": "/apis/argocd-image-updater.argoproj.io/v1alpha1/namespaces/argocd/imageupdaters/podinfo-chart",
-        "uid": "cdb17099-faa7-4cba-8f3d-c6afd5d01070"
+        "uid": "8b0e23e5-648e-460a-b82c-7a0fdde2b27b"
       },
       "spec": {
         "applicationRefs": [
@@ -307,7 +380,7 @@
         "applicationsMatched": 1,
         "conditions": [
           {
-            "lastTransitionTime": "2026-10-03T00:47:10Z",
+            "lastTransitionTime": "2026-10-18T03:00:19Z",
             "message": "Last check completed. Awaiting next cycle.",
             "observedGeneration": 1,
             "reason": "Idle",
@@ -315,7 +388,7 @@
             "type": "Reconciling"
           },
           {
-            "lastTransitionTime": "2026-10-03T00:45:09Z",
+            "lastTransitionTime": "2026-10-12T15:33:51Z",
             "message": "No errors during last reconciliation.",
             "observedGeneration": 1,
             "reason": "NoErrors",
@@ -323,8 +396,8 @@
             "type": "Error"
           },
           {
-            "lastTransitionTime": "2026-10-03T00:45:09Z",
-            "message": "Reconciled 1 applications, 1 images updated.",
+            "lastTransitionTime": "2026-10-04T20:28:59Z",
+            "message": "Reconciled 1 applications, 0 images updated.",
             "observedGeneration": 1,
             "reason": "ReconcileSucceeded",
             "status": "True",
@@ -332,8 +405,8 @@
           }
         ],
         "imagesManaged": 1,
-        "lastCheckedAt": "2026-10-03T00:47:10Z",
-        "lastUpdatedAt": "2026-10-03T00:47:10Z",
+        "lastCheckedAt": "2026-10-18T03:00:19Z",
+        "lastUpdatedAt": "2026-10-04T20:31:04Z",
         "observedGeneration": 1,
         "recentUpdates": [
           {
@@ -342,7 +415,7 @@
             "image": "ghcr.io/stefanprodan/podinfo",
             "message": "Updated from 6.13.0 to 6.14.1.",
             "newVersion": "6.14.1",
-            "updatedAt": "2026-10-03T00:47:10Z"
+            "updatedAt": "2026-10-04T20:31:04Z"
           }
         ]
       }
@@ -352,16 +425,16 @@
       "kind": "ImageUpdater",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T00:13:44Z",
+        "creationTimestamp": "2026-10-04T20:28:59Z",
         "finalizers": [
           "resources-finalizer.argocd-image-updater.argoproj.io"
         ],
-        "generation": 1,
+        "generation": 3,
         "name": "podinfo-patches",
         "namespace": "argocd",
-        "resourceVersion": "317013",
+        "resourceVersion": "498058",
         "selfLink": "/apis/argocd-image-updater.argoproj.io/v1alpha1/namespaces/argocd/imageupdaters/podinfo-patches",
-        "uid": "61763c25-395f-4375-817f-d73b6484b90a"
+        "uid": "a91fd76b-3a8a-443d-9958-99c1de8bd211"
       },
       "spec": {
         "applicationRefs": [
@@ -388,34 +461,34 @@
         "applicationsMatched": 1,
         "conditions": [
           {
-            "lastTransitionTime": "2026-10-03T00:48:26Z",
+            "lastTransitionTime": "2026-10-18T03:00:20Z",
             "message": "Last check completed. Awaiting next cycle.",
-            "observedGeneration": 1,
+            "observedGeneration": 3,
             "reason": "Idle",
             "status": "False",
             "type": "Reconciling"
           },
           {
-            "lastTransitionTime": "2026-10-03T00:14:13Z",
+            "lastTransitionTime": "2026-10-12T15:33:52Z",
             "message": "No errors during last reconciliation.",
-            "observedGeneration": 1,
+            "observedGeneration": 3,
             "reason": "NoErrors",
             "status": "False",
             "type": "Error"
           },
           {
-            "lastTransitionTime": "2026-10-03T00:14:13Z",
+            "lastTransitionTime": "2026-10-04T20:28:59Z",
             "message": "Reconciled 1 applications, 0 images updated.",
-            "observedGeneration": 1,
+            "observedGeneration": 3,
             "reason": "ReconcileSucceeded",
             "status": "True",
             "type": "Ready"
           }
         ],
         "imagesManaged": 1,
-        "lastCheckedAt": "2026-10-03T00:48:26Z",
-        "lastUpdatedAt": "2026-10-03T00:14:13Z",
-        "observedGeneration": 1,
+        "lastCheckedAt": "2026-10-18T03:00:20Z",
+        "lastUpdatedAt": "2026-10-04T20:31:02Z",
+        "observedGeneration": 3,
         "recentUpdates": [
           {
             "alias": "podinfo",
@@ -423,7 +496,7 @@
             "image": "ghcr.io/stefanprodan/podinfo",
             "message": "Updated from 6.13.0 to 6.14.1.",
             "newVersion": "6.14.1",
-            "updatedAt": "2026-10-03T00:14:13Z"
+            "updatedAt": "2026-10-04T20:31:02Z"
           }
         ]
       }
@@ -433,16 +506,16 @@
       "kind": "ImageUpdater",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T00:13:44Z",
+        "creationTimestamp": "2026-10-04T20:28:59Z",
         "finalizers": [
           "resources-finalizer.argocd-image-updater.argoproj.io"
         ],
-        "generation": 1,
+        "generation": 3,
         "name": "retired",
         "namespace": "argocd",
-        "resourceVersion": "317019",
+        "resourceVersion": "498060",
         "selfLink": "/apis/argocd-image-updater.argoproj.io/v1alpha1/namespaces/argocd/imageupdaters/retired",
-        "uid": "91eef655-a344-4461-86ec-9f600ef45910"
+        "uid": "cf1bdb0b-169a-499d-87a3-a13cead60573"
       },
       "spec": {
         "applicationRefs": [
@@ -462,33 +535,33 @@
         "applicationsMatched": 0,
         "conditions": [
           {
-            "lastTransitionTime": "2026-10-03T00:48:26Z",
+            "lastTransitionTime": "2026-10-18T03:00:20Z",
             "message": "Last check completed. Awaiting next cycle.",
-            "observedGeneration": 1,
+            "observedGeneration": 3,
             "reason": "Idle",
             "status": "False",
             "type": "Reconciling"
           },
           {
-            "lastTransitionTime": "2026-10-03T00:14:13Z",
+            "lastTransitionTime": "2026-10-04T20:28:59Z",
             "message": "No errors during last reconciliation.",
-            "observedGeneration": 1,
+            "observedGeneration": 3,
             "reason": "NoErrors",
             "status": "False",
             "type": "Error"
           },
           {
-            "lastTransitionTime": "2026-10-03T00:14:13Z",
+            "lastTransitionTime": "2026-10-04T20:28:59Z",
             "message": "Reconciled 0 applications, 0 images updated.",
-            "observedGeneration": 1,
+            "observedGeneration": 3,
             "reason": "ReconcileSucceeded",
             "status": "True",
             "type": "Ready"
           }
         ],
         "imagesManaged": 0,
-        "lastCheckedAt": "2026-10-03T00:48:26Z",
-        "observedGeneration": 1
+        "lastCheckedAt": "2026-10-18T03:00:20Z",
+        "observedGeneration": 3
       }
     }
   ],

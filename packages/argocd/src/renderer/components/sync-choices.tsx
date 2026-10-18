@@ -1,14 +1,14 @@
 import { Renderer } from "@freelensapp/extensions";
 import { useState } from "react";
 
-import { isRiskyChoice, type SyncChoice } from "../api/patches";
+import { isRiskyChoice, type SyncChoice } from "../api/writes/patches";
 import { TypedField } from "./confirm";
 
 const {
   Component: { Checkbox },
 } = Renderer;
 
-export function describeChoice({ prune, force }: SyncChoice): string {
+export function describeSyncChoice({ prune, force }: SyncChoice): string {
   const picked = [prune && "prune", force && "force"].filter(Boolean);
 
   return picked.length === 0 ? "" : ` with ${picked.join(" and ")}`;

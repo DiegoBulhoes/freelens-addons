@@ -7,6 +7,7 @@
 #   plain-manifests  names an Application the controller skips.
 #   from-annotations reads its images from the Application's annotations.
 #   podinfo-chart    the podinfo update as Helm parameters.
+#   git-pinned       writes back to git, on a line that never moves.
 #
 # Ready=False lives in image-updater-refused.yaml, which is not seeded.
 apiVersion: argoproj.io/v1alpha1
@@ -117,6 +118,25 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+---
+# Writes to git, but 6.13 never moves, so it never commits and its Secret need not exist.
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: git-pinned
+  namespace: argocd
+spec:
+  writeBackConfig:
+    method: git:secret:argocd/no-such-git-creds
+    gitConfig:
+      branch: main
+  applicationRefs:
+    - namePattern: legacy-annotations
+      images:
+        - alias: podinfo
+          imageName: ghcr.io/stefanprodan/podinfo:6.13.x
+          commonUpdateSettings:
+            updateStrategy: semver
 ---
 apiVersion: argocd-image-updater.argoproj.io/v1alpha1
 kind: ImageUpdater

@@ -5,13 +5,13 @@
       "apiVersion": "argoproj.io/v1alpha1",
       "kind": "AppProject",
       "metadata": {
-        "creationTimestamp": "2026-09-26T21:59:12Z",
-        "generation": 1,
+        "creationTimestamp": "2026-10-04T20:28:32Z",
+        "generation": 6,
         "name": "default",
         "namespace": "argocd",
-        "resourceVersion": "843",
+        "resourceVersion": "18018",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/appprojects/default",
-        "uid": "dd6bf139-1f7b-4b19-9be0-28b52856dfe3"
+        "uid": "ff89407a-0ff3-4515-9bb6-4bf50f97baa9"
       },
       "spec": {
         "clusterResourceWhitelist": [
@@ -37,13 +37,13 @@
       "kind": "AppProject",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-09-26T21:59:42Z",
-        "generation": 1,
+        "creationTimestamp": "2026-10-04T20:28:58Z",
+        "generation": 4,
         "name": "demo",
         "namespace": "argocd",
-        "resourceVersion": "1219",
+        "resourceVersion": "17981",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/appprojects/demo",
-        "uid": "bc9f9d2d-194f-4d18-a388-07f2bddaada0"
+        "uid": "751c536d-3ad8-482c-b753-01e1c60be971"
       },
       "spec": {
         "clusterResourceWhitelist": [
@@ -61,6 +61,88 @@
         ],
         "sourceRepos": [
           "*"
+        ]
+      }
+    },
+    {
+      "apiVersion": "argoproj.io/v1alpha1",
+      "kind": "AppProject",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T18:56:17Z",
+        "generation": 1,
+        "name": "restricted",
+        "namespace": "argocd",
+        "resourceVersion": "333540",
+        "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/appprojects/restricted",
+        "uid": "706557e3-edeb-4f56-a524-df51cd79f3a6"
+      },
+      "spec": {
+        "clusterResourceWhitelist": [
+          {
+            "group": "",
+            "kind": "Namespace"
+          }
+        ],
+        "description": "Scoped project for extension development",
+        "destinations": [
+          {
+            "namespace": "restricted",
+            "server": "https://kubernetes.default.svc"
+          },
+          {
+            "name": "in-cluster",
+            "namespace": "restricted-*"
+          }
+        ],
+        "namespaceResourceBlacklist": [
+          {
+            "group": "",
+            "kind": "ResourceQuota"
+          }
+        ],
+        "roles": [
+          {
+            "description": "Read the project's Applications",
+            "name": "read-only",
+            "policies": [
+              "p, proj:restricted:read-only, applications, get, restricted/*, allow"
+            ]
+          },
+          {
+            "description": "Sync the project's Applications",
+            "groups": [
+              "restricted-deployers"
+            ],
+            "name": "deployer",
+            "policies": [
+              "p, proj:restricted:deployer, applications, sync, restricted/*, allow"
+            ]
+          }
+        ],
+        "sourceRepos": [
+          "https://github.com/argoproj/argocd-example-apps.git"
+        ],
+        "syncWindows": [
+          {
+            "applications": [
+              "*"
+            ],
+            "duration": "2h",
+            "kind": "allow",
+            "manualSync": true,
+            "schedule": "0 22 * * *",
+            "timeZone": "UTC"
+          },
+          {
+            "description": "Weekend freeze",
+            "duration": "24h",
+            "kind": "deny",
+            "namespaces": [
+              "restricted"
+            ],
+            "schedule": "0 0 * * 6"
+          }
         ]
       }
     }

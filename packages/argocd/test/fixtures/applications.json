@@ -6,13 +6,13 @@
       "kind": "Application",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-09-28T17:29:46Z",
-        "generation": 1986,
+        "creationTimestamp": "2026-10-04T20:28:58Z",
+        "generation": 433,
         "name": "apps",
         "namespace": "argocd",
-        "resourceVersion": "316741",
+        "resourceVersion": "498284",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/apps",
-        "uid": "fd526df8-abb1-44ec-8930-a5ab400b9402"
+        "uid": "d23fe05f-9127-439e-be94-f1a29c671088"
       },
       "spec": {
         "destination": {
@@ -53,13 +53,13 @@
       "status": {
         "controllerNamespace": "argocd",
         "health": {
-          "lastTransitionTime": "2026-09-28T17:42:44Z",
+          "lastTransitionTime": "2026-10-04T20:29:01Z",
           "status": "Healthy"
         },
         "history": [
           {
-            "deployStartedAt": "2026-09-28T17:42:44Z",
-            "deployedAt": "2026-09-28T17:42:44Z",
+            "deployStartedAt": "2026-10-04T20:29:00Z",
+            "deployedAt": "2026-10-04T20:29:00Z",
             "id": 0,
             "initiatedBy": {
               "automated": true
@@ -91,7 +91,7 @@
           }
         ],
         "operationState": {
-          "finishedAt": "2026-09-28T17:42:44Z",
+          "finishedAt": "2026-10-04T20:29:00Z",
           "message": "successfully synced (all tasks run)",
           "operation": {
             "initiatedBy": {
@@ -129,9 +129,9 @@
             }
           },
           "phase": "Succeeded",
-          "startedAt": "2026-09-28T17:42:44Z"
+          "startedAt": "2026-10-04T20:29:00Z"
         },
-        "reconciledAt": "2026-10-03T00:46:16Z",
+        "reconciledAt": "2026-10-18T03:00:46Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -196,13 +196,13 @@
       "kind": "Application",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-09-27T01:27:06Z",
-        "generation": 2410,
+        "creationTimestamp": "2026-10-04T20:28:58Z",
+        "generation": 436,
         "name": "bad-namespace",
         "namespace": "argocd",
-        "resourceVersion": "316947",
+        "resourceVersion": "497505",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/bad-namespace",
-        "uid": "4d898469-ba3d-40b0-a69a-6a59a95d0fff"
+        "uid": "27ad1357-90f2-4b18-9b50-80deebbb9fac"
       },
       "spec": {
         "destination": {
@@ -222,23 +222,22 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-27T13:29:33Z",
-            "message": "Failed last sync attempt to [8088f4c0d970abb09e250248cc97e35623447cb5]: one or more objects failed to apply, reason: namespaces \"nowhere-at-all\" not found",
+            "lastTransitionTime": "2026-10-11T16:53:05Z",
+            "message": "Failed last sync attempt to [8088f4c0d970abb09e250248cc97e35623447cb5]: one or more objects failed to apply, reason: namespaces \"nowhere-at-all\" not found (retried 5 times).",
             "type": "SyncError"
           }
         ],
         "controllerNamespace": "argocd",
         "health": {
-          "lastTransitionTime": "2026-09-27T01:27:07Z",
+          "lastTransitionTime": "2026-10-11T16:53:05Z",
           "status": "Missing"
         },
         "operationState": {
-          "finishedAt": "2026-09-27T13:29:32Z",
-          "message": "one or more objects failed to apply, reason: namespaces \"nowhere-at-all\" not found",
+          "finishedAt": "2026-10-04T20:34:10Z",
+          "message": "one or more objects failed to apply, reason: namespaces \"nowhere-at-all\" not found (retried 5 times).",
           "operation": {
             "initiatedBy": {
-              "automated": true,
-              "username": "freelens"
+              "automated": true
             },
             "retry": {
               "limit": 5
@@ -254,9 +253,9 @@
           },
           "phase": "Failed",
           "retryCount": 5,
-          "startedAt": "2026-09-27T13:29:32Z"
+          "startedAt": "2026-10-04T20:29:00Z"
         },
-        "reconciledAt": "2026-10-03T00:47:38Z",
+        "reconciledAt": "2026-10-18T02:59:08Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -300,13 +299,13 @@
       "kind": "Application",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-09-27T01:27:06Z",
-        "generation": 2387,
+        "creationTimestamp": "2026-10-04T20:28:58Z",
+        "generation": 428,
         "name": "bad-revision",
         "namespace": "argocd",
-        "resourceVersion": "317022",
+        "resourceVersion": "497324",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/bad-revision",
-        "uid": "1290f172-627c-4b99-b316-39e29afea787"
+        "uid": "7c16c828-3d6a-4545-b31e-5228403626eb"
       },
       "spec": {
         "destination": {
@@ -326,17 +325,17 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-27T13:06:17Z",
+            "lastTransitionTime": "2026-10-11T16:57:04Z",
             "message": "Failed to load target state: failed to generate manifest for source 1 of 1: rpc error: code = Unknown desc = unable to resolve 'no-such-branch' to a commit SHA",
             "type": "ComparisonError"
           }
         ],
         "controllerNamespace": "argocd",
         "health": {
-          "lastTransitionTime": "2026-09-27T01:27:07Z",
+          "lastTransitionTime": "2026-10-04T20:29:00Z",
           "status": "Healthy"
         },
-        "reconciledAt": "2026-10-03T00:48:30Z",
+        "reconciledAt": "2026-10-18T02:58:37Z",
         "resourceHealthSource": "appTree",
         "sync": {
           "comparedTo": {
@@ -362,16 +361,16 @@
         "annotations": {
           "argocd.argoproj.io/tracking-id": "apps:argoproj.io/Application:argocd/example.kustomize-guestbook"
         },
-        "creationTimestamp": "2026-09-28T17:42:44Z",
+        "creationTimestamp": "2026-10-04T20:29:00Z",
         "finalizers": [
           "resources-finalizer.argocd.argoproj.io"
         ],
-        "generation": 1972,
+        "generation": 431,
         "name": "example.kustomize-guestbook",
         "namespace": "argocd",
-        "resourceVersion": "316689",
+        "resourceVersion": "496811",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/example.kustomize-guestbook",
-        "uid": "4e639a5c-7c74-4121-9ebb-f7302ae5e296"
+        "uid": "0870ab32-2ada-469f-80cd-99b51d9ce4ca"
       },
       "spec": {
         "destination": {
@@ -397,13 +396,13 @@
       "status": {
         "controllerNamespace": "argocd",
         "health": {
-          "lastTransitionTime": "2026-09-28T17:42:50Z",
+          "lastTransitionTime": "2026-10-04T20:29:28Z",
           "status": "Healthy"
         },
         "history": [
           {
-            "deployStartedAt": "2026-09-28T17:42:45Z",
-            "deployedAt": "2026-09-28T17:42:45Z",
+            "deployStartedAt": "2026-10-04T20:29:01Z",
+            "deployedAt": "2026-10-04T20:29:01Z",
             "id": 0,
             "initiatedBy": {
               "automated": true
@@ -417,7 +416,7 @@
           }
         ],
         "operationState": {
-          "finishedAt": "2026-09-28T17:42:45Z",
+          "finishedAt": "2026-10-04T20:29:01Z",
           "message": "successfully synced (all tasks run)",
           "operation": {
             "initiatedBy": {
@@ -440,9 +439,9 @@
             }
           },
           "phase": "Succeeded",
-          "startedAt": "2026-09-28T17:42:45Z"
+          "startedAt": "2026-10-04T20:29:01Z"
         },
-        "reconciledAt": "2026-10-03T00:45:45Z",
+        "reconciledAt": "2026-10-18T02:56:54Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -492,16 +491,16 @@
         "annotations": {
           "argocd.argoproj.io/tracking-id": "apps:argoproj.io/Application:argocd/example.sync-waves"
         },
-        "creationTimestamp": "2026-09-28T17:42:44Z",
+        "creationTimestamp": "2026-10-04T20:29:00Z",
         "finalizers": [
           "resources-finalizer.argocd.argoproj.io"
         ],
-        "generation": 2000,
+        "generation": 441,
         "name": "example.sync-waves",
         "namespace": "argocd",
-        "resourceVersion": "317011",
+        "resourceVersion": "497377",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/example.sync-waves",
-        "uid": "07e0ac3f-e2c4-4257-846e-86d2a74c87da"
+        "uid": "5d4ba2d2-6636-4e1d-8bbc-cc704ac5157d"
       },
       "spec": {
         "destination": {
@@ -527,13 +526,13 @@
       "status": {
         "controllerNamespace": "argocd",
         "health": {
-          "lastTransitionTime": "2026-09-28T17:43:23Z",
+          "lastTransitionTime": "2026-10-04T20:29:45Z",
           "status": "Healthy"
         },
         "history": [
           {
-            "deployStartedAt": "2026-09-28T17:42:45Z",
-            "deployedAt": "2026-09-28T17:43:30Z",
+            "deployStartedAt": "2026-10-04T20:29:01Z",
+            "deployedAt": "2026-10-04T20:29:53Z",
             "id": 0,
             "initiatedBy": {
               "automated": true
@@ -547,7 +546,7 @@
           }
         ],
         "operationState": {
-          "finishedAt": "2026-09-28T17:43:30Z",
+          "finishedAt": "2026-10-04T20:29:53Z",
           "message": "successfully synced (no more tasks)",
           "operation": {
             "initiatedBy": {
@@ -570,9 +569,9 @@
             }
           },
           "phase": "Succeeded",
-          "startedAt": "2026-09-28T17:42:45Z"
+          "startedAt": "2026-10-04T20:29:01Z"
         },
-        "reconciledAt": "2026-10-03T00:48:25Z",
+        "reconciledAt": "2026-10-18T02:58:47Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -631,7 +630,7 @@
             "group": "batch",
             "hook": true,
             "kind": "Job",
-            "name": "upgrade-sql-schema8088f4c-presync-1790617365",
+            "name": "upgrade-sql-schema8088f4c-presync-1791145741",
             "namespace": "sync-waves",
             "version": "v1"
           }
@@ -668,13 +667,13 @@
         "annotations": {
           "argocd.argoproj.io/sync-wave": "1"
         },
-        "creationTimestamp": "2026-09-26T21:59:42Z",
-        "generation": 2593,
+        "creationTimestamp": "2026-10-04T20:28:58Z",
+        "generation": 636,
         "name": "guestbook",
         "namespace": "argocd",
-        "resourceVersion": "317180",
+        "resourceVersion": "498031",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/guestbook",
-        "uid": "0431b0ec-7b04-427b-a173-04afb7ab67d8"
+        "uid": "588fe3b7-9449-49b0-9231-f5b6af4289ba"
       },
       "spec": {
         "destination": {
@@ -696,125 +695,13 @@
       "status": {
         "controllerNamespace": "argocd",
         "health": {
-          "lastTransitionTime": "2026-10-03T00:48:55Z",
+          "lastTransitionTime": "2026-10-18T03:00:14Z",
           "status": "Healthy"
         },
         "history": [
           {
-            "deployStartedAt": "2026-10-03T00:19:05Z",
-            "deployedAt": "2026-10-03T00:19:06Z",
-            "id": 9,
-            "initiatedBy": {
-              "username": "seed"
-            },
-            "revision": "5c2d89b897c4df42e06f94622f857dc4d7adc8f8",
-            "source": {
-              "path": "guestbook",
-              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
-              "targetRevision": "HEAD"
-            }
-          },
-          {
-            "deployStartedAt": "2026-10-03T00:19:06Z",
-            "deployedAt": "2026-10-03T00:19:06Z",
-            "id": 10,
-            "initiatedBy": {
-              "automated": true
-            },
-            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
-            "source": {
-              "path": "guestbook",
-              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
-              "targetRevision": "HEAD"
-            }
-          },
-          {
-            "deployStartedAt": "2026-10-03T00:24:51Z",
-            "deployedAt": "2026-10-03T00:24:52Z",
-            "id": 11,
-            "initiatedBy": {
-              "username": "seed"
-            },
-            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
-            "source": {
-              "path": "guestbook",
-              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
-              "targetRevision": "HEAD"
-            }
-          },
-          {
-            "deployStartedAt": "2026-10-03T00:24:54Z",
-            "deployedAt": "2026-10-03T00:24:54Z",
-            "id": 12,
-            "initiatedBy": {
-              "username": "seed"
-            },
-            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
-            "source": {
-              "path": "guestbook",
-              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
-              "targetRevision": "HEAD"
-            }
-          },
-          {
-            "deployStartedAt": "2026-10-03T00:24:56Z",
-            "deployedAt": "2026-10-03T00:24:56Z",
-            "id": 13,
-            "initiatedBy": {
-              "username": "seed"
-            },
-            "revision": "5c2d89b897c4df42e06f94622f857dc4d7adc8f8",
-            "source": {
-              "path": "guestbook",
-              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
-              "targetRevision": "HEAD"
-            }
-          },
-          {
-            "deployStartedAt": "2026-10-03T00:24:57Z",
-            "deployedAt": "2026-10-03T00:24:57Z",
-            "id": 14,
-            "initiatedBy": {
-              "automated": true
-            },
-            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
-            "source": {
-              "path": "guestbook",
-              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
-              "targetRevision": "HEAD"
-            }
-          },
-          {
-            "deployStartedAt": "2026-10-03T00:48:49Z",
-            "deployedAt": "2026-10-03T00:48:49Z",
-            "id": 15,
-            "initiatedBy": {
-              "username": "seed"
-            },
-            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
-            "source": {
-              "path": "guestbook",
-              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
-              "targetRevision": "HEAD"
-            }
-          },
-          {
-            "deployStartedAt": "2026-10-03T00:48:51Z",
-            "deployedAt": "2026-10-03T00:48:52Z",
-            "id": 16,
-            "initiatedBy": {
-              "username": "seed"
-            },
-            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
-            "source": {
-              "path": "guestbook",
-              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
-              "targetRevision": "HEAD"
-            }
-          },
-          {
-            "deployStartedAt": "2026-10-03T00:48:54Z",
-            "deployedAt": "2026-10-03T00:48:54Z",
+            "deployStartedAt": "2026-10-18T00:09:17Z",
+            "deployedAt": "2026-10-18T00:09:17Z",
             "id": 17,
             "initiatedBy": {
               "username": "seed"
@@ -827,9 +714,121 @@
             }
           },
           {
-            "deployStartedAt": "2026-10-03T00:48:54Z",
-            "deployedAt": "2026-10-03T00:48:54Z",
+            "deployStartedAt": "2026-10-18T00:09:18Z",
+            "deployedAt": "2026-10-18T00:09:18Z",
             "id": 18,
+            "initiatedBy": {
+              "automated": true
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-18T01:49:41Z",
+            "deployedAt": "2026-10-18T01:49:42Z",
+            "id": 19,
+            "initiatedBy": {
+              "username": "seed"
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-18T01:49:46Z",
+            "deployedAt": "2026-10-18T01:49:47Z",
+            "id": 20,
+            "initiatedBy": {
+              "username": "seed"
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-18T01:49:52Z",
+            "deployedAt": "2026-10-18T01:49:52Z",
+            "id": 21,
+            "initiatedBy": {
+              "username": "seed"
+            },
+            "revision": "5c2d89b897c4df42e06f94622f857dc4d7adc8f8",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-18T01:49:52Z",
+            "deployedAt": "2026-10-18T01:49:53Z",
+            "id": 22,
+            "initiatedBy": {
+              "automated": true
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-18T03:00:02Z",
+            "deployedAt": "2026-10-18T03:00:03Z",
+            "id": 23,
+            "initiatedBy": {
+              "username": "seed"
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-18T03:00:07Z",
+            "deployedAt": "2026-10-18T03:00:08Z",
+            "id": 24,
+            "initiatedBy": {
+              "username": "seed"
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-18T03:00:13Z",
+            "deployedAt": "2026-10-18T03:00:13Z",
+            "id": 25,
+            "initiatedBy": {
+              "username": "seed"
+            },
+            "revision": "5c2d89b897c4df42e06f94622f857dc4d7adc8f8",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-18T03:00:14Z",
+            "deployedAt": "2026-10-18T03:00:14Z",
+            "id": 26,
             "initiatedBy": {
               "automated": true
             },
@@ -842,7 +841,7 @@
           }
         ],
         "operationState": {
-          "finishedAt": "2026-10-03T00:48:55Z",
+          "finishedAt": "2026-10-18T03:00:14Z",
           "message": "successfully synced (all tasks run)",
           "operation": {
             "initiatedBy": {
@@ -869,9 +868,9 @@
             }
           },
           "phase": "Succeeded",
-          "startedAt": "2026-10-03T00:48:55Z"
+          "startedAt": "2026-10-18T03:00:14Z"
         },
-        "reconciledAt": "2026-10-03T00:48:55Z",
+        "reconciledAt": "2026-10-18T03:00:14Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -918,14 +917,286 @@
       "apiVersion": "argoproj.io/v1alpha1",
       "kind": "Application",
       "metadata": {
+        "creationTimestamp": "2026-10-18T03:00:01Z",
+        "generation": 15,
+        "name": "guestbook-blue",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "argoproj.io/v1alpha1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "ApplicationSet",
+            "name": "guestbooks",
+            "uid": "7879206c-03cf-4c32-ace4-5b9701adf765"
+          }
+        ],
+        "resourceVersion": "497945",
+        "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/guestbook-blue",
+        "uid": "4e19e3a4-a6f7-42e0-a42b-cfdbc564d5d9"
+      },
+      "spec": {
+        "destination": {
+          "namespace": "guestbook-blue",
+          "server": "https://kubernetes.default.svc"
+        },
+        "project": "demo",
+        "source": {
+          "path": "guestbook",
+          "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+          "targetRevision": "HEAD"
+        },
+        "syncPolicy": {
+          "automated": {
+            "selfHeal": true
+          },
+          "syncOptions": [
+            "CreateNamespace=true"
+          ]
+        }
+      },
+      "status": {
+        "controllerNamespace": "argocd",
+        "health": {
+          "lastTransitionTime": "2026-10-18T03:00:10Z",
+          "status": "Healthy"
+        },
+        "history": [
+          {
+            "deployStartedAt": "2026-10-18T03:00:02Z",
+            "deployedAt": "2026-10-18T03:00:02Z",
+            "id": 0,
+            "initiatedBy": {
+              "automated": true
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          }
+        ],
+        "operationState": {
+          "finishedAt": "2026-10-18T03:00:02Z",
+          "message": "successfully synced (all tasks run)",
+          "operation": {
+            "initiatedBy": {
+              "automated": true
+            },
+            "retry": {
+              "limit": 5
+            },
+            "sync": {
+              "autoHealAttemptsCount": 1,
+              "resources": [
+                {
+                  "group": "apps",
+                  "kind": "Deployment",
+                  "name": "guestbook-ui"
+                }
+              ],
+              "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+              "source": {
+                "path": "guestbook",
+                "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+                "targetRevision": "HEAD"
+              },
+              "syncOptions": [
+                "CreateNamespace=true"
+              ]
+            }
+          },
+          "phase": "Succeeded",
+          "startedAt": "2026-10-18T03:00:02Z"
+        },
+        "reconciledAt": "2026-10-18T03:00:02Z",
+        "resourceHealthSource": "appTree",
+        "resources": [
+          {
+            "kind": "Service",
+            "name": "guestbook-ui",
+            "namespace": "guestbook-blue",
+            "status": "Synced",
+            "version": "v1"
+          },
+          {
+            "group": "apps",
+            "kind": "Deployment",
+            "name": "guestbook-ui",
+            "namespace": "guestbook-blue",
+            "status": "Synced",
+            "version": "v1"
+          }
+        ],
+        "sourceHydrator": {},
+        "sourceType": "Directory",
+        "summary": {
+          "images": [
+            "gcr.io/google-samples/gb-frontend:v5"
+          ]
+        },
+        "sync": {
+          "comparedTo": {
+            "destination": {
+              "namespace": "guestbook-blue",
+              "server": "https://kubernetes.default.svc"
+            },
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+          "status": "Synced"
+        }
+      }
+    },
+    {
+      "apiVersion": "argoproj.io/v1alpha1",
+      "kind": "Application",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T03:00:01Z",
+        "generation": 11,
+        "name": "guestbook-green",
+        "namespace": "argocd",
+        "ownerReferences": [
+          {
+            "apiVersion": "argoproj.io/v1alpha1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "ApplicationSet",
+            "name": "guestbooks",
+            "uid": "7879206c-03cf-4c32-ace4-5b9701adf765"
+          }
+        ],
+        "resourceVersion": "497941",
+        "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/guestbook-green",
+        "uid": "0fc05319-4aff-49be-9b40-880b57bb3445"
+      },
+      "spec": {
+        "destination": {
+          "namespace": "guestbook-green",
+          "server": "https://kubernetes.default.svc"
+        },
+        "project": "demo",
+        "source": {
+          "path": "guestbook",
+          "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+          "targetRevision": "HEAD"
+        },
+        "syncPolicy": {
+          "automated": {
+            "selfHeal": true
+          },
+          "syncOptions": [
+            "CreateNamespace=true"
+          ]
+        }
+      },
+      "status": {
+        "controllerNamespace": "argocd",
+        "health": {
+          "lastTransitionTime": "2026-10-18T03:00:10Z",
+          "status": "Healthy"
+        },
+        "history": [
+          {
+            "deployStartedAt": "2026-10-18T03:00:02Z",
+            "deployedAt": "2026-10-18T03:00:02Z",
+            "id": 0,
+            "initiatedBy": {
+              "automated": true
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          }
+        ],
+        "operationState": {
+          "finishedAt": "2026-10-18T03:00:02Z",
+          "message": "successfully synced (all tasks run)",
+          "operation": {
+            "initiatedBy": {
+              "automated": true
+            },
+            "retry": {
+              "limit": 5
+            },
+            "sync": {
+              "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+              "source": {
+                "path": "guestbook",
+                "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+                "targetRevision": "HEAD"
+              },
+              "syncOptions": [
+                "CreateNamespace=true"
+              ]
+            }
+          },
+          "phase": "Succeeded",
+          "startedAt": "2026-10-18T03:00:02Z"
+        },
+        "reconciledAt": "2026-10-18T03:00:02Z",
+        "resourceHealthSource": "appTree",
+        "resources": [
+          {
+            "kind": "Service",
+            "name": "guestbook-ui",
+            "namespace": "guestbook-green",
+            "status": "Synced",
+            "version": "v1"
+          },
+          {
+            "group": "apps",
+            "kind": "Deployment",
+            "name": "guestbook-ui",
+            "namespace": "guestbook-green",
+            "status": "Synced",
+            "version": "v1"
+          }
+        ],
+        "sourceHydrator": {},
+        "sourceType": "Directory",
+        "summary": {
+          "images": [
+            "gcr.io/google-samples/gb-frontend:v5"
+          ]
+        },
+        "sync": {
+          "comparedTo": {
+            "destination": {
+              "namespace": "guestbook-green",
+              "server": "https://kubernetes.default.svc"
+            },
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+          "status": "Synced"
+        }
+      }
+    },
+    {
+      "apiVersion": "argoproj.io/v1alpha1",
+      "kind": "Application",
+      "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-09-28T17:29:46Z",
-        "generation": 1988,
+        "creationTimestamp": "2026-10-04T20:28:58Z",
+        "generation": 443,
         "name": "guestbook-pinned",
         "namespace": "argocd",
-        "resourceVersion": "316739",
+        "resourceVersion": "496868",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/guestbook-pinned",
-        "uid": "bb19ec57-01b4-49e9-97eb-f68a3680e51b"
+        "uid": "66726f56-bcd6-42e6-bb7d-e286427721cf"
       },
       "spec": {
         "destination": {
@@ -948,13 +1219,13 @@
       "status": {
         "controllerNamespace": "argocd",
         "health": {
-          "lastTransitionTime": "2026-09-28T17:35:40Z",
+          "lastTransitionTime": "2026-10-04T20:29:27Z",
           "status": "Healthy"
         },
         "history": [
           {
-            "deployStartedAt": "2026-09-28T17:35:39Z",
-            "deployedAt": "2026-09-28T17:35:39Z",
+            "deployStartedAt": "2026-10-04T20:29:00Z",
+            "deployedAt": "2026-10-04T20:29:00Z",
             "id": 0,
             "initiatedBy": {
               "automated": true
@@ -965,14 +1236,29 @@
               "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
               "targetRevision": "f58c7ed8cfe28ad70701c5923fdbd0154388ea9f"
             }
+          },
+          {
+            "deployStartedAt": "2026-10-04T21:00:15Z",
+            "deployedAt": "2026-10-04T21:00:15Z",
+            "id": 1,
+            "initiatedBy": {
+              "username": "freelens"
+            },
+            "revision": "f58c7ed8cfe28ad70701c5923fdbd0154388ea9f",
+            "source": {
+              "path": "guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "f58c7ed8cfe28ad70701c5923fdbd0154388ea9f"
+            }
           }
         ],
         "operationState": {
-          "finishedAt": "2026-09-28T17:35:39Z",
+          "finishedAt": "2026-10-04T21:00:15Z",
           "message": "successfully synced (all tasks run)",
           "operation": {
             "initiatedBy": {
-              "automated": true
+              "automated": true,
+              "username": "freelens"
             },
             "retry": {
               "limit": 5
@@ -990,9 +1276,9 @@
             }
           },
           "phase": "Succeeded",
-          "startedAt": "2026-09-28T17:35:39Z"
+          "startedAt": "2026-10-04T21:00:15Z"
         },
-        "reconciledAt": "2026-10-03T00:46:14Z",
+        "reconciledAt": "2026-10-18T02:57:06Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -1042,13 +1328,13 @@
         "annotations": {
           "argocd.argoproj.io/sync-wave": "2"
         },
-        "creationTimestamp": "2026-09-26T21:59:42Z",
-        "generation": 2504,
+        "creationTimestamp": "2026-10-04T20:28:58Z",
+        "generation": 486,
         "name": "helm-guestbook",
         "namespace": "argocd",
-        "resourceVersion": "317202",
+        "resourceVersion": "498187",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/helm-guestbook",
-        "uid": "c9c6e15b-0276-4f9a-928a-987ca5bd901f"
+        "uid": "905b0d89-35bf-4ba3-b635-94fc20f6c3c2"
       },
       "spec": {
         "destination": {
@@ -1065,28 +1351,14 @@
       "status": {
         "controllerNamespace": "argocd",
         "health": {
-          "lastTransitionTime": "2026-10-03T00:48:59Z",
-          "status": "Progressing"
+          "lastTransitionTime": "2026-10-18T03:00:26Z",
+          "status": "Healthy"
         },
         "history": [
           {
-            "deployStartedAt": "2026-09-27T13:29:31Z",
-            "deployedAt": "2026-09-27T13:29:32Z",
+            "deployStartedAt": "2026-10-04T20:29:12Z",
+            "deployedAt": "2026-10-04T20:29:13Z",
             "id": 0,
-            "initiatedBy": {
-              "username": "freelens"
-            },
-            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
-            "source": {
-              "path": "helm-guestbook",
-              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
-              "targetRevision": "HEAD"
-            }
-          },
-          {
-            "deployStartedAt": "2026-09-28T17:36:08Z",
-            "deployedAt": "2026-09-28T17:36:09Z",
-            "id": 1,
             "initiatedBy": {
               "username": "seed"
             },
@@ -1098,8 +1370,22 @@
             }
           },
           {
-            "deployStartedAt": "2026-10-03T00:19:08Z",
-            "deployedAt": "2026-10-03T00:19:09Z",
+            "deployStartedAt": "2026-10-04T21:00:09Z",
+            "deployedAt": "2026-10-04T21:00:10Z",
+            "id": 1,
+            "initiatedBy": {
+              "username": "freelens"
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "helm-guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-12T18:56:35Z",
+            "deployedAt": "2026-10-12T18:56:36Z",
             "id": 2,
             "initiatedBy": {
               "username": "seed"
@@ -1112,8 +1398,8 @@
             }
           },
           {
-            "deployStartedAt": "2026-10-03T00:24:59Z",
-            "deployedAt": "2026-10-03T00:24:59Z",
+            "deployStartedAt": "2026-10-17T17:17:44Z",
+            "deployedAt": "2026-10-17T17:17:45Z",
             "id": 3,
             "initiatedBy": {
               "username": "seed"
@@ -1126,9 +1412,37 @@
             }
           },
           {
-            "deployStartedAt": "2026-10-03T00:48:56Z",
-            "deployedAt": "2026-10-03T00:48:57Z",
+            "deployStartedAt": "2026-10-18T00:09:24Z",
+            "deployedAt": "2026-10-18T00:09:25Z",
             "id": 4,
+            "initiatedBy": {
+              "username": "seed"
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "helm-guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-18T01:49:57Z",
+            "deployedAt": "2026-10-18T01:49:58Z",
+            "id": 5,
+            "initiatedBy": {
+              "username": "seed"
+            },
+            "revision": "8088f4c0d970abb09e250248cc97e35623447cb5",
+            "source": {
+              "path": "helm-guestbook",
+              "repoURL": "https://github.com/argoproj/argocd-example-apps.git",
+              "targetRevision": "HEAD"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-18T03:00:19Z",
+            "deployedAt": "2026-10-18T03:00:20Z",
+            "id": 6,
             "initiatedBy": {
               "username": "seed"
             },
@@ -1141,7 +1455,7 @@
           }
         ],
         "operationState": {
-          "finishedAt": "2026-10-03T00:48:57Z",
+          "finishedAt": "2026-10-18T03:00:20Z",
           "message": "successfully synced (all tasks run)",
           "operation": {
             "initiatedBy": {
@@ -1153,9 +1467,9 @@
             }
           },
           "phase": "Succeeded",
-          "startedAt": "2026-10-03T00:48:56Z"
+          "startedAt": "2026-10-18T03:00:19Z"
         },
-        "reconciledAt": "2026-10-03T00:48:57Z",
+        "reconciledAt": "2026-10-18T03:00:20Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -1202,13 +1516,13 @@
       "kind": "Application",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T00:45:09Z",
-        "generation": 25,
+        "creationTimestamp": "2026-10-04T20:28:59Z",
+        "generation": 450,
         "name": "helm-image-updates",
         "namespace": "argocd",
-        "resourceVersion": "316907",
+        "resourceVersion": "498260",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/helm-image-updates",
-        "uid": "a211d721-b944-4a61-a4a2-55509c4df570"
+        "uid": "db24d435-676b-4f45-aaf1-0dfe69897e56"
       },
       "spec": {
         "destination": {
@@ -1247,13 +1561,13 @@
       "status": {
         "controllerNamespace": "argocd",
         "health": {
-          "lastTransitionTime": "2026-10-03T00:47:22Z",
+          "lastTransitionTime": "2026-10-04T20:31:23Z",
           "status": "Healthy"
         },
         "history": [
           {
-            "deployStartedAt": "2026-10-03T00:45:10Z",
-            "deployedAt": "2026-10-03T00:45:10Z",
+            "deployStartedAt": "2026-10-04T20:29:00Z",
+            "deployedAt": "2026-10-04T20:29:00Z",
             "id": 0,
             "initiatedBy": {
               "automated": true
@@ -1266,8 +1580,8 @@
             }
           },
           {
-            "deployStartedAt": "2026-10-03T00:47:10Z",
-            "deployedAt": "2026-10-03T00:47:10Z",
+            "deployStartedAt": "2026-10-04T20:31:04Z",
+            "deployedAt": "2026-10-04T20:31:05Z",
             "id": 1,
             "initiatedBy": {
               "automated": true
@@ -1295,7 +1609,7 @@
           }
         ],
         "operationState": {
-          "finishedAt": "2026-10-03T00:47:10Z",
+          "finishedAt": "2026-10-04T20:31:05Z",
           "message": "successfully synced (all tasks run)",
           "operation": {
             "initiatedBy": {
@@ -1331,9 +1645,9 @@
             }
           },
           "phase": "Succeeded",
-          "startedAt": "2026-10-03T00:47:10Z"
+          "startedAt": "2026-10-04T20:31:04Z"
         },
-        "reconciledAt": "2026-10-03T00:47:10Z",
+        "reconciledAt": "2026-10-18T03:00:41Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -1395,13 +1709,13 @@
       "kind": "Application",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T00:13:42Z",
-        "generation": 35,
+        "creationTimestamp": "2026-10-04T20:28:59Z",
+        "generation": 471,
         "name": "image-updates",
         "namespace": "argocd",
-        "resourceVersion": "316745",
+        "resourceVersion": "497562",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/image-updates",
-        "uid": "e0253942-00f5-4e8d-9e1a-dfa393134fc4"
+        "uid": "c197fb21-9e21-4dab-8860-d6d8aaeba771"
       },
       "spec": {
         "destination": {
@@ -1431,13 +1745,13 @@
       "status": {
         "controllerNamespace": "argocd",
         "health": {
-          "lastTransitionTime": "2026-10-03T00:14:14Z",
+          "lastTransitionTime": "2026-10-04T20:29:32Z",
           "status": "Degraded"
         },
         "history": [
           {
-            "deployStartedAt": "2026-10-03T00:13:44Z",
-            "deployedAt": "2026-10-03T00:13:44Z",
+            "deployStartedAt": "2026-10-04T20:29:02Z",
+            "deployedAt": "2026-10-04T20:29:02Z",
             "id": 0,
             "initiatedBy": {
               "automated": true
@@ -1450,9 +1764,47 @@
             }
           },
           {
-            "deployStartedAt": "2026-10-03T00:14:14Z",
-            "deployedAt": "2026-10-03T00:14:14Z",
+            "deployStartedAt": "2026-10-04T20:31:03Z",
+            "deployedAt": "2026-10-04T20:31:03Z",
             "id": 1,
+            "initiatedBy": {
+              "automated": true
+            },
+            "revision": "875ffa9431368708aef7fb968a4cc369a72884ad",
+            "source": {
+              "kustomize": {
+                "images": [
+                  "ghcr.io/stefanprodan/podinfo:6.14.1"
+                ]
+              },
+              "path": "kustomize",
+              "repoURL": "https://github.com/stefanprodan/podinfo.git",
+              "targetRevision": "6.13.0"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-04T21:01:03Z",
+            "deployedAt": "2026-10-04T21:01:03Z",
+            "id": 2,
+            "initiatedBy": {
+              "automated": true
+            },
+            "revision": "875ffa9431368708aef7fb968a4cc369a72884ad",
+            "source": {
+              "kustomize": {
+                "images": [
+                  "ghcr.io/stefanprodan/podinfo:6.13.0"
+                ]
+              },
+              "path": "kustomize",
+              "repoURL": "https://github.com/stefanprodan/podinfo.git",
+              "targetRevision": "6.13.0"
+            }
+          },
+          {
+            "deployStartedAt": "2026-10-04T21:01:03Z",
+            "deployedAt": "2026-10-04T21:01:03Z",
+            "id": 3,
             "initiatedBy": {
               "automated": true
             },
@@ -1470,7 +1822,7 @@
           }
         ],
         "operationState": {
-          "finishedAt": "2026-10-03T00:14:14Z",
+          "finishedAt": "2026-10-04T21:01:04Z",
           "message": "successfully synced (all tasks run)",
           "operation": {
             "initiatedBy": {
@@ -1505,9 +1857,9 @@
             }
           },
           "phase": "Succeeded",
-          "startedAt": "2026-10-03T00:14:14Z"
+          "startedAt": "2026-10-04T21:01:03Z"
         },
-        "reconciledAt": "2026-10-03T00:46:20Z",
+        "reconciledAt": "2026-10-18T02:59:19Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -1572,13 +1924,13 @@
           "argocd-image-updater.argoproj.io/podinfo.update-strategy": "semver",
           "argocd-image-updater.argoproj.io/write-back-method": "argocd"
         },
-        "creationTimestamp": "2026-10-03T00:22:02Z",
-        "generation": 24,
+        "creationTimestamp": "2026-10-04T20:28:59Z",
+        "generation": 442,
         "name": "legacy-annotations",
         "namespace": "argocd",
-        "resourceVersion": "316999",
+        "resourceVersion": "496764",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/legacy-annotations",
-        "uid": "e77aa709-1d52-40d0-acd4-2a1a0b775c9e"
+        "uid": "8ebea7ef-eafe-4709-b35b-763762527fac"
       },
       "spec": {
         "destination": {
@@ -1603,13 +1955,13 @@
       "status": {
         "controllerNamespace": "argocd",
         "health": {
-          "lastTransitionTime": "2026-10-03T00:22:33Z",
+          "lastTransitionTime": "2026-10-04T20:29:32Z",
           "status": "Degraded"
         },
         "history": [
           {
-            "deployStartedAt": "2026-10-03T00:22:03Z",
-            "deployedAt": "2026-10-03T00:22:03Z",
+            "deployStartedAt": "2026-10-04T20:29:02Z",
+            "deployedAt": "2026-10-04T20:29:02Z",
             "id": 0,
             "initiatedBy": {
               "automated": true
@@ -1623,7 +1975,7 @@
           }
         ],
         "operationState": {
-          "finishedAt": "2026-10-03T00:22:03Z",
+          "finishedAt": "2026-10-04T20:29:02Z",
           "message": "successfully synced (all tasks run)",
           "operation": {
             "initiatedBy": {
@@ -1633,23 +1985,6 @@
               "limit": 5
             },
             "sync": {
-              "autoHealAttemptsCount": 1,
-              "resources": [
-                {
-                  "kind": "Service",
-                  "name": "podinfo"
-                },
-                {
-                  "group": "apps",
-                  "kind": "Deployment",
-                  "name": "podinfo"
-                },
-                {
-                  "group": "autoscaling",
-                  "kind": "HorizontalPodAutoscaler",
-                  "name": "podinfo"
-                }
-              ],
               "revision": "875ffa9431368708aef7fb968a4cc369a72884ad",
               "source": {
                 "path": "kustomize",
@@ -1662,9 +1997,9 @@
             }
           },
           "phase": "Succeeded",
-          "startedAt": "2026-10-03T00:22:03Z"
+          "startedAt": "2026-10-04T20:29:02Z"
         },
-        "reconciledAt": "2026-10-03T00:48:17Z",
+        "reconciledAt": "2026-10-18T02:56:45Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {
@@ -1720,13 +2055,13 @@
       "kind": "Application",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-09-26T21:59:42Z",
-        "generation": 2458,
+        "creationTimestamp": "2026-10-04T20:28:58Z",
+        "generation": 416,
         "name": "missing-path",
         "namespace": "argocd",
-        "resourceVersion": "316726",
+        "resourceVersion": "497535",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/missing-path",
-        "uid": "e31c6212-bae8-4a92-98d2-3058921372be"
+        "uid": "d2d64ed4-354d-443e-a0e1-ccd4df64c0f9"
       },
       "spec": {
         "destination": {
@@ -1746,17 +2081,17 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-10-03T00:23:53Z",
+            "lastTransitionTime": "2026-10-18T02:18:29Z",
             "message": "Failed to load target state: failed to generate manifest for source 1 of 1: rpc error: code = Unknown desc = Manifest generation error (cached): no-such-directory: app path does not exist",
             "type": "ComparisonError"
           }
         ],
         "controllerNamespace": "argocd",
         "health": {
-          "lastTransitionTime": "2026-09-26T21:59:47Z",
+          "lastTransitionTime": "2026-10-04T20:29:00Z",
           "status": "Healthy"
         },
-        "reconciledAt": "2026-10-03T00:46:06Z",
+        "reconciledAt": "2026-10-18T02:59:15Z",
         "resourceHealthSource": "appTree",
         "sync": {
           "comparedTo": {
@@ -1782,13 +2117,13 @@
         "annotations": {
           "argocd.argoproj.io/sync-wave": "3"
         },
-        "creationTimestamp": "2026-09-28T17:29:46Z",
-        "generation": 1990,
+        "creationTimestamp": "2026-10-04T20:28:58Z",
+        "generation": 441,
         "name": "podinfo",
         "namespace": "argocd",
-        "resourceVersion": "316991",
+        "resourceVersion": "496733",
         "selfLink": "/apis/argoproj.io/v1alpha1/namespaces/argocd/applications/podinfo",
-        "uid": "82db56bc-e646-472d-92b3-3c08cf560bcb"
+        "uid": "923a5792-e6d6-4724-970a-b19e6fcde79f"
       },
       "spec": {
         "destination": {
@@ -1820,13 +2155,13 @@
       "status": {
         "controllerNamespace": "argocd",
         "health": {
-          "lastTransitionTime": "2026-09-28T17:35:56Z",
+          "lastTransitionTime": "2026-10-04T20:29:29Z",
           "status": "Healthy"
         },
         "history": [
           {
-            "deployStartedAt": "2026-09-28T17:35:39Z",
-            "deployedAt": "2026-09-28T17:35:40Z",
+            "deployStartedAt": "2026-10-04T20:29:01Z",
+            "deployedAt": "2026-10-04T20:29:01Z",
             "id": 0,
             "initiatedBy": {
               "automated": true
@@ -1853,7 +2188,7 @@
           }
         ],
         "operationState": {
-          "finishedAt": "2026-09-28T17:35:40Z",
+          "finishedAt": "2026-10-04T20:29:01Z",
           "message": "successfully synced (all tasks run)",
           "operation": {
             "initiatedBy": {
@@ -1868,19 +2203,19 @@
                 {
                   "group": "apps",
                   "kind": "Deployment",
-                  "name": "guestbook-ui"
-                },
-                {
-                  "kind": "Service",
-                  "name": "guestbook-ui"
-                },
-                {
-                  "kind": "Service",
                   "name": "podinfo"
                 },
                 {
                   "group": "apps",
                   "kind": "Deployment",
+                  "name": "guestbook-ui"
+                },
+                {
+                  "kind": "Service",
+                  "name": "guestbook-ui"
+                },
+                {
+                  "kind": "Service",
                   "name": "podinfo"
                 }
               ],
@@ -1906,9 +2241,9 @@
             }
           },
           "phase": "Succeeded",
-          "startedAt": "2026-09-28T17:35:40Z"
+          "startedAt": "2026-10-04T20:29:01Z"
         },
-        "reconciledAt": "2026-10-03T00:48:14Z",
+        "reconciledAt": "2026-10-18T02:56:38Z",
         "resourceHealthSource": "appTree",
         "resources": [
           {

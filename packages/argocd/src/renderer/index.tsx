@@ -1,26 +1,35 @@
 import { Renderer } from "@freelensapp/extensions";
 import { computed } from "mobx";
-
-import { AppProject } from "./api/app-project";
-import { Application } from "./api/application";
-import { hasImageUpdater, isInstalled } from "./api/installed";
-import { flushState, startPersistingState } from "./api/persist";
+import { Application } from "./api/applications/application";
+import { AppProject } from "./api/projects/app-project";
+import { hasApplicationSets, hasImageUpdater, isInstalled } from "./api/shared/installed";
+import { flushState, startPersistingState } from "./api/shared/persist";
+import { AppProjectDetails } from "./details/app-project-details";
 import { ApplicationDetails } from "./details/application-details";
 import { ArgoCDIcon } from "./icons/argocd";
-import { ImageUpdaterImagesPage } from "./image-updater/images-page";
+import { type ImagesParams, ImageUpdaterImagesPage } from "./image-updater/images-page";
 import { ImageUpdaterOverviewPage } from "./image-updater/overview-page";
 import { IMAGE_UPDATER_PAGES } from "./image-updater/pages";
-import { ImageUpdaterRulesPage } from "./image-updater/rules-page";
+import { ImageUpdaterRulesPage, type RulesParams } from "./image-updater/rules-page";
 import { ImageUpdaterUpdatesPage } from "./image-updater/updates-page";
 import { AppProjectMenuItem } from "./menus/app-project-menu";
 import { ApplicationMenuItem } from "./menus/application-menu";
 import { AppProjectsPage } from "./pages/app-projects-page";
-import { ApplicationsPage, type ApplicationsPageProps } from "./pages/applications-page";
+import {
+  APPLICATION_SETS_PAGE,
+  ApplicationSetsPage,
+  type ApplicationSetsParams,
+} from "./pages/application-sets-page";
+import {
+  APPLICATIONS_PAGE,
+  ApplicationsPage,
+  type ApplicationsPageProps,
+} from "./pages/applications-page";
 import { DashboardPage } from "./pages/dashboard-page";
 
 const PAGES = {
   dashboard: "dashboard",
-  applications: "applications",
+  applications: APPLICATIONS_PAGE,
   projects: "projects",
 } as const;
 
@@ -29,6 +38,12 @@ const PAGES = {
 const installed = computed(() =>
   isInstalled(Renderer.K8sApi.crdStore.items.map((crd) => crd.getName())),
 );
+
+const applicationSetsInstalled = computed(() => {
+  const names = Renderer.K8sApi.crdStore.items.map((crd) => crd.getName());
+
+  return isInstalled(names) && hasApplicationSets(names);
+});
 
 const imageUpdaterInstalled = computed(() => {
   const names = Renderer.K8sApi.crdStore.items.map((crd) => crd.getName());
@@ -44,7 +59,17 @@ export default class ArgoCDRenderer extends Renderer.LensExtension {
       priority: 10,
       components: {
         Details: (props: Renderer.Component.KubeObjectDetailsProps<Application>) => (
-          <ApplicationDetails {...props} />
+          <ApplicationDetails {...props} extension={this} />
+        ),
+      },
+    },
+    {
+      kind: AppProject.kind,
+      apiVersions: AppProject.crd.apiVersions,
+      priority: 10,
+      components: {
+        Details: (props: Renderer.Component.KubeObjectDetailsProps<AppProject>) => (
+          <AppProjectDetails {...props} extension={this} />
         ),
       },
     },
@@ -67,7 +92,7 @@ export default class ArgoCDRenderer extends Renderer.LensExtension {
     },
   ];
 
-  override clusterPages = [
+  override clusterPages: Renderer.LensExtension["clusterPages"] = [
     {
       id: PAGES.dashboard,
       components: {
@@ -76,7 +101,7 @@ export default class ArgoCDRenderer extends Renderer.LensExtension {
     },
     {
       id: PAGES.applications,
-      params: { project: "", status: "", name: "" },
+      params: { project: "", projectNamespace: "", status: "", name: "", namespace: "" },
       components: {
         Page: (props: { params?: ApplicationsPageProps["params"] }) => (
           <ApplicationsPage params={props.params} />
@@ -86,7 +111,16 @@ export default class ArgoCDRenderer extends Renderer.LensExtension {
     {
       id: PAGES.projects,
       components: {
-        Page: () => <AppProjectsPage />,
+        Page: () => <AppProjectsPage extension={this} />,
+      },
+    },
+    {
+      id: APPLICATION_SETS_PAGE,
+      params: { name: "", namespace: "" },
+      components: {
+        Page: (props: { params?: ApplicationSetsParams }) => (
+          <ApplicationSetsPage extension={this} params={props.params} />
+        ),
       },
     },
     {
@@ -95,11 +129,21 @@ export default class ArgoCDRenderer extends Renderer.LensExtension {
     },
     {
       id: IMAGE_UPDATER_PAGES.rules,
-      components: { Page: () => <ImageUpdaterRulesPage extension={this} /> },
+      params: { name: "", namespace: "", filter: "" },
+      components: {
+        Page: (props: { params?: RulesParams }) => (
+          <ImageUpdaterRulesPage extension={this} params={props.params} />
+        ),
+      },
     },
     {
       id: IMAGE_UPDATER_PAGES.images,
-      components: { Page: () => <ImageUpdaterImagesPage extension={this} /> },
+      params: { filter: "" },
+      components: {
+        Page: (props: { params?: ImagesParams }) => (
+          <ImageUpdaterImagesPage extension={this} params={props.params} />
+        ),
+      },
     },
     {
       id: IMAGE_UPDATER_PAGES.updates,
@@ -132,6 +176,14 @@ export default class ArgoCDRenderer extends Renderer.LensExtension {
       parentId: "argocd",
       target: { pageId: PAGES.applications },
       title: "Applications",
+      components: {},
+    },
+    {
+      id: "argocd-application-sets",
+      visible: applicationSetsInstalled,
+      parentId: "argocd",
+      target: { pageId: APPLICATION_SETS_PAGE },
+      title: "ApplicationSets",
       components: {},
     },
     {

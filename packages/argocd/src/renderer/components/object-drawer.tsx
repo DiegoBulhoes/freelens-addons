@@ -1,6 +1,7 @@
 import { Renderer } from "@freelensapp/extensions";
 import type { ReactNode } from "react";
 
+import { StateBanner } from "./state-banner";
 import type { Tone } from "./status";
 import { ArgoCDStyles } from "./styles";
 
@@ -68,17 +69,7 @@ export function ObjectDrawer({
       {open && (
         <div className="ArgoCD ArgoCD-drawer" data-section={section}>
           <ArgoCDStyles />
-          {state &&
-            (state.tone === "ok" || state.tone === "info" ? (
-              <p className="ArgoCD-muted">{state.reason}</p>
-            ) : (
-              <div
-                className={`ArgoCD-banner${state.tone === "critical" ? " ArgoCD-banner--critical" : ""}`}
-              >
-                <div className="ArgoCD-banner__title">{state.label}</div>
-                <div className="ArgoCD-banner__body">{state.reason}</div>
-              </div>
-            ))}
+          <StateBanner state={state} />
           {children}
         </div>
       )}

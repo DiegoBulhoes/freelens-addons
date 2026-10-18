@@ -6,14 +6,14 @@ description: "The idea behind the ArgoCD extension and its features"
 # ArgoCD extension
 
 Shows which ArgoCD Applications need attention, worst first, with the reason and the action on the
-same row. Everything goes through the Kubernetes API with the kubeconfig Freelens already holds, so
-no ArgoCD login is needed.
+same row. It uses the kubeconfig Freelens already holds, so no ArgoCD login is needed.
 
 ## Contents
 
 - [Pages](#pages)
 - [Overview](#overview)
 - [Applications and Projects](#applications-and-projects)
+- [ApplicationSets](#applicationsets)
 - [Image Updater](#image-updater)
 - [Actions](#actions)
 
@@ -24,75 +24,111 @@ flowchart LR
   O["Overview<br/><i>what to look at</i>"]
   A["Applications<br/><i>the fleet, filtered</i>"]
   P["Projects<br/><i>constraints, windows</i>"]
+  S["ApplicationSets<br/><i>generators, verdict</i>"]
+  SD["ApplicationSet drawer"]
   I["Image Updater<br/><i>rules, last updates</i>"]
-  D["Details drawer<br/><i>one Application</i>"]
+  D["Application drawer"]
+  PD["Project drawer"]
 
-  O -->|click a row| A
-  O -->|click a node| N["Nodes<br/><i>the host's page</i>"]
+  O -->|a row, a card| A
+  O -->|the Projects card| P
+  O -->|a node| N["Nodes<br/><i>the host's page</i>"]
   A --> D
+  P --> PD
   P -->|its Applications| A
+  PD -->|its Applications| A
+  PD -->|an Application| D
+  D -->|its project| PD
+  D -->|its parent| D
+  D -->|its ApplicationSet| SD
+  S --> SD
+  SD -->|an Application it owns| D
+  D -->|a rule| I
   I -->|a watched image| A
 ```
 
-Every page has the host's namespace selector.
+| Every page | Behaviour |
+|------------|-----------|
+| Namespaces | The host's namespace selector narrows the page |
+| Loading | Says it is connecting until the lists load, never "none" too early |
+| Refused namespaces | Named in a banner; the others still show |
+| Links | A link to one Application opens the list with its drawer open |
 
 ## Overview
 
 | Feature | What it shows |
 |---------|---------------|
-| Headline | How many Applications need attention |
-| Cards | Counts by sync and health, each opening the filtered list |
-| Needs attention | Degraded, stuck, failed or not comparable with git, worst first, with the drifting resources by name |
-| Pins | Applications pinned to the top, kept per cluster |
-| Cluster pressure | Node conditions and recent kubelet warnings |
+| Headline | How many Applications need attention, whatever the filters hide |
+| Headline menu | ArgoCD's component logs, and its web UI when its address is found |
+| Cards | Applications, Projects, and counts by sync, health and no auto-sync; each opens the list it counts |
+| Needs attention | Degraded, stuck, failed or not comparable, worst first, with the drifting resources |
+| Pins | Applications kept at the top, per cluster |
+| Cluster pressure | Node conditions and the last hour's node warnings |
 | Syncing repeatedly | Applications that sync over and over |
 | Recent rollouts | Deploys grouped by revision |
 | What the next commit can move | The repositories and references the Applications follow |
-| Component logs | ArgoCD's own pods, from the headline menu |
 
 ## Applications and Projects
 
-| Feature | Where |
-|---------|-------|
-| Sync and health badges, resource drift, revision, destination | Applications list |
-| Bulk Refresh, Hard refresh and Sync on ticked rows | Applications list |
-| Sources, last sync, conditions, managed resources, images, deploy history | Application details drawer |
-| Image Updater rules that watch the Application's images | Application details drawer |
-| Allowed sources, destinations, roles, sync windows | Projects list |
-| Refresh all, Sync all, Freeze, Resume | Project menu, and on ticked projects (skipping those already frozen or not frozen) |
+| Where | Features |
+|-------|----------|
+| Applications list | Sync and health, drift, revision, destination; bulk Refresh, Hard refresh and Sync |
+| Application drawer | Its overview finding as a banner; project and owner as links |
+| Application drawer | Sources, auto-sync, last sync, conditions, resources, images, deploy history |
+| Application drawer | Commands to look further; the Image Updater rules that watch its images |
+| Projects list | Allowed sources and destinations, roles, sync windows, frozen or not, its Applications |
+| Project drawer | Frozen banner, sync windows, roles, allowed and denied kinds, its Applications |
+| Project menu and ticked projects | Refresh all, Sync all, Freeze, Resume |
+
+## ApplicationSets
+
+Read only. Shown only where the `ApplicationSet` CRD exists.
+
+| Where | Features |
+|-------|----------|
+| List | Generators, owned Applications with sync and health summed, a verdict from the conditions; failing first; searched and sorted |
+| Drawer | Verdict banner, generators, whether it uses Go templates, the template, sync policy, owned Applications, conditions |
+
+A verdict reads Not reported until the controller writes a condition. Owned Applications are found
+by owner reference, so same-named sets in two control planes stay apart.
 
 ## Image Updater
 
-For [Argo CD Image Updater](https://argocd-image-updater.readthedocs.io/) v1.0 or later. The group
-appears only where the `ImageUpdater` CRD exists.
+For [Argo CD Image Updater](https://argocd-image-updater.readthedocs.io/) v1.0 or later. Shown only
+where the `ImageUpdater` CRD exists.
 
 | Screen | Features |
 |--------|----------|
-| Overview | Rules that are failing, erroring behind `Ready=True`, not checking, or matching nothing; counts; Check now |
-| Rules | Every rule with its state, Applications, images, last check and last update; a row opens the rule; Delete on ticked rules |
-| Images | Each watched image: how it picks a tag, the Applications it reaches and the tag each runs, where updates are written; a row opens the image's drawer, with its rule a link away; Edit |
-| Updates | Each rule's last update, from which tag to which; a row opens the update's drawer, with the Applications it reached and whether Undo is possible; Undo |
-| Rule drawer | Controller log and Delete in the title bar; last update with Undo, images with Edit, commands to copy |
+| Overview | Rules failing, erroring, not checking or matching nothing; counts; Check now |
+| Rules | State, Applications, images, last check and update; Delete on ticked rules |
+| Images | How each image picks a tag, the Application it reaches, the tag it runs; Edit |
+| Updates | Each rule's last update, from which tag to which; Undo |
+| Rule drawer | Last update, images, controller log, commands; Delete |
 
-Rules, Images and Updates each count their rows, search them, and sort by any column.
+Rules, Images and Updates are searched and sorted by any column.
 
 ## Actions
 
-Every write asks first. A write that deletes, or that reaches several Applications at once, also
-asks for a typed word. A write that has a simple reverse offers Undo in the notification that
-reports it.
+Every write asks first. A write that deletes, or that reaches several Applications or projects from
+a selection or a Sync all, also asks for a typed word; freezing one project does not. A write with a
+simple reverse offers Undo in its notification.
 
 | Action | Note |
 |--------|------|
-| Refresh, Hard refresh | Re-compares with git; changes nothing in the cluster, so no typed word |
-| Sync | Prune and Force are off unless ticked. Force deletes and recreates each resource. With either ticked, asks for the Application's name |
-| Sync several | From the ticked rows, the overview or a project's Sync all. Asks for the word `confirm` |
+| Logs | Opens the logs of the Application's first pod |
+| What changed in git | Opens the git diff since the previous deploy, when the repository gives one |
+| Refresh, Hard refresh | Compares with git again; changes nothing in the cluster |
+| Sync | Prune and Force off unless ticked; either asks for the Application's name |
+| Sync several | Ticked rows, the overview or Sync all; type `confirm`; skips Applications already syncing |
 | Terminate | Stops a sync in flight |
-| Roll back | Syncs a revision from history and turns automated sync off |
-| Freeze, Resume | Adds or removes a deny sync window on the project. Undo does the other |
-| Pin, Unpin | Keeps an Application at the top of the overview, per cluster. Undo does the other |
+| Roll back | Syncs one of the last three deploys; pauses auto-sync, and Resume auto-sync restores it |
+| Freeze, Resume | Adds or removes a deny sync window on the project |
+| Pin, Unpin | Keeps an Application at the top of the overview |
 | Copy commands | `argocd`, `kubectl` and a status summary |
-| Check now | Restarts the Image Updater controller. Refused while a rule is failing, since the controller would not start |
-| Edit an image | Constraint, strategy, allowed tags. Undo puts the previous settings back, refused if the image changed since |
-| Undo an update | Puts the previous tag back. Pin keeps it there; Skip only ignores the undone tag. Not offered for rules that write to git. Undo puts the newer tag and the rule's settings back |
+| Check now | Restarts the Image Updater controller |
+| Edit an image | Constraint, strategy, allowed tags |
+| Undo an update | Puts the previous tag back, when the rule allows it |
 | Delete a rule | After typing its name |
+
+Sync several from the overview never prunes; the ticked rows and Sync all offer Prune and Force.
+Roll back warns when an ApplicationSet or a self-healing parent would undo it.

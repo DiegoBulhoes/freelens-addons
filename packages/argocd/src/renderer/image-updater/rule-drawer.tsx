@@ -2,32 +2,35 @@ import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
 
-import type { Application } from "../api/application";
-import { copyToClipboard } from "../api/cli";
-import type { ImageUpdater } from "../api/image-updater";
-import { findControllerNamespace, openControllerLogs } from "../api/image-updater-actions";
-import { locateImages, ruleCommands } from "../api/image-updater-patches";
-import { type RuleHealth, recentUpdates, trackedImages } from "../api/image-updates";
+import type { Application } from "../api/applications/application";
+import type { ImageUpdater } from "../api/image-updater/image-updater";
+import {
+  type ControllerRef,
+  controllerOf,
+  ruleCommands,
+} from "../api/image-updater/image-updater-controller";
+import { undoRefusal } from "../api/image-updater/image-updater-details";
+import { describePicks } from "../api/image-updater/image-updater-tables";
+import { recentUpdates, trackedImages } from "../api/image-updater/image-updates";
+import type { RuleHealth } from "../api/image-updater/rule-health";
+import { findController, openControllerLogs } from "../api/writes/image-updater-actions";
+import { locateImages } from "../api/writes/image-updater-patches";
+import { CommandsSection } from "../components/commands-section";
 import { ObjectDrawer } from "../components/object-drawer";
+import { ApplicationChips, ago } from "./cells";
 import { confirmDelete, confirmEditImage, confirmUndo } from "./dialogs";
-import { ApplicationChips, ago, describeChoice } from "./shared";
 
 const {
   Component: { Notifications, WithTooltip },
 } = Renderer;
 
 async function showControllerLogs() {
-  if ((await openControllerLogs()) === "no-pods") {
-    Notifications.error("No pod of the Image Updater controller was found by its labels.");
-  }
-}
-
-async function copy(label: string, text: string) {
   try {
-    await copyToClipboard(text);
-    Notifications.ok(`${label} copied.`);
+    if ((await openControllerLogs()) === "no-pods") {
+      Notifications.error("No pod of the Image Updater controller was found by its labels.");
+    }
   } catch (error) {
-    Notifications.checkedError(error, `Could not copy ${label.toLowerCase()}`);
+    Notifications.checkedError(error, "Could not list the Image Updater controller's pods");
   }
 }
 
@@ -41,7 +44,7 @@ interface RuleDrawerProps {
 
 export const RuleDrawer = observer(
   ({ updater, health, applications, onClose, onOpenApplication }: RuleDrawerProps) => {
-    const [controllerNamespace, setControllerNamespace] = useState<string>();
+    const [controller, setController] = useState<ControllerRef>();
     const namespace = updater?.getNs();
 
     useEffect(() => {
@@ -49,8 +52,8 @@ export const RuleDrawer = observer(
 
       let cancelled = false;
 
-      void findControllerNamespace(namespace).then((found) => {
-        if (!cancelled) setControllerNamespace(found);
+      void findController(namespace).then((found) => {
+        if (!cancelled) setController(found);
       });
 
       return () => {
@@ -109,31 +112,40 @@ export const RuleDrawer = observer(
                 <p className="ArgoCD-section__note">Nothing updated since the rule was created.</p>
               ) : (
                 <div className="ArgoCD-list">
-                  {updates.map((update) => (
-                    <div key={`${update.alias}/${update.to}`} className="ArgoCD-row">
-                      <span className="ArgoCD-row__main">
-                        <span className="ArgoCD-row__name">
-                          <b>{update.alias}</b>
-                          <span className="ArgoCD-row__meta">{update.image}</span>
+                  {updates.map((update) => {
+                    const refusal = undoRefusal(update, updater, applications);
+
+                    return (
+                      <div key={`${update.alias}/${update.to}`} className="ArgoCD-row">
+                        <span className="ArgoCD-row__main">
+                          <span className="ArgoCD-row__name">
+                            <b>{update.alias}</b>
+                            <span className="ArgoCD-row__meta">{update.image}</span>
+                          </span>
+                          <span className="ArgoCD-row__reason ArgoCD-mono">
+                            {update.from ?? "?"} → {update.to}, on {update.applications} Application
+                            {update.applications === 1 ? "" : "s"}, {ago(update.at, now)}
+                          </span>
+                          {refusal && (
+                            <span className="ArgoCD-row__reason">No Undo here: {refusal}</span>
+                          )}
                         </span>
-                        <span className="ArgoCD-row__reason ArgoCD-mono">
-                          {update.from ?? "?"} → {update.to}, on {update.applications} Application
-                          {update.applications === 1 ? "" : "s"}, {ago(update.at, now)}
-                        </span>
-                      </span>
-                      <span className="ArgoCD-row__actions">
-                        <WithTooltip tooltip="Puts the previous tag back on the Applications and keeps it there. Asks first">
-                          <button
-                            type="button"
-                            className="ArgoCD-button ArgoCD-button--caution"
-                            onClick={() => confirmUndo(updater, update, applications)}
-                          >
-                            Undo
-                          </button>
-                        </WithTooltip>
-                      </span>
-                    </div>
-                  ))}
+                        {!refusal && (
+                          <span className="ArgoCD-row__actions">
+                            <WithTooltip tooltip="Puts the previous tag back on the Applications and keeps it there. Asks first">
+                              <button
+                                type="button"
+                                className="ArgoCD-button ArgoCD-button--caution"
+                                onClick={() => confirmUndo(updater, update, applications)}
+                              >
+                                Undo
+                              </button>
+                            </WithTooltip>
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
               <p className="ArgoCD-hint">
@@ -161,7 +173,7 @@ export const RuleDrawer = observer(
                         </span>
                       </div>
                       <p className="ArgoCD-box__reason">
-                        <span className="ArgoCD-mono">{describeChoice(image)}</span>
+                        <span className="ArgoCD-mono">{describePicks(image)}</span>
                         {". Written to "}
                         {image.writeBack}
                         {image.fromAnnotations && ", configured in the Application's annotations"}.
@@ -186,32 +198,13 @@ export const RuleDrawer = observer(
               )}
             </section>
 
-            <section className="ArgoCD-section" data-section="image-updater-commands">
-              <h3 className="ArgoCD-section__title">Look further</h3>
-              <div className="ArgoCD-list">
-                {ruleCommands(updater, controllerNamespace ?? updater.getNs() ?? "argocd").map(
-                  ({ label, command }) => (
-                    <div key={label} className="ArgoCD-row">
-                      <span className="ArgoCD-row__main">
-                        <span className="ArgoCD-row__name">{label}</span>
-                        <code className="ArgoCD-row__reason">{command}</code>
-                      </span>
-                      <span className="ArgoCD-row__actions">
-                        <WithTooltip tooltip="Copies the command, to paste into a terminal">
-                          <button
-                            type="button"
-                            className="ArgoCD-button"
-                            onClick={() => void copy(label, command)}
-                          >
-                            Copy
-                          </button>
-                        </WithTooltip>
-                      </span>
-                    </div>
-                  ),
-                )}
-              </div>
-            </section>
+            <CommandsSection
+              commands={ruleCommands(
+                updater,
+                controller ?? controllerOf([], updater.getNs() ?? "argocd"),
+              )}
+              section="image-updater-commands"
+            />
           </>
         )}
       </ObjectDrawer>

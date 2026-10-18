@@ -1,10 +1,25 @@
 import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
-import { Application, shortenRevision } from "../api/application";
-import { wasForced } from "../api/patches";
-import type { ApplicationSource, ResourceStatus } from "../api/types";
+import { Application } from "../api/applications/application";
+import { applicationCommands } from "../api/applications/cli";
+import {
+  applicationState,
+  describeAutoSyncState,
+  managerOf,
+  projectLinkOf,
+} from "../api/applications/drawers";
+import { shortenRevision } from "../api/applications/revisions";
+import type { ApplicationSource, ResourceStatus } from "../api/shared/types";
+import { wasForced } from "../api/writes/patches";
+import { CommandsSection } from "../components/commands-section";
+import { DrawerLink } from "../components/drawer-link";
+import { StateBanner } from "../components/state-banner";
 import { HealthBadge, SyncBadge } from "../components/status";
 import { ArgoCDStyles } from "../components/styles";
+import { useKubeStore } from "../components/use-kube-store";
+import { useLoadedStores } from "../hooks/load-stores";
+import { IMAGE_UPDATER_PAGES } from "../image-updater/pages";
+import { APPLICATION_SETS_PAGE } from "../pages/application-sets-page";
 import { ImageUpdaterSection } from "./image-updater-section";
 
 const {
@@ -45,6 +60,37 @@ function selfLinkFor(resource: ResourceStatus): string | undefined {
 
   return api.formatUrlForNotListing({ name, namespace });
 }
+
+// Its parent is found among the others, so the drawer loads them.
+const ManagedBy = observer(
+  ({ application, extension }: { application: Application; extension: Renderer.LensExtension }) => {
+    const store = useKubeStore(() => Application.getStore<Application>());
+
+    useLoadedStores([{ kind: "Application", store }]);
+
+    const manager = managerOf(application, (store?.items ?? []) as Application[]);
+
+    if (!manager) return null;
+
+    return (
+      <DrawerItem name="Managed by">
+        {manager.kind}{" "}
+        <DrawerLink
+          label={manager.name}
+          title={`Opens the ${manager.kind} that manages it`}
+          onOpen={() =>
+            manager.kind === "ApplicationSet"
+              ? void extension.navigate(APPLICATION_SETS_PAGE, {
+                  name: manager.name,
+                  namespace: manager.namespace,
+                })
+              : showDetails(manager.link)
+          }
+        />
+      </DrawerItem>
+    );
+  },
+);
 
 function ManagedResources({ application }: { application: Application }) {
   const resources = Application.getManagedResources(application);
@@ -155,77 +201,104 @@ function History({ application }: { application: Application }) {
   );
 }
 
-export const ApplicationDetails = observer(
-  ({ object }: Renderer.Component.KubeObjectDetailsProps<Application>) => {
-    if (!object) return null;
+export interface ApplicationDetailsProps
+  extends Renderer.Component.KubeObjectDetailsProps<Application> {
+  extension: Renderer.LensExtension;
+}
 
-    const sources = Application.getSources(object);
-    const conditions = object.status?.conditions ?? [];
-    const images = Application.getImages(object);
+export const ApplicationDetails = observer(({ object, extension }: ApplicationDetailsProps) => {
+  if (!object) return null;
 
-    return (
-      <div className="ArgoCD ArgoCDApplicationDetails">
-        <ArgoCDStyles />
-        <DrawerItem name="Destination">{Application.getDestination(object)}</DrawerItem>
-        {Application.getHealthMessage(object) && (
-          <DrawerItem name="Health message">{Application.getHealthMessage(object)}</DrawerItem>
-        )}
-        <DrawerItem name="Auto-sync">
-          {Application.isAutoSynced(object)
-            ? object.spec.syncPolicy?.automated?.selfHeal
-              ? "enabled, self-healing"
-              : "enabled"
-            : "disabled: drift stays until someone syncs"}
+  const sources = Application.getSources(object);
+  const conditions = object.status?.conditions ?? [];
+  const images = Application.getImages(object);
+  const revision = Application.getRevision(object);
+  const state = applicationState(object, Date.now());
+  const healthMessage = Application.getHealthMessage(object);
+
+  return (
+    <div className="ArgoCD ArgoCDApplicationDetails">
+      <ArgoCDStyles />
+      <StateBanner state={state} />
+      <DrawerItem name="Sync">
+        <SyncBadge status={Application.getSyncStatus(object)} detail={revision} />
+        {revision && <span className="ArgoCD-muted ArgoCD-mono"> {revision}</span>}
+      </DrawerItem>
+      <DrawerItem name="Health">
+        <HealthBadge status={Application.getHealthStatus(object)} message={healthMessage} />
+      </DrawerItem>
+      <DrawerItem name="Project">
+        <DrawerLink
+          label={Application.getProject(object)}
+          title="Opens its project"
+          onOpen={() => showDetails(projectLinkOf(object))}
+        />
+      </DrawerItem>
+      <ManagedBy application={object} extension={extension} />
+      <DrawerItem name="Destination">{Application.getDestination(object)}</DrawerItem>
+      {healthMessage && healthMessage !== state?.reason && (
+        <DrawerItem name="Health message">{healthMessage}</DrawerItem>
+      )}
+      <DrawerItem name="Auto-sync">{describeAutoSyncState(object)}</DrawerItem>
+      <DrawerItem name="Last reconciled">{formatTime(object.status?.reconciledAt)}</DrawerItem>
+
+      <DrawerTitle>Sources ({sources.length})</DrawerTitle>
+      {sources.map((source, index) => (
+        <DrawerItem
+          // Sources have no id of their own; two can share a repoURL at different paths.
+          key={`${source.repoURL}-${source.path ?? source.chart ?? index}`}
+          name={source.ref ? `$${source.ref}` : `Source ${index + 1}`}
+        >
+          <div>
+            <div>{source.repoURL}</div>
+            <div style={{ opacity: 0.7 }}>{describeSource(source)}</div>
+          </div>
         </DrawerItem>
-        <DrawerItem name="Last reconciled">{formatTime(object.status?.reconciledAt)}</DrawerItem>
+      ))}
 
-        <DrawerTitle>Sources ({sources.length})</DrawerTitle>
-        {sources.map((source, index) => (
-          <DrawerItem
-            // Sources have no id of their own; two can share a repoURL at different paths.
-            key={`${source.repoURL}-${source.path ?? source.chart ?? index}`}
-            name={source.ref ? `$${source.ref}` : `Source ${index + 1}`}
-          >
-            <div>
-              <div>{source.repoURL}</div>
-              <div style={{ opacity: 0.7 }}>{describeSource(source)}</div>
-            </div>
-          </DrawerItem>
-        ))}
+      <LastSync application={object} />
 
-        <LastSync application={object} />
+      {conditions.length > 0 && (
+        <>
+          <DrawerTitle>Conditions</DrawerTitle>
+          {conditions.map((condition) => (
+            <DrawerItem
+              key={`${condition.type}-${condition.lastTransitionTime}`}
+              name={condition.type ?? "Condition"}
+            >
+              {condition.message ?? "—"}
+            </DrawerItem>
+          ))}
+        </>
+      )}
 
-        {conditions.length > 0 && (
-          <>
-            <DrawerTitle>Conditions</DrawerTitle>
-            {conditions.map((condition) => (
-              <DrawerItem
-                key={`${condition.type}-${condition.lastTransitionTime}`}
-                name={condition.type ?? "Condition"}
-              >
-                {condition.message ?? "—"}
-              </DrawerItem>
-            ))}
-          </>
-        )}
+      <ManagedResources application={object} />
 
-        <ManagedResources application={object} />
+      {images.length > 0 && (
+        <>
+          <DrawerTitle>Images</DrawerTitle>
+          {images.map((image) => (
+            <DrawerItem key={image} name="">
+              <code>{image}</code>
+            </DrawerItem>
+          ))}
+        </>
+      )}
 
-        {images.length > 0 && (
-          <>
-            <DrawerTitle>Images</DrawerTitle>
-            {images.map((image) => (
-              <DrawerItem key={image} name="">
-                <code>{image}</code>
-              </DrawerItem>
-            ))}
-          </>
-        )}
+      <ImageUpdaterSection
+        application={object}
+        onOpenRule={(name, namespace) =>
+          void extension.navigate(IMAGE_UPDATER_PAGES.rules, { name, namespace })
+        }
+      />
 
-        <ImageUpdaterSection application={object} />
+      <History application={object} />
 
-        <History application={object} />
-      </div>
-    );
-  },
-);
+      <CommandsSection
+        commands={applicationCommands(object)}
+        section="application-commands"
+        hostDrawer
+      />
+    </div>
+  );
+});

@@ -1,34 +1,30 @@
-import { Application } from "../api/application";
-import { ImageUpdater } from "../api/image-updater";
-import { scopeKey, withinScope } from "../api/namespace-scope";
-import { getOverviewState, type OverviewState } from "../api/store-state";
+import { Application } from "../api/applications/application";
+import { ImageUpdater } from "../api/image-updater/image-updater";
+import type { LoadState } from "../api/shared/store-state";
 import { useKubeStore } from "../components/use-kube-store";
-import { useLoadedStores } from "./load-stores";
-import { useNamespaceScope } from "./use-namespace-scope";
+import { useScopedStores } from "./use-scoped-stores";
 
 export interface ImageUpdaterStores {
   updaters: ImageUpdater[];
   applications: Application[];
-  state: OverviewState;
+  state: LoadState;
+  /** The namespaces whose rules or Applications were refused, when some answered. */
+  gap?: string;
 }
+
+const KINDS = { ImageUpdater: "ImageUpdater rules", Application: "Applications" } as const;
 
 export function useImageUpdaterStores(): ImageUpdaterStores {
   const updaterStore = useKubeStore(() => ImageUpdater.getStore<ImageUpdater>());
   const applicationStore = useKubeStore(() => Application.getStore<Application>());
-  const scope = useNamespaceScope();
-  const gaveUp = useLoadedStores([updaterStore, applicationStore], scopeKey(scope));
 
-  const updaters = withinScope((updaterStore?.items ?? []) as ImageUpdater[], scope);
+  const { primaryItems, secondaryItems, state, gap } = useScopedStores<ImageUpdater, Application>(
+    { kind: "ImageUpdater", store: updaterStore },
+    { kind: "Application", store: applicationStore },
+    KINDS,
+    // A rule's health reads its Applications: both must be this scope's.
+    [updaterStore, applicationStore],
+  );
 
-  return {
-    updaters,
-    applications: withinScope((applicationStore?.items ?? []) as Application[], scope),
-    state: getOverviewState({
-      registered: Boolean(updaterStore),
-      loaded: Boolean(updaterStore?.isLoaded),
-      failed: Boolean(updaterStore?.failedLoading),
-      itemCount: updaters.length,
-      gaveUp,
-    }),
-  };
+  return { updaters: primaryItems, applications: secondaryItems, state, gap };
 }

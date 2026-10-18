@@ -1,43 +1,24 @@
 import { observer } from "mobx-react";
 
-import type { Application } from "../api/application";
-import type { ImageUpdater } from "../api/image-updater";
+import type { Application } from "../api/applications/application";
+import type { ImageUpdater } from "../api/image-updater/image-updater";
 import {
   applicationsOfUpdate,
   editTarget,
   imageState,
   undoPreview,
+  undoRefusal,
   updateState,
-} from "../api/image-updater-details";
-import type { TrackedImage, UpdateRow, WatchedApplication } from "../api/image-updates";
+} from "../api/image-updater/image-updater-details";
+import type {
+  TrackedImage,
+  UpdateRow,
+  WatchedApplication,
+} from "../api/image-updater/image-updates";
+import { DrawerLink } from "../components/drawer-link";
 import { ObjectDrawer } from "../components/object-drawer";
+import { ago } from "./cells";
 import { confirmEditImage, confirmUndo } from "./dialogs";
-import { ago } from "./shared";
-
-/** Prevented, so the drawer it opens is not closed by this click. */
-function DrawerLink({
-  label,
-  title,
-  onOpen,
-}: {
-  label: string;
-  title: string;
-  onOpen: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      className="ArgoCD-link"
-      title={title}
-      onClick={(event) => {
-        event.preventDefault();
-        onOpen();
-      }}
-    >
-      {label}
-    </button>
-  );
-}
 
 function ApplicationRows({
   applications,
@@ -192,7 +173,7 @@ export const UpdateDrawer = observer(
         state={update ? updateState(update, undoPreview(update, rule, applications)) : undefined}
         section="image-updater-update"
         actions={
-          update && rule
+          update && rule && !undoRefusal(update, rule, applications)
             ? [
                 {
                   icon: "undo",

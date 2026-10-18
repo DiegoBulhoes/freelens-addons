@@ -1,25 +1,24 @@
 import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 import { useState } from "react";
-
+import { countWatching, recentUpdates, trackedImages } from "../api/image-updater/image-updates";
 import {
-  countWatching,
   describeRulesHeadline,
   describeRulesState,
   needingAttention,
   rankRules,
-  recentUpdates,
   restartRefusal,
-  trackedImages,
-} from "../api/image-updates";
+} from "../api/image-updater/rule-health";
+import { keyFor } from "../api/shared/identity";
 import { NamespaceFilter } from "../components/namespace-filter";
+import { StatCard } from "../components/stat-card";
 import { ArgoCDStyles } from "../components/styles";
 import { useImageUpdaterStores } from "../hooks/use-image-updater-stores";
-import { StatCard } from "../overview/stat-card";
+import { APPLICATIONS_PAGE } from "../pages/applications-page";
+import { ago, opening, StateNote } from "./cells";
 import { confirmCheckNow } from "./dialogs";
 import { IMAGE_UPDATER_PAGES } from "./pages";
 import { RuleDrawer } from "./rule-drawer";
-import { ago, opening, StateNote } from "./shared";
 
 const {
   Component: { WithTooltip },
@@ -27,7 +26,7 @@ const {
 
 export const ImageUpdaterOverviewPage = observer(
   ({ extension }: { extension: Renderer.LensExtension }) => {
-    const { updaters, applications, state } = useImageUpdaterStores();
+    const { updaters, applications, state, gap } = useImageUpdaterStores();
     const [selectedKey, setSelectedKey] = useState<string>();
     const now = Date.now();
 
@@ -35,7 +34,7 @@ export const ImageUpdaterOverviewPage = observer(
     const attention = needingAttention(ranked);
     const images = trackedImages(updaters, applications);
     const keyOf = (row: (typeof ranked)[number]) =>
-      `${row.updater.getNs()}/${row.updater.getName()}`;
+      keyFor(row.updater.getName(), row.updater.getNs());
     const selected = ranked.find((row) => keyOf(row) === selectedKey);
     const ready = state === "ready" && updaters.length > 0;
 
@@ -48,6 +47,7 @@ export const ImageUpdaterOverviewPage = observer(
               {describeRulesHeadline(state, attention.length, updaters.length)}
             </h1>
             <StateNote note={describeRulesState(state)} alarm={state === "unreachable"} />
+            <StateNote note={gap} alarm />
             {ready && (
               <p className="ArgoCD-page__subline">
                 The controller checks every 2 minutes unless its <code>interval</code> says
@@ -83,12 +83,16 @@ export const ImageUpdaterOverviewPage = observer(
                 label="Need attention"
                 value={attention.length}
                 tone="critical"
-                onOpen={() => void extension.navigate(IMAGE_UPDATER_PAGES.rules)}
+                onOpen={() =>
+                  void extension.navigate(IMAGE_UPDATER_PAGES.rules, { filter: "attention" })
+                }
               />
               <StatCard
                 label="Images watched"
                 value={countWatching(images)}
-                onOpen={() => void extension.navigate(IMAGE_UPDATER_PAGES.images)}
+                onOpen={() =>
+                  void extension.navigate(IMAGE_UPDATER_PAGES.images, { filter: "watching" })
+                }
               />
               <StatCard
                 label="Last updates"
@@ -135,7 +139,10 @@ export const ImageUpdaterOverviewPage = observer(
           onClose={() => setSelectedKey(undefined)}
           onOpenApplication={(name) => {
             setSelectedKey(undefined);
-            void extension.navigate("applications", { name });
+            void extension.navigate(APPLICATIONS_PAGE, {
+              name,
+              namespace: selected?.updater.getNs() ?? "",
+            });
           }}
         />
       </div>

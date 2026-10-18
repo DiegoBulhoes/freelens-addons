@@ -1,7 +1,15 @@
 import { Renderer } from "@freelensapp/extensions";
 import type { ReactNode } from "react";
 
-import { describeEachOutcome, listNames, type Plan, planFor } from "../api/bulk";
+import {
+  type BulkOutcome,
+  describeBulkOutcome,
+  describeOutcome,
+  failureOf,
+  listNames,
+  type Plan,
+  planFor,
+} from "../api/writes/bulk";
 import { confirmWrite } from "./confirm";
 import type { SelectionAction } from "./selection-bar";
 import { ArgoCDStyles } from "./styles";
@@ -9,6 +17,13 @@ import { ArgoCDStyles } from "./styles";
 const {
   Component: { Notifications },
 } = Renderer;
+
+export function notifyBulkOutcome(pastTenseVerb: string, outcome: BulkOutcome) {
+  const sentence = describeBulkOutcome(pastTenseVerb, outcome);
+
+  if (outcome.failures.length === 0) Notifications.ok(sentence);
+  else Notifications.error(sentence);
+}
 
 export interface BulkWrite<Item> {
   nameOf: (item: Item) => string;
@@ -69,12 +84,12 @@ export function confirmBulk<Item>(write: BulkWrite<Item>): void {
         try {
           await write.run(item);
           succeeded += 1;
-        } catch {
-          failed.push(nameOf(item));
+        } catch (error) {
+          failed.push(failureOf(nameOf(item), error));
         }
       }
 
-      const message = describeEachOutcome(write.done, succeeded, failed);
+      const message = describeOutcome(write.done, succeeded, failed);
 
       if (failed.length === 0) Notifications.ok(message);
       else

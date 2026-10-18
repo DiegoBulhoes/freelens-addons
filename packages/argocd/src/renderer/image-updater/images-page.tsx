@@ -1,36 +1,57 @@
 import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
-import { useState } from "react";
-
-import { locateImages } from "../api/image-updater-patches";
+import { useEffect, useState } from "react";
 import {
   findRule,
   IMAGE_COLUMNS,
   IMAGE_SORT,
   imageKey,
   imageSearchTexts,
-} from "../api/image-updater-tables";
+  picksCell,
+} from "../api/image-updater/image-updater-tables";
 import {
+  applyFilter,
   countWatching,
-  describeRulesState,
-  rankRules,
+  filterNamed,
+  IMAGE_FILTERS,
+  type ImageFilter,
   type TrackedImage,
   trackedImages,
-} from "../api/image-updates";
+} from "../api/image-updater/image-updates";
+import { describeRulesState, rankRules } from "../api/image-updater/rule-health";
+import { emptyText } from "../api/shared/store-state";
+import { locateImages } from "../api/writes/image-updater-patches";
+import { RowDrawerLink } from "../components/drawer-link";
+import { FilterChips } from "../components/filter-chips";
 import { type Column, ListPage } from "../components/list-page";
 import { useImageUpdaterStores } from "../hooks/use-image-updater-stores";
+import { APPLICATIONS_PAGE } from "../pages/applications-page";
+import { ApplicationLinks } from "./cells";
 import { confirmEditImage } from "./dialogs";
 import { ImageDrawer } from "./image-drawers";
 import { RuleDrawer } from "./rule-drawer";
-import { ApplicationLinks, describeChoice } from "./shared";
 
 const {
   Component: { Icon, MenuItem },
 } = Renderer;
 
+export interface ImagesParams {
+  filter?: { get(): string };
+}
+
+const FILTER_LABELS: Record<ImageFilter, string> = { watching: "Reach an Application" };
+const FILTER_TITLES: Record<ImageFilter, string> = {
+  watching: "Shows the images that reach an Application the controller updates",
+};
+
 export const ImageUpdaterImagesPage = observer(
-  ({ extension }: { extension: Renderer.LensExtension }) => {
-    const { updaters, applications, state } = useImageUpdaterStores();
+  ({ extension, params }: { extension: Renderer.LensExtension; params?: ImagesParams }) => {
+    const { updaters, applications, state, gap } = useImageUpdaterStores();
+    const requested = filterNamed(IMAGE_FILTERS, params?.filter?.get());
+    const [filter, setFilter] = useState<ImageFilter | undefined>(requested);
+
+    // The page stays mounted when a card names another filter.
+    useEffect(() => setFilter(requested), [requested]);
     const [opened, setOpened] = useState<{ image: string } | { rule: TrackedImage }>();
     const images = trackedImages(updaters, applications);
     const ranked = rankRules(updaters, applications, Date.now());
@@ -41,9 +62,10 @@ export const ImageUpdaterImagesPage = observer(
         : undefined;
     const rule = opened && "rule" in opened ? ruleOf(opened.rule) : undefined;
 
-    const openApplication = (name: string) => {
+    // A rule selects Applications in its own namespace only.
+    const openApplication = (namespace: string | undefined) => (name: string) => {
       setOpened(undefined);
-      void extension.navigate("applications", { name });
+      void extension.navigate(APPLICATIONS_PAGE, { name, namespace: namespace ?? "" });
     };
 
     const columns: Column<TrackedImage>[] = [
@@ -61,13 +83,23 @@ export const ImageUpdaterImagesPage = observer(
       {
         title: IMAGE_COLUMNS.picks,
         className: "ArgoCD-table__shrink",
-        cell: (image) => <span className="ArgoCD-mono">{describeChoice(image)}</span>,
+        cell: (image) => {
+          const picks = picksCell(image);
+
+          return (
+            <span className="ArgoCD-mono" title={picks.title}>
+              {picks.label}
+            </span>
+          );
+        },
         sortValue: IMAGE_SORT[IMAGE_COLUMNS.picks],
       },
       {
         title: IMAGE_COLUMNS.applications,
         className: "ArgoCD-table__shrink",
-        cell: (image) => <ApplicationLinks image={image} onOpen={openApplication} />,
+        cell: (image) => (
+          <ApplicationLinks image={image} onOpen={openApplication(image.namespace)} />
+        ),
         sortValue: IMAGE_SORT[IMAGE_COLUMNS.applications],
       },
       {
@@ -87,7 +119,13 @@ export const ImageUpdaterImagesPage = observer(
       {
         title: IMAGE_COLUMNS.rule,
         className: "ArgoCD-table__shrink",
-        cell: (image) => <span className="ArgoCD-muted">{image.updater}</span>,
+        cell: (image) => (
+          <RowDrawerLink
+            label={image.updater}
+            title="Opens its rule"
+            onOpen={() => setOpened({ rule: image })}
+          />
+        ),
         sortValue: IMAGE_SORT[IMAGE_COLUMNS.rule],
       },
     ];
@@ -117,30 +155,46 @@ export const ImageUpdaterImagesPage = observer(
             ? `${countWatching(images)} of ${images.length} reach an Application the controller updates. A row opens the image.`
             : undefined
         }
-        alarm={state === "unreachable" ? describeRulesState(state) : undefined}
-        note={state === "unreachable" ? undefined : describeRulesState(state)}
+        alarm={state === "unreachable" ? describeRulesState(state) : gap}
         section="image-updater-images"
-        rows={images}
+        rows={applyFilter(images, IMAGE_FILTERS, filter)}
+        filters={
+          images.length > 0 && (
+            <FilterChips
+              filters={Object.keys(IMAGE_FILTERS) as ImageFilter[]}
+              labels={FILTER_LABELS}
+              titles={FILTER_TITLES}
+              counts={{ watching: countWatching(images) }}
+              current={filter}
+              onChange={setFilter}
+              section="image-updater-image-filters"
+            />
+          )
+        }
         columns={columns}
         keyOf={imageKey}
         searchTexts={imageSearchTexts}
         onOpen={(row) => setOpened({ image: imageKey(row) })}
         menu={menu}
-        empty="No rule names an image yet."
+        empty={emptyText(
+          state,
+          describeRulesState,
+          images.length > 0 ? "No image matches that filter." : "No rule names an image yet.",
+        )}
       >
         <ImageDrawer
           image={image}
           rule={image ? ruleOf(image)?.updater : undefined}
           onClose={() => setOpened(undefined)}
           onOpenRule={() => image && setOpened({ rule: image })}
-          onOpenApplication={openApplication}
+          onOpenApplication={openApplication(image?.namespace)}
         />
         <RuleDrawer
           updater={rule?.updater}
           health={rule?.health}
           applications={applications}
           onClose={() => setOpened(undefined)}
-          onOpenApplication={openApplication}
+          onOpenApplication={openApplication(rule?.updater.getNs())}
         />
       </ListPage>
     );
