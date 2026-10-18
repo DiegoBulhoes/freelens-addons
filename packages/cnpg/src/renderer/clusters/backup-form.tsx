@@ -1,7 +1,8 @@
 import { useState } from "react";
 
-import type { BackupOptions, BackupTarget } from "../api/operations";
-import type { BackupMethod } from "../api/types";
+import type { BackupOptions, BackupTarget } from "../api/backups/backup-manifests";
+import type { BackupMethod } from "../api/shared/types";
+import { ChoiceButtons } from "./choice-buttons";
 
 const METHOD_LABELS: Record<BackupMethod, string> = {
   plugin: "Plugin",
@@ -9,8 +10,9 @@ const METHOD_LABELS: Record<BackupMethod, string> = {
   volumeSnapshot: "Volume snapshot",
 };
 
-const TARGETS: { value?: BackupTarget; label: string; title: string }[] = [
+const TARGETS: { value: BackupTarget | undefined; label: string; title: string }[] = [
   {
+    value: undefined,
     label: "Cluster default",
     title: "Uses the target set on the cluster, a standby unless it says otherwise",
   },
@@ -43,20 +45,15 @@ export function BackupOptionsForm({
       {methods.length > 1 && (
         <div className="CNPG-form__field">
           <span>Method</span>
-          <div className="CNPG-filters">
-            {methods.map((method) => (
-              <button
-                key={method}
-                type="button"
-                className="CNPG-filter"
-                aria-pressed={options.method === method}
-                title={`Backs up with ${METHOD_LABELS[method].toLowerCase()}`}
-                onClick={() => change({ method })}
-              >
-                {METHOD_LABELS[method]}
-              </button>
-            ))}
-          </div>
+          <ChoiceButtons
+            options={methods.map((method) => ({
+              value: method,
+              label: METHOD_LABELS[method],
+              title: `Backs up with ${METHOD_LABELS[method].toLowerCase()}`,
+            }))}
+            value={options.method}
+            onPick={(method) => change({ method })}
+          />
         </div>
       )}
       {options.method === "volumeSnapshot" && (
@@ -111,20 +108,11 @@ export function BackupOptionsForm({
       )}
       <div className="CNPG-form__field">
         <span>Take it from</span>
-        <div className="CNPG-filters">
-          {TARGETS.map((target) => (
-            <button
-              key={target.label}
-              type="button"
-              className="CNPG-filter"
-              aria-pressed={options.target === target.value}
-              title={target.title}
-              onClick={() => change({ target: target.value })}
-            >
-              {target.label}
-            </button>
-          ))}
-        </div>
+        <ChoiceButtons
+          options={TARGETS}
+          value={options.target}
+          onPick={(target) => change({ target })}
+        />
       </div>
     </>
   );

@@ -6,13 +6,13 @@
       "kind": "ScheduledBackup",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "creationTimestamp": "2026-10-04T20:33:16Z",
         "generation": 1,
         "name": "billing-nightly",
         "namespace": "databases",
-        "resourceVersion": "485825",
+        "resourceVersion": "477853",
         "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/scheduledbackups/billing-nightly",
-        "uid": "723638a0-63fb-4f91-855c-342072af4f0f"
+        "uid": "3ce33be5-bdd2-429b-b0a2-8131405f4e6c"
       },
       "spec": {
         "backupOwnerReference": "none",
@@ -27,9 +27,9 @@
         "schedule": "0 0 2 * * *"
       },
       "status": {
-        "lastCheckTime": "2026-10-04T02:00:00Z",
-        "lastScheduleTime": "2026-10-04T02:00:00Z",
-        "nextScheduleTime": "2026-10-05T02:00:00Z"
+        "lastCheckTime": "2026-10-18T02:00:00Z",
+        "lastScheduleTime": "2026-10-18T02:00:00Z",
+        "nextScheduleTime": "2026-10-19T02:00:00Z"
       }
     },
     {
@@ -37,13 +37,43 @@
       "kind": "ScheduledBackup",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T21:42:01Z",
-        "generation": 7,
+        "creationTimestamp": "2026-10-12T19:27:32Z",
+        "generation": 1,
+        "name": "legacy-nightly",
+        "namespace": "databases",
+        "resourceVersion": "365650",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/scheduledbackups/legacy-nightly",
+        "uid": "16f801b1-fe2b-4119-ad94-8da234f7bee5"
+      },
+      "spec": {
+        "backupOwnerReference": "none",
+        "cluster": {
+          "name": "legacy-db"
+        },
+        "method": "plugin",
+        "pluginConfiguration": {
+          "name": "barman-cloud.cloudnative-pg.io"
+        },
+        "schedule": "0 0 1 * * *"
+      },
+      "status": {
+        "lastCheckTime": "2026-10-17T17:17:32Z",
+        "lastScheduleTime": "2026-10-13T01:00:00Z",
+        "nextScheduleTime": "2026-10-18T01:00:00Z"
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "ScheduledBackup",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T20:33:16Z",
+        "generation": 3,
         "name": "orders-hourly",
         "namespace": "databases",
-        "resourceVersion": "575861",
+        "resourceVersion": "477854",
         "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/scheduledbackups/orders-hourly",
-        "uid": "3fcf8e97-d4ee-47f3-8eae-f7bff6afd139"
+        "uid": "9fb235e3-4fee-4c28-9c36-8fae9b3eae80"
       },
       "spec": {
         "backupOwnerReference": "self",
@@ -59,9 +89,9 @@
         "suspend": false
       },
       "status": {
-        "lastCheckTime": "2026-10-04T13:00:00Z",
-        "lastScheduleTime": "2026-10-04T13:00:00Z",
-        "nextScheduleTime": "2026-10-04T14:00:00Z"
+        "lastCheckTime": "2026-10-18T02:00:00Z",
+        "lastScheduleTime": "2026-10-18T02:00:00Z",
+        "nextScheduleTime": "2026-10-18T03:00:00Z"
       }
     },
     {
@@ -69,13 +99,13 @@
       "kind": "ScheduledBackup",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T21:42:01Z",
-        "generation": 1,
+        "creationTimestamp": "2026-10-04T20:33:16Z",
+        "generation": 3,
         "name": "orders-weekly",
         "namespace": "databases",
-        "resourceVersion": "419327",
+        "resourceVersion": "20068",
         "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/scheduledbackups/orders-weekly",
-        "uid": "ada6a1f5-ce36-4314-97ba-272324544331"
+        "uid": "1e7f7b27-63b7-4fce-bc36-4ba3d46f2632"
       },
       "spec": {
         "backupOwnerReference": "none",
@@ -88,6 +118,9 @@
         },
         "schedule": "0 0 3 * * 0",
         "suspend": true
+      },
+      "status": {
+        "lastCheckTime": "2026-10-04T21:04:13Z"
       }
     }
   ],

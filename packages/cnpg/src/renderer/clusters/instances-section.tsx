@@ -1,25 +1,26 @@
 import { Renderer } from "@freelensapp/extensions";
-
-import { openInstanceLog, openTerminal } from "../api/actions";
-import { placementOf } from "../api/cluster-status";
-import { instancesOf, isHibernated, replicaNames } from "../api/clusters";
-import { psqlCommand, psqlRefusal } from "../api/operations";
-import { replicaLags } from "../api/replication";
-import type { ClusterLike, InstanceStatus, PodLike } from "../api/types";
+import { placementOf } from "../api/clusters/cluster-status";
+import { instancesOf, isHibernated, replicaNames, roleLabel } from "../api/clusters/clusters";
+import { clusterLags, instanceKey } from "../api/replication/replication";
+import { HOST_LIST_TITLES } from "../api/shared/host-links";
+import type { ClusterLike, InstanceStatus, PodLike } from "../api/shared/types";
+import { openInstanceLog, openTerminal } from "../api/writes/actions";
+import { psqlCommand, psqlRefusal } from "../api/writes/operations";
+import { DrawerLink, followHost } from "../components/drawer-link";
 import { Status } from "../components/status";
-import { confirmDestroyInstance, confirmRestartInstance, confirmRestartReplicas } from "./dialogs";
+import {
+  confirmDestroyInstance,
+  confirmRestartInstance,
+  confirmRestartReplicas,
+  notifyRefusal,
+} from "./dialogs";
 
 const {
   Component: { Icon, MenuActions, MenuItem, Notifications, WithTooltip },
 } = Renderer;
 
 export async function openPsql(cluster: ClusterLike, instance: string | undefined) {
-  const refused = psqlRefusal(cluster, instance);
-
-  if (refused) {
-    Notifications.error(refused);
-    return;
-  }
+  if (notifyRefusal(psqlRefusal(cluster, instance))) return;
 
   if (!instance) return;
 
@@ -40,23 +41,21 @@ async function openLog(cluster: ClusterLike, instance: string) {
   }
 }
 
-const ROLE_LABEL = { primary: "Primary", promoting: "Promoting", replica: "Replica" } as const;
-
 export function InstancesSection({
   cluster,
   statuses,
   pods,
+  onClose,
 }: {
   cluster: ClusterLike;
   statuses: Record<string, InstanceStatus | undefined>;
   pods: PodLike[];
+  /** Closes the drawer before a link opens a host list. */
+  onClose: () => void;
 }) {
   const namespace = cluster.getNs();
   const instances = instancesOf(cluster);
-  const lags = replicaLags(
-    statuses[`${namespace}/${cluster.status?.currentPrimary}`],
-    Object.fromEntries(instances.map((each) => [each.name, statuses[`${namespace}/${each.name}`]])),
-  );
+  const lags = clusterLags(cluster, statuses);
 
   return (
     <section className="CNPG-section" data-section="cnpg-instances">
@@ -81,21 +80,35 @@ export function InstancesSection({
       ) : (
         <div className="CNPG-list">
           {instances.map((instance) => {
-            const placed = placementOf(pods, namespace, instance.name);
+            const { node, qos } = placementOf(pods, namespace, instance.name);
             const lag = lags.find((each) => each.replica === instance.name);
-            const status = statuses[`${namespace}/${instance.name}`];
+            const status = statuses[instanceKey(cluster, instance.name)];
 
             return (
               <div
                 key={instance.name}
                 className={`CNPG-row${instance.role === "primary" ? " CNPG-row--info" : ""}`}
               >
-                <span className="CNPG-row__state">{ROLE_LABEL[instance.role]}</span>
+                <span className="CNPG-row__state">{roleLabel(cluster, instance.role)}</span>
                 <span className="CNPG-row__main">
                   <span className="CNPG-row__name">
-                    <b>{instance.name}</b>
+                    <DrawerLink
+                      title={HOST_LIST_TITLES.Pod}
+                      onClick={() => followHost(onClose, "Pod", instance.name)}
+                    >
+                      <b>{instance.name}</b>
+                    </DrawerLink>
                     <span className="CNPG-row__meta">
-                      {[placed.node, placed.qos].filter(Boolean).join(" · ")}
+                      {node && (
+                        <DrawerLink
+                          title={HOST_LIST_TITLES.Node}
+                          onClick={() => followHost(onClose, "Node", node)}
+                        >
+                          {node}
+                        </DrawerLink>
+                      )}
+                      {node && qos && " · "}
+                      {qos}
                     </span>
                   </span>
                   <span className="CNPG-row__reason">

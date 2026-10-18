@@ -2,7 +2,14 @@ import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 import { type ReactNode, useState } from "react";
 
-import { describeCount, nextSort, type Sort, searchRows, sortRows } from "../api/table";
+import {
+  describeCount,
+  limitRows,
+  nextSort,
+  type Sort,
+  searchRows,
+  sortRows,
+} from "../api/shared/table";
 import { NamespaceFilter } from "./namespace-filter";
 import { type SelectionAction, SelectionBar } from "./selection-bar";
 import { CNPGStyles } from "./styles";
@@ -21,6 +28,8 @@ export interface Column<Row> {
 export interface ListPageProps<Row> {
   title: string;
   subline?: ReactNode;
+  /** Marks the subline as the page's alarm. */
+  alarm?: boolean;
   rows: Row[];
   columns: Column<Row>[];
   keyOf: (row: Row) => string;
@@ -37,6 +46,8 @@ export interface ListPageProps<Row> {
   action?: ReactNode;
   /** Ticks rows and offers these actions on them; a cluster write types "confirm". */
   selection?: { hint: string; actions: SelectionAction<Row>[] };
+  /** Rows drawn at most; search and sort still run over all of them. */
+  limit?: number;
   children?: ReactNode;
 }
 
@@ -49,8 +60,9 @@ function ListPageView<Row>(props: ListPageProps<Row>) {
   const shown = sortRows(searchRows(rows, query, props.searchTexts), sort, (row, column) =>
     columns.find((each) => each.title === column)?.sortValue?.(row),
   );
-  // Only what is on screen counts: a row searched away or deleted drops out of the selection.
-  const selected = shown.filter((row) => ticked.has(props.keyOf(row)));
+  const { drawn, note } = limitRows(shown, props.limit);
+  // Only what is on screen counts: a row searched away, past the cap or deleted drops out.
+  const selected = drawn.filter((row) => ticked.has(props.keyOf(row)));
   const toggle = (keys: string[], on: boolean) =>
     setTicked((before) => {
       const next = new Set(before);
@@ -72,7 +84,11 @@ function ListPageView<Row>(props: ListPageProps<Row>) {
             {props.title}{" "}
             <span className="CNPG-page__count">{describeCount(shown.length, rows.length)}</span>
           </h1>
-          {props.subline && <p className="CNPG-page__subline">{props.subline}</p>}
+          {props.subline && (
+            <p className={`CNPG-page__subline${props.alarm ? " CNPG-page__subline--alarm" : ""}`}>
+              {props.subline}
+            </p>
+          )}
         </div>
         <div className="CNPG-page__actions">
           <input
@@ -92,7 +108,7 @@ function ListPageView<Row>(props: ListPageProps<Row>) {
 
       {props.selection && (
         <SelectionBar
-          getItems={() => shown}
+          getItems={() => drawn}
           pickOnlySelected={() => selected}
           hint={props.selection.hint}
           actions={props.selection.actions}
@@ -112,8 +128,8 @@ function ListPageView<Row>(props: ListPageProps<Row>) {
                   <th className="CNPG-table__check">
                     <Checkbox
                       aria-label="Select every row shown"
-                      value={selected.length > 0 && selected.length === shown.length}
-                      onChange={(on: boolean) => toggle(shown.map(props.keyOf), on)}
+                      value={selected.length > 0 && selected.length === drawn.length}
+                      onChange={(on: boolean) => toggle(drawn.map(props.keyOf), on)}
                     />
                   </th>
                 )}
@@ -146,7 +162,7 @@ function ListPageView<Row>(props: ListPageProps<Row>) {
               </tr>
             </thead>
             <tbody>
-              {shown.map((row) => (
+              {drawn.map((row) => (
                 <tr
                   key={props.keyOf(row)}
                   className={
@@ -200,6 +216,11 @@ function ListPageView<Row>(props: ListPageProps<Row>) {
               ))}
             </tbody>
           </table>
+        )}
+        {note && (
+          <p className="CNPG-section__note" data-section="list-limit">
+            {note}
+          </p>
         )}
       </section>
 

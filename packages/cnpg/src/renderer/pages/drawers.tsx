@@ -1,43 +1,43 @@
 import { observer } from "mobx-react";
-
-import { ago, backupTime } from "../api/backups";
-import type { Verdict } from "../api/clusters";
-import { backupsFromSchedule, describeCron, entriesOf } from "../api/details";
-import { dropsInPostgres, type LogicalRow } from "../api/logical";
-import { backupDuration, backupVerdict } from "../api/rows";
-import type { BackupLike, ClusterLike, PoolerLike, ScheduledBackupLike } from "../api/types";
+import { backupTime } from "../api/backups/backups";
+import { backupsFromSchedule, describeCron, entriesOf } from "../api/backups/details";
+import { dropsInPostgres, type LogicalRow } from "../api/replication/logical";
+import { HOST_LIST_TITLES } from "../api/shared/host-links";
+import type { OpenPage } from "../api/shared/navigation";
+import {
+  backupDuration,
+  backupVerdict,
+  type PoolerReady,
+  SCHEDULE_LABEL,
+} from "../api/shared/rows";
+import type { BackupLike, ClusterLike, PoolerLike, ScheduledBackupLike } from "../api/shared/types";
+import { ago, until, type Verdict, withCause } from "../api/shared/verdict";
+import { DrawerLink, followHost, followPage } from "../components/drawer-link";
 import { ObjectDrawer } from "../components/object-drawer";
 import { Status } from "../components/status";
-import {
-  confirmDeleteBackup,
-  confirmDeleteLogical,
-  confirmDeletePooler,
-  confirmDeleteSchedule,
-  confirmPause,
-  confirmScheduleBackup,
-  confirmSuspend,
-} from "./row-dialogs";
+import { backupActions, logicalActions, poolerActions, scheduleActions } from "./row-dialogs";
 
 const SHOWN_BACKUPS = 8;
 
-/** The state for the drawer's banner, with barman's cause when one was read. */
-function withCause(verdict: Verdict, cause?: string): Verdict {
-  return cause ? { ...verdict, reason: `${verdict.reason} Cause: ${cause}` } : verdict;
-}
-
-function ClusterLink({ name, onOpen }: { name: string; onOpen: (name: string) => void }) {
+/** The cluster of an object, by the object's namespace: two clusters can share a name. */
+function ClusterLink({
+  namespace,
+  name,
+  onClose,
+  open,
+}: {
+  namespace: string | undefined;
+  name: string;
+  onClose: () => void;
+  open: OpenPage;
+}) {
   return (
-    <button
-      type="button"
-      className="CNPG-link"
+    <DrawerLink
       title="Opens the cluster"
-      onClick={(event) => {
-        event.preventDefault();
-        onOpen(name);
-      }}
+      onClick={() => followPage(onClose, open, "clusters", { namespace, name })}
     >
       {name}
-    </button>
+    </DrawerLink>
   );
 }
 
@@ -49,7 +49,7 @@ export const ScheduleDrawer = observer(
     clusters,
     backups,
     onClose,
-    onOpenCluster,
+    open,
   }: {
     schedule?: ScheduledBackupLike;
     verdict?: Verdict;
@@ -57,7 +57,7 @@ export const ScheduleDrawer = observer(
     clusters: ClusterLike[];
     backups: BackupLike[];
     onClose: () => void;
-    onOpenCluster: (name: string) => void;
+    open: OpenPage;
   }) => {
     const now = Date.now();
     const started = schedule ? backupsFromSchedule(schedule, backups) : [];
@@ -70,33 +70,7 @@ export const ScheduleDrawer = observer(
         onClose={onClose}
         state={verdict ? withCause(verdict, cause) : undefined}
         section="cnpg-schedule"
-        actions={
-          schedule
-            ? [
-                {
-                  icon: "backup",
-                  title: "Starts a backup now, as this schedule would. Asks first",
-                  onClick: () => confirmScheduleBackup(schedule, clusters),
-                },
-                schedule.spec.suspend
-                  ? {
-                      icon: "play_arrow",
-                      title: "Starts backups on its cron again. Asks first",
-                      onClick: () => confirmSuspend(schedule, false),
-                    }
-                  : {
-                      icon: "pause",
-                      title: "Stops it starting backups until started again. Asks first",
-                      onClick: () => confirmSuspend(schedule, true),
-                    },
-                {
-                  icon: "delete",
-                  title: "Deletes the schedule. Asks you to type its name",
-                  onClick: () => confirmDeleteSchedule(schedule, backups),
-                },
-              ]
-            : []
-        }
+        actions={schedule ? scheduleActions(schedule, clusters, backups) : []}
       >
         {schedule && (
           <>
@@ -105,7 +79,12 @@ export const ScheduleDrawer = observer(
               <dd>{schedule.getNs()}</dd>
               <dt>Cluster</dt>
               <dd>
-                <ClusterLink name={schedule.spec.cluster.name} onOpen={onOpenCluster} />
+                <ClusterLink
+                  namespace={schedule.getNs()}
+                  name={schedule.spec.cluster.name}
+                  onClose={onClose}
+                  open={open}
+                />
               </dd>
               <dt>When</dt>
               <dd>
@@ -113,12 +92,24 @@ export const ScheduleDrawer = observer(
                 <span className="CNPG-muted CNPG-mono">{schedule.spec.schedule}</span>
               </dd>
               <dt>Last run</dt>
-              <dd>{schedule.status?.lastScheduleTime ?? "—"}</dd>
+              <dd>
+                {ago(schedule.status?.lastScheduleTime, now)}
+                {schedule.status?.lastScheduleTime && (
+                  <span className="CNPG-muted"> · {schedule.status.lastScheduleTime}</span>
+                )}
+              </dd>
               <dt>Next run</dt>
               <dd>
-                {schedule.spec.suspend
-                  ? "None while suspended"
-                  : (schedule.status?.nextScheduleTime ?? "—")}
+                {schedule.spec.suspend ? (
+                  "None while suspended"
+                ) : (
+                  <>
+                    {until(schedule.status?.nextScheduleTime, now)}
+                    {schedule.status?.nextScheduleTime && (
+                      <span className="CNPG-muted"> · {schedule.status.nextScheduleTime}</span>
+                    )}
+                  </>
+                )}
               </dd>
               <dt>Method</dt>
               <dd>
@@ -144,7 +135,17 @@ export const ScheduleDrawer = observer(
                       <div key={backup.getName()} className="CNPG-row">
                         <span className="CNPG-row__main">
                           <span className="CNPG-row__name">
-                            <b>{backup.getName()}</b>
+                            <DrawerLink
+                              title="Opens the backup"
+                              onClick={() =>
+                                followPage(onClose, open, "backups", {
+                                  namespace: backup.getNs(),
+                                  name: backup.getName(),
+                                })
+                              }
+                            >
+                              <b>{backup.getName()}</b>
+                            </DrawerLink>
                           </span>
                           <span className="CNPG-row__reason">
                             <Status tone={state.tone} label={state.label} />
@@ -172,14 +173,16 @@ export const BackupDrawer = observer(
     backup,
     cause,
     onClose,
-    onOpenCluster,
+    open,
   }: {
     backup?: BackupLike;
     cause?: string;
     onClose: () => void;
-    onOpenCluster: (name: string) => void;
+    open: OpenPage;
   }) => {
     const status = backup?.status;
+    const schedule = backup?.metadata.labels?.[SCHEDULE_LABEL];
+    const pod = status?.instanceID?.podName;
     const verdict = backup ? backupVerdict(backup) : undefined;
 
     return (
@@ -192,17 +195,7 @@ export const BackupDrawer = observer(
           verdict ? withCause(verdict, verdict.tone === "critical" ? cause : undefined) : undefined
         }
         section="cnpg-backup"
-        actions={
-          backup
-            ? [
-                {
-                  icon: "delete",
-                  title: "Deletes the Backup object; its files stay. Asks you to type its name",
-                  onClick: () => confirmDeleteBackup(backup),
-                },
-              ]
-            : []
-        }
+        actions={backup ? backupActions(backup) : []}
       >
         {backup && (
           <dl className="CNPG-facts">
@@ -210,7 +203,30 @@ export const BackupDrawer = observer(
             <dd>{backup.getNs()}</dd>
             <dt>Cluster</dt>
             <dd>
-              <ClusterLink name={backup.spec.cluster.name} onOpen={onOpenCluster} />
+              <ClusterLink
+                namespace={backup.getNs()}
+                name={backup.spec.cluster.name}
+                onClose={onClose}
+                open={open}
+              />
+            </dd>
+            <dt>Schedule</dt>
+            <dd>
+              {schedule ? (
+                <DrawerLink
+                  title="Opens the schedule"
+                  onClick={() =>
+                    followPage(onClose, open, "schedules", {
+                      namespace: backup.getNs(),
+                      name: schedule,
+                    })
+                  }
+                >
+                  {schedule}
+                </DrawerLink>
+              ) : (
+                "None; started by hand"
+              )}
             </dd>
             <dt>Method</dt>
             <dd>
@@ -220,7 +236,18 @@ export const BackupDrawer = observer(
               )}
             </dd>
             <dt>Taken from</dt>
-            <dd>{status?.instanceID?.podName ?? "—"}</dd>
+            <dd>
+              {pod ? (
+                <DrawerLink
+                  title={HOST_LIST_TITLES.Pod}
+                  onClick={() => followHost(onClose, "Pod", pod)}
+                >
+                  {pod}
+                </DrawerLink>
+              ) : (
+                "—"
+              )}
+            </dd>
             <dt>Started</dt>
             <dd>{status?.startedAt ?? status?.reconciliationStartedAt ?? "—"}</dd>
             <dt>Stopped</dt>
@@ -259,13 +286,16 @@ export const PoolerDrawer = observer(
   ({
     pooler,
     verdict,
+    ready,
     onClose,
-    onOpenCluster,
+    open,
   }: {
     pooler?: PoolerLike;
     verdict?: Verdict;
+    /** Undefined while its pods are not read. */
+    ready?: PoolerReady;
     onClose: () => void;
-    onOpenCluster: (name: string) => void;
+    open: OpenPage;
   }) => {
     const parameters = entriesOf(pooler?.spec.pgbouncer?.parameters);
 
@@ -277,28 +307,7 @@ export const PoolerDrawer = observer(
         onClose={onClose}
         state={verdict}
         section="cnpg-pooler"
-        actions={
-          pooler
-            ? [
-                pooler.spec.pgbouncer?.paused
-                  ? {
-                      icon: "play_arrow",
-                      title: "Lets queries through again. Asks first",
-                      onClick: () => confirmPause(pooler, false),
-                    }
-                  : {
-                      icon: "pause",
-                      title: "Holds new queries, keeping connections open. Asks first",
-                      onClick: () => confirmPause(pooler, true),
-                    },
-                {
-                  icon: "delete",
-                  title: "Deletes the pooler. Asks you to type its name",
-                  onClick: () => confirmDeletePooler(pooler),
-                },
-              ]
-            : []
-        }
+        actions={pooler ? poolerActions(pooler) : []}
       >
         {pooler && (
           <>
@@ -307,7 +316,12 @@ export const PoolerDrawer = observer(
               <dd>{pooler.getNs()}</dd>
               <dt>Cluster</dt>
               <dd>
-                <ClusterLink name={pooler.spec.cluster.name} onOpen={onOpenCluster} />
+                <ClusterLink
+                  namespace={pooler.getNs()}
+                  name={pooler.spec.cluster.name}
+                  onClose={onClose}
+                  open={open}
+                />
               </dd>
               <dt>Sends to</dt>
               <dd>
@@ -325,6 +339,7 @@ export const PoolerDrawer = observer(
                 {pooler.status?.instances !== undefined && (
                   <span className="CNPG-muted"> · {pooler.status.instances} reported</span>
                 )}
+                {ready && <span className="CNPG-muted"> · {ready.ready} ready</span>}
               </dd>
               <dt>Service</dt>
               <dd className="CNPG-mono">
@@ -356,15 +371,7 @@ export const PoolerDrawer = observer(
 );
 
 export const LogicalDrawer = observer(
-  ({
-    row,
-    onClose,
-    onOpenCluster,
-  }: {
-    row?: LogicalRow;
-    onClose: () => void;
-    onOpenCluster: (name: string) => void;
-  }) => (
+  ({ row, onClose, open }: { row?: LogicalRow; onClose: () => void; open: OpenPage }) => (
     <ObjectDrawer
       open={Boolean(row)}
       kind={row?.kind ?? ""}
@@ -372,18 +379,7 @@ export const LogicalDrawer = observer(
       onClose={onClose}
       state={row?.verdict}
       section="cnpg-logical-object"
-      actions={
-        row
-          ? [
-              {
-                icon: "delete",
-                title:
-                  "Deletes the object; Postgres keeps it unless its reclaim policy is delete. Asks you to type its name",
-                onClick: () => confirmDeleteLogical(row),
-              },
-            ]
-          : []
-      }
+      actions={row ? logicalActions(row) : []}
     >
       {row && (
         <dl className="CNPG-facts">
@@ -391,7 +387,12 @@ export const LogicalDrawer = observer(
           <dd>{row.object.getNs()}</dd>
           <dt>Cluster</dt>
           <dd>
-            <ClusterLink name={row.cluster} onOpen={onOpenCluster} />
+            <ClusterLink
+              namespace={row.object.getNs()}
+              name={row.cluster}
+              onClose={onClose}
+              open={open}
+            />
           </dd>
           <dt>Database</dt>
           <dd>{row.database}</dd>

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-
-import { readMetrics } from "../api/actions";
-import { type Metrics, parseMetrics } from "../api/summary";
-import type { ClusterLike } from "../api/types";
+import { type Metrics, parseMetrics } from "../api/clusters/metrics";
+import type { ClusterLike } from "../api/shared/types";
+import { readMetrics } from "../api/writes/actions";
 
 const REFRESH_MS = 30_000;
 

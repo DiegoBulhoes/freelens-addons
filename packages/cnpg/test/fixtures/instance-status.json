@@ -2,10 +2,48 @@
     "items": [
         {
             "namespace": "databases",
-            "pod": "billing-db-1",
+            "pod": "audit-db-1",
             "status": {
                 "currentLsn": "0/8000000",
-                "systemID": "7692560244539453466",
+                "systemID": "7695868147566219293",
+                "isPrimary": true,
+                "replayPaused": false,
+                "pendingRestart": false,
+                "pendingRestartForDecrease": false,
+                "isWalReceiverActive": false,
+                "isPgRewindRunning": false,
+                "mightBeUnavailable": false,
+                "isArchivingWAL": true,
+                "node": "",
+                "pod": {
+                    "metadata": {
+                        "name": "audit-db-1"
+                    },
+                    "spec": {
+                        "containers": null
+                    },
+                    "status": {}
+                },
+                "loadedConfigurationHash": "008b9e858bd781e5513723799b15e66338bf1192e65c4d3ea0cb028abad80527",
+                "lastArchivedWAL": "000000010000000000000007",
+                "lastArchivedWALTime": "2026-10-18T00:18:26.656836Z",
+                "lastFailedWALTime": "-infinity",
+                "currentWAL": "000000010000000000000008",
+                "timeLineID": 1,
+                "executableHash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13",
+                "instanceManagerVersion": "1.30.0",
+                "instanceArch": "amd64",
+                "isInstanceManagerUpgrading": false,
+                "sessionID": "a2eef12f-59a4-4577-a73c-a1b17ef8815d",
+                "isPodReady": false
+            }
+        },
+        {
+            "namespace": "databases",
+            "pod": "billing-db-1",
+            "status": {
+                "currentLsn": "0/1A000000",
+                "systemID": "7692913736156434459",
                 "isPrimary": true,
                 "replayPaused": false,
                 "pendingRestart": false,
@@ -26,18 +64,18 @@
                 "loadedConfigurationHash": "6b7f3f0823c6da0273eaa121707c30104709f97c797eb0bc6644e73590288443",
                 "lastArchivedWALTime": "-infinity",
                 "lastFailedWAL": "000000010000000000000001",
-                "lastFailedWALTime": "2026-10-04T13:33:00.492639Z",
-                "currentWAL": "000000010000000000000008",
-                "readyWalFiles": 8,
+                "lastFailedWALTime": "2026-10-18T02:52:39.336474Z",
+                "currentWAL": "00000001000000000000001A",
+                "readyWalFiles": 26,
                 "timeLineID": 1,
                 "replicationInfo": [
                     {
                         "applicationName": "billing-db-2",
                         "state": "streaming",
-                        "receivedLsn": "0/8000000",
-                        "writeLsn": "0/8000000",
-                        "flushLsn": "0/8000000",
-                        "replayLsn": "0/8000000",
+                        "receivedLsn": "0/1A000000",
+                        "writeLsn": "0/1A000000",
+                        "flushLsn": "0/1A000000",
+                        "replayLsn": "0/1A000000",
                         "writeLag": "00:00:00",
                         "flushLag": "00:00:00",
                         "replayLag": "00:00:00",
@@ -49,7 +87,7 @@
                     {
                         "slotName": "_cnpg_billing_db_2",
                         "slotType": "physical",
-                        "restartLsn": "0/8000000",
+                        "restartLsn": "0/1A000000",
                         "walStatus": "reserved",
                         "active": true
                     }
@@ -58,7 +96,7 @@
                 "instanceManagerVersion": "1.30.0",
                 "instanceArch": "amd64",
                 "isInstanceManagerUpgrading": false,
-                "sessionID": "08adc929-1009-47e6-9b76-67a4d3c87db0",
+                "sessionID": "00a634d8-4b44-4687-86a0-bb7d3f0d9ea1",
                 "isPodReady": false
             }
         },
@@ -66,9 +104,9 @@
             "namespace": "databases",
             "pod": "billing-db-2",
             "status": {
-                "receivedLsn": "0/8000000",
-                "replayLsn": "0/8000000",
-                "systemID": "7692560244539453466",
+                "receivedLsn": "0/1A000000",
+                "replayLsn": "0/1A000000",
+                "systemID": "7692913736156434459",
                 "isPrimary": false,
                 "replayPaused": false,
                 "pendingRestart": false,
@@ -94,7 +132,7 @@
                 "instanceManagerVersion": "1.30.0",
                 "instanceArch": "amd64",
                 "isInstanceManagerUpgrading": false,
-                "sessionID": "c320e224-6465-4f29-99b2-872caf647e51",
+                "sessionID": "bad62c6e-f8a9-4b72-9509-6fdb8fccd5d0",
                 "isPodReady": false
             }
         },
@@ -102,8 +140,8 @@
             "namespace": "databases",
             "pod": "inventory-db-1",
             "status": {
-                "currentLsn": "0/E2FED00",
-                "systemID": "7692560244491542552",
+                "currentLsn": "0/1E000000",
+                "systemID": "7692913736105590810",
                 "isPrimary": true,
                 "replayPaused": false,
                 "pendingRestart": false,
@@ -123,16 +161,16 @@
                     "status": {}
                 },
                 "loadedConfigurationHash": "fcfcd436805c1917148e9c9e223eedfcfb425ab2afc9b8714cf1b28e829bc534",
-                "lastArchivedWAL": "00000001000000000000000D",
-                "lastArchivedWALTime": "2026-10-04T12:07:19.662816Z",
+                "lastArchivedWAL": "00000001000000000000001D",
+                "lastArchivedWALTime": "2026-10-18T00:18:23.011236Z",
                 "lastFailedWALTime": "-infinity",
-                "currentWAL": "00000001000000000000000E",
+                "currentWAL": "00000001000000000000001E",
                 "timeLineID": 1,
                 "executableHash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13",
                 "instanceManagerVersion": "1.30.0",
                 "instanceArch": "amd64",
                 "isInstanceManagerUpgrading": false,
-                "sessionID": "38b913ac-b3bc-4d43-9454-d13e1223ef65",
+                "sessionID": "26e485eb-ceb1-4450-be59-ce391faf4c07",
                 "isPodReady": false
             }
         },
@@ -140,9 +178,9 @@
             "namespace": "databases",
             "pod": "orders-db-1",
             "status": {
-                "receivedLsn": "0/373C9440",
-                "replayLsn": "0/373C9440",
-                "systemID": "7692560244499226653",
+                "receivedLsn": "0/4E110418",
+                "replayLsn": "0/4E110418",
+                "systemID": "7692913736512081945",
                 "isPrimary": false,
                 "replayPaused": false,
                 "pendingRestart": false,
@@ -163,12 +201,12 @@
                 "loadedConfigurationHash": "f5367cc0aead051c84a6c06d5cb012f300a3968fb62ff2b83538a7d6eddbf554",
                 "lastArchivedWALTime": "-infinity",
                 "lastFailedWALTime": "-infinity",
-                "timeLineID": 6,
+                "timeLineID": 4,
                 "executableHash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13",
                 "instanceManagerVersion": "1.30.0",
                 "instanceArch": "amd64",
                 "isInstanceManagerUpgrading": false,
-                "sessionID": "db467e38-f635-45c1-b8ec-4b36441dee2b",
+                "sessionID": "2e7fd350-bec8-45d5-b10f-ea8c91f67341",
                 "isPodReady": false
             }
         },
@@ -176,8 +214,8 @@
             "namespace": "databases",
             "pod": "orders-db-2",
             "status": {
-                "currentLsn": "0/373C9440",
-                "systemID": "7692560244499226653",
+                "currentLsn": "0/4E110418",
+                "systemID": "7692913736512081945",
                 "isPrimary": true,
                 "replayPaused": false,
                 "pendingRestart": false,
@@ -197,35 +235,35 @@
                     "status": {}
                 },
                 "loadedConfigurationHash": "f5367cc0aead051c84a6c06d5cb012f300a3968fb62ff2b83538a7d6eddbf554",
-                "lastArchivedWAL": "000000060000000000000036",
-                "lastArchivedWALTime": "2026-10-04T13:32:24.271594Z",
+                "lastArchivedWAL": "00000004000000000000004D.00000028.backup",
+                "lastArchivedWALTime": "2026-10-18T02:52:30.697008Z",
                 "lastFailedWALTime": "-infinity",
-                "currentWAL": "000000060000000000000037",
-                "timeLineID": 6,
+                "currentWAL": "00000004000000000000004E",
+                "timeLineID": 4,
                 "replicationInfo": [
                     {
-                        "applicationName": "orders-db-1",
+                        "applicationName": "orders-db-3",
                         "state": "streaming",
-                        "receivedLsn": "0/373C9440",
-                        "writeLsn": "0/373C9440",
-                        "flushLsn": "0/373C9440",
-                        "replayLsn": "0/373C9440",
-                        "writeLag": "00:00:00",
-                        "flushLag": "00:00:00",
-                        "replayLag": "00:00:00",
+                        "receivedLsn": "0/4E110418",
+                        "writeLsn": "0/4E110418",
+                        "flushLsn": "0/4E110418",
+                        "replayLsn": "0/46003740",
+                        "writeLag": "00:00:00.000261",
+                        "flushLag": "00:00:00.003979",
+                        "replayLag": "01:47:14.73575",
                         "syncState": "async",
                         "syncPriority": "0"
                     },
                     {
-                        "applicationName": "orders-db-3",
+                        "applicationName": "orders-db-1",
                         "state": "streaming",
-                        "receivedLsn": "0/373C9440",
-                        "writeLsn": "0/373C9440",
-                        "flushLsn": "0/373C9440",
-                        "replayLsn": "0/37000110",
-                        "writeLag": "00:00:00.000406",
-                        "flushLag": "00:00:00.002523",
-                        "replayLag": "00:00:25.583329",
+                        "receivedLsn": "0/4E110418",
+                        "writeLsn": "0/4E110418",
+                        "flushLsn": "0/4E110418",
+                        "replayLsn": "0/4E110418",
+                        "writeLag": "00:00:00",
+                        "flushLag": "00:00:00",
+                        "replayLag": "00:00:00",
                         "syncState": "async",
                         "syncPriority": "0"
                     }
@@ -237,22 +275,22 @@
                         "slotType": "logical",
                         "datoid": "16385",
                         "database": "app",
-                        "catalogXmin": "1018",
-                        "restartLsn": "0/373C4278",
+                        "catalogXmin": "1004",
+                        "restartLsn": "0/4E1103E0",
                         "walStatus": "reserved",
                         "active": true
                     },
                     {
                         "slotName": "_cnpg_orders_db_3",
                         "slotType": "physical",
-                        "restartLsn": "0/373C9440",
+                        "restartLsn": "0/4E110418",
                         "walStatus": "reserved",
                         "active": true
                     },
                     {
                         "slotName": "_cnpg_orders_db_1",
                         "slotType": "physical",
-                        "restartLsn": "0/373C9440",
+                        "restartLsn": "0/4E110418",
                         "walStatus": "reserved",
                         "active": true
                     }
@@ -261,7 +299,7 @@
                 "instanceManagerVersion": "1.30.0",
                 "instanceArch": "amd64",
                 "isInstanceManagerUpgrading": false,
-                "sessionID": "ff2fe08f-0e4b-490f-afa0-a25b3aea9657",
+                "sessionID": "6565138e-c100-420d-a55d-66349b733b11",
                 "isPodReady": false
             }
         },
@@ -269,9 +307,9 @@
             "namespace": "databases",
             "pod": "orders-db-3",
             "status": {
-                "receivedLsn": "0/373C9440",
-                "replayLsn": "0/37000110",
-                "systemID": "7692560244499226653",
+                "receivedLsn": "0/4E110418",
+                "replayLsn": "0/46003740",
+                "systemID": "7692913736512081945",
                 "isPrimary": false,
                 "replayPaused": true,
                 "pendingRestart": false,
@@ -292,12 +330,48 @@
                 "loadedConfigurationHash": "f5367cc0aead051c84a6c06d5cb012f300a3968fb62ff2b83538a7d6eddbf554",
                 "lastArchivedWALTime": "-infinity",
                 "lastFailedWALTime": "-infinity",
-                "timeLineID": 6,
+                "timeLineID": 4,
                 "executableHash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13",
                 "instanceManagerVersion": "1.30.0",
                 "instanceArch": "amd64",
                 "isInstanceManagerUpgrading": false,
-                "sessionID": "f5b543a0-9303-4638-a5b7-826954f86915",
+                "sessionID": "48e46226-2f4f-4d7c-8c00-64cd3f30fa93",
+                "isPodReady": false
+            }
+        },
+        {
+            "namespace": "databases",
+            "pod": "orders-replica-db-1",
+            "status": {
+                "receivedLsn": "0/4E110418",
+                "replayLsn": "0/4E110418",
+                "systemID": "7692913736512081945",
+                "isPrimary": false,
+                "replayPaused": false,
+                "pendingRestart": false,
+                "pendingRestartForDecrease": false,
+                "isWalReceiverActive": true,
+                "isPgRewindRunning": false,
+                "mightBeUnavailable": false,
+                "node": "",
+                "pod": {
+                    "metadata": {
+                        "name": "orders-replica-db-1"
+                    },
+                    "spec": {
+                        "containers": null
+                    },
+                    "status": {}
+                },
+                "loadedConfigurationHash": "32022b6433119fbb7385706f9e6b5d35b5ae61e749763751758facd08ec33dc2",
+                "lastArchivedWALTime": "-infinity",
+                "lastFailedWALTime": "-infinity",
+                "timeLineID": 4,
+                "executableHash": "582a4e35fb052c39d3402794de5f6602a56cdc8cc4b92ce7abbe41a51a0bbc13",
+                "instanceManagerVersion": "1.30.0",
+                "instanceArch": "amd64",
+                "isInstanceManagerUpgrading": false,
+                "sessionID": "2f23b0ec-051f-4f5b-94a5-802173f34a99",
                 "isPodReady": false
             }
         }

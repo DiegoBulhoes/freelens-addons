@@ -1,0 +1,30 @@
+# A replica cluster of orders-db: its designated primary streams from orders-db's -rw service.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: orders-replica-db
+  namespace: databases
+spec:
+  instances: 1
+  storage: { size: 1Gi }
+  # pg_basebackup copies orders-db's tablespace, so it needs a volume here too.
+  tablespaces:
+    - name: archive
+      storage: { size: 1Gi }
+  bootstrap:
+    pg_basebackup:
+      source: orders-db
+  replica:
+    enabled: true
+    source: orders-db
+  externalClusters:
+    - name: orders-db
+      connectionParameters:
+        host: orders-db-rw.databases.svc
+        user: streaming_replica
+        sslmode: verify-full
+      sslKey: { name: orders-db-replication, key: tls.key }
+      sslCert: { name: orders-db-replication, key: tls.crt }
+      sslRootCert: { name: orders-db-ca, key: ca.crt }
+  resources:
+    requests: { cpu: 50m, memory: 128Mi }

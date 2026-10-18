@@ -6,13 +6,13 @@
       "kind": "ObjectStore",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "creationTimestamp": "2026-10-04T20:33:16Z",
         "generation": 1,
         "name": "backups",
         "namespace": "databases",
-        "resourceVersion": "575885",
+        "resourceVersion": "477886",
         "selfLink": "/apis/barmancloud.cnpg.io/v1/namespaces/databases/objectstores/backups",
-        "uid": "0a034202-e033-4986-a843-eb661c3b7266"
+        "uid": "407ead38-1490-417d-9e6f-71c6c7ad9a1f"
       },
       "spec": {
         "configuration": {
@@ -36,9 +36,11 @@
       },
       "status": {
         "serverRecoveryWindow": {
+          "audit-db": {},
           "orders-db": {
-            "firstRecoverabilityPoint": "2026-10-03T21:43:32Z",
-            "lastSuccessfulBackupTime": "2026-10-04T13:00:01Z"
+            "firstRecoverabilityPoint": "2026-10-12T20:00:00Z",
+            "lastFailedBackupTime": "2026-10-12T19:00:00Z",
+            "lastSuccessfulBackupTime": "2026-10-18T02:00:01Z"
           }
         }
       }
@@ -48,13 +50,13 @@
       "kind": "ObjectStore",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T21:42:01Z",
+        "creationTimestamp": "2026-10-04T20:33:16Z",
         "generation": 1,
         "name": "backups-wrong-keys",
         "namespace": "databases",
-        "resourceVersion": "485845",
+        "resourceVersion": "477871",
         "selfLink": "/apis/barmancloud.cnpg.io/v1/namespaces/databases/objectstores/backups-wrong-keys",
-        "uid": "237b5c00-7c7c-40e9-aabf-880ba9f6bf05"
+        "uid": "8feae55b-acc7-4f4c-b004-3ae13898a75e"
       },
       "spec": {
         "configuration": {
@@ -75,7 +77,7 @@
       "status": {
         "serverRecoveryWindow": {
           "billing-db": {
-            "lastFailedBackupTime": "2026-10-04T02:00:01Z"
+            "lastFailedBackupTime": "2026-10-18T02:00:00Z"
           }
         }
       }

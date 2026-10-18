@@ -12,5 +12,16 @@ wait_deploy cnpg-system barman-cloud
 
 echo "==> Postgres clusters, backups and poolers"
 apply samples.yaml
-kubectl -n databases wait cluster/orders-db cluster/billing-db cluster/inventory-db cluster/reports-db \
-  --for=condition=Ready --timeout=600s
+wait_deploy databases rustfs
+# Barman creates no bucket before it archives WAL; 409 means it is already there.
+create_bucket() {
+  kubectl -n databases exec deploy/rustfs -- sh -c 'curl -sS -o /dev/null -w "%{http_code}" -X PUT \
+    --aws-sigv4 aws:amz:us-east-1:s3 --user "$RUSTFS_ACCESS_KEY:$RUSTFS_SECRET_KEY" http://localhost:9000/backups' \
+    | grep -qE '^(200|409)$'
+}
+retry create_bucket
+# Once hibernated, reports-db's Ready condition is no longer updated.
+hibernated() { [[ "$(kubectl -n databases get cluster "$1" -o jsonpath='{.metadata.annotations.cnpg\.io/hibernation}')" == on ]]; }
+clusters=(orders-db billing-db inventory-db audit-db)
+hibernated reports-db || clusters+=(reports-db)
+kubectl -n databases wait "${clusters[@]/#/cluster/}" --for=condition=Ready --timeout=600s

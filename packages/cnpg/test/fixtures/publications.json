@@ -6,16 +6,16 @@
       "kind": "Publication",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-04T01:18:06Z",
+        "creationTimestamp": "2026-10-04T20:33:17Z",
         "finalizers": [
           "cnpg.io/deletePublication"
         ],
         "generation": 1,
         "name": "legacy-pub",
         "namespace": "databases",
-        "resourceVersion": "558253",
+        "resourceVersion": "435297",
         "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/publications/legacy-pub",
-        "uid": "95ad6a57-798e-4b8c-8e91-708a88561a67"
+        "uid": "51cf13af-b546-4b0d-a865-4e9cf748008c"
       },
       "spec": {
         "cluster": {
@@ -38,16 +38,16 @@
       "kind": "Publication",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T23:09:57Z",
+        "creationTimestamp": "2026-10-04T20:33:17Z",
         "finalizers": [
           "cnpg.io/deletePublication"
         ],
         "generation": 1,
         "name": "orders-pub",
         "namespace": "databases",
-        "resourceVersion": "442941",
+        "resourceVersion": "6783",
         "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/publications/orders-pub",
-        "uid": "336c14ad-4382-447d-8e76-a1af77ae159f"
+        "uid": "f660009c-bfbf-4582-836d-f17f447a922d"
       },
       "spec": {
         "cluster": {

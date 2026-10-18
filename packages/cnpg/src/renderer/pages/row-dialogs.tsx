@@ -1,33 +1,51 @@
 import { Renderer } from "@freelensapp/extensions";
 import { useState } from "react";
-
 import {
-  createBackup,
+  type BackupOptions,
+  backupCandidates,
+  backupMethods,
+  ownedBackups,
+  pickedBackup,
+  scheduleBackupManifest,
+  scheduleBackupRefusal,
+} from "../api/backups/backup-manifests";
+import { dropsInPostgres, type LogicalRow } from "../api/replication/logical";
+import { keyOf } from "../api/shared/navigation";
+import type { BackupLike, ClusterLike, PoolerLike, ScheduledBackupLike } from "../api/shared/types";
+import {
   deleteBackup,
   deleteLogical,
   deletePooler,
   deleteSchedule,
   patchPooler,
   patchSchedule,
-} from "../api/actions";
-import { dropsInPostgres, type LogicalRow } from "../api/logical";
-import {
-  type BackupOptions,
-  backupCandidates,
-  backupFromSchedule,
-  backupNow,
-  ownedBackups,
-  pausePatch,
-  scheduleBackupRefusal,
-  suspendPatch,
-} from "../api/operations";
-import type { BackupLike, ClusterLike, PoolerLike, ScheduledBackupLike } from "../api/types";
+} from "../api/writes/actions";
+import { pausePatch, suspendPatch } from "../api/writes/operations";
 import { BackupOptionsForm } from "../clusters/backup-form";
+import { notifyRefusal, startBackup } from "../clusters/dialogs";
 import { confirmWrite, notifyDone } from "../components/confirm";
+import type { DrawerAction } from "../components/object-drawer";
 
 const {
-  Component: { Notifications },
+  Component: { Icon, MenuItem, Notifications, Select },
 } = Renderer;
+
+export interface RowAction extends DrawerAction {
+  label: string;
+}
+
+export function RowMenu({ actions }: { actions: RowAction[] }) {
+  return (
+    <>
+      {actions.map((action) => (
+        <MenuItem key={action.label} onClick={action.onClick}>
+          <Icon material={action.icon} tooltip={action.title} />
+          <span className="title">{action.label}</span>
+        </MenuItem>
+      ))}
+    </>
+  );
+}
 
 export function confirmSuspend(schedule: ScheduledBackupLike, suspend: boolean): void {
   const name = schedule.getName();
@@ -85,12 +103,7 @@ export function confirmScheduleBackup(
   schedule: ScheduledBackupLike,
   clusters: ClusterLike[],
 ): void {
-  const refused = scheduleBackupRefusal(schedule, clusters);
-
-  if (refused) {
-    Notifications.error(refused);
-    return;
-  }
+  if (notifyRefusal(scheduleBackupRefusal(schedule, clusters))) return;
 
   const cluster = schedule.spec.cluster.name;
 
@@ -104,46 +117,62 @@ export function confirmScheduleBackup(
     label: "Back up",
     destructive: false,
     ok: async () => {
-      const manifest = backupFromSchedule(schedule, Date.now());
-
-      try {
-        await createBackup(manifest);
-        notifyDone(`Backup ${manifest.metadata.name} started for ${cluster}.`);
-      } catch (error) {
-        Notifications.checkedError(error, `Could not start a backup of ${cluster}`);
-      }
+      await startBackup(scheduleBackupManifest(schedule, Date.now()), cluster);
     },
   });
 }
 
-function ClusterPicker({ names, onPick }: { names: string[]; onPick: (name: string) => void }) {
-  const [picked, setPicked] = useState(names[0]);
+interface Choice {
+  value: string;
+  label: string;
+}
+
+/** Reports through a callback: the dialog copies plain-object props. */
+function BackupPickerForm({
+  candidates,
+  onChange,
+}: {
+  candidates: ClusterLike[];
+  onChange: (picked: string, options: BackupOptions) => void;
+}) {
+  const [picked, setPicked] = useState(keyOf(candidates[0] as ClusterLike));
+  const methodsOf = (key: string) => {
+    const cluster = candidates.find((each) => keyOf(each) === key);
+
+    return cluster ? backupMethods(cluster) : [];
+  };
 
   return (
-    <div className="CNPG-form__field">
-      <span>Cluster</span>
-      <div className="CNPG-filters">
-        {names.map((name) => (
-          <button
-            key={name}
-            type="button"
-            className="CNPG-filter"
-            aria-pressed={picked === name}
-            title={`Backs up ${name}`}
-            onClick={() => {
-              setPicked(name);
-              onPick(name);
-            }}
-          >
-            {name}
-          </button>
-        ))}
+    <>
+      <div className="CNPG-form__field">
+        <span>Cluster</span>
+        <Select<string, Choice, false>
+          id="cnpg-backup-cluster-select"
+          options={candidates.map((cluster) => ({
+            value: keyOf(cluster),
+            label: keyOf(cluster),
+          }))}
+          value={picked}
+          themeName="lens"
+          menuPlacement="auto"
+          onChange={(option) => {
+            if (!option) return;
+            setPicked(option.value);
+            onChange(option.value, { method: methodsOf(option.value)[0] });
+          }}
+        />
       </div>
-    </div>
+      {/* Keyed so the form starts over from the picked cluster's own methods. */}
+      <BackupOptionsForm
+        key={picked}
+        methods={methodsOf(picked)}
+        onChange={(next) => onChange(picked, next)}
+      />
+    </>
   );
 }
 
-export function confirmBackupOf(clusters: ClusterLike[]): void {
+export function confirmBackupPicker(clusters: ClusterLike[]): void {
   const candidates = backupCandidates(clusters);
 
   if (candidates.length === 0) {
@@ -151,43 +180,30 @@ export function confirmBackupOf(clusters: ClusterLike[]): void {
     return;
   }
 
-  const keyOf = (cluster: ClusterLike) => `${cluster.getNs()}/${cluster.getName()}`;
-  let picked = keyOf(candidates[0] as ClusterLike);
-  let options: BackupOptions = {};
+  const first = candidates[0] as ClusterLike;
+  let picked = keyOf(first);
+  let options: BackupOptions = { method: backupMethods(first)[0] };
 
   confirmWrite({
     question: "Back up which cluster now?",
     detail: "Creates a Backup with the cluster's own method, as kubectl cnpg backup does.",
     form: (
-      <>
-        <ClusterPicker
-          names={candidates.map(keyOf)}
-          onPick={(name) => {
-            picked = name;
-          }}
-        />
-        <BackupOptionsForm
-          methods={[]}
-          onChange={(next) => {
-            options = { target: next.target };
-          }}
-        />
-      </>
+      <BackupPickerForm
+        candidates={candidates}
+        onChange={(key, next) => {
+          picked = key;
+          options = next;
+        }}
+      />
     ),
     label: "Back up",
     destructive: false,
     ok: async () => {
-      const cluster = candidates.find((each) => keyOf(each) === picked);
-      const manifest = cluster ? backupNow(cluster, Date.now(), options) : undefined;
+      const backup = pickedBackup(candidates, picked, options, Date.now());
 
-      if (!cluster || !manifest) return;
+      if (!backup) return;
 
-      try {
-        await createBackup(manifest);
-        notifyDone(`Backup ${manifest.metadata.name} started for ${cluster.getName()}.`);
-      } catch (error) {
-        Notifications.checkedError(error, `Could not start a backup of ${cluster.getName()}`);
-      }
+      await startBackup(backup.manifest, backup.cluster.getName());
     },
   });
 }
@@ -256,4 +272,85 @@ export function confirmDeleteLogical(row: LogicalRow): void {
       : `Only the object goes. The ${kind} ${row.name} stays in Postgres, as its reclaim policy is retain.`,
     () => deleteLogical(row.object, row.kind),
   );
+}
+
+export function scheduleActions(
+  schedule: ScheduledBackupLike,
+  clusters: ClusterLike[],
+  backups: BackupLike[],
+): RowAction[] {
+  return [
+    {
+      icon: "backup",
+      label: "Back up now",
+      title: "Starts a backup now, as this schedule would. Asks first",
+      onClick: () => confirmScheduleBackup(schedule, clusters),
+    },
+    schedule.spec.suspend
+      ? {
+          icon: "play_arrow",
+          label: "Start",
+          title: "Starts backups on its cron again. Asks first",
+          onClick: () => confirmSuspend(schedule, false),
+        }
+      : {
+          icon: "pause",
+          label: "Suspend",
+          title: "Stops it starting backups until started again. Asks first",
+          onClick: () => confirmSuspend(schedule, true),
+        },
+    {
+      icon: "delete",
+      label: "Delete",
+      title: "Deletes the schedule. Asks you to type its name",
+      onClick: () => confirmDeleteSchedule(schedule, backups),
+    },
+  ];
+}
+
+export function poolerActions(pooler: PoolerLike): RowAction[] {
+  return [
+    pooler.spec.pgbouncer?.paused
+      ? {
+          icon: "play_arrow",
+          label: "Start",
+          title: "Lets queries through again. Asks first",
+          onClick: () => confirmPause(pooler, false),
+        }
+      : {
+          icon: "pause",
+          label: "Pause",
+          title: "Holds new queries, keeping connections open. Asks first",
+          onClick: () => confirmPause(pooler, true),
+        },
+    {
+      icon: "delete",
+      label: "Delete",
+      title: "Deletes the pooler. Asks you to type its name",
+      onClick: () => confirmDeletePooler(pooler),
+    },
+  ];
+}
+
+export function backupActions(backup: BackupLike): RowAction[] {
+  return [
+    {
+      icon: "delete",
+      label: "Delete",
+      title: "Deletes the Backup object; its files stay. Asks you to type its name",
+      onClick: () => confirmDeleteBackup(backup),
+    },
+  ];
+}
+
+export function logicalActions(row: LogicalRow): RowAction[] {
+  return [
+    {
+      icon: "delete",
+      label: "Delete",
+      title:
+        "Deletes the object; Postgres keeps it unless its reclaim policy is delete. Asks you to type its name",
+      onClick: () => confirmDeleteLogical(row),
+    },
+  ];
 }

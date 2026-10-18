@@ -1,52 +1,59 @@
 import { Renderer } from "@freelensapp/extensions";
 import { useState } from "react";
-
+import {
+  type BackupManifest,
+  type BackupOptions,
+  backupManifest,
+  backupMethods,
+} from "../api/backups/backup-manifests";
+import { type Maintenance, maintenanceOf, maintenancePatch } from "../api/clusters/cluster-status";
+import { healthyReplicaNames, replicaNames } from "../api/clusters/clusters";
+import type { ClusterLike } from "../api/shared/types";
 import {
   createBackup,
   destroyInstance,
   patchCluster,
-  patchClusterStatus,
+  promote,
   restartInstance,
   restartReplicas,
-} from "../api/actions";
-import { type Maintenance, maintenanceOf, maintenancePatch } from "../api/cluster-status";
-import { replicaNames, replicasOf } from "../api/clusters";
+} from "../api/writes/actions";
 import {
-  type BackupOptions,
-  backupMethods,
-  backupNow,
+  clusterActionRefusal,
   hibernationPatch,
   instanceRefusal,
-  promotePatch,
-  refusal,
   reloadPatch,
   restartPatch,
   restartReplicasRefusal,
-} from "../api/operations";
-import type { ClusterLike } from "../api/types";
+} from "../api/writes/operations";
 import { confirmWrite, notifyDone } from "../components/confirm";
 import { BackupOptionsForm } from "./backup-form";
+import { ChoiceButtons } from "./choice-buttons";
 
 const {
   Component: { Notifications },
 } = Renderer;
 
-type Action = Parameters<typeof refusal>[1];
-
-function refused(cluster: ClusterLike, action: Action): boolean {
-  const reason = refusal(cluster, action);
-
+export function notifyRefusal(reason: string | undefined): boolean {
   if (reason) Notifications.error(reason);
 
   return Boolean(reason);
 }
 
-function failed(error: unknown, what: string) {
+function notifyFailure(error: unknown, what: string) {
   Notifications.checkedError(error, `Could not ${what}`);
 }
 
+export async function startBackup(manifest: BackupManifest, cluster: string): Promise<void> {
+  try {
+    await createBackup(manifest);
+    notifyDone(`Backup ${manifest.metadata.name} started for ${cluster}.`);
+  } catch (error) {
+    notifyFailure(error, `start a backup of ${cluster}`);
+  }
+}
+
 export function confirmBackup(cluster: ClusterLike): void {
-  if (refused(cluster, "backup")) return;
+  if (notifyRefusal(clusterActionRefusal(cluster, "backup"))) return;
 
   const name = cluster.getName();
   let options: BackupOptions = { method: backupMethods(cluster)[0] };
@@ -69,22 +76,17 @@ export function confirmBackup(cluster: ClusterLike): void {
     label: "Back up",
     destructive: false,
     ok: async () => {
-      const manifest = backupNow(cluster, Date.now(), options);
+      const manifest = backupManifest(cluster, Date.now(), options);
 
       if (!manifest) return;
 
-      try {
-        await createBackup(manifest);
-        notifyDone(`Backup ${manifest.metadata.name} started for ${name}.`);
-      } catch (error) {
-        failed(error, `start a backup of ${name}`);
-      }
+      await startBackup(manifest, name);
     },
   });
 }
 
 export function confirmRestart(cluster: ClusterLike): void {
-  if (refused(cluster, "restart")) return;
+  if (notifyRefusal(clusterActionRefusal(cluster, "restart"))) return;
 
   const name = cluster.getName();
 
@@ -104,14 +106,14 @@ export function confirmRestart(cluster: ClusterLike): void {
         await patchCluster(cluster, restartPatch(Date.now()));
         notifyDone(`Rolling restart requested for ${name}.`);
       } catch (error) {
-        failed(error, `restart ${name}`);
+        notifyFailure(error, `restart ${name}`);
       }
     },
   });
 }
 
 export function confirmReload(cluster: ClusterLike): void {
-  if (refused(cluster, "reload")) return;
+  if (notifyRefusal(clusterActionRefusal(cluster, "reload"))) return;
 
   const name = cluster.getName();
 
@@ -129,7 +131,7 @@ export function confirmReload(cluster: ClusterLike): void {
         await patchCluster(cluster, reloadPatch(Date.now()));
         notifyDone(`Reload requested for ${name}.`);
       } catch (error) {
-        failed(error, `reload ${name}`);
+        notifyFailure(error, `reload ${name}`);
       }
     },
   });
@@ -141,32 +143,27 @@ function TargetForm({ replicas, onPick }: { replicas: string[]; onPick: (name: s
   return (
     <div className="CNPG-form__field">
       <span>Replica to promote</span>
-      <div className="CNPG-filters">
-        {replicas.map((replica) => (
-          <button
-            key={replica}
-            type="button"
-            className="CNPG-filter"
-            aria-pressed={picked === replica}
-            title={`Makes ${replica} the primary`}
-            onClick={() => {
-              setPicked(replica);
-              onPick(replica);
-            }}
-          >
-            {replica}
-          </button>
-        ))}
-      </div>
+      <ChoiceButtons
+        options={replicas.map((replica) => ({
+          value: replica,
+          label: replica,
+          title: `Makes ${replica} the primary`,
+        }))}
+        value={picked}
+        onPick={(replica) => {
+          setPicked(replica);
+          onPick(replica);
+        }}
+      />
     </div>
   );
 }
 
 export function confirmPromote(cluster: ClusterLike): void {
-  if (refused(cluster, "promote")) return;
+  if (notifyRefusal(clusterActionRefusal(cluster, "promote"))) return;
 
   const name = cluster.getName();
-  const replicas = replicasOf(cluster);
+  const replicas = healthyReplicaNames(cluster);
   let target = replicas[0] ?? "";
 
   confirmWrite({
@@ -189,10 +186,10 @@ export function confirmPromote(cluster: ClusterLike): void {
     typed: () => name,
     ok: async () => {
       try {
-        await patchClusterStatus(cluster, promotePatch(target));
+        await promote(cluster, target);
         notifyDone(`Switchover of ${name} to ${target} started.`);
       } catch (error) {
-        failed(error, `switch ${name} over`);
+        notifyFailure(error, `switch ${name} over`);
       }
     },
   });
@@ -203,7 +200,7 @@ async function setHibernation(cluster: ClusterLike, on: boolean) {
 }
 
 export function confirmHibernate(cluster: ClusterLike): void {
-  if (refused(cluster, "hibernate")) return;
+  if (notifyRefusal(clusterActionRefusal(cluster, "hibernate"))) return;
 
   const name = cluster.getName();
 
@@ -226,14 +223,14 @@ export function confirmHibernate(cluster: ClusterLike): void {
           run: () => setHibernation(cluster, false),
         });
       } catch (error) {
-        failed(error, `hibernate ${name}`);
+        notifyFailure(error, `hibernate ${name}`);
       }
     },
   });
 }
 
 export function confirmWake(cluster: ClusterLike): void {
-  if (refused(cluster, "wake")) return;
+  if (notifyRefusal(clusterActionRefusal(cluster, "wake"))) return;
 
   const name = cluster.getName();
 
@@ -254,19 +251,14 @@ export function confirmWake(cluster: ClusterLike): void {
           run: () => setHibernation(cluster, true),
         });
       } catch (error) {
-        failed(error, `wake ${name}`);
+        notifyFailure(error, `wake ${name}`);
       }
     },
   });
 }
 
 export function confirmRestartReplicas(cluster: ClusterLike): void {
-  const refused = restartReplicasRefusal(cluster);
-
-  if (refused) {
-    Notifications.error(refused);
-    return;
-  }
+  if (notifyRefusal(restartReplicasRefusal(cluster))) return;
 
   const name = cluster.getName();
   const replicas = replicaNames(cluster);
@@ -292,19 +284,14 @@ export function confirmRestartReplicas(cluster: ClusterLike): void {
         );
         notifyDone(`Restarted every replica of ${name}.`);
       } catch (error) {
-        failed(error, `restart every replica of ${name}`);
+        notifyFailure(error, `restart every replica of ${name}`);
       }
     },
   });
 }
 
 export function confirmRestartInstance(cluster: ClusterLike, instance: string): void {
-  const refusedFor = instanceRefusal(cluster, instance, "restart");
-
-  if (refusedFor) {
-    Notifications.error(refusedFor);
-    return;
-  }
+  if (notifyRefusal(instanceRefusal(cluster, instance, "restart"))) return;
 
   const primary = instance === cluster.status?.currentPrimary;
 
@@ -325,19 +312,14 @@ export function confirmRestartInstance(cluster: ClusterLike, instance: string): 
         await restartInstance(cluster, instance);
         notifyDone(`Restart of ${instance} requested.`);
       } catch (error) {
-        failed(error, `restart ${instance}`);
+        notifyFailure(error, `restart ${instance}`);
       }
     },
   });
 }
 
 export function confirmDestroyInstance(cluster: ClusterLike, instance: string): void {
-  const refusedFor = instanceRefusal(cluster, instance, "destroy");
-
-  if (refusedFor) {
-    Notifications.error(refusedFor);
-    return;
-  }
+  if (notifyRefusal(instanceRefusal(cluster, instance, "destroy"))) return;
 
   confirmWrite({
     question: (
@@ -355,7 +337,7 @@ export function confirmDestroyInstance(cluster: ClusterLike, instance: string): 
         await destroyInstance(cluster, instance);
         notifyDone(`Destroyed ${instance}. The operator will create a replacement.`);
       } catch (error) {
-        failed(error, `destroy ${instance}`);
+        notifyFailure(error, `destroy ${instance}`);
       }
     },
   });
@@ -373,8 +355,8 @@ function MaintenanceForm({
   return (
     <div className="CNPG-form__field">
       <span>When a node with an instance goes away</span>
-      <div className="CNPG-filters">
-        {[
+      <ChoiceButtons
+        options={[
           {
             value: true,
             label: "Wait and reuse its volume",
@@ -385,22 +367,13 @@ function MaintenanceForm({
             label: "Rebuild elsewhere",
             title: "Drops the volume and clones a new replica on another node",
           },
-        ].map((option) => (
-          <button
-            key={option.label}
-            type="button"
-            className="CNPG-filter"
-            aria-pressed={reuse === option.value}
-            title={option.title}
-            onClick={() => {
-              setReuse(option.value);
-              onChange({ ...initial, reusePVC: option.value });
-            }}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
+        ]}
+        value={reuse}
+        onPick={(value) => {
+          setReuse(value);
+          onChange({ ...initial, reusePVC: value });
+        }}
+      />
     </div>
   );
 }
@@ -436,7 +409,7 @@ export function confirmMaintenance(cluster: ClusterLike): void {
           run: () => patchCluster(cluster, maintenancePatch(current)),
         });
       } catch (error) {
-        failed(error, `change the maintenance window of ${name}`);
+        notifyFailure(error, `change the maintenance window of ${name}`);
       }
     },
   });

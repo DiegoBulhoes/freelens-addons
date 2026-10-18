@@ -6,13 +6,13 @@
       "kind": "Pooler",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-04T01:18:06Z",
+        "creationTimestamp": "2026-10-04T20:33:17Z",
         "generation": 1,
         "name": "legacy-rw",
         "namespace": "databases",
-        "resourceVersion": "475649",
+        "resourceVersion": "4555",
         "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/poolers/legacy-rw",
-        "uid": "130bbfa6-2161-4496-ba13-c650531cd59d"
+        "uid": "2dcfcaae-71ef-4359-aeff-32bb00d73772"
       },
       "spec": {
         "cluster": {
@@ -35,13 +35,13 @@
       "kind": "Pooler",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T21:42:01Z",
-        "generation": 1,
+        "creationTimestamp": "2026-10-04T20:33:17Z",
+        "generation": 3,
         "name": "orders-ro",
         "namespace": "databases",
-        "resourceVersion": "419650",
+        "resourceVersion": "20124",
         "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/poolers/orders-ro",
-        "uid": "cdeeeca6-5532-48a7-afdc-ea58e87165c5"
+        "uid": "57ba1537-c095-404f-b7c9-557bf88864cf"
       },
       "spec": {
         "cluster": {
@@ -61,21 +61,21 @@
         "secrets": {
           "clientCA": {
             "name": "orders-db-ca",
-            "version": "419317"
+            "version": "4487"
           },
           "clientTLS": {
             "name": "orders-db-server",
-            "version": "419321"
+            "version": "4503"
           },
           "pgBouncerSecrets": {
             "authQuery": {
               "name": "orders-db-pooler",
-              "version": "419523"
+              "version": "4792"
             }
           },
           "serverCA": {
             "name": "orders-db-ca",
-            "version": "419317"
+            "version": "4487"
           },
           "serverTLS": {}
         }
@@ -86,13 +86,13 @@
       "kind": "Pooler",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T21:42:01Z",
-        "generation": 5,
+        "creationTimestamp": "2026-10-04T20:33:16Z",
+        "generation": 1,
         "name": "orders-rw",
         "namespace": "databases",
-        "resourceVersion": "473580",
+        "resourceVersion": "4909",
         "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/poolers/orders-rw",
-        "uid": "4f912e56-7976-4101-ad6a-ae6b33325883"
+        "uid": "71c55663-a74d-4718-a496-cc1ce9322d75"
       },
       "spec": {
         "cluster": {
@@ -112,21 +112,72 @@
         "secrets": {
           "clientCA": {
             "name": "orders-db-ca",
-            "version": "419317"
+            "version": "4487"
           },
           "clientTLS": {
             "name": "orders-db-server",
-            "version": "419321"
+            "version": "4503"
           },
           "pgBouncerSecrets": {
             "authQuery": {
               "name": "orders-db-pooler",
-              "version": "419523"
+              "version": "4792"
             }
           },
           "serverCA": {
             "name": "orders-db-ca",
-            "version": "419317"
+            "version": "4487"
+          },
+          "serverTLS": {}
+        }
+      }
+    },
+    {
+      "apiVersion": "postgresql.cnpg.io/v1",
+      "kind": "Pooler",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T19:27:33Z",
+        "generation": 1,
+        "name": "reports-rw",
+        "namespace": "databases",
+        "resourceVersion": "342789",
+        "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/poolers/reports-rw",
+        "uid": "48510c0f-eb88-4bd9-b8b2-5f2728562658"
+      },
+      "spec": {
+        "cluster": {
+          "name": "reports-db"
+        },
+        "instances": 1,
+        "pgbouncer": {
+          "paused": false,
+          "poolMode": "transaction"
+        },
+        "type": "rw"
+      },
+      "status": {
+        "image": "ghcr.io/cloudnative-pg/pgbouncer:1.25.1",
+        "instances": 1,
+        "phase": "active",
+        "secrets": {
+          "clientCA": {
+            "name": "reports-db-ca",
+            "version": "4500"
+          },
+          "clientTLS": {
+            "name": "reports-db-server",
+            "version": "4507"
+          },
+          "pgBouncerSecrets": {
+            "authQuery": {
+              "name": "reports-db-pooler",
+              "version": "342747"
+            }
+          },
+          "serverCA": {
+            "name": "reports-db-ca",
+            "version": "4500"
           },
           "serverTLS": {}
         }

@@ -1,4 +1,4 @@
-import type { Verdict } from "../api/clusters";
+import type { Verdict } from "../api/shared/verdict";
 import { Status } from "./status";
 
 /** A state, why, and barman's cause when there is one: visible, not only in a tooltip. */

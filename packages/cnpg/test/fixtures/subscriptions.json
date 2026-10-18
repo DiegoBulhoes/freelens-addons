@@ -6,16 +6,16 @@
       "kind": "Subscription",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T23:09:57Z",
+        "creationTimestamp": "2026-10-04T20:33:17Z",
         "finalizers": [
           "cnpg.io/deleteSubscription"
         ],
         "generation": 1,
         "name": "billing-sub",
         "namespace": "databases",
-        "resourceVersion": "442947",
+        "resourceVersion": "6135",
         "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/subscriptions/billing-sub",
-        "uid": "91394f95-95ba-4cc3-a96f-7c317afb1ec1"
+        "uid": "7c02b5fd-dbf3-4675-a7f0-5ad052ed9eb5"
       },
       "spec": {
         "cluster": {
@@ -37,16 +37,16 @@
       "kind": "Subscription",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-03T23:09:57Z",
+        "creationTimestamp": "2026-10-04T20:33:17Z",
         "finalizers": [
           "cnpg.io/deleteSubscription"
         ],
         "generation": 1,
         "name": "orders-sub",
         "namespace": "databases",
-        "resourceVersion": "443312",
+        "resourceVersion": "6776",
         "selfLink": "/apis/postgresql.cnpg.io/v1/namespaces/databases/subscriptions/orders-sub",
-        "uid": "81c25d5b-09b4-45ec-a783-20f978b2205b"
+        "uid": "3e00478a-ae55-4e7a-b675-8373d06dea30"
       },
       "spec": {
         "cluster": {

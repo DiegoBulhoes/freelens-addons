@@ -31,6 +31,7 @@ metadata:
   namespace: databases
 spec:
   replicas: 1
+  strategy: { type: Recreate }
   selector:
     matchLabels: { app: rustfs }
   template:
@@ -51,10 +52,21 @@ spec:
             - { name: data, mountPath: /data }
             - { name: logs, mountPath: /logs }
       volumes:
+        # On a volume: an emptyDir is lost when the k3s container is recreated, and the bucket with it.
         - name: data
-          emptyDir: {}
+          persistentVolumeClaim: { claimName: rustfs-data }
         - name: logs
           emptyDir: {}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rustfs-data
+  namespace: databases
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests: { storage: 1Gi }
 ---
 apiVersion: v1
 kind: Service
@@ -150,6 +162,18 @@ spec:
   method: plugin
   pluginConfiguration: { name: barman-cloud.cloudnative-pg.io }
 ---
+# Its cluster does not exist.
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: legacy-nightly
+  namespace: databases
+spec:
+  schedule: "0 0 1 * * *"
+  cluster: { name: legacy-db }
+  method: plugin
+  pluginConfiguration: { name: barman-cloud.cloudnative-pg.io }
+---
 # Archiving fails: the object store refuses its keys, so backups fail too.
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
@@ -213,6 +237,22 @@ spec:
   resources:
     requests: { cpu: 50m, memory: 128Mi }
 ---
+# Archives WAL, but nothing schedules a backup and none was ever taken.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: audit-db
+  namespace: databases
+spec:
+  instances: 1
+  storage: { size: 1Gi }
+  resources:
+    requests: { cpu: 50m, memory: 128Mi }
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters: { barmanObjectName: backups }
+---
 # Never starts: its storage class does not exist.
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
@@ -261,6 +301,19 @@ spec:
   type: rw
   pgbouncer:
     poolMode: session
+---
+# In front of reports-db, which the seed hibernates.
+apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+metadata:
+  name: reports-rw
+  namespace: databases
+spec:
+  cluster: { name: reports-db }
+  instances: 1
+  type: rw
+  pgbouncer:
+    poolMode: transaction
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Publication
