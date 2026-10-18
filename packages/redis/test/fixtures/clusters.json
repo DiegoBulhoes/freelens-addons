@@ -6,16 +6,16 @@
       "kind": "RedisCluster",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-04T17:01:13Z",
+        "creationTimestamp": "2026-10-04T20:41:29Z",
         "finalizers": [
           "redisClusterFinalizer"
         ],
         "generation": 2,
         "name": "shards",
         "namespace": "redis",
-        "resourceVersion": "605911",
+        "resourceVersion": "90317",
         "selfLink": "/apis/redis.redis.opstreelabs.in/v1beta2/namespaces/redis/redisclusters/shards",
-        "uid": "8181ddf7-85c7-46bc-bc6b-2e919f168b67"
+        "uid": "e9ab211b-acf9-4994-8d2a-050801a1654b"
       },
       "spec": {
         "clusterSize": 3,

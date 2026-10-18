@@ -5,10 +5,9 @@ description: "The idea behind the Redis extension and its features"
 
 # Redis extension
 
-Shows which Redis objects run by the [OT-Container-Kit redis-operator](https://github.com/OT-CONTAINER-KIT/redis-operator)
-need attention, which pod is master, and what fails a replication over. The operator records no
-status for a standalone or a sentinel; the extension reads their pods, volumes and events, and puts
-the cause beside each one.
+Shows which objects of the [OT-Container-Kit redis-operator](https://github.com/OT-CONTAINER-KIT/redis-operator)
+need attention, which pod is master, and what a failover needs. The operator records no status for a
+standalone or a sentinel, so the extension judges them from their pods, volumes and events.
 
 ## Contents
 
@@ -23,21 +22,15 @@ the cause beside each one.
 ```mermaid
 flowchart LR
   O["Overview<br/><i>what needs a person</i>"]
-  R["Replications"]
-  C["Clusters"]
-  S["Standalones"]
-  T["Sentinels"]
+  L["Replications, Clusters,<br/>Standalones, Sentinels"]
   D["Drawer<br/><i>pods, connection, actions</i>"]
+  H["Host's lists<br/><i>Pods, Nodes, PVCs, Secrets</i>"]
 
-  O -->|a row, a card| R
-  O --> C
-  O --> S
-  O --> T
-  R --> D
-  C --> D
-  S --> D
-  T --> D
-  T -.->|watches| R
+  O -->|a card| L
+  O -->|a row| D
+  L -->|a row| D
+  D -->|a sentinel or the replication it watches| D
+  D -->|a pod, its node, a volume, a Secret| H
 ```
 
 The group appears only where one of the operator's CRDs exists. Every page has the host's namespace
@@ -47,37 +40,42 @@ selector.
 
 | Fact | Source |
 |------|--------|
-| Master and replicas | The operator's `redis-role` label on each pod; it follows a failover about half a minute late |
-| A replication's recorded master | `status.masterNode`; while it and the labels disagree, the replication reads "Changing master" |
-| A cluster's state | `status.state` and `status.reason`, and the pods of its leader and follower StatefulSets |
-| Why a pod is not up | Its volume, its scheduling, its containers |
-| Who issued a TLS certificate | cert-manager's annotations on the Secret; Secrets are listed as metadata only, never their values |
+| Master and replicas | The operator's `redis-role` label on each pod; it lags a failover by about half a minute |
+| Changing master | `status.masterNode` disagrees with the labels |
+| Writes refused | "Master down" when the labelled master is not ready; "No master" when no pod is labelled |
+| A sentinel's state | "Watches nothing" when its replication does not exist; "Below quorum" when fewer sentinels are ready than its quorum |
+| A cluster's state | `status.state` and `status.reason`; "Failed" when the operator says so, any other non-Ready state shown as is |
+| A cluster stuck | Every pod ready for ten minutes while the state is not Ready; a pod back on a new IP leaves a ghost node |
+| Unknown | Pods or volumes not read yet, or refused in that namespace; no write is judged on pods not read |
+| TLS issuer | cert-manager's annotations on the Secret, read as metadata only, never its values |
+| Recent warnings | The object's namespace events, read while its drawer is open |
+| Where the operator runs | Found by its `redis-operator` image, in any namespace |
 
 ## Features
 
 | Page | Features |
 |------|----------|
-| Overview | Counts by kind, down or failed, degraded, replications no sentinel watches; what needs attention, worst first, with its cause |
-| Replications, Clusters, Standalones, Sentinels | State and cause, ready pods, master and sentinels (replications), the replication watched (sentinels), TLS and whether cert-manager issued it, image tag; searched and sorted; a row opens the drawer |
-| Drawer | State, master, sentinels or the replication watched, quorum, the operator's reason (clusters), image, password Secret, TLS with its Secret and issuer, connection URLs to copy (without the password); pods with role, group, node, volume, uptime, restarts and cause; recent warnings without the readiness-probe noise; commands to copy |
+| Overview | Counts by kind, down or failed, degraded; what needs attention, worst first; the replications no sentinel watches, since nothing promotes a replica if their master goes |
+| Lists | State and cause, ready pods, master, sentinels, TLS issuer, image tag; filters, search and sort |
+| Drawer | State, master, quorum, password and TLS Secrets, connection URLs (without the password); pods with role, node, volume, uptime, restarts and cause, plus pods left from a scale-down, marked and not counted; recent warnings, newest first; commands to copy |
 
 ## Actions
 
-Every write asks first; the dialog closes on OK and the write reports by notification.
+Every write asks first and reports by notification.
 
 | Action | Note |
 |--------|------|
-| redis-cli | Opens a terminal tab running redis-cli in a pod, with cluster mode, the sentinel port and TLS where they apply. The password is the pod's own `REDIS_PASSWORD`, expanded inside the pod: neither Freelens nor the terminal reads the Secret |
-| Fail over | For a replication a sentinel watches: asks a ready sentinel to promote a replica, as `SENTINEL FAILOVER` does. Refused without a sentinel, a master or a ready replica. Asks for the name |
-| Scale | Replications, clusters (at least three leaders) and sentinels. Warns of the pods removed, of resharding, of an even or short sentinel quorum, and of a lone pod. Undo puts the size back |
-| Restart a pod | Deletes it; it comes back on its volume. Refused while another pod is down. Asks for the pod's name. Not offered for clusters |
-| Restart all | Replications, standalones and sentinels: replicas one at a time, then the master, each waiting for the set to settle (pods ready, roles relabelled) and re-reading it first. Asks for the name; ticked rows can be restarted together |
-| No cluster restart | A restarted cluster pod comes back on a new IP; redis-operator v0.26.0 neither rejoins it nor forgets the old node, and the cluster stays in Bootstrap. The drawer says so; a ticked cluster is skipped |
+| redis-cli | A terminal tab in a pod, with cluster mode, sentinel port and TLS as needed; the password stays inside the pod |
+| Fail over | For a watched replication: a ready sentinel promotes a replica. Asks for the name |
+| Scale | Replications, clusters (three leaders minimum) and sentinels; the dialog says what the new size removes or breaks. Undo puts it back |
+| Restart a pod | Deletes it; it comes back on its volume. A ready pod is refused while another is down. Asks for the pod's name |
+| Restart all | From the drawer for replications and sentinels with more than one pod; from ticked rows for replications, standalones and sentinels. One pod at a time, a replication's master last, each waiting for the set to settle. The drawer asks for the name, ticked rows for "confirm" |
+| No cluster restart | redis-operator v0.26.0 does not rejoin a pod back on a new IP; the cluster stays in Bootstrap |
 | Logs | A pod's log in a log tab |
-| Copy commands | `kubectl describe`, the operator's log, the password from its Secret |
+| Copy commands | `kubectl describe`, the operator's log, `cluster nodes`, the password from its Secret |
 
 ## What it will not do
 
 - Back up or restore. The operator has neither.
 - Delete a Redis object or its volumes.
-- Edit ACLs or change passwords. That writes credentials.
+- Edit ACLs or change passwords.

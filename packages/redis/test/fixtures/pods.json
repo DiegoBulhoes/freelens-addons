@@ -9,7 +9,7 @@
           "redis.opstreelabs.in": "true",
           "redis.opstreelabs.instance": "broken-cache"
         },
-        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "creationTimestamp": "2026-10-04T20:41:30Z",
         "generateName": "broken-cache-",
         "generation": 1,
         "labels": {
@@ -29,12 +29,12 @@
             "controller": true,
             "kind": "StatefulSet",
             "name": "broken-cache",
-            "uid": "813c7bb1-687e-45e3-9670-8de850a81109"
+            "uid": "c8069765-f260-45c3-a4f0-604ae8157ca2"
           }
         ],
-        "resourceVersion": "608735",
+        "resourceVersion": "480051",
         "selfLink": "/api/v1/namespaces/redis/pods/broken-cache-0",
-        "uid": "b8c12be5-8130-4a0e-a833-c0f0ae922eb9"
+        "uid": "ae7c2daf-c014-4372-9a07-1f7d1e9df70a"
       },
       "spec": {
         "containers": [
@@ -92,7 +92,7 @@
             "volumeMounts": [
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-wdr75",
+                "name": "kube-api-access-xbc5m",
                 "readOnly": true
               }
             ]
@@ -134,7 +134,7 @@
             "name": "config"
           },
           {
-            "name": "kube-api-access-wdr75",
+            "name": "kube-api-access-xbc5m",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -177,21 +177,21 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:14Z",
+            "lastTransitionTime": "2026-10-18T00:08:13Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:14Z",
+            "lastTransitionTime": "2026-10-04T20:41:30Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:14Z",
+            "lastTransitionTime": "2026-10-04T20:41:30Z",
             "message": "containers with unready status: [broken-cache]",
             "observedGeneration": 1,
             "reason": "ContainersNotReady",
@@ -200,7 +200,7 @@
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:14Z",
+            "lastTransitionTime": "2026-10-04T20:41:30Z",
             "message": "containers with unready status: [broken-cache]",
             "observedGeneration": 1,
             "reason": "ContainersNotReady",
@@ -209,7 +209,7 @@
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:14Z",
+            "lastTransitionTime": "2026-10-04T20:41:30Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -233,7 +233,7 @@
             "volumeMounts": [
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-wdr75",
+                "name": "kube-api-access-xbc5m",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -256,7 +256,7 @@
         ],
         "qosClass": "BestEffort",
         "resources": {},
-        "startTime": "2026-10-04T17:01:14Z"
+        "startTime": "2026-10-04T20:41:30Z"
       }
     },
     {
@@ -267,14 +267,14 @@
           "redis.opstreelabs.in": "true",
           "redis.opstreelabs.instance": "cache"
         },
-        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "creationTimestamp": "2026-10-04T21:39:54Z",
         "generateName": "cache-",
         "generation": 1,
         "labels": {
           "app": "cache",
           "apps.kubernetes.io/pod-index": "0",
           "controller-revision-hash": "cache-fbcfc464d",
-          "redis-role": "slave",
+          "redis-role": "master",
           "redis_setup_type": "replication",
           "role": "replication",
           "statefulset.kubernetes.io/pod-name": "cache-0"
@@ -288,12 +288,12 @@
             "controller": true,
             "kind": "StatefulSet",
             "name": "cache",
-            "uid": "cbd31980-d274-492e-a28b-88df8ce3fd25"
+            "uid": "d64cb130-83e3-4d55-ac7e-91ab11b7eb53"
           }
         ],
-        "resourceVersion": "607121",
+        "resourceVersion": "434396",
         "selfLink": "/api/v1/namespaces/redis/pods/cache-0",
-        "uid": "b457ea38-4777-4711-93a7-512262212e61"
+        "uid": "13ce1ba3-dff6-4064-bd18-751e12748552"
       },
       "spec": {
         "containers": [
@@ -373,7 +373,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-szhc7",
+                "name": "kube-api-access-xcrth",
                 "readOnly": true
               }
             ]
@@ -421,7 +421,7 @@
             "name": "config"
           },
           {
-            "name": "kube-api-access-szhc7",
+            "name": "kube-api-access-xcrth",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -468,35 +468,35 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:23Z",
+            "lastTransitionTime": "2026-10-18T00:08:18Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:23Z",
+            "lastTransitionTime": "2026-10-04T21:39:54Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:29Z",
+            "lastTransitionTime": "2026-10-18T00:08:18Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:29Z",
+            "lastTransitionTime": "2026-10-18T00:08:18Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:23Z",
+            "lastTransitionTime": "2026-10-04T21:39:54Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -508,10 +508,18 @@
               "cpu": "20m",
               "memory": "32Mi"
             },
-            "containerID": "containerd://cf70800f3bb731f4680dc69c5f8129fdb91dac06764a24a8da8f8aeafba821eb",
+            "containerID": "containerd://d5e76f9c31c3031a3260b3e1f07f4c3fa3425cbe8b65810627c0d211b4264aee",
             "image": "quay.io/opstree/redis:v8.2.9",
             "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://72fe9935215335548c6d2ca152f475e451700542742d5ca2e8cc2988ea10f0a2",
+                "exitCode": 255,
+                "finishedAt": "2026-10-18T00:08:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-17T17:17:09Z"
+              }
+            },
             "name": "cache",
             "ready": true,
             "resources": {
@@ -520,11 +528,11 @@
                 "memory": "32Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 12,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-04T17:01:29Z"
+                "startedAt": "2026-10-18T00:08:18Z"
               }
             },
             "user": {
@@ -543,7 +551,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-szhc7",
+                "name": "kube-api-access-xcrth",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -570,7 +578,7 @@
             "memory": "32Mi"
           }
         },
-        "startTime": "2026-10-04T17:01:23Z"
+        "startTime": "2026-10-04T21:39:54Z"
       }
     },
     {
@@ -581,14 +589,14 @@
           "redis.opstreelabs.in": "true",
           "redis.opstreelabs.instance": "cache"
         },
-        "creationTimestamp": "2026-10-04T17:01:29Z",
+        "creationTimestamp": "2026-10-04T21:40:50Z",
         "generateName": "cache-",
         "generation": 1,
         "labels": {
           "app": "cache",
           "apps.kubernetes.io/pod-index": "1",
           "controller-revision-hash": "cache-fbcfc464d",
-          "redis-role": "master",
+          "redis-role": "slave",
           "redis_setup_type": "replication",
           "role": "replication",
           "statefulset.kubernetes.io/pod-name": "cache-1"
@@ -602,12 +610,12 @@
             "controller": true,
             "kind": "StatefulSet",
             "name": "cache",
-            "uid": "cbd31980-d274-492e-a28b-88df8ce3fd25"
+            "uid": "d64cb130-83e3-4d55-ac7e-91ab11b7eb53"
           }
         ],
-        "resourceVersion": "607126",
+        "resourceVersion": "434287",
         "selfLink": "/api/v1/namespaces/redis/pods/cache-1",
-        "uid": "1323c63d-c088-4a5f-992f-2bdaab5cbc58"
+        "uid": "06858226-7769-484c-96c8-886821ad6136"
       },
       "spec": {
         "containers": [
@@ -687,7 +695,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-vnjvm",
+                "name": "kube-api-access-xlscd",
                 "readOnly": true
               }
             ]
@@ -735,7 +743,7 @@
             "name": "config"
           },
           {
-            "name": "kube-api-access-vnjvm",
+            "name": "kube-api-access-xlscd",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -782,35 +790,35 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:32Z",
+            "lastTransitionTime": "2026-10-18T00:08:18Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:32Z",
+            "lastTransitionTime": "2026-10-04T21:40:50Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:32Z",
+            "lastTransitionTime": "2026-10-18T00:08:18Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:32Z",
+            "lastTransitionTime": "2026-10-18T00:08:18Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:32Z",
+            "lastTransitionTime": "2026-10-04T21:40:50Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -822,10 +830,18 @@
               "cpu": "20m",
               "memory": "32Mi"
             },
-            "containerID": "containerd://8bc1287e86077779026fd83eae0a197c797ff9d41c7c00a5ddc72ba49d6e5364",
+            "containerID": "containerd://c5a253a7349c8be05a718169f9663bf9e621f8688113c316f3d224eb16e056db",
             "image": "quay.io/opstree/redis:v8.2.9",
             "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://ba063192573d2d724c4da854b3bd183fa738990b39c914869f8109ec03290eff",
+                "exitCode": 255,
+                "finishedAt": "2026-10-18T00:08:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-17T17:17:08Z"
+              }
+            },
             "name": "cache",
             "ready": true,
             "resources": {
@@ -834,11 +850,11 @@
                 "memory": "32Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 12,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-04T17:01:32Z"
+                "startedAt": "2026-10-18T00:08:18Z"
               }
             },
             "user": {
@@ -857,7 +873,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-vnjvm",
+                "name": "kube-api-access-xlscd",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -884,7 +900,7 @@
             "memory": "32Mi"
           }
         },
-        "startTime": "2026-10-04T17:01:32Z"
+        "startTime": "2026-10-04T21:40:50Z"
       }
     },
     {
@@ -895,7 +911,7 @@
           "redis.opstreelabs.in": "true",
           "redis.opstreelabs.instance": "cache"
         },
-        "creationTimestamp": "2026-10-04T17:01:32Z",
+        "creationTimestamp": "2026-10-04T21:40:10Z",
         "generateName": "cache-",
         "generation": 1,
         "labels": {
@@ -916,12 +932,12 @@
             "controller": true,
             "kind": "StatefulSet",
             "name": "cache",
-            "uid": "cbd31980-d274-492e-a28b-88df8ce3fd25"
+            "uid": "d64cb130-83e3-4d55-ac7e-91ab11b7eb53"
           }
         ],
-        "resourceVersion": "605252",
+        "resourceVersion": "434497",
         "selfLink": "/api/v1/namespaces/redis/pods/cache-2",
-        "uid": "2facf327-9041-4dbc-8e10-f2306e37de0d"
+        "uid": "763bd24a-3c38-46bb-a337-c824e054b7fb"
       },
       "spec": {
         "containers": [
@@ -1001,7 +1017,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-qmck2",
+                "name": "kube-api-access-cw9j9",
                 "readOnly": true
               }
             ]
@@ -1049,7 +1065,7 @@
             "name": "config"
           },
           {
-            "name": "kube-api-access-qmck2",
+            "name": "kube-api-access-cw9j9",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -1096,35 +1112,35 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:37Z",
+            "lastTransitionTime": "2026-10-18T00:08:18Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:36Z",
+            "lastTransitionTime": "2026-10-04T21:40:10Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:37Z",
+            "lastTransitionTime": "2026-10-18T00:08:19Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:37Z",
+            "lastTransitionTime": "2026-10-18T00:08:19Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:36Z",
+            "lastTransitionTime": "2026-10-04T21:40:10Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -1136,10 +1152,18 @@
               "cpu": "20m",
               "memory": "32Mi"
             },
-            "containerID": "containerd://9018a707a5a5e8358630e368d2825e6c27cda52f9b0c4a3d40699a307ab6d29e",
+            "containerID": "containerd://2c24c8e1efedfcb34fffcfda4f64d666b8fbc7fc321abc81a99133149e9ce08f",
             "image": "quay.io/opstree/redis:v8.2.9",
             "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://69029e85f984ff1f64fadd49906855e8685b1bca23bbf577302fc417db2b96bc",
+                "exitCode": 255,
+                "finishedAt": "2026-10-18T00:08:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-17T17:17:09Z"
+              }
+            },
             "name": "cache",
             "ready": true,
             "resources": {
@@ -1148,11 +1172,11 @@
                 "memory": "32Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 12,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-04T17:01:37Z"
+                "startedAt": "2026-10-18T00:08:19Z"
               }
             },
             "user": {
@@ -1171,7 +1195,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-qmck2",
+                "name": "kube-api-access-cw9j9",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -1198,7 +1222,7 @@
             "memory": "32Mi"
           }
         },
-        "startTime": "2026-10-04T17:01:36Z"
+        "startTime": "2026-10-04T21:40:10Z"
       }
     },
     {
@@ -1209,7 +1233,7 @@
           "redis.opstreelabs.in": "true",
           "redis.opstreelabs.instance": "cache-sentinel"
         },
-        "creationTimestamp": "2026-10-04T17:01:53Z",
+        "creationTimestamp": "2026-10-12T14:04:19Z",
         "generateName": "cache-sentinel-sentinel-",
         "generation": 1,
         "labels": {
@@ -1229,12 +1253,12 @@
             "controller": true,
             "kind": "StatefulSet",
             "name": "cache-sentinel-sentinel",
-            "uid": "c158947f-f2ba-4f96-b4af-ab294fd692fc"
+            "uid": "bf4251cc-83c4-4607-ae77-21c793e4013e"
           }
         ],
-        "resourceVersion": "604877",
+        "resourceVersion": "434241",
         "selfLink": "/api/v1/namespaces/redis/pods/cache-sentinel-sentinel-0",
-        "uid": "14b7569f-f9d0-4c19-bb50-539fc5b55a64"
+        "uid": "3a5f4109-dc92-4170-b5ee-39ab3dac0ec1"
       },
       "spec": {
         "containers": [
@@ -1351,7 +1375,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-z68ml",
+                "name": "kube-api-access-lc4v2",
                 "readOnly": true
               }
             ]
@@ -1393,7 +1417,7 @@
             "name": "config"
           },
           {
-            "name": "kube-api-access-z68ml",
+            "name": "kube-api-access-lc4v2",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -1440,35 +1464,35 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:54Z",
+            "lastTransitionTime": "2026-10-18T00:08:16Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:53Z",
+            "lastTransitionTime": "2026-10-12T14:04:19Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:02:02Z",
+            "lastTransitionTime": "2026-10-18T00:08:16Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:02:02Z",
+            "lastTransitionTime": "2026-10-18T00:08:16Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:53Z",
+            "lastTransitionTime": "2026-10-12T14:04:19Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -1480,10 +1504,18 @@
               "cpu": "20m",
               "memory": "32Mi"
             },
-            "containerID": "containerd://248aebce2566b3c4589785cc11b7deb3103cb4890187bd918a21ab8113774e40",
+            "containerID": "containerd://e73fe8a3110fbbc98eab3f0a06a80595e505c78d0c8b9aa66b2602f75843a074",
             "image": "quay.io/opstree/redis-sentinel:v8.2.9",
             "imageID": "quay.io/opstree/redis-sentinel@sha256:38c615472337f56fd6db64d388aa4565af7046e14fb3f36f2893d8295ac0ffc3",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://0e3361566390b6a94d61ea8be75cdb42215c8fc47b4b4eb29b4cbf8e2d8cb3f0",
+                "exitCode": 1,
+                "finishedAt": "2026-10-17T20:07:03Z",
+                "reason": "Error",
+                "startedAt": "2026-10-17T20:07:03Z"
+              }
+            },
             "name": "cache-sentinel-sentinel",
             "ready": true,
             "resources": {
@@ -1492,11 +1524,11 @@
                 "memory": "32Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 105,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-04T17:02:02Z"
+                "startedAt": "2026-10-18T00:08:16Z"
               }
             },
             "user": {
@@ -1515,7 +1547,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-z68ml",
+                "name": "kube-api-access-lc4v2",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -1542,7 +1574,7 @@
             "memory": "32Mi"
           }
         },
-        "startTime": "2026-10-04T17:01:53Z"
+        "startTime": "2026-10-12T14:04:19Z"
       }
     },
     {
@@ -1553,7 +1585,7 @@
           "redis.opstreelabs.in": "true",
           "redis.opstreelabs.instance": "cache-sentinel"
         },
-        "creationTimestamp": "2026-10-04T17:02:02Z",
+        "creationTimestamp": "2026-10-12T14:04:24Z",
         "generateName": "cache-sentinel-sentinel-",
         "generation": 1,
         "labels": {
@@ -1573,12 +1605,12 @@
             "controller": true,
             "kind": "StatefulSet",
             "name": "cache-sentinel-sentinel",
-            "uid": "c158947f-f2ba-4f96-b4af-ab294fd692fc"
+            "uid": "bf4251cc-83c4-4607-ae77-21c793e4013e"
           }
         ],
-        "resourceVersion": "604900",
+        "resourceVersion": "434095",
         "selfLink": "/api/v1/namespaces/redis/pods/cache-sentinel-sentinel-1",
-        "uid": "9adfdcf5-0fc5-496b-a554-65bf1baa143f"
+        "uid": "d9a2ba91-ce73-4891-bb6c-8a942759f56d"
       },
       "spec": {
         "containers": [
@@ -1695,7 +1727,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-fc2l6",
+                "name": "kube-api-access-q6xlv",
                 "readOnly": true
               }
             ]
@@ -1737,7 +1769,7 @@
             "name": "config"
           },
           {
-            "name": "kube-api-access-fc2l6",
+            "name": "kube-api-access-q6xlv",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -1784,35 +1816,35 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:02:03Z",
+            "lastTransitionTime": "2026-10-18T00:08:16Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:02:02Z",
+            "lastTransitionTime": "2026-10-12T14:04:24Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:02:03Z",
+            "lastTransitionTime": "2026-10-18T00:08:16Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:02:03Z",
+            "lastTransitionTime": "2026-10-18T00:08:16Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:02:02Z",
+            "lastTransitionTime": "2026-10-12T14:04:24Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -1824,10 +1856,18 @@
               "cpu": "20m",
               "memory": "32Mi"
             },
-            "containerID": "containerd://dd69fc8e5e8a749cc385248fd7fe77695bebdca9ff97e215236e095dcd7e9393",
+            "containerID": "containerd://e772e59caf990e18d2fac2d5c072f420e8ea791caf60a387741b447f169a0481",
             "image": "quay.io/opstree/redis-sentinel:v8.2.9",
             "imageID": "quay.io/opstree/redis-sentinel@sha256:38c615472337f56fd6db64d388aa4565af7046e14fb3f36f2893d8295ac0ffc3",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://50ee75dd624cb42e481cd2edd07d758c377fc05d8ea2dcbb0b431a4fdee570f7",
+                "exitCode": 1,
+                "finishedAt": "2026-10-17T20:02:53Z",
+                "reason": "Error",
+                "startedAt": "2026-10-17T20:02:53Z"
+              }
+            },
             "name": "cache-sentinel-sentinel",
             "ready": true,
             "resources": {
@@ -1836,11 +1876,11 @@
                 "memory": "32Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 104,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-04T17:02:03Z"
+                "startedAt": "2026-10-18T00:08:16Z"
               }
             },
             "user": {
@@ -1859,7 +1899,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-fc2l6",
+                "name": "kube-api-access-q6xlv",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -1886,7 +1926,7 @@
             "memory": "32Mi"
           }
         },
-        "startTime": "2026-10-04T17:02:02Z"
+        "startTime": "2026-10-12T14:04:24Z"
       }
     },
     {
@@ -1897,7 +1937,7 @@
           "redis.opstreelabs.in": "true",
           "redis.opstreelabs.instance": "cache-sentinel"
         },
-        "creationTimestamp": "2026-10-04T17:02:03Z",
+        "creationTimestamp": "2026-10-12T14:04:24Z",
         "generateName": "cache-sentinel-sentinel-",
         "generation": 1,
         "labels": {
@@ -1917,12 +1957,12 @@
             "controller": true,
             "kind": "StatefulSet",
             "name": "cache-sentinel-sentinel",
-            "uid": "c158947f-f2ba-4f96-b4af-ab294fd692fc"
+            "uid": "bf4251cc-83c4-4607-ae77-21c793e4013e"
           }
         ],
-        "resourceVersion": "604901",
+        "resourceVersion": "434028",
         "selfLink": "/api/v1/namespaces/redis/pods/cache-sentinel-sentinel-2",
-        "uid": "3c4f5477-3026-48e3-9032-b8f24b7f2b87"
+        "uid": "808e6513-8861-4b67-b12d-6d3553a61cb0"
       },
       "spec": {
         "containers": [
@@ -2039,7 +2079,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-9wrmz",
+                "name": "kube-api-access-pnf2b",
                 "readOnly": true
               }
             ]
@@ -2081,7 +2121,7 @@
             "name": "config"
           },
           {
-            "name": "kube-api-access-9wrmz",
+            "name": "kube-api-access-pnf2b",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -2128,35 +2168,35 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:02:03Z",
+            "lastTransitionTime": "2026-10-18T00:08:15Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:02:03Z",
+            "lastTransitionTime": "2026-10-12T14:04:24Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:02:03Z",
+            "lastTransitionTime": "2026-10-18T00:08:16Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:02:03Z",
+            "lastTransitionTime": "2026-10-18T00:08:16Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:02:03Z",
+            "lastTransitionTime": "2026-10-12T14:04:24Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -2168,10 +2208,18 @@
               "cpu": "20m",
               "memory": "32Mi"
             },
-            "containerID": "containerd://4460e7633fd81ba69ed4eac5ff5a8072c95e22c5640403b384856f98e401b160",
+            "containerID": "containerd://da52fb0f280dbf059a0c017d65238c8788e31b91429102201e67850434567516",
             "image": "quay.io/opstree/redis-sentinel:v8.2.9",
             "imageID": "quay.io/opstree/redis-sentinel@sha256:38c615472337f56fd6db64d388aa4565af7046e14fb3f36f2893d8295ac0ffc3",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://657f8276eb91e1912501d4b5774cd4188a5ed71613464b2e5ccede358a2e8055",
+                "exitCode": 1,
+                "finishedAt": "2026-10-17T20:04:15Z",
+                "reason": "Error",
+                "startedAt": "2026-10-17T20:04:15Z"
+              }
+            },
             "name": "cache-sentinel-sentinel",
             "ready": true,
             "resources": {
@@ -2180,11 +2228,11 @@
                 "memory": "32Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 104,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-04T17:02:03Z"
+                "startedAt": "2026-10-18T00:08:16Z"
               }
             },
             "user": {
@@ -2203,7 +2251,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-9wrmz",
+                "name": "kube-api-access-pnf2b",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -2230,7 +2278,7 @@
             "memory": "32Mi"
           }
         },
-        "startTime": "2026-10-04T17:02:03Z"
+        "startTime": "2026-10-12T14:04:24Z"
       }
     },
     {
@@ -2241,7 +2289,7 @@
           "redis.opstreelabs.in": "true",
           "redis.opstreelabs.instance": "legacy-store"
         },
-        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "creationTimestamp": "2026-10-04T20:41:30Z",
         "generateName": "legacy-store-",
         "generation": 1,
         "labels": {
@@ -2261,12 +2309,12 @@
             "controller": true,
             "kind": "StatefulSet",
             "name": "legacy-store",
-            "uid": "f96b017d-0975-4974-b056-d4f504acdb74"
+            "uid": "f2216ba4-f002-4f3f-b129-7c61bc96e9e7"
           }
         ],
-        "resourceVersion": "603340",
+        "resourceVersion": "11509",
         "selfLink": "/api/v1/namespaces/redis/pods/legacy-store-0",
-        "uid": "2b2a5ecb-ffd5-4e52-ac3c-28253165a333"
+        "uid": "f24bddf5-83ca-44df-94e5-66524952aa8d"
       },
       "spec": {
         "containers": [
@@ -2332,7 +2380,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-xq274",
+                "name": "kube-api-access-9ntlb",
                 "readOnly": true
               }
             ]
@@ -2379,7 +2427,7 @@
             "name": "config"
           },
           {
-            "name": "kube-api-access-xq274",
+            "name": "kube-api-access-9ntlb",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -2422,7 +2470,7 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:14Z",
+            "lastTransitionTime": "2026-10-04T20:41:30Z",
             "message": "0/1 nodes are available: pod has unbound immediate PersistentVolumeClaims. not found",
             "observedGeneration": 1,
             "reason": "Unschedulable",
@@ -2442,7 +2490,7 @@
           "redis.opstreelabs.in": "true",
           "redis.opstreelabs.instance": "sessions"
         },
-        "creationTimestamp": "2026-10-04T17:04:10Z",
+        "creationTimestamp": "2026-10-04T21:41:36Z",
         "generateName": "sessions-",
         "generation": 1,
         "labels": {
@@ -2462,12 +2510,12 @@
             "controller": true,
             "kind": "StatefulSet",
             "name": "sessions",
-            "uid": "c6dce01b-234b-4401-9b47-cbae5e49e4f7"
+            "uid": "18dca90a-3819-4e01-875c-1f79536d9969"
           }
         ],
-        "resourceVersion": "606347",
+        "resourceVersion": "434480",
         "selfLink": "/api/v1/namespaces/redis/pods/sessions-0",
-        "uid": "7f963a5b-cd2b-42ec-8441-29437c902276"
+        "uid": "91ebf3ff-0d55-44ba-bc73-ac2eff318001"
       },
       "spec": {
         "containers": [
@@ -2572,7 +2620,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-7jvsw",
+                "name": "kube-api-access-x2fpx",
                 "readOnly": true
               }
             ]
@@ -2627,7 +2675,7 @@
             }
           },
           {
-            "name": "kube-api-access-7jvsw",
+            "name": "kube-api-access-x2fpx",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -2674,35 +2722,35 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:04:10Z",
+            "lastTransitionTime": "2026-10-18T00:08:18Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:04:10Z",
+            "lastTransitionTime": "2026-10-04T21:41:36Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:04:10Z",
+            "lastTransitionTime": "2026-10-18T00:08:18Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:04:10Z",
+            "lastTransitionTime": "2026-10-18T00:08:18Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:04:10Z",
+            "lastTransitionTime": "2026-10-04T21:41:36Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -2714,10 +2762,18 @@
               "cpu": "20m",
               "memory": "32Mi"
             },
-            "containerID": "containerd://a7ed4e99d172032bc467d8a4ae00f51c4ff39da1d56056f391585216fc887cb8",
+            "containerID": "containerd://f08067a3c38216d0bdc1077d3535dcf22fa458cbe803bcc91c6be83b5ad00ba2",
             "image": "quay.io/opstree/redis:v8.2.9",
             "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://bceb3446dbc7e236a87b038e57f31cff3a265d8e4b70cc97334bac321da12ae8",
+                "exitCode": 255,
+                "finishedAt": "2026-10-18T00:08:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-17T17:17:09Z"
+              }
+            },
             "name": "sessions",
             "ready": true,
             "resources": {
@@ -2726,11 +2782,11 @@
                 "memory": "32Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 12,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-04T17:04:10Z"
+                "startedAt": "2026-10-18T00:08:18Z"
               }
             },
             "user": {
@@ -2755,7 +2811,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-7jvsw",
+                "name": "kube-api-access-x2fpx",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -2782,7 +2838,7 @@
             "memory": "32Mi"
           }
         },
-        "startTime": "2026-10-04T17:04:10Z"
+        "startTime": "2026-10-04T21:41:36Z"
       }
     },
     {
@@ -2793,7 +2849,7 @@
           "redis.opstreelabs.in": "true",
           "redis.opstreelabs.instance": "shards"
         },
-        "creationTimestamp": "2026-10-04T17:01:43Z",
+        "creationTimestamp": "2026-10-04T20:42:14Z",
         "generateName": "shards-follower-",
         "generation": 1,
         "labels": {
@@ -2815,12 +2871,12 @@
             "controller": true,
             "kind": "StatefulSet",
             "name": "shards-follower",
-            "uid": "76d9c8c4-4fc3-4186-a3b1-594345cea643"
+            "uid": "542ebd4e-e04a-4dbe-9001-f1062d041fb2"
           }
         ],
-        "resourceVersion": "605930",
+        "resourceVersion": "434185",
         "selfLink": "/api/v1/namespaces/redis/pods/shards-follower-0",
-        "uid": "2754dbd6-d919-4845-be5f-90a5d70b363c"
+        "uid": "bd8eba3d-71c6-4ded-b9f1-d0d1d8a6facf"
       },
       "spec": {
         "containers": [
@@ -2915,7 +2971,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-msgvl",
+                "name": "kube-api-access-bj7bb",
                 "readOnly": true
               }
             ]
@@ -2963,7 +3019,7 @@
             "name": "config"
           },
           {
-            "name": "kube-api-access-msgvl",
+            "name": "kube-api-access-bj7bb",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -3010,35 +3066,35 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:46Z",
+            "lastTransitionTime": "2026-10-18T00:08:15Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:46Z",
+            "lastTransitionTime": "2026-10-04T20:42:18Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:46Z",
+            "lastTransitionTime": "2026-10-18T00:08:15Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:46Z",
+            "lastTransitionTime": "2026-10-18T00:08:15Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:46Z",
+            "lastTransitionTime": "2026-10-04T20:42:18Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -3050,10 +3106,18 @@
               "cpu": "20m",
               "memory": "32Mi"
             },
-            "containerID": "containerd://c9e1ffffa801e6289df17625304535bb17450c7bb29e16c09a655a0c4666d7ae",
+            "containerID": "containerd://97e2d7c68fe58d9b3c131f4c55a0a2a1da60b0c4f1ba4dcd3c4fa043ba5b1a8c",
             "image": "quay.io/opstree/redis:v8.2.9",
             "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://9748ae5811999c6f9fe93d660be18abedeba688ea98e3c3a6aa275c76b30e112",
+                "exitCode": 255,
+                "finishedAt": "2026-10-18T00:08:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-17T17:17:09Z"
+              }
+            },
             "name": "shards-follower",
             "ready": true,
             "resources": {
@@ -3062,11 +3126,11 @@
                 "memory": "32Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 12,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-04T17:01:46Z"
+                "startedAt": "2026-10-18T00:08:15Z"
               }
             },
             "user": {
@@ -3085,7 +3149,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-msgvl",
+                "name": "kube-api-access-bj7bb",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -3112,7 +3176,7 @@
             "memory": "32Mi"
           }
         },
-        "startTime": "2026-10-04T17:01:46Z"
+        "startTime": "2026-10-04T20:42:18Z"
       }
     },
     {
@@ -3123,7 +3187,7 @@
           "redis.opstreelabs.in": "true",
           "redis.opstreelabs.instance": "shards"
         },
-        "creationTimestamp": "2026-10-04T17:01:46Z",
+        "creationTimestamp": "2026-10-04T20:42:19Z",
         "generateName": "shards-follower-",
         "generation": 1,
         "labels": {
@@ -3145,12 +3209,12 @@
             "controller": true,
             "kind": "StatefulSet",
             "name": "shards-follower",
-            "uid": "76d9c8c4-4fc3-4186-a3b1-594345cea643"
+            "uid": "542ebd4e-e04a-4dbe-9001-f1062d041fb2"
           }
         ],
-        "resourceVersion": "605932",
+        "resourceVersion": "434196",
         "selfLink": "/api/v1/namespaces/redis/pods/shards-follower-1",
-        "uid": "9daa7d53-2c61-42c7-aafd-e4bf939f2389"
+        "uid": "26bdafd6-ddbc-42a6-aafe-3d180538c606"
       },
       "spec": {
         "containers": [
@@ -3245,7 +3309,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-fgl7s",
+                "name": "kube-api-access-fwn7p",
                 "readOnly": true
               }
             ]
@@ -3293,7 +3357,7 @@
             "name": "config"
           },
           {
-            "name": "kube-api-access-fgl7s",
+            "name": "kube-api-access-fwn7p",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -3340,35 +3404,35 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:51Z",
+            "lastTransitionTime": "2026-10-18T00:08:14Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:50Z",
+            "lastTransitionTime": "2026-10-04T20:42:23Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:52Z",
+            "lastTransitionTime": "2026-10-18T00:08:15Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:52Z",
+            "lastTransitionTime": "2026-10-18T00:08:15Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:50Z",
+            "lastTransitionTime": "2026-10-04T20:42:23Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -3380,10 +3444,18 @@
               "cpu": "20m",
               "memory": "32Mi"
             },
-            "containerID": "containerd://f846990556262fc3474334b1d31615ea1c464c9305c36605ce881c5d87111419",
+            "containerID": "containerd://8e9d3ce19d578478369038239952b3fce73a11ceea96f248a05f37d88179f00c",
             "image": "quay.io/opstree/redis:v8.2.9",
             "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://ffc1309f064469b62d7740f5d739e88792ab43d1564af5f02da15f4a28677e01",
+                "exitCode": 255,
+                "finishedAt": "2026-10-18T00:08:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-17T17:17:09Z"
+              }
+            },
             "name": "shards-follower",
             "ready": true,
             "resources": {
@@ -3392,11 +3464,11 @@
                 "memory": "32Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 12,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-04T17:01:51Z"
+                "startedAt": "2026-10-18T00:08:15Z"
               }
             },
             "user": {
@@ -3415,7 +3487,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-fgl7s",
+                "name": "kube-api-access-fwn7p",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -3442,7 +3514,7 @@
             "memory": "32Mi"
           }
         },
-        "startTime": "2026-10-04T17:01:50Z"
+        "startTime": "2026-10-04T20:42:23Z"
       }
     },
     {
@@ -3453,7 +3525,7 @@
           "redis.opstreelabs.in": "true",
           "redis.opstreelabs.instance": "shards"
         },
-        "creationTimestamp": "2026-10-04T17:01:52Z",
+        "creationTimestamp": "2026-10-04T20:42:24Z",
         "generateName": "shards-follower-",
         "generation": 1,
         "labels": {
@@ -3475,12 +3547,12 @@
             "controller": true,
             "kind": "StatefulSet",
             "name": "shards-follower",
-            "uid": "76d9c8c4-4fc3-4186-a3b1-594345cea643"
+            "uid": "542ebd4e-e04a-4dbe-9001-f1062d041fb2"
           }
         ],
-        "resourceVersion": "605934",
+        "resourceVersion": "434571",
         "selfLink": "/api/v1/namespaces/redis/pods/shards-follower-2",
-        "uid": "2a473ed2-8db7-4c6c-a099-5c1953a0f3ee"
+        "uid": "f31ce382-6d0d-4fce-99e5-0195f08ba9ac"
       },
       "spec": {
         "containers": [
@@ -3575,7 +3647,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-rkcr7",
+                "name": "kube-api-access-5hr46",
                 "readOnly": true
               }
             ]
@@ -3623,7 +3695,7 @@
             "name": "config"
           },
           {
-            "name": "kube-api-access-rkcr7",
+            "name": "kube-api-access-5hr46",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -3670,35 +3742,35 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:56Z",
+            "lastTransitionTime": "2026-10-18T00:08:18Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:56Z",
+            "lastTransitionTime": "2026-10-04T20:42:29Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:57Z",
+            "lastTransitionTime": "2026-10-18T00:08:20Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:57Z",
+            "lastTransitionTime": "2026-10-18T00:08:20Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:56Z",
+            "lastTransitionTime": "2026-10-04T20:42:29Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -3710,10 +3782,18 @@
               "cpu": "20m",
               "memory": "32Mi"
             },
-            "containerID": "containerd://624d591b052bf7c9d04d4ed222a871b320e851c1d37659adda7c8157260abd78",
+            "containerID": "containerd://c2836520e29eb3bd484b388b73ee97e45ecbbe13de285d1f113b063bd42e06a3",
             "image": "quay.io/opstree/redis:v8.2.9",
             "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://b1ce9bad53774521c600e80ce649b5033f762a3139561d998ced58bbda7ca961",
+                "exitCode": 255,
+                "finishedAt": "2026-10-18T00:08:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-17T17:17:09Z"
+              }
+            },
             "name": "shards-follower",
             "ready": true,
             "resources": {
@@ -3722,11 +3802,11 @@
                 "memory": "32Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 12,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-04T17:01:56Z"
+                "startedAt": "2026-10-18T00:08:19Z"
               }
             },
             "user": {
@@ -3745,7 +3825,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-rkcr7",
+                "name": "kube-api-access-5hr46",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -3772,7 +3852,7 @@
             "memory": "32Mi"
           }
         },
-        "startTime": "2026-10-04T17:01:56Z"
+        "startTime": "2026-10-04T20:42:29Z"
       }
     },
     {
@@ -3783,7 +3863,7 @@
           "redis.opstreelabs.in": "true",
           "redis.opstreelabs.instance": "shards"
         },
-        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "creationTimestamp": "2026-10-04T20:41:29Z",
         "generateName": "shards-leader-",
         "generation": 1,
         "labels": {
@@ -3805,12 +3885,12 @@
             "controller": true,
             "kind": "StatefulSet",
             "name": "shards-leader",
-            "uid": "cd13b0a5-8484-414b-93ff-ba64f760c693"
+            "uid": "4ee4b8f4-bb8b-4874-862e-6950e16fce6d"
           }
         ],
-        "resourceVersion": "605916",
+        "resourceVersion": "434138",
         "selfLink": "/api/v1/namespaces/redis/pods/shards-leader-0",
-        "uid": "c0b70aa5-af41-497d-a246-32bc84e7a907"
+        "uid": "23202963-72f3-4480-8d7c-57098507a076"
       },
       "spec": {
         "containers": [
@@ -3905,7 +3985,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-t7tp9",
+                "name": "kube-api-access-nvxbp",
                 "readOnly": true
               }
             ]
@@ -3953,7 +4033,7 @@
             "name": "config"
           },
           {
-            "name": "kube-api-access-t7tp9",
+            "name": "kube-api-access-nvxbp",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -4000,35 +4080,35 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:23Z",
+            "lastTransitionTime": "2026-10-18T00:08:14Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:23Z",
+            "lastTransitionTime": "2026-10-04T20:41:33Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:29Z",
+            "lastTransitionTime": "2026-10-18T00:08:16Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:29Z",
+            "lastTransitionTime": "2026-10-18T00:08:16Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:23Z",
+            "lastTransitionTime": "2026-10-04T20:41:33Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -4040,10 +4120,18 @@
               "cpu": "20m",
               "memory": "32Mi"
             },
-            "containerID": "containerd://d85b376d63d30cf74bbc0ab569546b2fdbddf3bf51f6d6a3d3595d9af3392472",
+            "containerID": "containerd://b1b2b2a17d74c543ed05dd45bf969318ebbec1ebb05a92b4627b99def91fcb39",
             "image": "quay.io/opstree/redis:v8.2.9",
             "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://fba8e2d594960cca4e2a1636832cecb2ab02ef97b2bea2ff96eb84e2d5df6c99",
+                "exitCode": 255,
+                "finishedAt": "2026-10-18T00:08:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-17T17:17:09Z"
+              }
+            },
             "name": "shards-leader",
             "ready": true,
             "resources": {
@@ -4052,11 +4140,11 @@
                 "memory": "32Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 12,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-04T17:01:29Z"
+                "startedAt": "2026-10-18T00:08:14Z"
               }
             },
             "user": {
@@ -4075,7 +4163,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-t7tp9",
+                "name": "kube-api-access-nvxbp",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -4102,7 +4190,7 @@
             "memory": "32Mi"
           }
         },
-        "startTime": "2026-10-04T17:01:23Z"
+        "startTime": "2026-10-04T20:41:33Z"
       }
     },
     {
@@ -4113,7 +4201,7 @@
           "redis.opstreelabs.in": "true",
           "redis.opstreelabs.instance": "shards"
         },
-        "creationTimestamp": "2026-10-04T17:01:29Z",
+        "creationTimestamp": "2026-10-04T20:41:48Z",
         "generateName": "shards-leader-",
         "generation": 1,
         "labels": {
@@ -4135,12 +4223,12 @@
             "controller": true,
             "kind": "StatefulSet",
             "name": "shards-leader",
-            "uid": "cd13b0a5-8484-414b-93ff-ba64f760c693"
+            "uid": "4ee4b8f4-bb8b-4874-862e-6950e16fce6d"
           }
         ],
-        "resourceVersion": "605920",
+        "resourceVersion": "434060",
         "selfLink": "/api/v1/namespaces/redis/pods/shards-leader-1",
-        "uid": "a1ae0018-bc86-4ea3-aec4-bcb8c92b52e0"
+        "uid": "81512cba-86df-44a3-9239-4c5db030fd3b"
       },
       "spec": {
         "containers": [
@@ -4235,7 +4323,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-pdbbn",
+                "name": "kube-api-access-7xcms",
                 "readOnly": true
               }
             ]
@@ -4283,7 +4371,7 @@
             "name": "config"
           },
           {
-            "name": "kube-api-access-pdbbn",
+            "name": "kube-api-access-7xcms",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -4330,35 +4418,35 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:33Z",
+            "lastTransitionTime": "2026-10-18T00:08:14Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:33Z",
+            "lastTransitionTime": "2026-10-04T20:41:54Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:34Z",
+            "lastTransitionTime": "2026-10-18T00:08:15Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:34Z",
+            "lastTransitionTime": "2026-10-18T00:08:15Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:33Z",
+            "lastTransitionTime": "2026-10-04T20:41:53Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -4370,10 +4458,18 @@
               "cpu": "20m",
               "memory": "32Mi"
             },
-            "containerID": "containerd://e0215da71f9f7d42640329b2bba95796ece58fb83b8440f7ed40fb5fcbd59755",
+            "containerID": "containerd://637042ae5e9bbb424c2478d98c5271d8c52600be6b5f8048cbae542d08d91107",
             "image": "quay.io/opstree/redis:v8.2.9",
             "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://56ec8b943fae06557059cb40b2b0b9f5366618291345960629b218ab25f1ab83",
+                "exitCode": 255,
+                "finishedAt": "2026-10-18T00:08:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-17T17:17:09Z"
+              }
+            },
             "name": "shards-leader",
             "ready": true,
             "resources": {
@@ -4382,11 +4478,11 @@
                 "memory": "32Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 12,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-04T17:01:33Z"
+                "startedAt": "2026-10-18T00:08:15Z"
               }
             },
             "user": {
@@ -4405,7 +4501,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-pdbbn",
+                "name": "kube-api-access-7xcms",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -4432,7 +4528,7 @@
             "memory": "32Mi"
           }
         },
-        "startTime": "2026-10-04T17:01:33Z"
+        "startTime": "2026-10-04T20:41:54Z"
       }
     },
     {
@@ -4443,7 +4539,7 @@
           "redis.opstreelabs.in": "true",
           "redis.opstreelabs.instance": "shards"
         },
-        "creationTimestamp": "2026-10-04T17:01:34Z",
+        "creationTimestamp": "2026-10-04T20:41:57Z",
         "generateName": "shards-leader-",
         "generation": 1,
         "labels": {
@@ -4465,12 +4561,12 @@
             "controller": true,
             "kind": "StatefulSet",
             "name": "shards-leader",
-            "uid": "cd13b0a5-8484-414b-93ff-ba64f760c693"
+            "uid": "4ee4b8f4-bb8b-4874-862e-6950e16fce6d"
           }
         ],
-        "resourceVersion": "605924",
+        "resourceVersion": "434071",
         "selfLink": "/api/v1/namespaces/redis/pods/shards-leader-2",
-        "uid": "c9631f33-4011-4e1d-baaf-eb39e1060535"
+        "uid": "33a71403-3d44-4c98-89b2-cb8599e30ea8"
       },
       "spec": {
         "containers": [
@@ -4565,7 +4661,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-qb5pq",
+                "name": "kube-api-access-zprgc",
                 "readOnly": true
               }
             ]
@@ -4613,7 +4709,7 @@
             "name": "config"
           },
           {
-            "name": "kube-api-access-qb5pq",
+            "name": "kube-api-access-zprgc",
             "projected": {
               "defaultMode": 420,
               "sources": [
@@ -4660,35 +4756,35 @@
         "conditions": [
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:39Z",
+            "lastTransitionTime": "2026-10-18T00:08:14Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodReadyToStartContainers"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:38Z",
+            "lastTransitionTime": "2026-10-04T20:42:05Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Initialized"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:39Z",
+            "lastTransitionTime": "2026-10-18T00:08:14Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "Ready"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:39Z",
+            "lastTransitionTime": "2026-10-18T00:08:14Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "ContainersReady"
           },
           {
             "lastProbeTime": null,
-            "lastTransitionTime": "2026-10-04T17:01:38Z",
+            "lastTransitionTime": "2026-10-04T20:42:04Z",
             "observedGeneration": 1,
             "status": "True",
             "type": "PodScheduled"
@@ -4700,10 +4796,18 @@
               "cpu": "20m",
               "memory": "32Mi"
             },
-            "containerID": "containerd://47fde2a6c9c92cb0b6ff32161eaf1b1224574c9ae506c62acad03e6910820c6b",
+            "containerID": "containerd://c398c3d14c241297487d0b6f49b467562a21aeb6d606e4691e32896ca284b9c9",
             "image": "quay.io/opstree/redis:v8.2.9",
             "imageID": "quay.io/opstree/redis@sha256:b4486b4e9927e49c584c4a0530f6596871857946186268f86085f2d0be5dc051",
-            "lastState": {},
+            "lastState": {
+              "terminated": {
+                "containerID": "containerd://445d6caade9704ccd200d2249fb2f6b9708fe28993344da03e155c6b2a7d174d",
+                "exitCode": 255,
+                "finishedAt": "2026-10-18T00:08:01Z",
+                "reason": "Unknown",
+                "startedAt": "2026-10-17T17:17:09Z"
+              }
+            },
             "name": "shards-leader",
             "ready": true,
             "resources": {
@@ -4712,11 +4816,11 @@
                 "memory": "32Mi"
               }
             },
-            "restartCount": 0,
+            "restartCount": 12,
             "started": true,
             "state": {
               "running": {
-                "startedAt": "2026-10-04T17:01:39Z"
+                "startedAt": "2026-10-18T00:08:14Z"
               }
             },
             "user": {
@@ -4735,7 +4839,7 @@
               },
               {
                 "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
-                "name": "kube-api-access-qb5pq",
+                "name": "kube-api-access-zprgc",
                 "readOnly": true,
                 "recursiveReadOnly": "Disabled"
               }
@@ -4762,7 +4866,7 @@
             "memory": "32Mi"
           }
         },
-        "startTime": "2026-10-04T17:01:38Z"
+        "startTime": "2026-10-04T20:42:05Z"
       }
     }
   ],

@@ -1,11 +1,13 @@
 import { Renderer } from "@freelensapp/extensions";
 import { computed } from "mobx";
-
-import { isInstalled } from "./api/installed";
-import type { RedisKind } from "./api/types";
+import { isInstalled } from "./api/shared/installed";
+import { KIND_TITLES, type OpenPage } from "./api/shared/navigation";
+import type { RedisKind } from "./api/shared/types";
 import { RedisIcon } from "./icons/redis";
 import { OverviewPage } from "./pages/overview-page";
 import { RedisListPage, type RedisListParams } from "./pages/redis-list-page";
+
+const KINDS: RedisKind[] = ["Replication", "Cluster", "Standalone", "Sentinel"];
 
 // Item ids start with `redis-`: the e2e harness drives the sidebar by data-testid suffix.
 const PAGES: Record<"overview" | RedisKind, string> = {
@@ -16,16 +18,18 @@ const PAGES: Record<"overview" | RedisKind, string> = {
   Sentinel: "sentinels",
 };
 
-const KINDS: RedisKind[] = ["Replication", "Cluster", "Standalone", "Sentinel"];
-
 // Registration fields are read right after construction; computing them in onActivate is too late.
 const installed = computed(() =>
   isInstalled(Renderer.K8sApi.crdStore.items.map((crd) => crd.getName())),
 );
 
 export default class RedisRenderer extends Renderer.LensExtension {
-  private open = (kind: RedisKind, name?: string) =>
-    void this.navigate(PAGES[kind], { name: name ?? "" });
+  private open: OpenPage = (kind, params = {}) =>
+    void this.navigate(PAGES[kind], {
+      namespace: params.namespace ?? "",
+      name: params.name ?? "",
+      filter: params.filter ?? "",
+    });
 
   override clusterPages = [
     {
@@ -34,10 +38,11 @@ export default class RedisRenderer extends Renderer.LensExtension {
     },
     ...KINDS.map((kind) => ({
       id: PAGES[kind],
-      params: { name: "" },
+      // A card opens a list on a filter; an attention row or a drawer link, one row's drawer.
+      params: { namespace: "", name: "", filter: "" },
       components: {
         Page: (props: { params?: RedisListParams }) => (
-          <RedisListPage kind={kind} params={props.params} />
+          <RedisListPage kind={kind} params={props.params} open={this.open} />
         ),
       },
     })),
@@ -56,7 +61,7 @@ export default class RedisRenderer extends Renderer.LensExtension {
       visible: installed,
       parentId: "redis",
       target: { pageId: PAGES[page] },
-      title: page === "overview" ? "Overview" : `${page}s`,
+      title: page === "overview" ? "Overview" : KIND_TITLES[page],
       components: {},
     })),
   ];

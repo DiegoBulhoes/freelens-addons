@@ -6,16 +6,16 @@
       "kind": "RedisSentinel",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-04T17:01:13Z",
+        "creationTimestamp": "2026-10-04T20:41:29Z",
         "finalizers": [
           "redisSentinelFinalizer"
         ],
-        "generation": 2,
+        "generation": 4,
         "name": "cache-sentinel",
         "namespace": "redis",
-        "resourceVersion": "603243",
+        "resourceVersion": "34069",
         "selfLink": "/apis/redis.redis.opstreelabs.in/v1beta2/namespaces/redis/redissentinels/cache-sentinel",
-        "uid": "b5a777ab-72e8-496f-8692-50c07fe24342"
+        "uid": "8cb65e1f-67b2-45eb-809e-2113f9f82b60"
       },
       "spec": {
         "clusterSize": 3,

@@ -14,7 +14,7 @@
           "volume.kubernetes.io/selected-node": "freelens-addons-dev",
           "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
         },
-        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "creationTimestamp": "2026-10-04T20:41:29Z",
         "finalizers": [
           "kubernetes.io/pvc-protection"
         ],
@@ -25,9 +25,9 @@
         },
         "name": "cache-cache-0",
         "namespace": "redis",
-        "resourceVersion": "603611",
+        "resourceVersion": "11729",
         "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/cache-cache-0",
-        "uid": "2ad245c2-e400-4cb8-8d2e-b8a1a93ffdce"
+        "uid": "aa0acc9c-3b72-475a-94b1-83a538c198ca"
       },
       "spec": {
         "accessModes": [
@@ -40,7 +40,7 @@
         },
         "storageClassName": "local-path",
         "volumeMode": "Filesystem",
-        "volumeName": "pvc-2ad245c2-e400-4cb8-8d2e-b8a1a93ffdce"
+        "volumeName": "pvc-aa0acc9c-3b72-475a-94b1-83a538c198ca"
       },
       "status": {
         "accessModes": [
@@ -65,7 +65,7 @@
           "volume.kubernetes.io/selected-node": "freelens-addons-dev",
           "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
         },
-        "creationTimestamp": "2026-10-04T17:01:29Z",
+        "creationTimestamp": "2026-10-04T20:41:48Z",
         "finalizers": [
           "kubernetes.io/pvc-protection"
         ],
@@ -76,9 +76,9 @@
         },
         "name": "cache-cache-1",
         "namespace": "redis",
-        "resourceVersion": "603962",
+        "resourceVersion": "12069",
         "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/cache-cache-1",
-        "uid": "d6e9b80d-da3a-4fd6-868f-7d21251e329e"
+        "uid": "7cc56651-a9ee-4e15-af98-fc88097281d7"
       },
       "spec": {
         "accessModes": [
@@ -91,7 +91,7 @@
         },
         "storageClassName": "local-path",
         "volumeMode": "Filesystem",
-        "volumeName": "pvc-d6e9b80d-da3a-4fd6-868f-7d21251e329e"
+        "volumeName": "pvc-7cc56651-a9ee-4e15-af98-fc88097281d7"
       },
       "status": {
         "accessModes": [
@@ -116,7 +116,7 @@
           "volume.kubernetes.io/selected-node": "freelens-addons-dev",
           "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
         },
-        "creationTimestamp": "2026-10-04T17:01:32Z",
+        "creationTimestamp": "2026-10-04T20:41:56Z",
         "finalizers": [
           "kubernetes.io/pvc-protection"
         ],
@@ -127,9 +127,9 @@
         },
         "name": "cache-cache-2",
         "namespace": "redis",
-        "resourceVersion": "604150",
+        "resourceVersion": "12282",
         "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/cache-cache-2",
-        "uid": "11c5088c-49a0-4a41-8ad3-21558cc4a429"
+        "uid": "f754b3e7-bcf2-479a-b9d7-9b95cf24a130"
       },
       "spec": {
         "accessModes": [
@@ -142,7 +142,7 @@
         },
         "storageClassName": "local-path",
         "volumeMode": "Filesystem",
-        "volumeName": "pvc-11c5088c-49a0-4a41-8ad3-21558cc4a429"
+        "volumeName": "pvc-f754b3e7-bcf2-479a-b9d7-9b95cf24a130"
       },
       "status": {
         "accessModes": [
@@ -162,7 +162,7 @@
           "redis.opstreelabs.in": "true",
           "redis.opstreelabs.instance": "legacy-store"
         },
-        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "creationTimestamp": "2026-10-04T20:41:29Z",
         "finalizers": [
           "kubernetes.io/pvc-protection"
         ],
@@ -173,9 +173,9 @@
         },
         "name": "legacy-store-legacy-store-0",
         "namespace": "redis",
-        "resourceVersion": "603333",
+        "resourceVersion": "11502",
         "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/legacy-store-legacy-store-0",
-        "uid": "ad8e64b5-aa41-4ef2-9acf-541e5851d321"
+        "uid": "3282b813-be6c-49bc-90a6-39f57a11811b"
       },
       "spec": {
         "accessModes": [
@@ -206,7 +206,7 @@
           "volume.kubernetes.io/selected-node": "freelens-addons-dev",
           "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
         },
-        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "creationTimestamp": "2026-10-04T20:41:30Z",
         "finalizers": [
           "kubernetes.io/pvc-protection"
         ],
@@ -217,9 +217,9 @@
         },
         "name": "sessions-sessions-0",
         "namespace": "redis",
-        "resourceVersion": "603663",
+        "resourceVersion": "11784",
         "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/sessions-sessions-0",
-        "uid": "3a2f8c3e-fb60-4972-b323-5d505cc2f01c"
+        "uid": "fb99a062-566f-4616-bc1e-cc1b09554f09"
       },
       "spec": {
         "accessModes": [
@@ -232,7 +232,7 @@
         },
         "storageClassName": "local-path",
         "volumeMode": "Filesystem",
-        "volumeName": "pvc-3a2f8c3e-fb60-4972-b323-5d505cc2f01c"
+        "volumeName": "pvc-fb99a062-566f-4616-bc1e-cc1b09554f09"
       },
       "status": {
         "accessModes": [
@@ -257,7 +257,7 @@
           "volume.kubernetes.io/selected-node": "freelens-addons-dev",
           "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
         },
-        "creationTimestamp": "2026-10-04T17:01:43Z",
+        "creationTimestamp": "2026-10-04T20:42:14Z",
         "finalizers": [
           "kubernetes.io/pvc-protection"
         ],
@@ -269,9 +269,9 @@
         },
         "name": "shards-follower-shards-follower-0",
         "namespace": "redis",
-        "resourceVersion": "604377",
+        "resourceVersion": "12601",
         "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/shards-follower-shards-follower-0",
-        "uid": "a1018607-9fff-480d-ad64-a8ef04bea9db"
+        "uid": "a350dcd4-154c-474c-ba48-2da5e4fc36ad"
       },
       "spec": {
         "accessModes": [
@@ -284,7 +284,7 @@
         },
         "storageClassName": "local-path",
         "volumeMode": "Filesystem",
-        "volumeName": "pvc-a1018607-9fff-480d-ad64-a8ef04bea9db"
+        "volumeName": "pvc-a350dcd4-154c-474c-ba48-2da5e4fc36ad"
       },
       "status": {
         "accessModes": [
@@ -309,7 +309,7 @@
           "volume.kubernetes.io/selected-node": "freelens-addons-dev",
           "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
         },
-        "creationTimestamp": "2026-10-04T17:01:46Z",
+        "creationTimestamp": "2026-10-04T20:42:19Z",
         "finalizers": [
           "kubernetes.io/pvc-protection"
         ],
@@ -321,9 +321,9 @@
         },
         "name": "shards-follower-shards-follower-1",
         "namespace": "redis",
-        "resourceVersion": "604471",
+        "resourceVersion": "12701",
         "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/shards-follower-shards-follower-1",
-        "uid": "346139da-5168-41e8-a665-2f6ebdb42170"
+        "uid": "cc91c157-fd72-4ba1-866f-3751a2f2f464"
       },
       "spec": {
         "accessModes": [
@@ -336,7 +336,7 @@
         },
         "storageClassName": "local-path",
         "volumeMode": "Filesystem",
-        "volumeName": "pvc-346139da-5168-41e8-a665-2f6ebdb42170"
+        "volumeName": "pvc-cc91c157-fd72-4ba1-866f-3751a2f2f464"
       },
       "status": {
         "accessModes": [
@@ -361,7 +361,7 @@
           "volume.kubernetes.io/selected-node": "freelens-addons-dev",
           "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
         },
-        "creationTimestamp": "2026-10-04T17:01:52Z",
+        "creationTimestamp": "2026-10-04T20:42:24Z",
         "finalizers": [
           "kubernetes.io/pvc-protection"
         ],
@@ -373,9 +373,9 @@
         },
         "name": "shards-follower-shards-follower-2",
         "namespace": "redis",
-        "resourceVersion": "604666",
+        "resourceVersion": "12884",
         "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/shards-follower-shards-follower-2",
-        "uid": "ecffc2ed-e223-4e0b-88e4-2ca931089b36"
+        "uid": "e0672b11-2187-4efb-b313-6f569c8db8dc"
       },
       "spec": {
         "accessModes": [
@@ -388,7 +388,7 @@
         },
         "storageClassName": "local-path",
         "volumeMode": "Filesystem",
-        "volumeName": "pvc-ecffc2ed-e223-4e0b-88e4-2ca931089b36"
+        "volumeName": "pvc-e0672b11-2187-4efb-b313-6f569c8db8dc"
       },
       "status": {
         "accessModes": [
@@ -413,7 +413,7 @@
           "volume.kubernetes.io/selected-node": "freelens-addons-dev",
           "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
         },
-        "creationTimestamp": "2026-10-04T17:01:14Z",
+        "creationTimestamp": "2026-10-04T20:41:29Z",
         "finalizers": [
           "kubernetes.io/pvc-protection"
         ],
@@ -425,9 +425,9 @@
         },
         "name": "shards-leader-shards-leader-0",
         "namespace": "redis",
-        "resourceVersion": "603624",
+        "resourceVersion": "11747",
         "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/shards-leader-shards-leader-0",
-        "uid": "2a2e5ecf-39ec-490e-ae51-8c647096e84b"
+        "uid": "c5880a6f-af33-4f9a-aea5-208b91287b5f"
       },
       "spec": {
         "accessModes": [
@@ -440,7 +440,7 @@
         },
         "storageClassName": "local-path",
         "volumeMode": "Filesystem",
-        "volumeName": "pvc-2a2e5ecf-39ec-490e-ae51-8c647096e84b"
+        "volumeName": "pvc-c5880a6f-af33-4f9a-aea5-208b91287b5f"
       },
       "status": {
         "accessModes": [
@@ -465,7 +465,7 @@
           "volume.kubernetes.io/selected-node": "freelens-addons-dev",
           "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
         },
-        "creationTimestamp": "2026-10-04T17:01:29Z",
+        "creationTimestamp": "2026-10-04T20:41:48Z",
         "finalizers": [
           "kubernetes.io/pvc-protection"
         ],
@@ -477,9 +477,9 @@
         },
         "name": "shards-leader-shards-leader-1",
         "namespace": "redis",
-        "resourceVersion": "604003",
+        "resourceVersion": "12083",
         "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/shards-leader-shards-leader-1",
-        "uid": "81ad02f4-5d8c-4182-b159-a3f32a8dd1bf"
+        "uid": "72a58172-1164-42d0-af54-6af83d8124c5"
       },
       "spec": {
         "accessModes": [
@@ -492,7 +492,7 @@
         },
         "storageClassName": "local-path",
         "volumeMode": "Filesystem",
-        "volumeName": "pvc-81ad02f4-5d8c-4182-b159-a3f32a8dd1bf"
+        "volumeName": "pvc-72a58172-1164-42d0-af54-6af83d8124c5"
       },
       "status": {
         "accessModes": [
@@ -517,7 +517,7 @@
           "volume.kubernetes.io/selected-node": "freelens-addons-dev",
           "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
         },
-        "creationTimestamp": "2026-10-04T17:01:34Z",
+        "creationTimestamp": "2026-10-04T20:41:57Z",
         "finalizers": [
           "kubernetes.io/pvc-protection"
         ],
@@ -529,9 +529,9 @@
         },
         "name": "shards-leader-shards-leader-2",
         "namespace": "redis",
-        "resourceVersion": "604200",
+        "resourceVersion": "12312",
         "selfLink": "/api/v1/namespaces/redis/persistentvolumeclaims/shards-leader-shards-leader-2",
-        "uid": "6157a2ef-9f1f-41eb-9c17-f77190085610"
+        "uid": "557ca281-f2f6-4b04-aaf3-452880f094ac"
       },
       "spec": {
         "accessModes": [
@@ -544,7 +544,7 @@
         },
         "storageClassName": "local-path",
         "volumeMode": "Filesystem",
-        "volumeName": "pvc-6157a2ef-9f1f-41eb-9c17-f77190085610"
+        "volumeName": "pvc-557ca281-f2f6-4b04-aaf3-452880f094ac"
       },
       "status": {
         "accessModes": [

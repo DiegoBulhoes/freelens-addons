@@ -1,28 +1,34 @@
 import { observer } from "mobx-react";
-import { useState } from "react";
-
-import { runRestartAll } from "../api/actions";
-import { masterOf, readyCount } from "../api/nodes";
-import { restartAllPlan } from "../api/operations";
-import { keyOf, type RedisRow } from "../api/rows";
-import { describeLoadState } from "../api/store-state";
-import type { RedisKind } from "../api/types";
+import { useEffect, useState } from "react";
+import { masterOf, readyCount } from "../api/objects/nodes";
+import {
+  bulkRestartRefusal,
+  filterOf,
+  filtersFor,
+  keyOf,
+  matchesFilter,
+  namedKey,
+  type RedisRow,
+  type RowFilter,
+} from "../api/objects/rows";
+import { KIND_TITLES, type OpenPage } from "../api/shared/navigation";
+import { emptyText, pageNote } from "../api/shared/store-state";
+import type { RedisKind } from "../api/shared/types";
+import { freshPlan } from "../api/writes/actions";
+import { BULK_RESTART_TOOLTIP } from "../api/writes/operations";
 import { bulkAction } from "../components/bulk";
 import { type Column, ListPage } from "../components/list-page";
+import { RowFilters } from "../components/row-filters";
 import { Status } from "../components/status";
 import { useInventory } from "../hooks/use-inventory";
+import { restartWithProgress } from "../objects/dialogs";
 import { RedisDrawer } from "../objects/redis-drawer";
 
 export interface RedisListParams {
+  namespace?: { get(): string };
   name?: { get(): string };
+  filter?: { get(): string };
 }
-
-const TITLES: Record<RedisKind, string> = {
-  Replication: "Replications",
-  Cluster: "Clusters",
-  Standalone: "Standalones",
-  Sentinel: "Sentinels",
-};
 
 const rowKey = (row: RedisRow) => keyOf(row.object);
 
@@ -117,58 +123,76 @@ function columnsFor(kind: RedisKind): Column<RedisRow>[] {
 }
 
 export const RedisListPage = observer(
-  ({ kind, params }: { kind: RedisKind; params?: RedisListParams }) => {
+  ({ kind, params, open }: { kind: RedisKind; params?: RedisListParams; open: OpenPage }) => {
     const { stores, rows } = useInventory();
-    const [selectedKey, setSelectedKey] = useState<string>();
-    const shown = rows.filter((row) => row.kind === kind);
+    const requested = params?.filter?.get();
+    const [filter, setFilter] = useState<RowFilter>(() => filterOf(kind, requested));
+    const named = namedKey(kind, {
+      namespace: params?.namespace?.get(),
+      name: params?.name?.get(),
+    });
+    const [selectedKey, setSelectedKey] = useState(named);
+    const kindRows = rows.filter((row) => row.kind === kind);
     const selected = rows.find((row) => rowKey(row) === selectedKey);
-    const noun = TITLES[kind].toLowerCase();
+    const noun = KIND_TITLES[kind].toLowerCase();
+    const tooltip = BULK_RESTART_TOOLTIP[kind];
+    const { note, alarm } = pageNote(stores.state, stores.failures);
+
+    // The page stays mounted when a card names another filter.
+    useEffect(() => {
+      setFilter(filterOf(kind, requested));
+    }, [kind, requested]);
+
+    // An attention row or a drawer link names an object: its drawer opens.
+    useEffect(() => {
+      if (named) setSelectedKey(named);
+    }, [named]);
 
     return (
       <ListPage
-        title={TITLES[kind]}
-        subline={
-          describeLoadState(stores.state) ??
-          "Worst first. A row opens its pods, connection and actions."
-        }
+        title={KIND_TITLES[kind]}
+        subline={note ?? "Worst first. A row opens its pods, connection and actions."}
+        alarm={alarm}
         section={`redis-${noun}`}
-        rows={shown}
+        rows={kindRows.filter((row) => matchesFilter(row, filter))}
         columns={columnsFor(kind)}
         keyOf={rowKey}
         searchTexts={(row) => [row.object.getName(), row.object.getNs() ?? "", row.health.label]}
         onOpen={(row) => setSelectedKey(rowKey(row))}
-        empty={`No ${noun} in the namespaces in scope.`}
-        initialQuery={params?.name?.get()}
-        selection={{
-          hint: "Restarts each ticked one pod by pod, one after another; the rest are listed as skipped.",
-          actions: [
-            bulkAction<RedisRow>({
-              label: "Restart",
-              done: "Restarted",
-              kind: kind.toLowerCase(),
-              tooltip: "Restarts every pod of each ticked one, replicas first and masters last.",
-              caution: true,
-              nameOf: (row) => row.object.getName(),
-              refuse: (row) => {
-                const plan = restartAllPlan(row.object, row.nodes);
-
-                return "refused" in plan ? plan.refused : undefined;
-              },
-              detail:
-                "One at a time, each waiting for the last to settle. Keep Freelens open until it ends.",
-              run: async (row) => {
-                const plan = restartAllPlan(row.object, row.nodes);
-
-                if ("steps" in plan) await runRestartAll(row.object, plan.steps, () => undefined);
-              },
-            }),
-          ],
-        }}
+        empty={
+          kindRows.length === 0
+            ? emptyText(stores.state, `No ${noun} in the namespaces in scope.`)
+            : "None of those."
+        }
+        filters={<RowFilters filters={filtersFor(kind)} current={filter} onChange={setFilter} />}
+        // A cluster would refuse every restart: no selection to tick.
+        selection={
+          tooltip
+            ? {
+                hint: "Restarts each ticked one pod by pod, one after another; the rest are listed as skipped.",
+                actions: [
+                  bulkAction<RedisRow>({
+                    label: "Restart",
+                    done: "Restarted",
+                    kind: kind.toLowerCase(),
+                    tooltip,
+                    caution: true,
+                    nameOf: (row) => row.object.getName(),
+                    refuse: bulkRestartRefusal,
+                    detail:
+                      "One at a time, each waiting for the last to settle. Keep Freelens open until it ends.",
+                    run: async (row) =>
+                      restartWithProgress(row.object, await freshPlan(row.object)),
+                  }),
+                ],
+              }
+            : undefined
+        }
       >
         <RedisDrawer
           row={selected}
           rows={rows}
-          events={stores.events}
+          open={open}
           onClose={() => setSelectedKey(undefined)}
         />
       </ListPage>

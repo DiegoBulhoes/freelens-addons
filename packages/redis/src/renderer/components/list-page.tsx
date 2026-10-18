@@ -2,7 +2,7 @@ import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 import { type ReactNode, useState } from "react";
 
-import { describeCount, nextSort, type Sort, searchRows, sortRows } from "../api/table";
+import { describeCount, nextSort, type Sort, searchRows, sortRows } from "../api/shared/table";
 import { NamespaceFilter } from "./namespace-filter";
 import { type SelectionAction, SelectionBar } from "./selection-bar";
 import { RedisStyles } from "./styles";
@@ -21,6 +21,8 @@ export interface Column<Row> {
 export interface ListPageProps<Row> {
   title: string;
   subline?: ReactNode;
+  /** Marks the subline as the page's alarm. */
+  alarm?: boolean;
   rows: Row[];
   columns: Column<Row>[];
   keyOf: (row: Row) => string;
@@ -72,7 +74,11 @@ function ListPageView<Row>(props: ListPageProps<Row>) {
             {props.title}{" "}
             <span className="Redis-page__count">{describeCount(shown.length, rows.length)}</span>
           </h1>
-          {props.subline && <p className="Redis-page__subline">{props.subline}</p>}
+          {props.subline && (
+            <p className={`Redis-page__subline${props.alarm ? " Redis-page__subline--alarm" : ""}`}>
+              {props.subline}
+            </p>
+          )}
         </div>
         <div className="Redis-page__actions">
           <input

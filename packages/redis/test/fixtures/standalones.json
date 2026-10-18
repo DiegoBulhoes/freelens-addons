@@ -6,16 +6,16 @@
       "kind": "Redis",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-04T17:01:13Z",
+        "creationTimestamp": "2026-10-04T20:41:29Z",
         "finalizers": [
           "redisFinalizer"
         ],
         "generation": 2,
         "name": "legacy-store",
         "namespace": "redis",
-        "resourceVersion": "603264",
+        "resourceVersion": "11487",
         "selfLink": "/apis/redis.redis.opstreelabs.in/v1beta2/namespaces/redis/rediss/legacy-store",
-        "uid": "75e95bb0-d732-4937-81cf-b4681ee242cc"
+        "uid": "3d6fb8d8-37dd-4051-8dfb-2803cbf09a8a"
       },
       "spec": {
         "kubernetesConfig": {
@@ -52,16 +52,16 @@
       "kind": "Redis",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-10-04T17:01:13Z",
+        "creationTimestamp": "2026-10-04T20:41:29Z",
         "finalizers": [
           "redisFinalizer"
         ],
-        "generation": 3,
+        "generation": 2,
         "name": "sessions",
         "namespace": "redis",
-        "resourceVersion": "606248",
+        "resourceVersion": "11490",
         "selfLink": "/apis/redis.redis.opstreelabs.in/v1beta2/namespaces/redis/rediss/sessions",
-        "uid": "f14acc10-c62f-4d3d-8dc6-fd25d7ec7bc0"
+        "uid": "23632758-3e8c-473b-98ef-6e65f8098935"
       },
       "spec": {
         "TLS": {
@@ -75,7 +75,7 @@
         "env": [
           {
             "name": "REDIS_TLS_CA_KEY",
-            "value": "/tls/ca.crt"
+            "value": "redacted-by-fixture-export"
           }
         ],
         "kubernetesConfig": {

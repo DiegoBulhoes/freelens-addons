@@ -1,6 +1,6 @@
 import { Renderer } from "@freelensapp/extensions";
 
-import { describeOutcome, type Plan, planFor } from "../api/bulk";
+import { describeOutcome, failureOf, type Plan, planFor } from "../api/writes/bulk";
 import { confirmWrite } from "./confirm";
 import type { SelectionAction } from "./selection-bar";
 import { RedisStyles } from "./styles";
@@ -18,7 +18,7 @@ function names(list: string[]): string {
 }
 
 /** One write over several objects: lists what it reaches and what it skips, and asks for "confirm". */
-export function confirmBulk<Item>({
+function confirmBulk<Item>({
   nameOf,
   verb,
   done,
@@ -77,8 +77,8 @@ export function confirmBulk<Item>({
         try {
           await run(item);
           succeeded += 1;
-        } catch {
-          failed.push(nameOf(item));
+        } catch (error) {
+          failed.push(failureOf(nameOf(item), error));
         }
       }
 
