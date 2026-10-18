@@ -3,18 +3,21 @@ name: CI
 # One chain, lightest first: each job runs only if the one before it passed. Pull requests stop
 # after the image. On main and by hand, one end-to-end leg per extension, each on its own runner and
 # k3s, then the smoke run on the full seed.
-# `make ci-local` runs it on this machine through act, beside the dev setup.
+# `make ci-local` runs it on this machine through act, beside the dev setup; release.yaml calls it
+# before it tags.
 on:
   push:
     branches: [main]
   pull_request:
   workflow_dispatch: {}
+  workflow_call: {}
 
 permissions:
   contents: read
 
+# Called from release.yaml, github.workflow is Release: a release never cancels CI on main.
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 # Digest-pinned containers, never third-party actions. Keep in step with scripts/security/scan.sh.
@@ -183,7 +186,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        leg: [argocd, cert-manager, cnpg, mongodb, redis, trivy]
+        leg: [argocd, cert-manager, cnpg, mongodb, opentelemetry, prometheus, redis, trivy]
     env:
       PACKAGE: ${{ matrix.leg }}
     steps:
@@ -209,21 +212,67 @@ jobs:
       - name: Real writes
         run: make e2e-writes PACKAGE="${PACKAGE}"
 
+      # Read-only, every line guarded: a leg that failed, timed out or was cancelled still dumps its state.
       - name: What Freelens and the cluster said
-        if: failure()
+        if: failure() || cancelled()
+        timeout-minutes: 5
         run: |
-          docker compose -p "${PROJECT:-freelens-addons}" -f dev/docker-compose.yml --project-directory . logs --tail=300 freelens
-          dev/cluster/cluster.sh kubectl get pods -A
-          dev/cluster/cluster.sh kubectl get events -A --field-selector reason=FailedScheduling
-          if [[ "${PACKAGE}" == trivy ]]; then
-            dev/cluster/cluster.sh kubectl -n trivy-system logs deployment/trivy-operator --tail=400 | grep -i error | tail -20
+          docker compose -p "${PROJECT:-freelens-addons}" -f dev/docker-compose.yml --project-directory . logs --tail=300 freelens || true
+          dev/cluster/cluster.sh kubectl get pods -A || true
+          dev/cluster/cluster.sh kubectl get events -A --field-selector reason=FailedScheduling || true
+          if [[ "${PACKAGE}" == argocd ]]; then
+            dev/cluster/cluster.sh kubectl -n argocd get applications.argoproj.io -o custom-columns=NAME:.metadata.name,SYNC:.status.sync.status,HEALTH:.status.health.status,OP:.status.operationState.phase || true
+            dev/cluster/cluster.sh kubectl -n argocd get appprojects.argoproj.io -o custom-columns=NAME:.metadata.name,WINDOWS:.spec.syncWindows || true
+            dev/cluster/cluster.sh kubectl -n argocd get imageupdaters.argocd-image-updater.argoproj.io -o custom-columns='NAME:.metadata.name,MATCHED:.status.applicationsMatched,READY:.status.conditions[?(@.type=="Ready")].status' || true
+            dev/cluster/cluster.sh kubectl -n argocd logs statefulset/argocd-application-controller --tail=400 | grep -i -E 'error|level=warn' | tail -50 || true
+            dev/cluster/cluster.sh kubectl -n argocd logs deployment/argocd-image-updater-controller --tail=400 | grep -i -E 'error|level=warn' | tail -50 || true
+          fi
+          if [[ "${PACKAGE}" == cert-manager ]]; then
+            dev/cluster/cluster.sh kubectl get clusterissuers,issuers,certificates,certificaterequests,orders,challenges -A || true
+            dev/cluster/cluster.sh kubectl get certificates -A -o custom-columns='NS:.metadata.namespace,NAME:.metadata.name,READY:.status.conditions[?(@.type=="Ready")].status,NOTAFTER:.status.notAfter,RENEWAL:.status.renewalTime,FAILED:.status.failedIssuanceAttempts' || true
+            dev/cluster/cluster.sh kubectl -n cert-manager logs deployment/cert-manager --tail=400 | grep -i -E 'error|fail' | tail -20 || true
+          fi
+          if [[ "${PACKAGE}" == cnpg ]]; then
+            dev/cluster/cluster.sh kubectl -n databases get clusters.postgresql.cnpg.io -o custom-columns=NAME:.metadata.name,PHASE:.status.phase,PRIMARY:.status.currentPrimary,READY:.status.readyInstances || true
+            dev/cluster/cluster.sh kubectl -n databases get clusters.postgresql.cnpg.io -o jsonpath='{range .items[*]}{.metadata.name}{": "}{range .status.conditions[*]}{.type}={.status} {.reason} {.message}; {end}{"\n"}{end}' || true
+            dev/cluster/cluster.sh kubectl -n databases get backups.postgresql.cnpg.io,scheduledbackups.postgresql.cnpg.io,poolers.postgresql.cnpg.io -o wide || true
+            dev/cluster/cluster.sh kubectl -n cnpg-system logs deployment/cnpg-controller-manager --tail=400 | grep -i error | tail -20 || true
+            dev/cluster/cluster.sh kubectl -n cnpg-system logs deployment/barman-cloud --tail=100 || true
+            for pod in $(dev/cluster/cluster.sh kubectl -n databases get pods -l cnpg.io/podRole=instance -o name || true); do
+              dev/cluster/cluster.sh kubectl -n databases logs "${pod}" -c plugin-barman-cloud --tail=30 || true
+            done
+          fi
+          if [[ "${PACKAGE}" == mongodb ]]; then
+            dev/cluster/cluster.sh kubectl get mongodbcommunity -A -o custom-columns=NS:.metadata.namespace,NAME:.metadata.name,PHASE:.status.phase,VERSION:.status.version,MESSAGE:.status.message || true
+            dev/cluster/cluster.sh kubectl -n mongodb get pods -o wide || true
+            dev/cluster/cluster.sh kubectl -n mongodb-apps get pods -o wide || true
+            dev/cluster/cluster.sh kubectl -n mongodb logs deployment/mongodb-kubernetes-operator --tail=400 | grep -i -E 'error|fail' | tail -20 || true
           fi
           if [[ "${PACKAGE}" == redis ]]; then
-            dev/cluster/cluster.sh kubectl -n redis get pods --show-labels
-            dev/cluster/cluster.sh kubectl -n redis get redisreplications -o custom-columns=NAME:.metadata.name,MASTER:.status.masterNode
-            dev/cluster/cluster.sh kubectl -n redis-operator-system logs deployment/redis-operator-redis-operator --tail=100
+            dev/cluster/cluster.sh kubectl -n redis get pods --show-labels || true
+            dev/cluster/cluster.sh kubectl -n redis get redisreplications -o custom-columns=NAME:.metadata.name,MASTER:.status.masterNode || true
+            dev/cluster/cluster.sh kubectl -n redis get redisclusters,redissentinels,redis -o wide || true
+            dev/cluster/cluster.sh kubectl -n redis-operator-system logs deployment/redis-operator-redis-operator --tail=100 || true
           fi
-          dev/cluster/cluster.sh kubectl get events -A --field-selector type=Warning --sort-by=.lastTimestamp | tail -80
+          if [[ "${PACKAGE}" == trivy ]]; then
+            dev/cluster/cluster.sh kubectl -n trivy-system logs deployment/trivy-operator --tail=400 | grep -i error | tail -20 || true
+            dev/cluster/cluster.sh kubectl -n demo get replicasets -o wide || true
+            dev/cluster/cluster.sh kubectl get vulnerabilityreports,sbomreports,configauditreports -A -L trivy-operator.resource.kind,trivy-operator.resource.name || true
+            dev/cluster/cluster.sh kubectl -n trivy-system get jobs,pods -o wide || true
+          fi
+          if [[ "${PACKAGE}" == opentelemetry || "${PACKAGE}" == prometheus ]]; then
+            dev/cluster/cluster.sh kubectl get instrumentations,opentelemetrycollectors -A || true
+            dev/cluster/cluster.sh kubectl -n opentelemetry-operator-system logs deployment/opentelemetry-operator-controller-manager -c manager --tail=400 | grep -i error | tail -20 || true
+          fi
+          if [[ "${PACKAGE}" == prometheus ]]; then
+            dev/cluster/cluster.sh kubectl get prometheuses,prometheusagents,alertmanagers,servicemonitors,podmonitors,scrapeconfigs,prometheusrules -A || true
+            dev/cluster/cluster.sh kubectl get events -A --field-selector reason=InvalidConfiguration || true
+            dev/cluster/cluster.sh kubectl -n prometheus-operator logs deployment/prometheus-operator --tail=400 | grep -i -E 'error|invalid' | tail -20 || true
+            dev/cluster/cluster.sh kubectl get --raw '/api/v1/namespaces/monitoring/pods/prometheus-seed-0:9090/proxy/api/v1/targets?state=active' \
+              | python3 -c 'import json, sys; [print(t["health"], t["scrapePool"], t.get("lastError", "")) for t in json.load(sys.stdin)["data"]["activeTargets"]]' || true
+            dev/cluster/cluster.sh kubectl get --raw /api/v1/namespaces/otel-collectors/services/scraper-targetallocator:80/proxy/jobs || true
+          fi
+          dev/cluster/cluster.sh kubectl get events -A --field-selector type=Warning --sort-by=.lastTimestamp | tail -80 || true
 
   # The full seed that development and the fixtures use, with every extension in one window; no writes.
   smoke:
@@ -253,10 +302,14 @@ jobs:
         run: make e2e FILES=pages-render
 
       - name: What Freelens and the cluster said
-        if: failure()
+        if: failure() || cancelled()
+        timeout-minutes: 5
         run: |
-          docker compose -p "${PROJECT:-freelens-addons}" -f dev/docker-compose.yml --project-directory . logs --tail=300 freelens
-          dev/cluster/cluster.sh kubectl get pods -A
-          dev/cluster/cluster.sh kubectl get events -A --field-selector reason=FailedScheduling
-          dev/cluster/cluster.sh kubectl -n trivy-system logs deployment/trivy-operator --tail=400 | grep -i error | tail -20
-          dev/cluster/cluster.sh kubectl get events -A --field-selector type=Warning --sort-by=.lastTimestamp | tail -80
+          docker compose -p "${PROJECT:-freelens-addons}" -f dev/docker-compose.yml --project-directory . logs --tail=300 freelens || true
+          dev/cluster/cluster.sh kubectl get pods -A || true
+          dev/cluster/cluster.sh kubectl get events -A --field-selector reason=FailedScheduling || true
+          dev/cluster/cluster.sh kubectl -n trivy-system logs deployment/trivy-operator --tail=400 | grep -i error | tail -20 || true
+          dev/cluster/cluster.sh kubectl -n demo get replicasets -o wide || true
+          dev/cluster/cluster.sh kubectl get vulnerabilityreports,sbomreports,configauditreports -A -L trivy-operator.resource.kind,trivy-operator.resource.name || true
+          dev/cluster/cluster.sh kubectl -n trivy-system get jobs,pods -o wide || true
+          dev/cluster/cluster.sh kubectl get events -A --field-selector type=Warning --sort-by=.lastTimestamp | tail -80 || true

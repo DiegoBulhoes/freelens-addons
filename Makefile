@@ -11,7 +11,7 @@ DEV_KUBECONFIG_DIR ?= /tmp/freelens-addons-k3s
 export DEV_KUBECONFIG_DIR
 # One extension: make cluster installs only what it needs, make e2e and e2e-writes run only its suites.
 PACKAGE ?=
-# A vitest file filter for make e2e, such as pages-render.
+# A vitest file filter for make e2e: a file, such as pages-render, or a folder, such as shared/.
 FILES   ?=
 
 # The pinned OSV-Scanner, from the one script that keeps it outside the workflows.
@@ -81,10 +81,12 @@ e2e-freelens: .env
 	FREELENS_EXTRA_ARGS=--remote-debugging-port=$(DEBUG_PORT) $(COMPOSE) up -d --build --force-recreate freelens
 	until curl -sf --max-time 2 http://localhost:$(DEBUG_PORT)/json/version >/dev/null; do sleep 2; done
 
+# The Prometheus suites read the operator's rejection Events, which expire after an hour.
 e2e: e2e-freelens
+	$(if $(filter-out prometheus,$(PACKAGE)),,bash dev/cluster/cluster.sh rejections)
 	$(DEV) "$(E2E_RUN) test:e2e $(FILES)"
 
-# --if-present: trivy has no writes.
+# --if-present: trivy and prometheus have no writes.
 e2e-writes: e2e-freelens
 	$(DEV) "$(E2E_RUN) --if-present test:e2e-writes"
 
