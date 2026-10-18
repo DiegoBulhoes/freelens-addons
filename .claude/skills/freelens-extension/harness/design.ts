@@ -1,5 +1,15 @@
 import type { Session } from "./cdp";
 
+// Page-side: a theme variable as the colour it computes to.
+const RESOLVE_VARIABLE = `const resolve = (variable) => {
+        const probe = document.createElement("span");
+        probe.style.color = "var(" + variable + ")";
+        document.body.append(probe);
+        const colour = getComputedStyle(probe).color;
+        probe.remove();
+        return colour;
+      };`;
+
 // Design-standard violations on the open page. Modifiers (`--`) may lack a rule of their own.
 export async function designViolations(
   session: Session,
@@ -9,14 +19,7 @@ export async function designViolations(
   return session.evaluate<string[]>(
     `(() => {
       const P = ${JSON.stringify(`${prefix}-`)};
-      const resolve = (variable) => {
-        const probe = document.createElement("span");
-        probe.style.color = "var(" + variable + ")";
-        document.body.append(probe);
-        const colour = getComputedStyle(probe).color;
-        probe.remove();
-        return colour;
-      };
+      ${RESOLVE_VARIABLE}
       const surface = resolve("--sidebarBackground");
       const accent = resolve("--colorInfo");
       const all = (selector) => [...document.querySelectorAll(selector)];
@@ -46,6 +49,10 @@ export async function designViolations(
           const alignment = getComputedStyle(element).textAlign;
           if (!/^(left|start)$/.test(alignment)) problems.add(selector + " is aligned " + alignment);
         }
+      }
+
+      for (const element of all("button." + P + "card")) {
+        if (!element.title) problems.add("a button." + P + "card has no tooltip saying what it opens");
       }
 
       const panel = resolve("--contentColor");
@@ -119,19 +126,12 @@ export async function dialogColourViolations(
 ): Promise<string[]> {
   return session.evaluate<string[]>(
     `(() => {
-      const P = ${JSON.stringify(prefix)};
+      const P = ${JSON.stringify(`${prefix}-`)};
       const dialog = document.querySelector(".ConfirmDialog");
       if (!dialog) return ["no dialog is open"];
-      const root = dialog.querySelector("." + P + "-dialog");
-      if (!root) return ["the dialog's message has no ." + P + "-dialog"];
-      const resolve = (variable) => {
-        const probe = document.createElement("span");
-        probe.style.color = "var(" + variable + ")";
-        document.body.append(probe);
-        const colour = getComputedStyle(probe).color;
-        probe.remove();
-        return colour;
-      };
+      const root = dialog.querySelector("." + P + "dialog");
+      if (!root) return ["the dialog's message has no ." + P + "dialog"];
+      ${RESOLVE_VARIABLE}
       const problems = [];
       const panel = getComputedStyle(dialog.querySelector(".box")).backgroundColor;
       const surface = resolve("--contentColor").replace("rgb(", "rgba(").replace(")", ", 1)");
@@ -140,7 +140,7 @@ export async function dialogColourViolations(
       const expected = getComputedStyle(root.parentElement).color;
       const exempt = (element) =>
         element.matches('[aria-pressed="true"]') ||
-        [...element.classList].some((name) => name.startsWith(P + "-text--") || name.startsWith(P + "-tag"));
+        [...element.classList].some((name) => name.startsWith(P + "text--") || name.startsWith(P + "tag"));
       return [root, ...root.querySelectorAll("p, span, label, input, button")]
         .filter((element) => element.textContent.trim() || element.matches("input"))
         .filter((element) => !exempt(element) && !element.closest('[aria-pressed="true"]'))

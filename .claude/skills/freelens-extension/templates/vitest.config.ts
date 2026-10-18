@@ -5,7 +5,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   resolve: {
     alias: {
-      "@freelensapp/extensions": resolve(__dirname, "test/freelens-host.ts"),
+      "@freelensapp/extensions": resolve(__dirname, "test/support/freelens-host.ts"),
     },
   },
   test: {
@@ -19,7 +19,7 @@ export default defineConfig({
       include: ["src/renderer/api/**/*.ts"],
       exclude: [
         // Declarations only.
-        "src/renderer/api/types.ts",
+        "src/renderer/api/shared/types.ts",
         // Add each module that reads a store or sends a patch, naming the module that decides for it.
       ],
       thresholds: {

@@ -10,7 +10,7 @@ description: |
   one look like the rest, even if they do not say "design".
 license: Apache-2.0
 metadata:
-  version: "2.5.0"
+  version: "2.7.0"
 ---
 
 # Freelens extension
@@ -37,7 +37,7 @@ If they disagree, follow the repository and tell the person.
 | Path | What |
 |------|------|
 | `design.md` | The design standard. Read before drawing a screen |
-| `templates/` | A minimal extension: manifest, build, tests, pages, ready-made components |
+| `templates/` | A minimal extension: manifest, build, tests, pages, ready-made components, the store-loading hook and its decisions |
 | `templates/src/renderer/styles/design.css` | The standard's components, with a `__Name__` prefix |
 | `scripts/copy-design-standard.sh` | Writes `design.css` into every extension; `--check` fails on drift |
 | `harness/design.ts`, `harness/cdp.ts` | `designViolations()`, `dialogColourViolations()` and the CDP client they run on |
@@ -87,7 +87,7 @@ Host facts, true everywhere:
 - **Sidebar order.** A saved order in `lens-user-store.json` beats `orderNumber`. A new group lands last for existing users.
 - **Secrets.** `secretsStore` loads every value. Ask for a `PartialObjectMetadataList`; drop `last-applied-configuration`.
 - **Details drawer.** `Navigation.showDetails` does nothing from a plain `clusterPage`. Navigate to a host list with `?search=<name>`.
-- **`isLoaded`.** Means "loaded once", not "loaded for this namespace scope". Load on every mount.
+- **`isLoaded`.** Means "loaded once", not "loaded for this namespace scope". Load on every mount, and trust a store only once its load finished for the scope asked (`loadedFor`).
 - **`ConfirmDialog`.** Copies plain-object props. Form values reach `ok` through callbacks.
 
 ## Names
@@ -132,9 +132,19 @@ Then adapt to the repository:
 
 - Shared build config: replace `electron.vite.config.ts` with its re-export; delete `vite/`.
 - Shared tsconfig: extend it; keep `node10` and `react-jsx`.
-- Existing `test/freelens-host.ts`: copy theirs.
+- Existing `test/support/freelens-host.ts`: copy theirs.
 - `design.css`: run the repository's copy-design-standard.sh, or `$SKILL/scripts/copy-design-standard.sh <where extensions live>`.
-- Do not copy another extension's hooks or stores. Write what this one needs.
+- Do not copy another extension's hooks or stores. Start from the template's `hooks/load-stores.ts` and write what this one needs.
+
+Where files go, the same in every extension:
+
+| Folder | Holds |
+|--------|-------|
+| `src/renderer/api/shared/` | The template's modules and the generic ones: store state, polling, retry, read timeout, table, host links, commands, installed, kinds, types, verdict, errors, namespace scope |
+| `src/renderer/api/writes/` | What changes the cluster: `operations.ts` decides, `actions.ts` sends, `bulk.ts` for the selection bar |
+| `src/renderer/api/<noun>/` | One folder per page, named by the extension's own plural noun (`clusters/`, `backups/`) |
+| `test/` | Mirrors `api/`: `api/<folder>/x.ts` is tested in `test/<folder>/x.test.ts`; `test/support/` holds the host and fixture helpers; `test/fixtures/` holds the export |
+| `e2e/` | One file per page or feature, in a folder per page; `shared/` for every-page suites, `support/` for setup and helpers, `writes/` for `*.writes.ts` |
 
 **Check:** the manifest has `private`, `files`, `engines.freelens`, `main`, `renderer`. The directory holds only extensions.
 
@@ -177,7 +187,7 @@ const installed = computed(() =>
 );
 ```
 
-`isInstalled` lives in `api/`, tested. Check the hidden case once with a CRD name that does not exist.
+`isInstalled` lives in `api/shared/installed.ts`, tested. Check the hidden case once with a CRD name that does not exist.
 
 ### 6. Decisions apart from store access
 
@@ -185,9 +195,11 @@ const installed = computed(() =>
 |--------------------------|--------------------------------|
 | Parsing, sorting, filtering, thresholds, attention | `getStore()`, `loadAll()`, `subscribe()`, `patch()` |
 
-- Under test, `@freelensapp/extensions` resolves to `test/freelens-host.ts`. No mocks.
+- Under test, `@freelensapp/extensions` resolves to `test/support/freelens-host.ts`. No mocks.
 - Time-dependent code takes `now`.
-- Hooks load on every mount; retry only while never loaded.
+- Stores load through `useLoadedStore` (`hooks/load-stores.ts`), one call per store: on every mount and scope change, with `onLoadFailure`, since without it one refused namespace empties the shared store; it subscribes once the list arrived, keeps the refused namespaces in `failed`, and lists again until each answers or the attempts run out (`afterLoad`).
+- Pages read that through `api/shared/store-state.ts`: `loadState` per store, `worstOf` for a page on several, `loadedForScope` before trusting a store, `emptyText` for an empty list. A refused list reads unreachable, never "none".
+- Reads through the API proxy: `Promise.allSettled`, so one refusal fails only its own part; `withTimeout` on each (`api/shared/read-timeout.ts`); one read in flight per key, a few at once (`dueReads`, `api/shared/polling.ts`); `nextReadDelay` before retrying a refusal (`api/shared/retry.ts`).
 
 ### 7. Fixtures
 

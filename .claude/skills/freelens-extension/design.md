@@ -36,7 +36,7 @@ Every extension looks like one product, and like Freelens. Components are in
 - One sidebar group per extension, shown only with its CRDs. Overview first.
 - A feature with more than one screen is a sub-group, shown only with its CRD.
 - One job per page. No tabs of ours.
-- Every row and card opens something. A row in a list opens that object's drawer; a card or an overview row may open the list behind it.
+- Every row and card opens something. A row in a list opens that object's drawer; a card or an overview row may open the list behind it, narrowed by a typed filter whose rows are the ones the card counts, never by a text search.
 
 ## Pages
 
@@ -60,13 +60,16 @@ selector (`namespace-filter.tsx`), and one action.
 | A value to copy, with its button | `P-copyable` inside a fact |
 | What the page must say first | `P-banner` |
 | A state | `P-status` (`status.tsx`) |
+| A list's typed filters | `P-filters` (`filter-chips.tsx`): "All" first, one pressed at a time, an optional count on each |
+| A related object, inside a drawer | `P-link` (`drawer-link.tsx`): `DrawerLink` to a drawer or page of ours, `HostLink` to the host's list searched by the name (`api/shared/host-links.ts`) |
+| Commands to copy | "Look further" (`commands-section.tsx`), a `Copy` button on each |
 
 ## Tables
 
 - Look of the host's lists: `--contentColor` panel, `--tableHeaderBackground` header, rows 33px apart, no lines.
 - Cells hold text and `P-link` only. Kind or type is plain text.
 - Cell classes: `__shrink` (names), `__fill` (the truncating column), `__number`, `__actions` (⋮ menu).
-- Search in the head; sort by header (`aria-sort`). Both from `api/table.ts`.
+- Search in the head; sort by header (`aria-sort`). Both from `api/shared/table.ts`.
 - Row click opens the object's drawer: a fuller view than the row, never a jump to another page, a side pane, or nothing. A link in a cell (a cluster, an owner) stops the click and navigates.
 - Lists with writes tick rows: the first cell holds the host's `Checkbox`, and the selection bar offers the bulk actions, each confirmed by typing `confirm` and listing what it skips and why.
 
@@ -74,7 +77,8 @@ selector (`namespace-filter.tsx`), and one action.
 
 - From a host list: the host's details drawer (`kubeObjectDetailItems`).
 - From our pages: `object-drawer.tsx`. Actions in the title bar through the host's toolbar `MenuActions`, as its own drawers do; destructive last.
-- What the drawer holds: the state with its cause in a banner, the facts, what belongs to the object (its runs, its instances, its children), commands to copy. More than the row, never a copy of it.
+- What the drawer holds: the state with its cause in a banner, the facts, what belongs to the object (its runs, its instances, its children) as links, commands to copy. More than the row, never a copy of it.
+- A link in a drawer closes the drawer first, then opens what it names.
 - The opening click calls `preventDefault()`, or the drawer closes at once. Also on another page, when it navigates to a route that opens a drawer.
 - A menu item inside a drawer calls `event.nativeEvent.preventDefault()`: the menu renders outside the drawer, so its click counts as outside. Not `event.preventDefault()`: the menu then stays open.
 
@@ -94,9 +98,9 @@ Every write asks first (`confirm.tsx`). Message root: `P P-dialog`.
 ## Text
 
 - Labels are verbs, never "...".
-- Every button and menu item has a tooltip saying its effect.
+- Every button and menu item has a tooltip saying its effect. A card's defaults to the list it opens; `designViolations()` flags a card without one.
 - Sentence case. Relative times in tables, absolute in facts.
-- Empty states say what is empty and why.
+- Empty states say what is empty and why. Before a list is read they say why it is empty (`emptyText` in `api/shared/store-state.ts`): connecting, not installed, or refused, never "none".
 
 ## Host pages
 

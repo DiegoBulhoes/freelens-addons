@@ -2,7 +2,7 @@ import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 import { type ReactNode, useState } from "react";
 
-import { describeCount, nextSort, type Sort, searchRows, sortRows } from "../api/table";
+import { describeCount, nextSort, type Sort, searchRows, sortRows } from "../api/shared/table";
 import { NamespaceFilter } from "./namespace-filter";
 import { type SelectionAction, SelectionBar } from "./selection-bar";
 import { __Name__Styles } from "./styles";

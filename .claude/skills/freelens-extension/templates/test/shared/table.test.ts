@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { describeCount, nextSort, searchRows, sortRows } from "../src/renderer/api/table";
+import { describeCount, nextSort, searchRows, sortRows } from "../../src/renderer/api/shared/table";
 
 // Template only: an extension tests its own search and sort against real fixtures.
 const rows = [
