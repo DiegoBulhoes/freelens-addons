@@ -1,0 +1,885 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T20:31:51Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "acme-test"
+        },
+        "name": "acme-test",
+        "resourceVersion": "3357",
+        "selfLink": "/api/v1/namespaces/acme-test",
+        "uid": "55f3cfe8-4cc5-4da8-9bca-7de16b9283ad"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T20:27:56Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "argocd"
+        },
+        "name": "argocd",
+        "resourceVersion": "279",
+        "selfLink": "/api/v1/namespaces/argocd",
+        "uid": "763fddb1-f2c9-4637-ab9a-b0950e22a1ce"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T20:31:50Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "cert-manager"
+        },
+        "name": "cert-manager",
+        "resourceVersion": "82469",
+        "selfLink": "/api/v1/namespaces/cert-manager",
+        "uid": "82bc9b4e-7181-4c4e-80c0-3ed7bedeee05"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T20:32:21Z",
+        "labels": {
+          "app.kubernetes.io/name": "cloudnative-pg",
+          "kubernetes.io/metadata.name": "cnpg-system"
+        },
+        "name": "cnpg-system",
+        "resourceVersion": "3897",
+        "selfLink": "/api/v1/namespaces/cnpg-system",
+        "uid": "59a99093-7fd6-4b6a-9652-21831e54dcee"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T20:33:16Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "databases"
+        },
+        "name": "databases",
+        "resourceVersion": "4421",
+        "selfLink": "/api/v1/namespaces/databases",
+        "uid": "e12f1c9e-3662-4924-9052-c58ceb4ed012"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T20:27:50Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "default"
+        },
+        "name": "default",
+        "resourceVersion": "14",
+        "selfLink": "/api/v1/namespaces/default",
+        "uid": "8edb4a3d-5699-46a2-bdbf-83bc056f9fb5"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T20:27:55Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "demo"
+        },
+        "name": "demo",
+        "resourceVersion": "271",
+        "selfLink": "/api/v1/namespaces/demo",
+        "uid": "71677315-9519-4049-9990-513672793c3b"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T20:29:00Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "helm-image-updates"
+        },
+        "name": "helm-image-updates",
+        "resourceVersion": "989",
+        "selfLink": "/api/v1/namespaces/helm-image-updates",
+        "uid": "9998635f-c03c-4494-bfce-2e30d16d977a"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T20:29:02Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "image-updates"
+        },
+        "name": "image-updates",
+        "resourceVersion": "1271",
+        "selfLink": "/api/v1/namespaces/image-updates",
+        "uid": "3c5866f3-f2f8-4a7b-894c-6d7716661842"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T20:27:50Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "kube-node-lease"
+        },
+        "name": "kube-node-lease",
+        "resourceVersion": "33",
+        "selfLink": "/api/v1/namespaces/kube-node-lease",
+        "uid": "608adab2-b0f2-45cf-bdff-dce8ead16902"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T20:27:50Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "kube-public"
+        },
+        "name": "kube-public",
+        "resourceVersion": "11",
+        "selfLink": "/api/v1/namespaces/kube-public",
+        "uid": "6b8bde4b-511a-4856-9b2f-1095f2a2b65b"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T20:27:50Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "kube-system"
+        },
+        "name": "kube-system",
+        "resourceVersion": "9",
+        "selfLink": "/api/v1/namespaces/kube-system",
+        "uid": "288173d0-c9b9-4a17-8c88-4113b7ed2d75"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T20:29:01Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "kustomize-guestbook"
+        },
+        "name": "kustomize-guestbook",
+        "resourceVersion": "1200",
+        "selfLink": "/api/v1/namespaces/kustomize-guestbook",
+        "uid": "6da17b79-c1e5-4d6d-a611-0db61237a4c1"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T20:29:02Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "legacy-annotations"
+        },
+        "name": "legacy-annotations",
+        "resourceVersion": "1268",
+        "selfLink": "/api/v1/namespaces/legacy-annotations",
+        "uid": "722231da-2150-4ebc-b9fc-efd92494d7df"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T20:36:27Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "mongodb"
+        },
+        "name": "mongodb",
+        "resourceVersion": "7557",
+        "selfLink": "/api/v1/namespaces/mongodb",
+        "uid": "48291195-4e1a-4461-a6e1-565677b9e684"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:20Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "monitoring",
+          "seed.freelens/prometheus": "true"
+        },
+        "name": "monitoring",
+        "resourceVersion": "175641",
+        "selfLink": "/api/v1/namespaces/monitoring",
+        "uid": "73aa4069-d5c4-4a26-a589-33d7d26c1fe7"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "creationTimestamp": "2026-10-11T16:24:41Z",
+        "labels": {
+          "app.kubernetes.io/name": "opentelemetry-operator",
+          "control-plane": "controller-manager",
+          "kubernetes.io/metadata.name": "opentelemetry-operator-system"
+        },
+        "name": "opentelemetry-operator-system",
+        "resourceVersion": "83104",
+        "selfLink": "/api/v1/namespaces/opentelemetry-operator-system",
+        "uid": "17dee3d0-c69c-4162-a1c3-2cb8b7a316fb"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T16:17:31Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "otel-allocator"
+        },
+        "name": "otel-allocator",
+        "resourceVersion": "277136",
+        "selfLink": "/api/v1/namespaces/otel-allocator",
+        "uid": "6f7d6666-4883-4b27-a993-1dc4f02fc78e"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "otel-ambiguous"
+        },
+        "name": "otel-ambiguous",
+        "resourceVersion": "91312",
+        "selfLink": "/api/v1/namespaces/otel-ambiguous",
+        "uid": "87d15f5c-949d-47c5-a476-6e8044692a17"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "otel-apps"
+        },
+        "name": "otel-apps",
+        "resourceVersion": "91304",
+        "selfLink": "/api/v1/namespaces/otel-apps",
+        "uid": "4f011ff3-24e4-4e42-b76b-07999a5ab0a3"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T17:26:32Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "otel-batch"
+        },
+        "name": "otel-batch",
+        "resourceVersion": "303056",
+        "selfLink": "/api/v1/namespaces/otel-batch",
+        "uid": "cd46589a-4b85-4a93-afc8-a5b143d55a8b"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T16:17:31Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "otel-blocked"
+        },
+        "name": "otel-blocked",
+        "resourceVersion": "277123",
+        "selfLink": "/api/v1/namespaces/otel-blocked",
+        "uid": "919e0972-b3d3-4375-95d4-8f5d404541e4"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "otel-collectors"
+        },
+        "name": "otel-collectors",
+        "resourceVersion": "91324",
+        "selfLink": "/api/v1/namespaces/otel-collectors",
+        "uid": "d2c263a9-a918-43be-9791-270e645619bb"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {
+          "instrumentation.opentelemetry.io/inject-python": "true"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "otel-late"
+        },
+        "name": "otel-late",
+        "resourceVersion": "159426",
+        "selfLink": "/api/v1/namespaces/otel-late",
+        "uid": "9d9de0b6-4630-4294-8905-6cabe0fbba2e"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {
+          "instrumentation.opentelemetry.io/inject-python": "true"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "otel-namespace"
+        },
+        "name": "otel-namespace",
+        "resourceVersion": "91305",
+        "selfLink": "/api/v1/namespaces/otel-namespace",
+        "uid": "fcb40365-00b3-4888-b44c-4d20b588e4c4"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "otel-orphan"
+        },
+        "name": "otel-orphan",
+        "resourceVersion": "91306",
+        "selfLink": "/api/v1/namespaces/otel-orphan",
+        "uid": "80fd835a-7dbf-448d-afff-b297a2dd5eec"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T16:17:31Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "otel-sidecar"
+        },
+        "name": "otel-sidecar",
+        "resourceVersion": "277133",
+        "selfLink": "/api/v1/namespaces/otel-sidecar",
+        "uid": "d303986c-ea98-45ca-9018-a5d7b53478fc"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T16:17:31Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "otel-tls"
+        },
+        "name": "otel-tls",
+        "resourceVersion": "277124",
+        "selfLink": "/api/v1/namespaces/otel-tls",
+        "uid": "33dd57dc-97a3-49c3-bd0d-71126886d03b"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T20:29:00Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "pinned"
+        },
+        "name": "pinned",
+        "resourceVersion": "1044",
+        "selfLink": "/api/v1/namespaces/pinned",
+        "uid": "8640ad78-43ca-4035-a9dc-155e7ef4afe2"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T20:29:01Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "podinfo"
+        },
+        "name": "podinfo",
+        "resourceVersion": "1126",
+        "selfLink": "/api/v1/namespaces/podinfo",
+        "uid": "be2acbc9-12cb-466e-8a8f-d135c6a748ab"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:20Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "prom-apps",
+          "seed.freelens/prometheus": "true"
+        },
+        "name": "prom-apps",
+        "resourceVersion": "175642",
+        "selfLink": "/api/v1/namespaces/prom-apps",
+        "uid": "d73e2a22-c409-4211-afa7-5dcf1dd38294"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:20Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "prom-broken"
+        },
+        "name": "prom-broken",
+        "resourceVersion": "175648",
+        "selfLink": "/api/v1/namespaces/prom-broken",
+        "uid": "25a56725-7260-4ece-99bb-41d8a55460d0"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:20Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "prom-outside"
+        },
+        "name": "prom-outside",
+        "resourceVersion": "175645",
+        "selfLink": "/api/v1/namespaces/prom-outside",
+        "uid": "25ccee80-54ab-4e75-ad95-d27ef4331010"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:20Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "prometheus-operator"
+        },
+        "name": "prometheus-operator",
+        "resourceVersion": "175640",
+        "selfLink": "/api/v1/namespaces/prometheus-operator",
+        "uid": "bcfb4bfe-dc64-4f99-ac4e-af562d042c13"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T20:41:29Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "redis"
+        },
+        "name": "redis",
+        "resourceVersion": "11386",
+        "selfLink": "/api/v1/namespaces/redis",
+        "uid": "2e801af8-944c-4e65-84ec-f2891ec1235c"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T20:41:03Z",
+        "labels": {
+          "control-plane": "redis-operator",
+          "kubernetes.io/metadata.name": "redis-operator-system"
+        },
+        "name": "redis-operator-system",
+        "resourceVersion": "10999",
+        "selfLink": "/api/v1/namespaces/redis-operator-system",
+        "uid": "999025a6-6295-4ddd-a7ed-3d629f6d6178"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-04T20:29:01Z",
+        "labels": {
+          "kubernetes.io/metadata.name": "sync-waves"
+        },
+        "name": "sync-waves",
+        "resourceVersion": "1192",
+        "selfLink": "/api/v1/namespaces/sync-waves",
+        "uid": "52bdaccd-dd9a-4d75-af99-79a7d6415ca9"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Namespace",
+      "metadata": {
+        "creationTimestamp": "2026-10-04T20:29:18Z",
+        "labels": {
+          "app.kubernetes.io/instance": "trivy-operator",
+          "app.kubernetes.io/managed-by": "kubectl",
+          "app.kubernetes.io/name": "trivy-operator",
+          "app.kubernetes.io/version": "0.34.0",
+          "kubernetes.io/metadata.name": "trivy-system"
+        },
+        "name": "trivy-system",
+        "resourceVersion": "1559",
+        "selfLink": "/api/v1/namespaces/trivy-system",
+        "uid": "a6aad082-f8fa-4b88-aa2e-56fb9877e2e5"
+      },
+      "spec": {
+        "finalizers": [
+          "kubernetes"
+        ]
+      },
+      "status": {
+        "phase": "Active"
+      }
+    }
+  ],
+  "kind": "List"
+}

@@ -1,0 +1,1047 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "opentelemetry.io/v1alpha1",
+      "kind": "Instrumentation",
+      "metadata": {
+        "annotations": {
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-apache-httpd-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-dotnet-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.16.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-go-image": "ghcr.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go:v0.24.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-java-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:2.30.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-nginx-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-nodejs-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.78.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-python-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.64b0"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "python-a",
+        "namespace": "otel-ambiguous",
+        "resourceVersion": "91322",
+        "selfLink": "/apis/opentelemetry.io/v1alpha1/namespaces/otel-ambiguous/instrumentations/python-a",
+        "uid": "bded5520-0cae-4915-8f7e-855d02e18d40"
+      },
+      "spec": {
+        "apacheHttpd": {
+          "configPath": "/usr/local/apache2/conf",
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "1m",
+              "memory": "128Mi"
+            }
+          },
+          "version": "2.4",
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "defaults": {},
+        "dotnet": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.16.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "exporter": {
+          "endpoint": "http://gateway-collector.otel-collectors.svc.cluster.local:4318"
+        },
+        "go": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go:v0.24.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "java": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:2.30.0",
+          "resources": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "nginx": {
+          "configFile": "/etc/nginx/nginx.conf",
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "1m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "nodejs": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.78.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "propagators": [
+          "tracecontext",
+          "baggage"
+        ],
+        "python": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.64b0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "10m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "resource": {},
+        "sampler": {
+          "argument": "1",
+          "type": "parentbased_traceidratio"
+        }
+      }
+    },
+    {
+      "apiVersion": "opentelemetry.io/v1alpha1",
+      "kind": "Instrumentation",
+      "metadata": {
+        "annotations": {
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-apache-httpd-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-dotnet-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.16.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-go-image": "ghcr.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go:v0.24.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-java-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:2.30.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-nginx-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-nodejs-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.78.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-python-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.64b0"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "python-b",
+        "namespace": "otel-ambiguous",
+        "resourceVersion": "91323",
+        "selfLink": "/apis/opentelemetry.io/v1alpha1/namespaces/otel-ambiguous/instrumentations/python-b",
+        "uid": "9b9931f2-904b-4b53-8c0f-bfcd960b08ef"
+      },
+      "spec": {
+        "apacheHttpd": {
+          "configPath": "/usr/local/apache2/conf",
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "1m",
+              "memory": "128Mi"
+            }
+          },
+          "version": "2.4",
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "defaults": {},
+        "dotnet": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.16.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "exporter": {
+          "endpoint": "http://gateway-collector.otel-collectors.svc.cluster.local:4318"
+        },
+        "go": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go:v0.24.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "java": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:2.30.0",
+          "resources": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "nginx": {
+          "configFile": "/etc/nginx/nginx.conf",
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "1m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "nodejs": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.78.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "propagators": [
+          "tracecontext",
+          "baggage"
+        ],
+        "python": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.64b0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "10m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "resource": {},
+        "sampler": {
+          "argument": "1",
+          "type": "parentbased_traceidratio"
+        }
+      }
+    },
+    {
+      "apiVersion": "opentelemetry.io/v1alpha1",
+      "kind": "Instrumentation",
+      "metadata": {
+        "annotations": {
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-apache-httpd-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-dotnet-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.16.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-go-image": "ghcr.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go:v0.24.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-java-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:2.30.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-nginx-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-nodejs-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.78.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-python-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.64b0"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "python",
+        "namespace": "otel-apps",
+        "resourceVersion": "91319",
+        "selfLink": "/apis/opentelemetry.io/v1alpha1/namespaces/otel-apps/instrumentations/python",
+        "uid": "bacb9a69-f4bb-4fdc-b9f7-9b3dbc9ba8e2"
+      },
+      "spec": {
+        "apacheHttpd": {
+          "configPath": "/usr/local/apache2/conf",
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "1m",
+              "memory": "128Mi"
+            }
+          },
+          "version": "2.4",
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "defaults": {},
+        "dotnet": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.16.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "exporter": {
+          "endpoint": "http://gateway-collector.otel-collectors.svc.cluster.local:4318"
+        },
+        "go": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go:v0.24.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "java": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:2.30.0",
+          "resources": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "nginx": {
+          "configFile": "/etc/nginx/nginx.conf",
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "1m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "nodejs": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.78.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "propagators": [
+          "tracecontext",
+          "baggage"
+        ],
+        "python": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.64b0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "10m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "resource": {},
+        "sampler": {
+          "argument": "1",
+          "type": "parentbased_traceidratio"
+        }
+      }
+    },
+    {
+      "apiVersion": "opentelemetry.io/v1alpha1",
+      "kind": "Instrumentation",
+      "metadata": {
+        "annotations": {
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-apache-httpd-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-dotnet-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.16.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-go-image": "ghcr.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go:v0.24.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-java-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:2.30.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-nginx-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-nodejs-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.78.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-python-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.64b0"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "python",
+        "namespace": "otel-late",
+        "resourceVersion": "91321",
+        "selfLink": "/apis/opentelemetry.io/v1alpha1/namespaces/otel-late/instrumentations/python",
+        "uid": "8ad2ccef-19e4-47e0-bf32-b56b77bdd7df"
+      },
+      "spec": {
+        "apacheHttpd": {
+          "configPath": "/usr/local/apache2/conf",
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "1m",
+              "memory": "128Mi"
+            }
+          },
+          "version": "2.4",
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "defaults": {},
+        "dotnet": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.16.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "exporter": {
+          "endpoint": "http://gateway-collector.otel-collectors.svc.cluster.local:4318"
+        },
+        "go": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go:v0.24.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "java": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:2.30.0",
+          "resources": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "nginx": {
+          "configFile": "/etc/nginx/nginx.conf",
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "1m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "nodejs": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.78.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "propagators": [
+          "tracecontext",
+          "baggage"
+        ],
+        "python": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.64b0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "10m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "resource": {},
+        "sampler": {
+          "argument": "1",
+          "type": "parentbased_traceidratio"
+        }
+      }
+    },
+    {
+      "apiVersion": "opentelemetry.io/v1alpha1",
+      "kind": "Instrumentation",
+      "metadata": {
+        "annotations": {
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-apache-httpd-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-dotnet-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.16.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-go-image": "ghcr.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go:v0.24.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-java-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:2.30.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-nginx-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-nodejs-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.78.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-python-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.64b0"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "python",
+        "namespace": "otel-namespace",
+        "resourceVersion": "91320",
+        "selfLink": "/apis/opentelemetry.io/v1alpha1/namespaces/otel-namespace/instrumentations/python",
+        "uid": "cfb8bfbd-f62e-46aa-900d-44614715eaa4"
+      },
+      "spec": {
+        "apacheHttpd": {
+          "configPath": "/usr/local/apache2/conf",
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "1m",
+              "memory": "128Mi"
+            }
+          },
+          "version": "2.4",
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "defaults": {},
+        "dotnet": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.16.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "exporter": {
+          "endpoint": "http://gateway-collector.otel-collectors.svc.cluster.local:4318"
+        },
+        "go": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go:v0.24.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "java": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:2.30.0",
+          "resources": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "nginx": {
+          "configFile": "/etc/nginx/nginx.conf",
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "1m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "nodejs": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.78.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "propagators": [
+          "tracecontext",
+          "baggage"
+        ],
+        "python": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.64b0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "10m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "resource": {},
+        "sampler": {
+          "argument": "1",
+          "type": "parentbased_traceidratio"
+        }
+      }
+    },
+    {
+      "apiVersion": "opentelemetry.io/v1alpha1",
+      "kind": "Instrumentation",
+      "metadata": {
+        "annotations": {
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-apache-httpd-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-dotnet-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.16.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-go-image": "ghcr.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go:v0.24.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-java-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:2.30.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-nginx-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-nodejs-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.78.0",
+          "instrumentation.opentelemetry.io/default-auto-instrumentation-python-image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.64b0"
+        },
+        "creationTimestamp": "2026-10-12T16:17:31Z",
+        "generation": 1,
+        "name": "python",
+        "namespace": "otel-tls",
+        "resourceVersion": "277132",
+        "selfLink": "/apis/opentelemetry.io/v1alpha1/namespaces/otel-tls/instrumentations/python",
+        "uid": "3f854c17-82b2-4845-9f34-6fef92d80279"
+      },
+      "spec": {
+        "apacheHttpd": {
+          "configPath": "/usr/local/apache2/conf",
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "1m",
+              "memory": "128Mi"
+            }
+          },
+          "version": "2.4",
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "defaults": {},
+        "dotnet": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.16.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "exporter": {
+          "endpoint": "https://gateway-collector.otel-collectors.svc.cluster.local:4318",
+          "tls": {
+            "secretName": "otel-ca"
+          }
+        },
+        "go": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go:v0.24.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "java": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:2.30.0",
+          "resources": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "nginx": {
+          "configFile": "/etc/nginx/nginx.conf",
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-apache-httpd:1.0.4",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "1m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "nodejs": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.78.0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "50m",
+              "memory": "128Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "propagators": [
+          "tracecontext",
+          "baggage"
+        ],
+        "python": {
+          "image": "ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.64b0",
+          "resourceRequirements": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "256Mi"
+            },
+            "requests": {
+              "cpu": "10m",
+              "memory": "64Mi"
+            }
+          },
+          "volumeClaimTemplate": {
+            "metadata": {},
+            "spec": {
+              "resources": {}
+            }
+          }
+        },
+        "resource": {},
+        "sampler": {
+          "argument": "1",
+          "type": "parentbased_traceidratio"
+        }
+      }
+    }
+  ],
+  "kind": "List"
+}

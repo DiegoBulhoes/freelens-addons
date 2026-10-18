@@ -1,0 +1,1029 @@
+/*
+ * The design standard. Edit it here and run the skill's scripts/copy-design-standard.sh; never edit a copy.
+ *
+ * - Colours come from the host's theme; the one literal is a pressed filter's white.
+ * - Content sits on --sidebarBackground: --layoutBackground equals it in the light theme.
+ * - Every component that can be a <button> resets `text-align: center`.
+ */
+
+.OpenTelemetry {
+  --opentelemetry-gap-xs: calc(var(--unit, 8px) * 0.5);
+  --opentelemetry-gap-sm: var(--unit, 8px);
+  --opentelemetry-gap-md: calc(var(--unit, 8px) * 2);
+  --opentelemetry-gap-lg: calc(var(--unit, 8px) * 3);
+
+  --opentelemetry-small: var(--font-size-small, 12px);
+  --opentelemetry-radius: var(--border-radius, 3px);
+  --opentelemetry-line: var(--borderFaintColor, rgba(127, 127, 127, 0.25));
+  --opentelemetry-line-strong: var(--borderColor, rgba(127, 127, 127, 0.5));
+  --opentelemetry-surface: var(--sidebarBackground, rgba(127, 127, 127, 0.15));
+  --opentelemetry-surface-hover: var(--sidebarItemHoverBackground, rgba(127, 127, 127, 0.25));
+
+  --opentelemetry-tone-critical: var(--colorError);
+  --opentelemetry-tone-warning: var(--colorWarning);
+  --opentelemetry-tone-ok: var(--colorSuccess);
+  --opentelemetry-tone-info: var(--colorInfo);
+
+  color: var(--textColorPrimary);
+}
+
+.OpenTelemetry :is(button, a, input):focus-visible {
+  outline: 2px solid var(--colorInfo);
+  outline-offset: 1px;
+}
+
+/* The host's ConfirmDialog is white in every theme; ours follows the theme. */
+.ConfirmDialog:has(.OpenTelemetry-dialog) > .box {
+  border: 1px solid var(--borderColor);
+  background-color: var(--contentColor);
+  color: var(--textColorPrimary);
+}
+
+.ConfirmDialog:has(.OpenTelemetry-dialog) .confirm-buttons {
+  background: var(--layoutBackground);
+}
+
+/* One text colour in our dialogs; the two root classes outrank the host's control rules. */
+.OpenTelemetry.OpenTelemetry-dialog,
+.OpenTelemetry.OpenTelemetry-dialog
+  :is(
+    .OpenTelemetry-muted,
+    .OpenTelemetry-hint,
+    .OpenTelemetry-filter:not([aria-pressed="true"]),
+    .Checkbox,
+    .Checkbox label,
+    .Input,
+    .Input label,
+    input
+  ) {
+  color: inherit;
+}
+
+/* ─── Page ──────────────────────────────────────────────────────────────── */
+
+.OpenTelemetry-page {
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding: var(--opentelemetry-gap-lg);
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: var(--opentelemetry-gap-lg);
+  min-width: 0;
+}
+
+/* Laid out as the host's `.ItemListLayout`. */
+.OpenTelemetry-page--list {
+  padding: 0;
+  gap: 0;
+  background: var(--contentColor);
+}
+
+.OpenTelemetry-page--list > .OpenTelemetry-page__head {
+  padding: var(--opentelemetry-gap-md);
+}
+
+.OpenTelemetry-page--list > .OpenTelemetry-filters {
+  padding: 0 var(--opentelemetry-gap-md) var(--opentelemetry-gap-md);
+}
+
+.OpenTelemetry-page--list > .OpenTelemetry-section > .OpenTelemetry-section__note {
+  padding: 0 var(--opentelemetry-gap-md) var(--opentelemetry-gap-md);
+}
+
+.OpenTelemetry-page__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--opentelemetry-gap-md);
+  flex-wrap: wrap;
+}
+
+.OpenTelemetry-page__head > :first-child {
+  flex: 1 1 20em;
+  min-width: 0;
+}
+
+.OpenTelemetry-page__headline {
+  display: flex;
+  align-items: baseline;
+  gap: var(--opentelemetry-gap-sm);
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: calc(var(--unit, 8px) * 3);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: 1.25;
+}
+
+.OpenTelemetry-page__subline {
+  margin: var(--opentelemetry-gap-xs) 0 0;
+  color: var(--textColorSecondary);
+}
+
+.OpenTelemetry-page__count {
+  font-size: var(--font-size-small, 12px);
+  color: var(--textColorSecondary);
+}
+
+.OpenTelemetry-page__subline--alarm {
+  color: var(--opentelemetry-tone-critical);
+}
+
+.OpenTelemetry-page__actions {
+  display: grid;
+  justify-items: end;
+  gap: var(--opentelemetry-gap-xs);
+  max-width: 28em;
+  text-align: right;
+}
+
+/* ─── Section ───────────────────────────────────────────────────────────── */
+
+.OpenTelemetry-section {
+  display: grid;
+  gap: var(--opentelemetry-gap-sm);
+  min-width: 0;
+}
+
+.OpenTelemetry-section__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--opentelemetry-gap-sm);
+  flex-wrap: wrap;
+}
+
+.OpenTelemetry-section__bar > :last-child:not(:first-child) {
+  margin-left: auto;
+}
+
+.OpenTelemetry-section__title {
+  margin: 0;
+  font-size: var(--font-size-big, 16px);
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+.OpenTelemetry-section__note {
+  margin: 0;
+  color: var(--textColorSecondary);
+}
+
+/* ─── Cards ─────────────────────────────────────────────────────────────── */
+
+/* auto-fill, not auto-fit: a card keeps its width however few there are. */
+.OpenTelemetry-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: var(--opentelemetry-gap-sm);
+}
+
+.OpenTelemetry-card {
+  display: grid;
+  align-content: start;
+  gap: var(--opentelemetry-gap-xs);
+  padding: var(--opentelemetry-gap-md);
+  border: 1px solid var(--opentelemetry-line);
+  border-radius: var(--opentelemetry-radius);
+  background: var(--opentelemetry-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.OpenTelemetry-card {
+  cursor: pointer;
+}
+
+button.OpenTelemetry-card:hover {
+  background: var(--opentelemetry-surface-hover);
+  border-color: var(--opentelemetry-line-strong);
+}
+
+.OpenTelemetry-card__value {
+  font-size: calc(var(--unit, 8px) * 3.5);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.OpenTelemetry-card__label {
+  font-size: var(--opentelemetry-small);
+  color: var(--textColorSecondary);
+}
+
+.OpenTelemetry-card--critical .OpenTelemetry-card__value {
+  color: var(--opentelemetry-tone-critical);
+}
+
+.OpenTelemetry-card--warning .OpenTelemetry-card__value {
+  color: var(--opentelemetry-tone-warning);
+}
+
+.OpenTelemetry-card--info .OpenTelemetry-card__value {
+  color: var(--opentelemetry-tone-info);
+}
+
+.OpenTelemetry-card--ok .OpenTelemetry-card__value {
+  color: var(--opentelemetry-tone-ok);
+}
+
+/* ─── Rows ──────────────────────────────────────────────────────────────── */
+
+.OpenTelemetry-list {
+  display: grid;
+  gap: var(--opentelemetry-gap-xs);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.OpenTelemetry-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--opentelemetry-gap-md);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--opentelemetry-gap-sm) var(--opentelemetry-gap-md);
+  border: 1px solid var(--opentelemetry-line);
+  border-left: 3px solid var(--opentelemetry-line);
+  border-radius: var(--opentelemetry-radius);
+  background: var(--opentelemetry-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.OpenTelemetry-row {
+  cursor: pointer;
+}
+
+button.OpenTelemetry-row:hover,
+.OpenTelemetry-row:has(> button.OpenTelemetry-row__main:hover) {
+  background: var(--opentelemetry-surface-hover);
+}
+
+.OpenTelemetry-row--critical {
+  border-left-color: var(--opentelemetry-tone-critical);
+}
+
+.OpenTelemetry-row--warning {
+  border-left-color: var(--opentelemetry-tone-warning);
+}
+
+.OpenTelemetry-row--info {
+  border-left-color: var(--opentelemetry-tone-info);
+}
+
+.OpenTelemetry-row--ok {
+  border-left-color: var(--opentelemetry-tone-ok);
+}
+
+.OpenTelemetry-row__state {
+  flex: 0 0 9em;
+  font-size: var(--opentelemetry-small);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+.OpenTelemetry-row--critical .OpenTelemetry-row__state {
+  color: var(--opentelemetry-tone-critical);
+}
+
+.OpenTelemetry-row--warning .OpenTelemetry-row__state {
+  color: var(--opentelemetry-tone-warning);
+}
+
+.OpenTelemetry-row--info .OpenTelemetry-row__state {
+  color: var(--opentelemetry-tone-info);
+}
+
+.OpenTelemetry-row--ok .OpenTelemetry-row__state {
+  color: var(--opentelemetry-tone-ok);
+}
+
+.OpenTelemetry-row__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+button.OpenTelemetry-row__main {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.OpenTelemetry-row__name {
+  display: flex;
+  align-items: baseline;
+  gap: var(--opentelemetry-gap-xs) var(--opentelemetry-gap-sm);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.OpenTelemetry-row__meta {
+  font-size: var(--opentelemetry-small);
+  color: var(--textColorSecondary);
+}
+
+.OpenTelemetry-row__reason {
+  font-size: var(--opentelemetry-small);
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+.OpenTelemetry-row__aside {
+  flex: none;
+  font-size: var(--opentelemetry-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.OpenTelemetry-row__actions {
+  flex: none;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: var(--opentelemetry-gap-xs);
+}
+
+/* A value to copy beside its button: the value wraps anywhere, so the button stays in view. */
+.OpenTelemetry-copyable {
+  display: flex;
+  align-items: center;
+  gap: var(--opentelemetry-gap-sm);
+}
+
+.OpenTelemetry-copyable > code {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ─── Boxes ─────────────────────────────────────────────────────────────── */
+
+.OpenTelemetry-box {
+  display: grid;
+  gap: var(--opentelemetry-gap-xs);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--opentelemetry-gap-sm) var(--opentelemetry-gap-md);
+  border: 1px solid var(--opentelemetry-line);
+  border-left: 3px solid var(--opentelemetry-line);
+  border-radius: var(--opentelemetry-radius);
+  background: var(--opentelemetry-surface);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+button.OpenTelemetry-box {
+  cursor: pointer;
+}
+
+button.OpenTelemetry-box:hover {
+  background: var(--opentelemetry-surface-hover);
+}
+
+.OpenTelemetry-box--critical {
+  border-left-color: var(--opentelemetry-tone-critical);
+}
+
+.OpenTelemetry-box--warning {
+  border-left-color: var(--opentelemetry-tone-warning);
+}
+
+.OpenTelemetry-box--info {
+  border-left-color: var(--opentelemetry-tone-info);
+}
+
+.OpenTelemetry-box--ok {
+  border-left-color: var(--opentelemetry-tone-ok);
+}
+
+.OpenTelemetry-box__head {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  align-items: baseline;
+  gap: var(--opentelemetry-gap-sm);
+  width: 100%;
+}
+
+button.OpenTelemetry-box__head {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.OpenTelemetry-box__title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--opentelemetry-gap-xs) var(--opentelemetry-gap-sm);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.OpenTelemetry-box__meta {
+  font-size: var(--opentelemetry-small);
+  color: var(--textColorSecondary);
+}
+
+.OpenTelemetry-box__count {
+  font-size: var(--opentelemetry-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.OpenTelemetry-box__reason {
+  margin: 0;
+  font-size: var(--opentelemetry-small);
+  color: var(--textColorSecondary);
+  overflow-wrap: anywhere;
+}
+
+/* ─── Chips ─────────────────────────────────────────────────────────────── */
+
+.OpenTelemetry-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--opentelemetry-gap-xs);
+}
+
+/* On the surface grey, so it takes the page's colour to stand out. */
+.OpenTelemetry-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--opentelemetry-gap-xs);
+  padding: 1px var(--opentelemetry-gap-sm);
+  border: 1px solid transparent;
+  border-radius: var(--opentelemetry-radius);
+  background: var(--contentColor, rgba(127, 127, 127, 0.1));
+  font: inherit;
+  font-size: var(--opentelemetry-small);
+  color: inherit;
+  text-align: left;
+}
+
+button.OpenTelemetry-chip {
+  color: var(--colorInfo);
+  cursor: pointer;
+}
+
+button.OpenTelemetry-chip:hover {
+  border-color: var(--colorInfo);
+}
+
+.OpenTelemetry-chip__meta {
+  color: var(--textColorSecondary);
+}
+
+/* ─── Tags ──────────────────────────────────────────────────────────────── */
+
+/* Toned through `color`, so a domain class that sets it tones the tag too. */
+.OpenTelemetry-tag {
+  display: inline-block;
+  padding: 0 var(--opentelemetry-gap-xs);
+  border: 1px solid currentColor;
+  border-radius: var(--opentelemetry-radius);
+  font-size: var(--opentelemetry-small);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.OpenTelemetry-tag--critical {
+  color: var(--opentelemetry-tone-critical);
+}
+
+.OpenTelemetry-tag--warning {
+  color: var(--opentelemetry-tone-warning);
+}
+
+.OpenTelemetry-tag--info {
+  color: var(--opentelemetry-tone-info);
+}
+
+.OpenTelemetry-tag--ok {
+  color: var(--opentelemetry-tone-ok);
+}
+
+.OpenTelemetry-tag--neutral {
+  color: var(--textColorSecondary);
+}
+
+/* ─── Tables ────────────────────────────────────────────────────────────── */
+
+/* Value for value as the host's lists (Freelens 1.10.3 `.ItemListLayout`, `.TableCell`). */
+.OpenTelemetry-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--contentColor);
+}
+
+.OpenTelemetry-table th {
+  box-sizing: border-box;
+  height: 33px;
+  padding: var(--opentelemetry-gap-sm);
+  border-top: 1px solid var(--borderFaintColor);
+  border-bottom: 1px solid var(--borderFaintColor);
+  background: var(--tableHeaderBackground);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: 1.1;
+  text-align: left;
+  color: var(--tableHeaderColor, var(--textColorPrimary));
+  white-space: nowrap;
+}
+
+.OpenTelemetry-table th:first-child,
+.OpenTelemetry-table td:first-child {
+  padding-left: var(--opentelemetry-gap-md);
+}
+
+/* 33px: the pitch at which the host's virtual list places its rows. */
+.OpenTelemetry-table td {
+  box-sizing: border-box;
+  height: 33px;
+  /* No vertical padding, so a 23px ⋮ or a tag fits. */
+  padding: 0 var(--opentelemetry-gap-sm);
+  line-height: 1.1;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+.OpenTelemetry-table__number {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Every column that must not break needs __shrink, or this one squeezes it to a letter per line. */
+.OpenTelemetry-table__fill {
+  width: 100%;
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.OpenTelemetry-table__shrink {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.OpenTelemetry-table__actions {
+  width: 1%;
+  line-height: 0;
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* The first cell of a selectable row, holding the host's own Checkbox, as its lists do. */
+.OpenTelemetry-table__check {
+  width: 1%;
+  padding-right: 0;
+  line-height: 0;
+}
+
+.OpenTelemetry-table__row--selected td {
+  background: var(--tableBgcSelected, var(--opentelemetry-surface-hover));
+}
+
+.OpenTelemetry-table__row--clickable {
+  cursor: pointer;
+}
+
+.OpenTelemetry-table__row--clickable:hover td {
+  background: var(--tableBgcSelected, var(--opentelemetry-surface-hover));
+}
+
+.OpenTelemetry-table th[aria-sort] > .OpenTelemetry-sort {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.OpenTelemetry-table th[aria-sort="ascending"] > .OpenTelemetry-sort::after {
+  content: " ▲";
+}
+
+.OpenTelemetry-table th[aria-sort="descending"] > .OpenTelemetry-sort::after {
+  content: " ▼";
+}
+
+/* ─── Facts ─────────────────────────────────────────────────────────────── */
+
+.OpenTelemetry-facts {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--opentelemetry-gap-xs) var(--opentelemetry-gap-md);
+  margin: 0;
+  padding: var(--opentelemetry-gap-sm) var(--opentelemetry-gap-md);
+  border: 1px solid var(--opentelemetry-line);
+  border-radius: var(--opentelemetry-radius);
+  background: var(--opentelemetry-surface);
+}
+
+.OpenTelemetry-facts dt {
+  color: var(--textColorSecondary);
+}
+
+.OpenTelemetry-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ─── Banner ────────────────────────────────────────────────────────────── */
+
+.OpenTelemetry-banner {
+  display: grid;
+  gap: var(--opentelemetry-gap-xs);
+  padding: var(--opentelemetry-gap-sm) var(--opentelemetry-gap-md);
+  border: 1px solid var(--opentelemetry-tone-warning);
+  border-radius: var(--opentelemetry-radius);
+  background: var(--opentelemetry-surface);
+}
+
+.OpenTelemetry-banner__title {
+  display: flex;
+  align-items: center;
+  gap: var(--opentelemetry-gap-sm);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--opentelemetry-tone-warning);
+}
+
+.OpenTelemetry-banner__body {
+  overflow-wrap: anywhere;
+}
+
+.OpenTelemetry-banner--critical {
+  border-color: var(--opentelemetry-tone-critical);
+}
+
+.OpenTelemetry-banner--critical .OpenTelemetry-banner__title {
+  color: var(--opentelemetry-tone-critical);
+}
+
+/* ─── Controls ──────────────────────────────────────────────────────────── */
+
+.OpenTelemetry-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--opentelemetry-gap-xs);
+}
+
+.OpenTelemetry-filter {
+  padding: 2px var(--opentelemetry-gap-sm);
+  border: 1px solid var(--opentelemetry-line);
+  border-radius: var(--opentelemetry-radius);
+  background: transparent;
+  font: inherit;
+  font-size: var(--opentelemetry-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.OpenTelemetry-filter:hover {
+  border-color: var(--opentelemetry-line-strong);
+  color: var(--textColorPrimary);
+}
+
+.OpenTelemetry-filter[aria-pressed="true"] {
+  border-color: var(--colorInfo);
+  background: var(--colorInfo);
+  color: #fff;
+}
+
+.OpenTelemetry-filter__count {
+  margin-left: var(--opentelemetry-gap-xs);
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+.OpenTelemetry-button {
+  padding: var(--opentelemetry-gap-xs) var(--opentelemetry-gap-md);
+  border: 1px solid var(--opentelemetry-line-strong);
+  border-radius: var(--opentelemetry-radius);
+  background: var(--opentelemetry-surface);
+  font: inherit;
+  color: var(--textColorPrimary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.OpenTelemetry-button:hover:not(:disabled) {
+  background: var(--opentelemetry-surface-hover);
+}
+
+.OpenTelemetry-button--primary {
+  border-color: var(--colorInfo);
+}
+
+.OpenTelemetry-button--caution {
+  border-color: var(--opentelemetry-tone-warning);
+  color: var(--opentelemetry-tone-warning);
+}
+
+.OpenTelemetry-button:disabled {
+  border-color: var(--opentelemetry-line);
+  color: var(--textColorSecondary);
+  cursor: not-allowed;
+}
+
+.OpenTelemetry-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--opentelemetry-gap-xs);
+  flex-wrap: wrap;
+}
+
+.OpenTelemetry-icon-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--textColorSecondary);
+  cursor: pointer;
+}
+
+.OpenTelemetry-icon-button:hover {
+  color: var(--textColorPrimary);
+}
+
+.OpenTelemetry-search {
+  min-width: 0;
+  padding: var(--opentelemetry-gap-xs) var(--opentelemetry-gap-sm);
+  border: 1px solid var(--inputControlBorder, var(--opentelemetry-line));
+  border-radius: var(--opentelemetry-radius);
+  background: var(--inputControlBackground, transparent);
+  font: inherit;
+  color: var(--textColorPrimary);
+}
+
+.OpenTelemetry-search:hover {
+  border-color: var(--inputControlHoverBorder, var(--opentelemetry-line-strong));
+}
+
+.OpenTelemetry-search:focus {
+  outline: none;
+  border-color: var(--colorInfo);
+}
+
+.OpenTelemetry-search--wide {
+  flex: 1 1 20rem;
+}
+
+.OpenTelemetry-link {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: var(--colorInfo);
+  text-align: left;
+  cursor: pointer;
+}
+
+.OpenTelemetry-link:hover,
+.OpenTelemetry a:hover {
+  text-decoration: underline;
+}
+
+.OpenTelemetry a {
+  color: var(--colorInfo);
+  text-decoration: none;
+}
+
+/* ─── Picker ────────────────────────────────────────────────────────────── */
+
+.OpenTelemetry-picker {
+  height: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.OpenTelemetry-picker__side {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: var(--opentelemetry-gap-sm);
+  padding: var(--opentelemetry-gap-md);
+  border-right: 1px solid var(--opentelemetry-line);
+  min-height: 0;
+}
+
+.OpenTelemetry-picker__list {
+  overflow-y: auto;
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 1px;
+  min-height: 0;
+}
+
+.OpenTelemetry-picker__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "name aside" "meta aside";
+  align-items: center;
+  gap: 0 var(--opentelemetry-gap-sm);
+  padding: var(--opentelemetry-gap-sm);
+  border: none;
+  border-left: 2px solid transparent;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.OpenTelemetry-picker__item:hover {
+  background: var(--opentelemetry-surface-hover);
+}
+
+.OpenTelemetry-picker__item--selected {
+  border-left-color: var(--colorInfo);
+  background: var(--opentelemetry-surface);
+}
+
+.OpenTelemetry-picker__name {
+  grid-area: name;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.OpenTelemetry-picker__meta {
+  grid-area: meta;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--opentelemetry-small);
+  color: var(--textColorSecondary);
+}
+
+.OpenTelemetry-picker__aside {
+  grid-area: aside;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: var(--opentelemetry-small);
+  color: var(--textColorSecondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.OpenTelemetry-picker__detail {
+  overflow-y: auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+.OpenTelemetry-picker__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+  padding: var(--opentelemetry-gap-lg);
+  color: var(--textColorSecondary);
+  text-align: center;
+}
+
+/* ─── Status ────────────────────────────────────────────────────────────── */
+
+.OpenTelemetry-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--opentelemetry-gap-xs);
+  white-space: nowrap;
+}
+
+.OpenTelemetry-status::before {
+  content: "";
+  width: 0.6em;
+  height: 0.6em;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--textColorSecondary);
+}
+
+.OpenTelemetry-status--critical::before {
+  background: var(--opentelemetry-tone-critical);
+}
+
+.OpenTelemetry-status--warning::before {
+  background: var(--opentelemetry-tone-warning);
+}
+
+.OpenTelemetry-status--info::before {
+  background: var(--opentelemetry-tone-info);
+}
+
+.OpenTelemetry-status--ok::before {
+  background: var(--opentelemetry-tone-ok);
+}
+
+/* ─── Namespace selector ────────────────────────────────────────────────── */
+
+.OpenTelemetry-namespaces {
+  min-width: 16em;
+}
+
+/* ─── Drawer ────────────────────────────────────────────────────────────── */
+
+.OpenTelemetry-drawer {
+  display: grid;
+  gap: var(--opentelemetry-gap-lg);
+  min-width: 0;
+  padding-block: var(--opentelemetry-gap-sm);
+}
+
+/* ─── Form ──────────────────────────────────────────────────────────────── */
+
+.OpenTelemetry-form {
+  display: grid;
+  gap: var(--opentelemetry-gap-md);
+}
+
+.OpenTelemetry-form__field {
+  display: grid;
+  gap: var(--opentelemetry-gap-xs);
+}
+
+/* ─── Selection ─────────────────────────────────────────────────────────── */
+
+.OpenTelemetry-selection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--opentelemetry-gap-md);
+  padding: var(--opentelemetry-gap-sm) var(--opentelemetry-gap-md);
+  border-top: 1px solid var(--opentelemetry-line);
+  background: var(--opentelemetry-surface);
+}
+
+.OpenTelemetry-selection__what {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.OpenTelemetry-selection__count {
+  color: var(--textColorSecondary);
+}
+
+/* ─── Text ──────────────────────────────────────────────────────────────── */
+
+.OpenTelemetry-muted {
+  color: var(--textColorSecondary);
+}
+
+.OpenTelemetry-hint {
+  font-size: var(--opentelemetry-small);
+  color: var(--textColorSecondary);
+}
+
+.OpenTelemetry code,
+.OpenTelemetry-mono {
+  font-family: var(--font-monospace, monospace);
+  font-size: var(--opentelemetry-small);
+}
+
+.OpenTelemetry-truncate {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.OpenTelemetry-text--critical {
+  color: var(--opentelemetry-tone-critical);
+}
+
+.OpenTelemetry-text--warning {
+  color: var(--opentelemetry-tone-warning);
+}
+
+.OpenTelemetry-text--info {
+  color: var(--opentelemetry-tone-info);
+}
+
+.OpenTelemetry-text--ok {
+  color: var(--opentelemetry-tone-ok);
+}

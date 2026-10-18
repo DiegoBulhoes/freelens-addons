@@ -1,0 +1,674 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "opentelemetry.io/v1beta1",
+      "kind": "OpenTelemetryCollector",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T16:27:52Z",
+        "generation": 1,
+        "name": "allocator",
+        "namespace": "otel-allocator",
+        "resourceVersion": "297741",
+        "selfLink": "/apis/opentelemetry.io/v1beta1/namespaces/otel-allocator/opentelemetrycollectors/allocator",
+        "uid": "c53368da-3083-4588-b259-4dc54ceeae79"
+      },
+      "spec": {
+        "config": {
+          "exporters": {
+            "debug": {}
+          },
+          "receivers": {
+            "prometheus": {
+              "config": {
+                "scrape_configs": [
+                  {
+                    "job_name": "self",
+                    "static_configs": [
+                      {
+                        "targets": [
+                          "127.0.0.1:8888"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          "service": {
+            "pipelines": {
+              "metrics": {
+                "exporters": [
+                  "debug"
+                ],
+                "receivers": [
+                  "prometheus"
+                ]
+              }
+            },
+            "telemetry": {
+              "metrics": {
+                "readers": [
+                  {
+                    "pull": {
+                      "exporter": {
+                        "prometheus": {
+                          "host": "198.51.100.10",
+                          "port": 8888
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "configVersions": 3,
+        "daemonSetUpdateStrategy": {},
+        "deploymentUpdateStrategy": {},
+        "httpRoute": {
+          "enabled": false,
+          "gateway": ""
+        },
+        "ingress": {
+          "route": {}
+        },
+        "ipFamilyPolicy": "SingleStack",
+        "managementState": "managed",
+        "mode": "statefulset",
+        "networkPolicy": {
+          "enabled": true
+        },
+        "observability": {
+          "metrics": {}
+        },
+        "podDnsConfig": {},
+        "replicas": 1,
+        "resources": {
+          "requests": {
+            "cpu": "10m",
+            "memory": "64Mi"
+          }
+        },
+        "targetAllocator": {
+          "allocationStrategy": "consistent-hashing",
+          "collectorNotReadyGracePeriod": "30s",
+          "collectorTargetReloadInterval": "30s",
+          "enabled": true,
+          "filterStrategy": "relabel-config",
+          "observability": {
+            "metrics": {}
+          },
+          "prometheusCR": {
+            "evaluationInterval": "30s",
+            "podMonitorNamespaceSelector": {},
+            "probeNamespaceSelector": {},
+            "scrapeConfigNamespaceSelector": {},
+            "scrapeInterval": "30s",
+            "serviceMonitorNamespaceSelector": {}
+          },
+          "replicas": 1,
+          "resources": {
+            "limits": {
+              "memory": "4Mi"
+            },
+            "requests": {
+              "cpu": "5m",
+              "memory": "4Mi"
+            }
+          }
+        },
+        "upgradeStrategy": "automatic"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-12T16:27:52Z",
+            "message": "Successfully reconciled",
+            "observedGeneration": 1,
+            "reason": "Reconciled",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "image": "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.158.0",
+        "observedGeneration": 1,
+        "scale": {
+          "replicas": 1,
+          "selector": "app.kubernetes.io/component=opentelemetry-collector,app.kubernetes.io/instance=otel-allocator.allocator,app.kubernetes.io/managed-by=opentelemetry-operator,app.kubernetes.io/name=allocator-collector,app.kubernetes.io/part-of=opentelemetry,app.kubernetes.io/version=latest",
+          "statusReplicas": "1/1"
+        },
+        "version": "0.158.0"
+      }
+    },
+    {
+      "apiVersion": "opentelemetry.io/v1beta1",
+      "kind": "OpenTelemetryCollector",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "broken",
+        "namespace": "otel-collectors",
+        "resourceVersion": "301375",
+        "selfLink": "/apis/opentelemetry.io/v1beta1/namespaces/otel-collectors/opentelemetrycollectors/broken",
+        "uid": "2297fee9-7b5f-459f-9a53-c6aa8aa0811a"
+      },
+      "spec": {
+        "config": {
+          "exporters": {
+            "debug": {}
+          },
+          "receivers": {
+            "otlp": {
+              "protocols": {
+                "grpc": {
+                  "endpoint": "198.51.100.10:4317"
+                }
+              }
+            }
+          },
+          "service": {
+            "pipelines": {
+              "traces": {
+                "exporters": [
+                  "debugg"
+                ],
+                "receivers": [
+                  "otlp"
+                ]
+              }
+            },
+            "telemetry": {
+              "metrics": {
+                "readers": [
+                  {
+                    "pull": {
+                      "exporter": {
+                        "prometheus": {
+                          "host": "198.51.100.10",
+                          "port": 8888
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "configVersions": 3,
+        "daemonSetUpdateStrategy": {},
+        "deploymentUpdateStrategy": {},
+        "httpRoute": {
+          "enabled": false,
+          "gateway": ""
+        },
+        "ingress": {
+          "route": {}
+        },
+        "ipFamilyPolicy": "SingleStack",
+        "managementState": "managed",
+        "mode": "deployment",
+        "networkPolicy": {
+          "enabled": true
+        },
+        "observability": {
+          "metrics": {}
+        },
+        "podDnsConfig": {},
+        "replicas": 1,
+        "resources": {
+          "requests": {
+            "cpu": "10m",
+            "memory": "64Mi"
+          }
+        },
+        "targetAllocator": {
+          "allocationStrategy": "consistent-hashing",
+          "collectorNotReadyGracePeriod": "30s",
+          "collectorTargetReloadInterval": "30s",
+          "filterStrategy": "relabel-config",
+          "observability": {
+            "metrics": {}
+          },
+          "prometheusCR": {
+            "evaluationInterval": "30s",
+            "podMonitorNamespaceSelector": {},
+            "probeNamespaceSelector": {},
+            "scrapeConfigNamespaceSelector": {},
+            "scrapeInterval": "30s",
+            "serviceMonitorNamespaceSelector": {}
+          },
+          "resources": {}
+        },
+        "upgradeStrategy": "automatic"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-11T16:56:29Z",
+            "message": "Successfully reconciled",
+            "observedGeneration": 1,
+            "reason": "Reconciled",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "image": "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.158.0",
+        "observedGeneration": 1,
+        "scale": {
+          "replicas": 1,
+          "selector": "app.kubernetes.io/component=opentelemetry-collector,app.kubernetes.io/instance=otel-collectors.broken,app.kubernetes.io/managed-by=opentelemetry-operator,app.kubernetes.io/name=broken-collector,app.kubernetes.io/part-of=opentelemetry,app.kubernetes.io/version=latest",
+          "statusReplicas": "0/1"
+        },
+        "version": "0.158.0"
+      }
+    },
+    {
+      "apiVersion": "opentelemetry.io/v1beta1",
+      "kind": "OpenTelemetryCollector",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "gateway",
+        "namespace": "otel-collectors",
+        "resourceVersion": "91855",
+        "selfLink": "/apis/opentelemetry.io/v1beta1/namespaces/otel-collectors/opentelemetrycollectors/gateway",
+        "uid": "216d5914-1d08-4759-8ee9-8b4c1a114f4d"
+      },
+      "spec": {
+        "config": {
+          "exporters": {
+            "debug": {}
+          },
+          "receivers": {
+            "otlp": {
+              "protocols": {
+                "grpc": {
+                  "endpoint": "198.51.100.10:4317"
+                },
+                "http": {
+                  "endpoint": "198.51.100.10:4318"
+                }
+              }
+            }
+          },
+          "service": {
+            "pipelines": {
+              "logs": {
+                "exporters": [
+                  "debug"
+                ],
+                "receivers": [
+                  "otlp"
+                ]
+              },
+              "metrics": {
+                "exporters": [
+                  "debug"
+                ],
+                "receivers": [
+                  "otlp"
+                ]
+              },
+              "traces": {
+                "exporters": [
+                  "debug"
+                ],
+                "receivers": [
+                  "otlp"
+                ]
+              }
+            },
+            "telemetry": {
+              "metrics": {
+                "readers": [
+                  {
+                    "pull": {
+                      "exporter": {
+                        "prometheus": {
+                          "host": "198.51.100.10",
+                          "port": 8888
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "configVersions": 3,
+        "daemonSetUpdateStrategy": {},
+        "deploymentUpdateStrategy": {},
+        "httpRoute": {
+          "enabled": false,
+          "gateway": ""
+        },
+        "ingress": {
+          "route": {}
+        },
+        "ipFamilyPolicy": "SingleStack",
+        "managementState": "managed",
+        "mode": "deployment",
+        "networkPolicy": {
+          "enabled": true
+        },
+        "observability": {
+          "metrics": {}
+        },
+        "podDnsConfig": {},
+        "replicas": 1,
+        "resources": {
+          "requests": {
+            "cpu": "10m",
+            "memory": "64Mi"
+          }
+        },
+        "targetAllocator": {
+          "allocationStrategy": "consistent-hashing",
+          "collectorNotReadyGracePeriod": "30s",
+          "collectorTargetReloadInterval": "30s",
+          "filterStrategy": "relabel-config",
+          "observability": {
+            "metrics": {}
+          },
+          "prometheusCR": {
+            "evaluationInterval": "30s",
+            "podMonitorNamespaceSelector": {},
+            "probeNamespaceSelector": {},
+            "scrapeConfigNamespaceSelector": {},
+            "scrapeInterval": "30s",
+            "serviceMonitorNamespaceSelector": {}
+          },
+          "resources": {}
+        },
+        "upgradeStrategy": "automatic"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-11T16:56:29Z",
+            "message": "Successfully reconciled",
+            "observedGeneration": 1,
+            "reason": "Reconciled",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "image": "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.158.0",
+        "observedGeneration": 1,
+        "scale": {
+          "replicas": 1,
+          "selector": "app.kubernetes.io/component=opentelemetry-collector,app.kubernetes.io/instance=otel-collectors.gateway,app.kubernetes.io/managed-by=opentelemetry-operator,app.kubernetes.io/name=gateway-collector,app.kubernetes.io/part-of=opentelemetry,app.kubernetes.io/version=latest",
+          "statusReplicas": "1/1"
+        },
+        "version": "0.158.0"
+      }
+    },
+    {
+      "apiVersion": "opentelemetry.io/v1beta1",
+      "kind": "OpenTelemetryCollector",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T02:13:52Z",
+        "generation": 1,
+        "name": "scraper",
+        "namespace": "otel-collectors",
+        "resourceVersion": "176520",
+        "selfLink": "/apis/opentelemetry.io/v1beta1/namespaces/otel-collectors/opentelemetrycollectors/scraper",
+        "uid": "7914eedb-cef4-4a3d-a697-ef1d85626b05"
+      },
+      "spec": {
+        "config": {
+          "exporters": {
+            "debug": {}
+          },
+          "receivers": {
+            "prometheus": {
+              "config": {
+                "scrape_configs": []
+              }
+            }
+          },
+          "service": {
+            "pipelines": {
+              "metrics": {
+                "exporters": [
+                  "debug"
+                ],
+                "receivers": [
+                  "prometheus"
+                ]
+              }
+            },
+            "telemetry": {
+              "metrics": {
+                "readers": [
+                  {
+                    "pull": {
+                      "exporter": {
+                        "prometheus": {
+                          "host": "198.51.100.10",
+                          "port": 8888
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "configVersions": 3,
+        "daemonSetUpdateStrategy": {},
+        "deploymentUpdateStrategy": {},
+        "httpRoute": {
+          "enabled": false,
+          "gateway": ""
+        },
+        "ingress": {
+          "route": {}
+        },
+        "ipFamilyPolicy": "SingleStack",
+        "managementState": "managed",
+        "mode": "statefulset",
+        "networkPolicy": {
+          "enabled": true
+        },
+        "observability": {
+          "metrics": {}
+        },
+        "podDnsConfig": {},
+        "replicas": 1,
+        "resources": {
+          "requests": {
+            "cpu": "10m",
+            "memory": "64Mi"
+          }
+        },
+        "targetAllocator": {
+          "allocationStrategy": "consistent-hashing",
+          "collectorNotReadyGracePeriod": "30s",
+          "collectorTargetReloadInterval": "30s",
+          "enabled": true,
+          "filterStrategy": "relabel-config",
+          "observability": {
+            "metrics": {}
+          },
+          "prometheusCR": {
+            "enabled": true,
+            "evaluationInterval": "30s",
+            "podMonitorNamespaceSelector": {},
+            "podMonitorSelector": {
+              "matchLabels": {
+                "scraper": "otel"
+              }
+            },
+            "probeNamespaceSelector": {},
+            "scrapeConfigNamespaceSelector": {},
+            "scrapeInterval": "30s",
+            "serviceMonitorNamespaceSelector": {},
+            "serviceMonitorSelector": {
+              "matchLabels": {
+                "scraper": "otel"
+              }
+            }
+          },
+          "replicas": 1,
+          "resources": {
+            "requests": {
+              "cpu": "10m",
+              "memory": "32Mi"
+            }
+          }
+        },
+        "upgradeStrategy": "automatic"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-12T02:14:14Z",
+            "message": "Successfully reconciled",
+            "observedGeneration": 1,
+            "reason": "Reconciled",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "image": "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.158.0",
+        "observedGeneration": 1,
+        "scale": {
+          "replicas": 1,
+          "selector": "app.kubernetes.io/component=opentelemetry-collector,app.kubernetes.io/instance=otel-collectors.scraper,app.kubernetes.io/managed-by=opentelemetry-operator,app.kubernetes.io/name=scraper-collector,app.kubernetes.io/part-of=opentelemetry,app.kubernetes.io/version=latest",
+          "statusReplicas": "1/1"
+        },
+        "version": "0.158.0"
+      }
+    },
+    {
+      "apiVersion": "opentelemetry.io/v1beta1",
+      "kind": "OpenTelemetryCollector",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T16:17:31Z",
+        "generation": 1,
+        "name": "sidecar",
+        "namespace": "otel-collectors",
+        "resourceVersion": "277145",
+        "selfLink": "/apis/opentelemetry.io/v1beta1/namespaces/otel-collectors/opentelemetrycollectors/sidecar",
+        "uid": "d5c7ebb1-7ebe-4c59-a720-6a066c542a1b"
+      },
+      "spec": {
+        "config": {
+          "exporters": {
+            "debug": {}
+          },
+          "receivers": {
+            "otlp": {
+              "protocols": {
+                "grpc": {
+                  "endpoint": "198.51.100.10:4317"
+                }
+              }
+            }
+          },
+          "service": {
+            "pipelines": {
+              "traces": {
+                "exporters": [
+                  "debug"
+                ],
+                "receivers": [
+                  "otlp"
+                ]
+              }
+            },
+            "telemetry": {
+              "metrics": {
+                "readers": [
+                  {
+                    "pull": {
+                      "exporter": {
+                        "prometheus": {
+                          "host": "198.51.100.10",
+                          "port": 8888
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "configVersions": 3,
+        "daemonSetUpdateStrategy": {},
+        "deploymentUpdateStrategy": {},
+        "httpRoute": {
+          "enabled": false,
+          "gateway": ""
+        },
+        "ingress": {
+          "route": {}
+        },
+        "ipFamilyPolicy": "SingleStack",
+        "managementState": "managed",
+        "mode": "sidecar",
+        "networkPolicy": {
+          "enabled": true
+        },
+        "observability": {
+          "metrics": {}
+        },
+        "podDnsConfig": {},
+        "replicas": 1,
+        "resources": {
+          "requests": {
+            "cpu": "10m",
+            "memory": "64Mi"
+          }
+        },
+        "targetAllocator": {
+          "allocationStrategy": "consistent-hashing",
+          "collectorNotReadyGracePeriod": "30s",
+          "collectorTargetReloadInterval": "30s",
+          "filterStrategy": "relabel-config",
+          "observability": {
+            "metrics": {}
+          },
+          "prometheusCR": {
+            "evaluationInterval": "30s",
+            "podMonitorNamespaceSelector": {},
+            "probeNamespaceSelector": {},
+            "scrapeConfigNamespaceSelector": {},
+            "scrapeInterval": "30s",
+            "serviceMonitorNamespaceSelector": {}
+          },
+          "resources": {}
+        },
+        "upgradeStrategy": "automatic"
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-12T16:17:31Z",
+            "message": "Successfully reconciled",
+            "observedGeneration": 1,
+            "reason": "Reconciled",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "observedGeneration": 1,
+        "version": "0.158.0"
+      }
+    }
+  ],
+  "kind": "List"
+}

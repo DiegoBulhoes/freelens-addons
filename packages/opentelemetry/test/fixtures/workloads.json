@@ -1,0 +1,3645 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-04T20:27:56Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/name": "api"
+        },
+        "name": "api",
+        "namespace": "demo",
+        "resourceVersion": "262875",
+        "selfLink": "/apis/apps/v1/namespaces/demo/deployments/api",
+        "uid": "c60c9881-125b-479d-a0fc-a796828b6dbd"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 2,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "api"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "api"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "python",
+                  "-m",
+                  "http.server",
+                  "8080"
+                ],
+                "image": "python:3.9-slim",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "api",
+                "ports": [
+                  {
+                    "containerPort": 8080,
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": {},
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 30
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 2,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-04T20:27:59Z",
+            "lastUpdateTime": "2026-10-04T20:28:31Z",
+            "message": "ReplicaSet \"api-657b58bb95\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T15:33:39Z",
+            "lastUpdateTime": "2026-10-12T15:33:39Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          }
+        ],
+        "observedGeneration": 1,
+        "readyReplicas": 2,
+        "replicas": 2,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 2
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-04T20:27:56Z",
+        "generation": 1,
+        "name": "broken",
+        "namespace": "demo",
+        "resourceVersion": "302251",
+        "selfLink": "/apis/apps/v1/namespaces/demo/deployments/broken",
+        "uid": "4cf0dbac-7654-4bd8-ac65-cb0bc47bd07f"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "broken"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "broken"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sh",
+                  "-c",
+                  "echo starting; sleep 5; exit 1"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "broken",
+                "resources": {},
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 30
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-04T20:27:59Z",
+            "lastUpdateTime": "2026-10-04T20:28:27Z",
+            "message": "ReplicaSet \"broken-86d6fd94d\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T17:24:37Z",
+            "lastUpdateTime": "2026-10-12T17:24:37Z",
+            "message": "Deployment does not have minimum availability.",
+            "reason": "MinimumReplicasUnavailable",
+            "status": "False",
+            "type": "Available"
+          }
+        ],
+        "observedGeneration": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "unavailableReplicas": 1,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "argocd.argoproj.io/tracking-id": "guestbook:apps/Deployment:demo/guestbook-ui",
+          "deployment.kubernetes.io/revision": "4"
+        },
+        "creationTimestamp": "2026-10-04T20:29:00Z",
+        "generation": 4,
+        "name": "guestbook-ui",
+        "namespace": "demo",
+        "resourceVersion": "267775",
+        "selfLink": "/apis/apps/v1/namespaces/demo/deployments/guestbook-ui",
+        "uid": "329a4c70-1a07-4435-afd0-6bf9df68fd03"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 3,
+        "selector": {
+          "matchLabels": {
+            "app": "guestbook-ui"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "guestbook-ui"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "image": "gcr.io/heptio-images/ks-guestbook-demo:0.2",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "guestbook-ui",
+                "ports": [
+                  {
+                    "containerPort": 80,
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": {},
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 30
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-12T15:33:38Z",
+            "lastUpdateTime": "2026-10-12T15:33:38Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T15:43:39Z",
+            "lastUpdateTime": "2026-10-12T15:43:39Z",
+            "message": "ReplicaSet \"guestbook-ui-6cbb7b6d85\" has timed out progressing.",
+            "reason": "ProgressDeadlineExceeded",
+            "status": "False",
+            "type": "Progressing"
+          }
+        ],
+        "observedGeneration": 4,
+        "readyReplicas": 1,
+        "replicas": 2,
+        "terminatingReplicas": 0,
+        "unavailableReplicas": 1,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "argocd.argoproj.io/tracking-id": "helm-guestbook:apps/Deployment:demo/helm-guestbook",
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-04T20:29:13Z",
+        "generation": 4,
+        "labels": {
+          "app": "helm-guestbook",
+          "chart": "helm-guestbook-0.1.0",
+          "heritage": "Helm",
+          "release": "helm-guestbook"
+        },
+        "name": "helm-guestbook",
+        "namespace": "demo",
+        "resourceVersion": "262883",
+        "selfLink": "/apis/apps/v1/namespaces/demo/deployments/helm-guestbook",
+        "uid": "e2f06e24-af38-477d-bd3c-353f15499720"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 2,
+        "revisionHistoryLimit": 3,
+        "selector": {
+          "matchLabels": {
+            "app": "helm-guestbook",
+            "release": "helm-guestbook"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "helm-guestbook",
+              "release": "helm-guestbook"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "image": "gcr.io/google-samples/gb-frontend:v5",
+                "imagePullPolicy": "IfNotPresent",
+                "livenessProbe": {
+                  "failureThreshold": 3,
+                  "httpGet": {
+                    "path": "/",
+                    "port": "http",
+                    "scheme": "HTTP"
+                  },
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "name": "helm-guestbook",
+                "ports": [
+                  {
+                    "containerPort": 80,
+                    "name": "http",
+                    "protocol": "TCP"
+                  }
+                ],
+                "readinessProbe": {
+                  "failureThreshold": 3,
+                  "httpGet": {
+                    "path": "/",
+                    "port": "http",
+                    "scheme": "HTTP"
+                  },
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "resources": {},
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 30
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 2,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-04T20:29:13Z",
+            "lastUpdateTime": "2026-10-04T20:29:28Z",
+            "message": "ReplicaSet \"helm-guestbook-77bb656876\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T15:33:39Z",
+            "lastUpdateTime": "2026-10-12T15:33:39Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          }
+        ],
+        "observedGeneration": 4,
+        "readyReplicas": 2,
+        "replicas": 2,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 2
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-04T20:27:56Z",
+        "generation": 1,
+        "name": "unscannable",
+        "namespace": "demo",
+        "resourceVersion": "9081",
+        "selfLink": "/apis/apps/v1/namespaces/demo/deployments/unscannable",
+        "uid": "8dd605b0-9cb6-4100-aaf4-b62aa16300de"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "unscannable"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "unscannable"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "image": "registry.invalid/freelens-addons/nothing:1",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "unscannable",
+                "resources": {},
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 30
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-04T20:27:59Z",
+            "lastUpdateTime": "2026-10-04T20:27:59Z",
+            "message": "Deployment does not have minimum availability.",
+            "reason": "MinimumReplicasUnavailable",
+            "status": "False",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-10-04T20:38:00Z",
+            "lastUpdateTime": "2026-10-04T20:38:00Z",
+            "message": "ReplicaSet \"unscannable-7d45447486\" has timed out progressing.",
+            "reason": "ProgressDeadlineExceeded",
+            "status": "False",
+            "type": "Progressing"
+          }
+        ],
+        "observedGeneration": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "unavailableReplicas": 1,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "2"
+        },
+        "creationTimestamp": "2026-10-04T20:27:56Z",
+        "generation": 2,
+        "labels": {
+          "app.kubernetes.io/name": "web"
+        },
+        "name": "web",
+        "namespace": "demo",
+        "resourceVersion": "262887",
+        "selfLink": "/apis/apps/v1/namespaces/demo/deployments/web",
+        "uid": "c8f7e2d5-eef6-48f7-a72e-4b6cc39ccb97"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "web"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "freelens-addons/rollout": "seeded"
+            },
+            "labels": {
+              "app": "web"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "image": "nginx:1.24.0",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "web",
+                "ports": [
+                  {
+                    "containerPort": 80,
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": {},
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 30
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-04T20:27:59Z",
+            "lastUpdateTime": "2026-10-04T20:31:47Z",
+            "message": "ReplicaSet \"web-5774f6f6c7\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T15:33:39Z",
+            "lastUpdateTime": "2026-10-12T15:33:39Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          }
+        ],
+        "observedGeneration": 2,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "14"
+        },
+        "creationTimestamp": "2026-10-11T16:24:42Z",
+        "generation": 14,
+        "labels": {
+          "app.kubernetes.io/name": "opentelemetry-operator",
+          "control-plane": "controller-manager"
+        },
+        "name": "opentelemetry-operator-controller-manager",
+        "namespace": "opentelemetry-operator-system",
+        "resourceVersion": "303074",
+        "selfLink": "/apis/apps/v1/namespaces/opentelemetry-operator-system/deployments/opentelemetry-operator-controller-manager",
+        "uid": "afa33704-3062-4aeb-b0ef-7f4d11f223e3"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app.kubernetes.io/name": "opentelemetry-operator",
+            "control-plane": "controller-manager"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "kubectl.kubernetes.io/restartedAt": "2026-10-12T12:33:57-04:00"
+            },
+            "labels": {
+              "app.kubernetes.io/name": "opentelemetry-operator",
+              "control-plane": "controller-manager"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  "--zap-log-level=info",
+                  "--zap-time-encoding=rfc3339nano"
+                ],
+                "env": [
+                  {
+                    "name": "SERVICE_ACCOUNT_NAME",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "spec.serviceAccountName"
+                      }
+                    }
+                  },
+                  {
+                    "name": "NAMESPACE",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      }
+                    }
+                  },
+                  {
+                    "name": "METRICS_ADDR",
+                    "value": "redacted-by-fixture-export"
+                  },
+                  {
+                    "name": "METRICS_SECURE",
+                    "value": "redacted-by-fixture-export"
+                  },
+                  {
+                    "name": "ENABLE_LEADER_ELECTION",
+                    "value": "redacted-by-fixture-export"
+                  },
+                  {
+                    "name": "ENABLE_NGINX_AUTO_INSTRUMENTATION",
+                    "value": "redacted-by-fixture-export"
+                  }
+                ],
+                "image": "ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator:0.158.0",
+                "imagePullPolicy": "IfNotPresent",
+                "livenessProbe": {
+                  "failureThreshold": 3,
+                  "httpGet": {
+                    "path": "/healthz",
+                    "port": 8081,
+                    "scheme": "HTTP"
+                  },
+                  "initialDelaySeconds": 15,
+                  "periodSeconds": 20,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "name": "manager",
+                "ports": [
+                  {
+                    "containerPort": 9443,
+                    "name": "webhook-server",
+                    "protocol": "TCP"
+                  },
+                  {
+                    "containerPort": 8443,
+                    "name": "https",
+                    "protocol": "TCP"
+                  }
+                ],
+                "readinessProbe": {
+                  "failureThreshold": 3,
+                  "httpGet": {
+                    "path": "/readyz",
+                    "port": 8081,
+                    "scheme": "HTTP"
+                  },
+                  "initialDelaySeconds": 5,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "resources": {
+                  "requests": {
+                    "cpu": "50m",
+                    "memory": "64Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/tmp/k8s-webhook-server/serving-certs",
+                    "name": "cert",
+                    "readOnly": true
+                  }
+                ]
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "serviceAccount": "opentelemetry-operator-controller-manager",
+            "serviceAccountName": "opentelemetry-operator-controller-manager",
+            "terminationGracePeriodSeconds": 10,
+            "volumes": [
+              {
+                "name": "cert",
+                "secret": {
+                  "defaultMode": 420,
+                  "secretName": "opentelemetry-operator-controller-manager-service-cert"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-12T15:33:42Z",
+            "lastUpdateTime": "2026-10-12T15:33:42Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-10-11T16:53:03Z",
+            "lastUpdateTime": "2026-10-12T17:26:31Z",
+            "message": "ReplicaSet \"opentelemetry-operator-controller-manager-546b56bc6b\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          }
+        ],
+        "observedGeneration": 14,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-12T16:27:52Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-targetallocator",
+          "app.kubernetes.io/instance": "otel-allocator.allocator",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "allocator-targetallocator",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest"
+        },
+        "name": "allocator-targetallocator",
+        "namespace": "otel-allocator",
+        "ownerReferences": [
+          {
+            "apiVersion": "opentelemetry.io/v1alpha1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "TargetAllocator",
+            "name": "allocator",
+            "uid": "07ddf74f-75de-4d57-bc9d-14f23890466f"
+          }
+        ],
+        "resourceVersion": "285185",
+        "selfLink": "/apis/apps/v1/namespaces/otel-allocator/deployments/allocator-targetallocator",
+        "uid": "f59025f4-fba5-4a65-b43e-53617d71f5d1"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app.kubernetes.io/component": "opentelemetry-targetallocator",
+            "app.kubernetes.io/instance": "otel-allocator.allocator",
+            "app.kubernetes.io/managed-by": "opentelemetry-operator",
+            "app.kubernetes.io/name": "allocator-targetallocator",
+            "app.kubernetes.io/part-of": "opentelemetry"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "opentelemetry-targetallocator-config/hash": "ea95cab0df1dea40fed67bb5402b04a48a8e8e2e90c58f8a4df5e74c777c7352"
+            },
+            "labels": {
+              "app.kubernetes.io/component": "opentelemetry-targetallocator",
+              "app.kubernetes.io/instance": "otel-allocator.allocator",
+              "app.kubernetes.io/managed-by": "opentelemetry-operator",
+              "app.kubernetes.io/name": "allocator-targetallocator",
+              "app.kubernetes.io/part-of": "opentelemetry",
+              "app.kubernetes.io/version": "latest"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "env": [
+                  {
+                    "name": "OTELCOL_NAMESPACE",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      }
+                    }
+                  },
+                  {
+                    "name": "GOMEMLIMIT",
+                    "valueFrom": {
+                      "resourceFieldRef": {
+                        "containerName": "ta-container",
+                        "divisor": "0",
+                        "resource": "limits.memory"
+                      }
+                    }
+                  },
+                  {
+                    "name": "GOMAXPROCS",
+                    "valueFrom": {
+                      "resourceFieldRef": {
+                        "containerName": "ta-container",
+                        "divisor": "0",
+                        "resource": "limits.cpu"
+                      }
+                    }
+                  }
+                ],
+                "image": "ghcr.io/open-telemetry/opentelemetry-operator/target-allocator:0.158.0",
+                "imagePullPolicy": "IfNotPresent",
+                "livenessProbe": {
+                  "failureThreshold": 3,
+                  "httpGet": {
+                    "path": "/livez",
+                    "port": 8080,
+                    "scheme": "HTTP"
+                  },
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "name": "ta-container",
+                "ports": [
+                  {
+                    "containerPort": 8080,
+                    "name": "http",
+                    "protocol": "TCP"
+                  }
+                ],
+                "readinessProbe": {
+                  "failureThreshold": 3,
+                  "httpGet": {
+                    "path": "/readyz",
+                    "port": 8080,
+                    "scheme": "HTTP"
+                  },
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "resources": {
+                  "limits": {
+                    "memory": "4Mi"
+                  },
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "4Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/conf",
+                    "name": "ta-internal"
+                  }
+                ]
+              }
+            ],
+            "dnsConfig": {},
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "serviceAccount": "allocator-targetallocator",
+            "serviceAccountName": "allocator-targetallocator",
+            "shareProcessNamespace": false,
+            "terminationGracePeriodSeconds": 30,
+            "volumes": [
+              {
+                "configMap": {
+                  "defaultMode": 420,
+                  "items": [
+                    {
+                      "key": "targetallocator.yaml",
+                      "path": "targetallocator.yaml"
+                    }
+                  ],
+                  "name": "allocator-targetallocator"
+                },
+                "name": "ta-internal"
+              }
+            ]
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-12T16:27:52Z",
+            "lastUpdateTime": "2026-10-12T16:27:52Z",
+            "message": "Deployment does not have minimum availability.",
+            "reason": "MinimumReplicasUnavailable",
+            "status": "False",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T16:37:53Z",
+            "lastUpdateTime": "2026-10-12T16:37:53Z",
+            "message": "ReplicaSet \"allocator-targetallocator-dfdf4c696\" has timed out progressing.",
+            "reason": "ProgressDeadlineExceeded",
+            "status": "False",
+            "type": "Progressing"
+          }
+        ],
+        "observedGeneration": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "unavailableReplicas": 1,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "ambiguous",
+        "namespace": "otel-ambiguous",
+        "resourceVersion": "262523",
+        "selfLink": "/apis/apps/v1/namespaces/otel-ambiguous/deployments/ambiguous",
+        "uid": "02baa7de-a00d-4f05-921f-e6dc67997212"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "ambiguous"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "instrumentation.opentelemetry.io/inject-python": "true"
+            },
+            "labels": {
+              "app": "ambiguous"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sleep",
+                  "2147483647"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-11T16:56:29Z",
+            "lastUpdateTime": "2026-10-11T16:56:30Z",
+            "message": "ReplicaSet \"ambiguous-7765c96f99\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T15:33:35Z",
+            "lastUpdateTime": "2026-10-12T15:33:35Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          }
+        ],
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "checkout",
+        "namespace": "otel-apps",
+        "resourceVersion": "262710",
+        "selfLink": "/apis/apps/v1/namespaces/otel-apps/deployments/checkout",
+        "uid": "773b3f45-bf7b-438b-89f6-94d6f34c207b"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "checkout"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "instrumentation.opentelemetry.io/inject-python": "true"
+            },
+            "labels": {
+              "app": "checkout"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sleep",
+                  "2147483647"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-11T16:56:29Z",
+            "lastUpdateTime": "2026-10-11T16:56:41Z",
+            "message": "ReplicaSet \"checkout-647596f7b7\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T15:33:37Z",
+            "lastUpdateTime": "2026-10-12T15:33:37Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          }
+        ],
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1",
+          "instrumentation.opentelemetry.io/inject-python": "true"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "misplaced",
+        "namespace": "otel-apps",
+        "resourceVersion": "262903",
+        "selfLink": "/apis/apps/v1/namespaces/otel-apps/deployments/misplaced",
+        "uid": "408a38c5-19d1-4b0b-af67-a37a742964ca"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "misplaced"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "misplaced"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sleep",
+                  "2147483647"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-11T16:56:29Z",
+            "lastUpdateTime": "2026-10-11T16:56:30Z",
+            "message": "ReplicaSet \"misplaced-59fc7845c8\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T15:33:39Z",
+            "lastUpdateTime": "2026-10-12T15:33:39Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          }
+        ],
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "typo",
+        "namespace": "otel-apps",
+        "resourceVersion": "262519",
+        "selfLink": "/apis/apps/v1/namespaces/otel-apps/deployments/typo",
+        "uid": "479090cf-29b2-4a75-88b3-85556dcad21e"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "typo"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "instrumentation.opentelemetry.io/inject-python": "absent"
+            },
+            "labels": {
+              "app": "typo"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sleep",
+                  "2147483647"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-11T16:56:29Z",
+            "lastUpdateTime": "2026-10-11T16:56:30Z",
+            "message": "ReplicaSet \"typo-67fb5f49f4\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T15:33:35Z",
+            "lastUpdateTime": "2026-10-12T15:33:35Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          }
+        ],
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-12T16:27:52Z",
+        "generation": 1,
+        "name": "go-service",
+        "namespace": "otel-blocked",
+        "resourceVersion": "280208",
+        "selfLink": "/apis/apps/v1/namespaces/otel-blocked/deployments/go-service",
+        "uid": "c2428922-6099-470f-9039-9facb159fbc6"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "go-service"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "instrumentation.opentelemetry.io/inject-go": "otel-apps/python",
+              "instrumentation.opentelemetry.io/otel-go-auto-target-exe": "/bin/sleep"
+            },
+            "labels": {
+              "app": "go-service"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sleep",
+                  "2147483647"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-12T16:27:57Z",
+            "lastUpdateTime": "2026-10-12T16:27:57Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T16:27:52Z",
+            "lastUpdateTime": "2026-10-12T16:27:57Z",
+            "message": "ReplicaSet \"go-service-677c45cd7\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          }
+        ],
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-12T16:27:52Z",
+        "generation": 1,
+        "name": "polyglot",
+        "namespace": "otel-blocked",
+        "resourceVersion": "280215",
+        "selfLink": "/apis/apps/v1/namespaces/otel-blocked/deployments/polyglot",
+        "uid": "6871cb90-db38-4b88-99bd-47f4ea8c2084"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "polyglot"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "instrumentation.opentelemetry.io/inject-nodejs": "otel-apps/python",
+              "instrumentation.opentelemetry.io/inject-python": "otel-apps/python"
+            },
+            "labels": {
+              "app": "polyglot"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sleep",
+                  "2147483647"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-12T16:27:57Z",
+            "lastUpdateTime": "2026-10-12T16:27:57Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T16:27:52Z",
+            "lastUpdateTime": "2026-10-12T16:27:57Z",
+            "message": "ReplicaSet \"polyglot-c66466cf6\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          }
+        ],
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.broken",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "broken-collector",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest"
+        },
+        "name": "broken-collector",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "opentelemetry.io/v1beta1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "OpenTelemetryCollector",
+            "name": "broken",
+            "uid": "2297fee9-7b5f-459f-9a53-c6aa8aa0811a"
+          }
+        ],
+        "resourceVersion": "301372",
+        "selfLink": "/apis/apps/v1/namespaces/otel-collectors/deployments/broken-collector",
+        "uid": "3d5bb360-8557-4c35-be41-cce81cec518e"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app.kubernetes.io/component": "opentelemetry-collector",
+            "app.kubernetes.io/instance": "otel-collectors.broken",
+            "app.kubernetes.io/managed-by": "opentelemetry-operator",
+            "app.kubernetes.io/part-of": "opentelemetry"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "opentelemetry-operator-config/sha256": "ecc9c6fd32cd61bd3d7f5636f5733eab7d7be476b2256dec6fe51e9f0c23062e",
+              "operator.opentelemetry.io/prometheus-annotations-added": "true",
+              "prometheus.io/path": "/metrics",
+              "prometheus.io/port": "8888",
+              "prometheus.io/scrape": "true"
+            },
+            "labels": {
+              "app.kubernetes.io/component": "opentelemetry-collector",
+              "app.kubernetes.io/instance": "otel-collectors.broken",
+              "app.kubernetes.io/managed-by": "opentelemetry-operator",
+              "app.kubernetes.io/name": "broken-collector",
+              "app.kubernetes.io/part-of": "opentelemetry",
+              "app.kubernetes.io/version": "latest"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  "--config=/conf/collector.yaml"
+                ],
+                "env": [
+                  {
+                    "name": "POD_NAME",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.name"
+                      }
+                    }
+                  },
+                  {
+                    "name": "GOMEMLIMIT",
+                    "valueFrom": {
+                      "resourceFieldRef": {
+                        "containerName": "otc-container",
+                        "divisor": "0",
+                        "resource": "limits.memory"
+                      }
+                    }
+                  },
+                  {
+                    "name": "GOMAXPROCS",
+                    "valueFrom": {
+                      "resourceFieldRef": {
+                        "containerName": "otc-container",
+                        "divisor": "0",
+                        "resource": "limits.cpu"
+                      }
+                    }
+                  }
+                ],
+                "image": "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.158.0",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "otc-container",
+                "ports": [
+                  {
+                    "containerPort": 8888,
+                    "name": "metrics",
+                    "protocol": "TCP"
+                  },
+                  {
+                    "containerPort": 4317,
+                    "name": "otlp-grpc",
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "cpu": "10m",
+                    "memory": "64Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/conf",
+                    "name": "otc-internal"
+                  }
+                ]
+              }
+            ],
+            "dnsConfig": {},
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "serviceAccount": "broken-collector",
+            "serviceAccountName": "broken-collector",
+            "shareProcessNamespace": false,
+            "terminationGracePeriodSeconds": 30,
+            "volumes": [
+              {
+                "configMap": {
+                  "defaultMode": 420,
+                  "items": [
+                    {
+                      "key": "collector.yaml",
+                      "path": "collector.yaml"
+                    }
+                  ],
+                  "name": "broken-collector-ecc9c6fd"
+                },
+                "name": "otc-internal"
+              }
+            ]
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-11T16:56:29Z",
+            "lastUpdateTime": "2026-10-11T16:56:43Z",
+            "message": "ReplicaSet \"broken-collector-794c597d6c\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T17:22:22Z",
+            "lastUpdateTime": "2026-10-12T17:22:22Z",
+            "message": "Deployment does not have minimum availability.",
+            "reason": "MinimumReplicasUnavailable",
+            "status": "False",
+            "type": "Available"
+          }
+        ],
+        "observedGeneration": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "unavailableReplicas": 1,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.gateway",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "gateway-collector",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest"
+        },
+        "name": "gateway-collector",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "opentelemetry.io/v1beta1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "OpenTelemetryCollector",
+            "name": "gateway",
+            "uid": "216d5914-1d08-4759-8ee9-8b4c1a114f4d"
+          }
+        ],
+        "resourceVersion": "262860",
+        "selfLink": "/apis/apps/v1/namespaces/otel-collectors/deployments/gateway-collector",
+        "uid": "1395be53-6fa9-4f52-925b-1a0ec58b69ea"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app.kubernetes.io/component": "opentelemetry-collector",
+            "app.kubernetes.io/instance": "otel-collectors.gateway",
+            "app.kubernetes.io/managed-by": "opentelemetry-operator",
+            "app.kubernetes.io/part-of": "opentelemetry"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "opentelemetry-operator-config/sha256": "028a91e25690f79d93f762b9ebfdad491a5fb00404e2391fbd7a66f582cfc3ef",
+              "operator.opentelemetry.io/prometheus-annotations-added": "true",
+              "prometheus.io/path": "/metrics",
+              "prometheus.io/port": "8888",
+              "prometheus.io/scrape": "true"
+            },
+            "labels": {
+              "app.kubernetes.io/component": "opentelemetry-collector",
+              "app.kubernetes.io/instance": "otel-collectors.gateway",
+              "app.kubernetes.io/managed-by": "opentelemetry-operator",
+              "app.kubernetes.io/name": "gateway-collector",
+              "app.kubernetes.io/part-of": "opentelemetry",
+              "app.kubernetes.io/version": "latest"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  "--config=/conf/collector.yaml"
+                ],
+                "env": [
+                  {
+                    "name": "POD_NAME",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.name"
+                      }
+                    }
+                  },
+                  {
+                    "name": "GOMEMLIMIT",
+                    "valueFrom": {
+                      "resourceFieldRef": {
+                        "containerName": "otc-container",
+                        "divisor": "0",
+                        "resource": "limits.memory"
+                      }
+                    }
+                  },
+                  {
+                    "name": "GOMAXPROCS",
+                    "valueFrom": {
+                      "resourceFieldRef": {
+                        "containerName": "otc-container",
+                        "divisor": "0",
+                        "resource": "limits.cpu"
+                      }
+                    }
+                  }
+                ],
+                "image": "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.158.0",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "otc-container",
+                "ports": [
+                  {
+                    "containerPort": 8888,
+                    "name": "metrics",
+                    "protocol": "TCP"
+                  },
+                  {
+                    "containerPort": 4317,
+                    "name": "otlp-grpc",
+                    "protocol": "TCP"
+                  },
+                  {
+                    "containerPort": 4318,
+                    "name": "otlp-http",
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "cpu": "10m",
+                    "memory": "64Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/conf",
+                    "name": "otc-internal"
+                  }
+                ]
+              }
+            ],
+            "dnsConfig": {},
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "serviceAccount": "gateway-collector",
+            "serviceAccountName": "gateway-collector",
+            "shareProcessNamespace": false,
+            "terminationGracePeriodSeconds": 30,
+            "volumes": [
+              {
+                "configMap": {
+                  "defaultMode": 420,
+                  "items": [
+                    {
+                      "key": "collector.yaml",
+                      "path": "collector.yaml"
+                    }
+                  ],
+                  "name": "gateway-collector-028a91e2"
+                },
+                "name": "otc-internal"
+              }
+            ]
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-11T16:56:29Z",
+            "lastUpdateTime": "2026-10-11T16:56:43Z",
+            "message": "ReplicaSet \"gateway-collector-77b5966cc9\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T15:33:39Z",
+            "lastUpdateTime": "2026-10-12T15:33:39Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          }
+        ],
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-12T02:14:14Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-targetallocator",
+          "app.kubernetes.io/instance": "otel-collectors.scraper",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "scraper-targetallocator",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest"
+        },
+        "name": "scraper-targetallocator",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "opentelemetry.io/v1alpha1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "TargetAllocator",
+            "name": "scraper",
+            "uid": "6c4602c9-8cfe-48f0-98b8-8738f716f40d"
+          }
+        ],
+        "resourceVersion": "262872",
+        "selfLink": "/apis/apps/v1/namespaces/otel-collectors/deployments/scraper-targetallocator",
+        "uid": "3ee2b050-897e-4936-a674-9c672045bd4f"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app.kubernetes.io/component": "opentelemetry-targetallocator",
+            "app.kubernetes.io/instance": "otel-collectors.scraper",
+            "app.kubernetes.io/managed-by": "opentelemetry-operator",
+            "app.kubernetes.io/name": "scraper-targetallocator",
+            "app.kubernetes.io/part-of": "opentelemetry"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "opentelemetry-targetallocator-config/hash": "1519585a7a95b081daaa8923ce571247175c8ec0dd4ae4ef72e5be839a55ef6e"
+            },
+            "labels": {
+              "app.kubernetes.io/component": "opentelemetry-targetallocator",
+              "app.kubernetes.io/instance": "otel-collectors.scraper",
+              "app.kubernetes.io/managed-by": "opentelemetry-operator",
+              "app.kubernetes.io/name": "scraper-targetallocator",
+              "app.kubernetes.io/part-of": "opentelemetry",
+              "app.kubernetes.io/version": "latest"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "env": [
+                  {
+                    "name": "OTELCOL_NAMESPACE",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      }
+                    }
+                  },
+                  {
+                    "name": "GOMEMLIMIT",
+                    "valueFrom": {
+                      "resourceFieldRef": {
+                        "containerName": "ta-container",
+                        "divisor": "0",
+                        "resource": "limits.memory"
+                      }
+                    }
+                  },
+                  {
+                    "name": "GOMAXPROCS",
+                    "valueFrom": {
+                      "resourceFieldRef": {
+                        "containerName": "ta-container",
+                        "divisor": "0",
+                        "resource": "limits.cpu"
+                      }
+                    }
+                  }
+                ],
+                "image": "ghcr.io/open-telemetry/opentelemetry-operator/target-allocator:0.158.0",
+                "imagePullPolicy": "IfNotPresent",
+                "livenessProbe": {
+                  "failureThreshold": 3,
+                  "httpGet": {
+                    "path": "/livez",
+                    "port": 8080,
+                    "scheme": "HTTP"
+                  },
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "name": "ta-container",
+                "ports": [
+                  {
+                    "containerPort": 8080,
+                    "name": "http",
+                    "protocol": "TCP"
+                  }
+                ],
+                "readinessProbe": {
+                  "failureThreshold": 3,
+                  "httpGet": {
+                    "path": "/readyz",
+                    "port": 8080,
+                    "scheme": "HTTP"
+                  },
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "resources": {
+                  "requests": {
+                    "cpu": "10m",
+                    "memory": "32Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/conf",
+                    "name": "ta-internal"
+                  }
+                ]
+              }
+            ],
+            "dnsConfig": {},
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "serviceAccount": "scraper-targetallocator",
+            "serviceAccountName": "scraper-targetallocator",
+            "shareProcessNamespace": false,
+            "terminationGracePeriodSeconds": 30,
+            "volumes": [
+              {
+                "configMap": {
+                  "defaultMode": 420,
+                  "items": [
+                    {
+                      "key": "targetallocator.yaml",
+                      "path": "targetallocator.yaml"
+                    }
+                  ],
+                  "name": "scraper-targetallocator"
+                },
+                "name": "ta-internal"
+              }
+            ]
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-12T02:14:14Z",
+            "lastUpdateTime": "2026-10-12T02:14:35Z",
+            "message": "ReplicaSet \"scraper-targetallocator-55fcf69557\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T15:33:39Z",
+            "lastUpdateTime": "2026-10-12T15:33:39Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          }
+        ],
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "3"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 3,
+        "name": "late",
+        "namespace": "otel-late",
+        "resourceVersion": "259505",
+        "selfLink": "/apis/apps/v1/namespaces/otel-late/deployments/late",
+        "uid": "6e3f0a18-10ea-4952-a760-751aea579013"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "late"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "late"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sleep",
+                  "2147483647"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-11T16:56:30Z",
+            "lastUpdateTime": "2026-10-11T20:04:24Z",
+            "message": "ReplicaSet \"late-6dd6ff8584\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T15:29:15Z",
+            "lastUpdateTime": "2026-10-12T15:29:15Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          }
+        ],
+        "observedGeneration": 3,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "inherited",
+        "namespace": "otel-namespace",
+        "resourceVersion": "262581",
+        "selfLink": "/apis/apps/v1/namespaces/otel-namespace/deployments/inherited",
+        "uid": "738422ac-cfa5-446e-8ea0-66b840c3008c"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "inherited"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "inherited"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sleep",
+                  "2147483647"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-11T16:56:29Z",
+            "lastUpdateTime": "2026-10-11T16:56:41Z",
+            "message": "ReplicaSet \"inherited-d8549799d\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T15:33:36Z",
+            "lastUpdateTime": "2026-10-12T15:33:36Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          }
+        ],
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "opted-out",
+        "namespace": "otel-namespace",
+        "resourceVersion": "262674",
+        "selfLink": "/apis/apps/v1/namespaces/otel-namespace/deployments/opted-out",
+        "uid": "bf1844e7-6257-469d-9562-0cc19009c159"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "opted-out"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "instrumentation.opentelemetry.io/inject-python": "false"
+            },
+            "labels": {
+              "app": "opted-out"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sleep",
+                  "2147483647"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-11T16:56:29Z",
+            "lastUpdateTime": "2026-10-11T16:56:31Z",
+            "message": "ReplicaSet \"opted-out-bd956b785\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T15:33:37Z",
+            "lastUpdateTime": "2026-10-12T15:33:37Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          }
+        ],
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "cross-ns",
+        "namespace": "otel-orphan",
+        "resourceVersion": "262516",
+        "selfLink": "/apis/apps/v1/namespaces/otel-orphan/deployments/cross-ns",
+        "uid": "708ad2c9-5e37-484b-b4bf-44a01aeb57d8"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "cross-ns"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "instrumentation.opentelemetry.io/inject-python": "otel-apps/python"
+            },
+            "labels": {
+              "app": "cross-ns"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sleep",
+                  "2147483647"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-11T16:56:29Z",
+            "lastUpdateTime": "2026-10-11T16:56:41Z",
+            "message": "ReplicaSet \"cross-ns-cb6c7cc95\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T15:33:35Z",
+            "lastUpdateTime": "2026-10-12T15:33:35Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          }
+        ],
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "orphan",
+        "namespace": "otel-orphan",
+        "resourceVersion": "262911",
+        "selfLink": "/apis/apps/v1/namespaces/otel-orphan/deployments/orphan",
+        "uid": "7c427ff8-2741-4f91-a45e-2122f283286d"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "orphan"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "instrumentation.opentelemetry.io/inject-python": "true"
+            },
+            "labels": {
+              "app": "orphan"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sleep",
+                  "2147483647"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-11T16:56:29Z",
+            "lastUpdateTime": "2026-10-11T16:56:30Z",
+            "message": "ReplicaSet \"orphan-76dbdb8b85\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T15:33:39Z",
+            "lastUpdateTime": "2026-10-12T15:33:39Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          }
+        ],
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-12T16:27:52Z",
+        "generation": 1,
+        "name": "carrier",
+        "namespace": "otel-sidecar",
+        "resourceVersion": "280225",
+        "selfLink": "/apis/apps/v1/namespaces/otel-sidecar/deployments/carrier",
+        "uid": "52185267-0f68-4cbb-aa38-45196fb60d4d"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "carrier"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "sidecar.opentelemetry.io/inject": "otel-collectors/sidecar"
+            },
+            "labels": {
+              "app": "carrier"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sleep",
+                  "2147483647"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-12T16:27:57Z",
+            "lastUpdateTime": "2026-10-12T16:27:57Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T16:27:52Z",
+            "lastUpdateTime": "2026-10-12T16:27:57Z",
+            "message": "ReplicaSet \"carrier-56478c5b66\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          }
+        ],
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "annotations": {
+          "deployment.kubernetes.io/revision": "1"
+        },
+        "creationTimestamp": "2026-10-12T16:27:52Z",
+        "generation": 1,
+        "name": "secure",
+        "namespace": "otel-tls",
+        "resourceVersion": "280221",
+        "selfLink": "/apis/apps/v1/namespaces/otel-tls/deployments/secure",
+        "uid": "4dcd4097-bbf2-4408-aac9-41ad4fad71b0"
+      },
+      "spec": {
+        "progressDeadlineSeconds": 600,
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "secure"
+          }
+        },
+        "strategy": {
+          "rollingUpdate": {
+            "maxSurge": "25%",
+            "maxUnavailable": "25%"
+          },
+          "type": "RollingUpdate"
+        },
+        "template": {
+          "metadata": {
+            "annotations": {
+              "instrumentation.opentelemetry.io/inject-python": "true"
+            },
+            "labels": {
+              "app": "secure"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sleep",
+                  "2147483647"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-12T16:27:57Z",
+            "lastUpdateTime": "2026-10-12T16:27:57Z",
+            "message": "Deployment has minimum availability.",
+            "reason": "MinimumReplicasAvailable",
+            "status": "True",
+            "type": "Available"
+          },
+          {
+            "lastTransitionTime": "2026-10-12T16:27:52Z",
+            "lastUpdateTime": "2026-10-12T16:27:57Z",
+            "message": "ReplicaSet \"secure-6dbdf59988\" has successfully progressed.",
+            "reason": "NewReplicaSetAvailable",
+            "status": "True",
+            "type": "Progressing"
+          }
+        ],
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "terminatingReplicas": 0,
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "StatefulSet",
+      "metadata": {
+        "creationTimestamp": "2026-10-12T16:27:52Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-allocator.allocator",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "allocator-collector",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest"
+        },
+        "name": "allocator-collector",
+        "namespace": "otel-allocator",
+        "ownerReferences": [
+          {
+            "apiVersion": "opentelemetry.io/v1beta1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "OpenTelemetryCollector",
+            "name": "allocator",
+            "uid": "c53368da-3083-4588-b259-4dc54ceeae79"
+          }
+        ],
+        "resourceVersion": "297740",
+        "selfLink": "/apis/apps/v1/namespaces/otel-allocator/statefulsets/allocator-collector",
+        "uid": "36ad7327-1620-4f82-a326-e4fa0deaafaf"
+      },
+      "spec": {
+        "persistentVolumeClaimRetentionPolicy": {
+          "whenDeleted": "Retain",
+          "whenScaled": "Retain"
+        },
+        "podManagementPolicy": "Parallel",
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app.kubernetes.io/component": "opentelemetry-collector",
+            "app.kubernetes.io/instance": "otel-allocator.allocator",
+            "app.kubernetes.io/managed-by": "opentelemetry-operator",
+            "app.kubernetes.io/part-of": "opentelemetry"
+          }
+        },
+        "serviceName": "allocator-collector-headless",
+        "template": {
+          "metadata": {
+            "annotations": {
+              "opentelemetry-operator-config/sha256": "ec037f9284fd6e2b242f26bd6e38f79535978114c8e24a70f9593db1cf6fe358",
+              "operator.opentelemetry.io/prometheus-annotations-added": "true",
+              "prometheus.io/path": "/metrics",
+              "prometheus.io/port": "8888",
+              "prometheus.io/scrape": "true"
+            },
+            "labels": {
+              "app.kubernetes.io/component": "opentelemetry-collector",
+              "app.kubernetes.io/instance": "otel-allocator.allocator",
+              "app.kubernetes.io/managed-by": "opentelemetry-operator",
+              "app.kubernetes.io/name": "allocator-collector",
+              "app.kubernetes.io/part-of": "opentelemetry",
+              "app.kubernetes.io/version": "latest"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  "--config=/conf/collector.yaml"
+                ],
+                "env": [
+                  {
+                    "name": "POD_NAME",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.name"
+                      }
+                    }
+                  },
+                  {
+                    "name": "GOMEMLIMIT",
+                    "valueFrom": {
+                      "resourceFieldRef": {
+                        "containerName": "otc-container",
+                        "divisor": "0",
+                        "resource": "limits.memory"
+                      }
+                    }
+                  },
+                  {
+                    "name": "GOMAXPROCS",
+                    "valueFrom": {
+                      "resourceFieldRef": {
+                        "containerName": "otc-container",
+                        "divisor": "0",
+                        "resource": "limits.cpu"
+                      }
+                    }
+                  }
+                ],
+                "image": "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.158.0",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "otc-container",
+                "ports": [
+                  {
+                    "containerPort": 8888,
+                    "name": "metrics",
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "cpu": "10m",
+                    "memory": "64Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/conf",
+                    "name": "otc-internal"
+                  }
+                ]
+              }
+            ],
+            "dnsConfig": {},
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "serviceAccount": "allocator-collector",
+            "serviceAccountName": "allocator-collector",
+            "shareProcessNamespace": false,
+            "terminationGracePeriodSeconds": 30,
+            "volumes": [
+              {
+                "configMap": {
+                  "defaultMode": 420,
+                  "items": [
+                    {
+                      "key": "collector.yaml",
+                      "path": "collector.yaml"
+                    }
+                  ],
+                  "name": "allocator-collector-ec037f92"
+                },
+                "name": "otc-internal"
+              }
+            ]
+          }
+        },
+        "updateStrategy": {
+          "rollingUpdate": {
+            "partition": 0
+          },
+          "type": "RollingUpdate"
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "collisionCount": 0,
+        "currentReplicas": 1,
+        "currentRevision": "allocator-collector-67966f747f",
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "updateRevision": "allocator-collector-67966f747f",
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "StatefulSet",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "ledger",
+        "namespace": "otel-apps",
+        "resourceVersion": "263054",
+        "selfLink": "/apis/apps/v1/namespaces/otel-apps/statefulsets/ledger",
+        "uid": "222ea984-3158-4dc8-b6d2-47af5d5834be"
+      },
+      "spec": {
+        "persistentVolumeClaimRetentionPolicy": {
+          "whenDeleted": "Retain",
+          "whenScaled": "Retain"
+        },
+        "podManagementPolicy": "OrderedReady",
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "ledger"
+          }
+        },
+        "serviceName": "ledger",
+        "template": {
+          "metadata": {
+            "annotations": {
+              "instrumentation.opentelemetry.io/inject-python": "python"
+            },
+            "labels": {
+              "app": "ledger"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sleep",
+                  "2147483647"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        },
+        "updateStrategy": {
+          "rollingUpdate": {
+            "partition": 0
+          },
+          "type": "RollingUpdate"
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "collisionCount": 0,
+        "currentReplicas": 1,
+        "currentRevision": "ledger-788f9bc4df",
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "updateRevision": "ledger-788f9bc4df",
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "StatefulSet",
+      "metadata": {
+        "creationTimestamp": "2026-10-12T02:14:14Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/component": "opentelemetry-collector",
+          "app.kubernetes.io/instance": "otel-collectors.scraper",
+          "app.kubernetes.io/managed-by": "opentelemetry-operator",
+          "app.kubernetes.io/name": "scraper-collector",
+          "app.kubernetes.io/part-of": "opentelemetry",
+          "app.kubernetes.io/version": "latest"
+        },
+        "name": "scraper-collector",
+        "namespace": "otel-collectors",
+        "ownerReferences": [
+          {
+            "apiVersion": "opentelemetry.io/v1beta1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "OpenTelemetryCollector",
+            "name": "scraper",
+            "uid": "7914eedb-cef4-4a3d-a697-ef1d85626b05"
+          }
+        ],
+        "resourceVersion": "262786",
+        "selfLink": "/apis/apps/v1/namespaces/otel-collectors/statefulsets/scraper-collector",
+        "uid": "5dc56c89-802d-4294-9b66-29502f2ca632"
+      },
+      "spec": {
+        "persistentVolumeClaimRetentionPolicy": {
+          "whenDeleted": "Retain",
+          "whenScaled": "Retain"
+        },
+        "podManagementPolicy": "Parallel",
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app.kubernetes.io/component": "opentelemetry-collector",
+            "app.kubernetes.io/instance": "otel-collectors.scraper",
+            "app.kubernetes.io/managed-by": "opentelemetry-operator",
+            "app.kubernetes.io/part-of": "opentelemetry"
+          }
+        },
+        "serviceName": "scraper-collector-headless",
+        "template": {
+          "metadata": {
+            "annotations": {
+              "opentelemetry-operator-config/sha256": "2b555ae0db0c8a588b97b776b32358e44163868cb5b8355238a3e2d241bc1fbe",
+              "operator.opentelemetry.io/prometheus-annotations-added": "true",
+              "prometheus.io/path": "/metrics",
+              "prometheus.io/port": "8888",
+              "prometheus.io/scrape": "true"
+            },
+            "labels": {
+              "app.kubernetes.io/component": "opentelemetry-collector",
+              "app.kubernetes.io/instance": "otel-collectors.scraper",
+              "app.kubernetes.io/managed-by": "opentelemetry-operator",
+              "app.kubernetes.io/name": "scraper-collector",
+              "app.kubernetes.io/part-of": "opentelemetry",
+              "app.kubernetes.io/version": "latest"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  "--config=/conf/collector.yaml"
+                ],
+                "env": [
+                  {
+                    "name": "POD_NAME",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.name"
+                      }
+                    }
+                  },
+                  {
+                    "name": "GOMEMLIMIT",
+                    "valueFrom": {
+                      "resourceFieldRef": {
+                        "containerName": "otc-container",
+                        "divisor": "0",
+                        "resource": "limits.memory"
+                      }
+                    }
+                  },
+                  {
+                    "name": "GOMAXPROCS",
+                    "valueFrom": {
+                      "resourceFieldRef": {
+                        "containerName": "otc-container",
+                        "divisor": "0",
+                        "resource": "limits.cpu"
+                      }
+                    }
+                  }
+                ],
+                "image": "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.158.0",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "otc-container",
+                "ports": [
+                  {
+                    "containerPort": 8888,
+                    "name": "metrics",
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "cpu": "10m",
+                    "memory": "64Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/conf",
+                    "name": "otc-internal"
+                  }
+                ]
+              }
+            ],
+            "dnsConfig": {},
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "serviceAccount": "scraper-collector",
+            "serviceAccountName": "scraper-collector",
+            "shareProcessNamespace": false,
+            "terminationGracePeriodSeconds": 30,
+            "volumes": [
+              {
+                "configMap": {
+                  "defaultMode": 420,
+                  "items": [
+                    {
+                      "key": "collector.yaml",
+                      "path": "collector.yaml"
+                    }
+                  ],
+                  "name": "scraper-collector-2b555ae0"
+                },
+                "name": "otc-internal"
+              }
+            ]
+          }
+        },
+        "updateStrategy": {
+          "rollingUpdate": {
+            "partition": 0
+          },
+          "type": "RollingUpdate"
+        }
+      },
+      "status": {
+        "availableReplicas": 1,
+        "collisionCount": 0,
+        "currentReplicas": 1,
+        "currentRevision": "scraper-collector-7dff485ddd",
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "updateRevision": "scraper-collector-7dff485ddd",
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "DaemonSet",
+      "metadata": {
+        "annotations": {
+          "deprecated.daemonset.template.generation": "3"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 3,
+        "name": "late-agent",
+        "namespace": "otel-late",
+        "resourceVersion": "262588",
+        "selfLink": "/apis/apps/v1/namespaces/otel-late/daemonsets/late-agent",
+        "uid": "28f1c159-a77c-4a51-96fa-91de95c1bafb"
+      },
+      "spec": {
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "late-agent"
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "late-agent"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sleep",
+                  "2147483647"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        },
+        "updateStrategy": {
+          "rollingUpdate": {
+            "maxSurge": 0,
+            "maxUnavailable": 1
+          },
+          "type": "RollingUpdate"
+        }
+      },
+      "status": {
+        "currentNumberScheduled": 1,
+        "desiredNumberScheduled": 1,
+        "numberAvailable": 1,
+        "numberMisscheduled": 0,
+        "numberReady": 1,
+        "observedGeneration": 3,
+        "updatedNumberScheduled": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "DaemonSet",
+      "metadata": {
+        "annotations": {
+          "deprecated.daemonset.template.generation": "1"
+        },
+        "creationTimestamp": "2026-10-11T16:56:29Z",
+        "generation": 1,
+        "name": "node-agent",
+        "namespace": "otel-namespace",
+        "resourceVersion": "262669",
+        "selfLink": "/apis/apps/v1/namespaces/otel-namespace/daemonsets/node-agent",
+        "uid": "259deb68-8e13-4cfc-84ee-d9cb32c1dfc3"
+      },
+      "spec": {
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "node-agent"
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "node-agent"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "sleep",
+                  "2147483647"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        },
+        "updateStrategy": {
+          "rollingUpdate": {
+            "maxSurge": 0,
+            "maxUnavailable": 1
+          },
+          "type": "RollingUpdate"
+        }
+      },
+      "status": {
+        "currentNumberScheduled": 1,
+        "desiredNumberScheduled": 1,
+        "numberAvailable": 1,
+        "numberMisscheduled": 0,
+        "numberReady": 1,
+        "observedGeneration": 1,
+        "updatedNumberScheduled": 1
+      }
+    },
+    {
+      "apiVersion": "batch/v1",
+      "kind": "CronJob",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T17:26:34Z",
+        "generation": 1,
+        "name": "nightly",
+        "namespace": "otel-batch",
+        "resourceVersion": "303166",
+        "selfLink": "/apis/batch/v1/namespaces/otel-batch/cronjobs/nightly",
+        "uid": "3765aacd-484f-437c-aecd-099a0af9c61e"
+      },
+      "spec": {
+        "concurrencyPolicy": "Allow",
+        "failedJobsHistoryLimit": 1,
+        "jobTemplate": {
+          "metadata": {},
+          "spec": {
+            "template": {
+              "metadata": {
+                "annotations": {
+                  "instrumentation.opentelemetry.io/inject-python": "otel-apps/python"
+                },
+                "labels": {
+                  "app": "nightly"
+                }
+              },
+              "spec": {
+                "containers": [
+                  {
+                    "command": [
+                      "true"
+                    ],
+                    "image": "busybox:1.36",
+                    "imagePullPolicy": "IfNotPresent",
+                    "name": "app",
+                    "resources": {
+                      "requests": {
+                        "cpu": "5m",
+                        "memory": "8Mi"
+                      }
+                    },
+                    "terminationMessagePath": "/dev/termination-log",
+                    "terminationMessagePolicy": "File"
+                  }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "restartPolicy": "Never",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "terminationGracePeriodSeconds": 2
+              }
+            }
+          }
+        },
+        "schedule": "0 0 1 1 *",
+        "successfulJobsHistoryLimit": 3,
+        "suspend": false
+      },
+      "status": {
+        "lastSuccessfulTime": "2026-10-12T17:26:41Z"
+      }
+    },
+    {
+      "apiVersion": "batch/v1",
+      "kind": "Job",
+      "metadata": {
+        "annotations": {},
+        "creationTimestamp": "2026-10-12T17:26:34Z",
+        "generation": 1,
+        "labels": {
+          "app": "migrate",
+          "batch.kubernetes.io/controller-uid": "8f6fed59-9705-47ba-95bc-15b11305a685",
+          "batch.kubernetes.io/job-name": "migrate",
+          "controller-uid": "8f6fed59-9705-47ba-95bc-15b11305a685",
+          "job-name": "migrate"
+        },
+        "name": "migrate",
+        "namespace": "otel-batch",
+        "resourceVersion": "303143",
+        "selfLink": "/apis/batch/v1/namespaces/otel-batch/jobs/migrate",
+        "uid": "8f6fed59-9705-47ba-95bc-15b11305a685"
+      },
+      "spec": {
+        "backoffLimit": 0,
+        "completionMode": "NonIndexed",
+        "completions": 1,
+        "manualSelector": false,
+        "parallelism": 1,
+        "podReplacementPolicy": "TerminatingOrFailed",
+        "selector": {
+          "matchLabels": {
+            "batch.kubernetes.io/controller-uid": "8f6fed59-9705-47ba-95bc-15b11305a685"
+          }
+        },
+        "suspend": false,
+        "template": {
+          "metadata": {
+            "annotations": {
+              "instrumentation.opentelemetry.io/inject-python": "true"
+            },
+            "labels": {
+              "app": "migrate",
+              "batch.kubernetes.io/controller-uid": "8f6fed59-9705-47ba-95bc-15b11305a685",
+              "batch.kubernetes.io/job-name": "migrate",
+              "controller-uid": "8f6fed59-9705-47ba-95bc-15b11305a685",
+              "job-name": "migrate"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "true"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Never",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        }
+      },
+      "status": {
+        "completionTime": "2026-10-12T17:26:38Z",
+        "conditions": [
+          {
+            "lastProbeTime": "2026-10-12T17:26:38Z",
+            "lastTransitionTime": "2026-10-12T17:26:38Z",
+            "message": "Reached expected number of succeeded pods",
+            "reason": "CompletionsReached",
+            "status": "True",
+            "type": "SuccessCriteriaMet"
+          },
+          {
+            "lastProbeTime": "2026-10-12T17:26:38Z",
+            "lastTransitionTime": "2026-10-12T17:26:38Z",
+            "message": "Reached expected number of succeeded pods",
+            "reason": "CompletionsReached",
+            "status": "True",
+            "type": "Complete"
+          }
+        ],
+        "ready": 0,
+        "startTime": "2026-10-12T17:26:34Z",
+        "succeeded": 1,
+        "terminating": 0,
+        "uncountedTerminatedPods": {}
+      }
+    },
+    {
+      "apiVersion": "batch/v1",
+      "kind": "Job",
+      "metadata": {
+        "annotations": {
+          "cronjob.kubernetes.io/instantiate": "manual"
+        },
+        "creationTimestamp": "2026-10-12T17:26:36Z",
+        "generation": 1,
+        "labels": {
+          "app": "nightly",
+          "batch.kubernetes.io/controller-uid": "76aad370-2e8e-46dd-adf5-3e87c22d0ab7",
+          "batch.kubernetes.io/job-name": "nightly-run",
+          "controller-uid": "76aad370-2e8e-46dd-adf5-3e87c22d0ab7",
+          "job-name": "nightly-run"
+        },
+        "name": "nightly-run",
+        "namespace": "otel-batch",
+        "ownerReferences": [
+          {
+            "apiVersion": "batch/v1",
+            "controller": true,
+            "kind": "CronJob",
+            "name": "nightly",
+            "uid": "3765aacd-484f-437c-aecd-099a0af9c61e"
+          }
+        ],
+        "resourceVersion": "303164",
+        "selfLink": "/apis/batch/v1/namespaces/otel-batch/jobs/nightly-run",
+        "uid": "76aad370-2e8e-46dd-adf5-3e87c22d0ab7"
+      },
+      "spec": {
+        "backoffLimit": 6,
+        "completionMode": "NonIndexed",
+        "completions": 1,
+        "manualSelector": false,
+        "parallelism": 1,
+        "podReplacementPolicy": "TerminatingOrFailed",
+        "selector": {
+          "matchLabels": {
+            "batch.kubernetes.io/controller-uid": "76aad370-2e8e-46dd-adf5-3e87c22d0ab7"
+          }
+        },
+        "suspend": false,
+        "template": {
+          "metadata": {
+            "annotations": {
+              "instrumentation.opentelemetry.io/inject-python": "otel-apps/python"
+            },
+            "labels": {
+              "app": "nightly",
+              "batch.kubernetes.io/controller-uid": "76aad370-2e8e-46dd-adf5-3e87c22d0ab7",
+              "batch.kubernetes.io/job-name": "nightly-run",
+              "controller-uid": "76aad370-2e8e-46dd-adf5-3e87c22d0ab7",
+              "job-name": "nightly-run"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "command": [
+                  "true"
+                ],
+                "image": "busybox:1.36",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "app",
+                "resources": {
+                  "requests": {
+                    "cpu": "5m",
+                    "memory": "8Mi"
+                  }
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File"
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "restartPolicy": "Never",
+            "schedulerName": "default-scheduler",
+            "securityContext": {},
+            "terminationGracePeriodSeconds": 2
+          }
+        }
+      },
+      "status": {
+        "completionTime": "2026-10-12T17:26:41Z",
+        "conditions": [
+          {
+            "lastProbeTime": "2026-10-12T17:26:41Z",
+            "lastTransitionTime": "2026-10-12T17:26:41Z",
+            "message": "Reached expected number of succeeded pods",
+            "reason": "CompletionsReached",
+            "status": "True",
+            "type": "SuccessCriteriaMet"
+          },
+          {
+            "lastProbeTime": "2026-10-12T17:26:41Z",
+            "lastTransitionTime": "2026-10-12T17:26:41Z",
+            "message": "Reached expected number of succeeded pods",
+            "reason": "CompletionsReached",
+            "status": "True",
+            "type": "Complete"
+          }
+        ],
+        "ready": 0,
+        "startTime": "2026-10-12T17:26:36Z",
+        "succeeded": 1,
+        "terminating": 0,
+        "uncountedTerminatedPods": {}
+      }
+    }
+  ],
+  "kind": "List"
+}

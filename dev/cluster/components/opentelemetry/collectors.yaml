@@ -1,0 +1,110 @@
+# One collector that runs, one whose pipeline names an exporter it does not configure, a sidecar
+# carried from another namespace, and one whose TargetAllocator is killed for memory.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: otel-collectors
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: otel-sidecar
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: otel-allocator
+---
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: gateway
+  namespace: otel-collectors
+spec:
+  mode: deployment
+  resources:
+    requests: { cpu: 10m, memory: 64Mi }
+  config:
+    receivers:
+      otlp:
+        protocols:
+          grpc: { endpoint: 0.0.0.0:4317 }
+          http: { endpoint: 0.0.0.0:4318 }
+    exporters:
+      debug: {}
+    service:
+      pipelines:
+        traces: { receivers: [otlp], exporters: [debug] }
+        metrics: { receivers: [otlp], exporters: [debug] }
+        logs: { receivers: [otlp], exporters: [debug] }
+---
+# The webhook checks no references: the typo is only caught when the collector starts.
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: broken
+  namespace: otel-collectors
+spec:
+  mode: deployment
+  resources:
+    requests: { cpu: 10m, memory: 64Mi }
+  config:
+    receivers:
+      otlp:
+        protocols:
+          grpc: { endpoint: 0.0.0.0:4317 }
+    exporters:
+      debug: {}
+    service:
+      pipelines:
+        traces: { receivers: [otlp], exporters: [debugg] }
+---
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: sidecar
+  namespace: otel-collectors
+spec:
+  mode: sidecar
+  resources:
+    requests: { cpu: 10m, memory: 64Mi }
+  config:
+    receivers:
+      otlp:
+        protocols:
+          grpc: { endpoint: 0.0.0.0:4317 }
+    exporters:
+      debug: {}
+    service:
+      pipelines:
+        traces: { receivers: [otlp], exporters: [debug] }
+---
+# The collector runs, so only its TargetAllocator's pods show the crash loop.
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: allocator
+  namespace: otel-allocator
+spec:
+  mode: statefulset
+  replicas: 1
+  resources:
+    requests: { cpu: 10m, memory: 64Mi }
+  targetAllocator:
+    enabled: true
+    resources:
+      requests: { cpu: 5m, memory: 4Mi }
+      limits: { memory: 4Mi }
+  config:
+    receivers:
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: self
+              static_configs:
+                - targets: [127.0.0.1:8888]
+    exporters:
+      debug: {}
+    service:
+      pipelines:
+        metrics: { receivers: [prometheus], exporters: [debug] }

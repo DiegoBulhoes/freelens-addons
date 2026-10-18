@@ -1,0 +1,1 @@
+Error: invalid configuration: service::pipelines::traces: references exporter "debugg" which is not configured

@@ -1,0 +1,153 @@
+# The namespaces of each Coverage state, and the Instrumentations their workloads resolve to.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: otel-apps
+---
+# Every workload here is opted in through the Namespace, unless its pod template says otherwise.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: otel-namespace
+  annotations:
+    instrumentation.opentelemetry.io/inject-python: "true"
+---
+# No Instrumentation: "true" resolves to nothing.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: otel-orphan
+---
+# Batch workloads, and no Instrumentation of its own.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: otel-batch
+---
+# Two Instrumentations: "true" cannot pick one.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: otel-ambiguous
+---
+# Opted in by states.sh once its pods run, so they need a restart.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: otel-late
+---
+# Blocked by the operator: workloads it admits without the agent.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: otel-blocked
+---
+# Blocked: its Instrumentation names a TLS Secret the namespace lacks.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: otel-tls
+---
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: python
+  namespace: otel-apps
+spec:
+  exporter:
+    endpoint: http://gateway-collector.otel-collectors.svc.cluster.local:4318
+  propagators: [tracecontext, baggage]
+  sampler:
+    type: parentbased_traceidratio
+    argument: "1"
+  python:
+    resourceRequirements:
+      requests: { cpu: 10m, memory: 64Mi }
+      limits: { cpu: 500m, memory: 256Mi }
+---
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: python
+  namespace: otel-namespace
+spec:
+  exporter:
+    endpoint: http://gateway-collector.otel-collectors.svc.cluster.local:4318
+  propagators: [tracecontext, baggage]
+  sampler:
+    type: parentbased_traceidratio
+    argument: "1"
+  python:
+    resourceRequirements:
+      requests: { cpu: 10m, memory: 64Mi }
+      limits: { cpu: 500m, memory: 256Mi }
+---
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: python
+  namespace: otel-late
+spec:
+  exporter:
+    endpoint: http://gateway-collector.otel-collectors.svc.cluster.local:4318
+  propagators: [tracecontext, baggage]
+  sampler:
+    type: parentbased_traceidratio
+    argument: "1"
+  python:
+    resourceRequirements:
+      requests: { cpu: 10m, memory: 64Mi }
+      limits: { cpu: 500m, memory: 256Mi }
+---
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: python-a
+  namespace: otel-ambiguous
+spec:
+  exporter:
+    endpoint: http://gateway-collector.otel-collectors.svc.cluster.local:4318
+  propagators: [tracecontext, baggage]
+  sampler:
+    type: parentbased_traceidratio
+    argument: "1"
+  python:
+    resourceRequirements:
+      requests: { cpu: 10m, memory: 64Mi }
+      limits: { cpu: 500m, memory: 256Mi }
+---
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: python-b
+  namespace: otel-ambiguous
+spec:
+  exporter:
+    endpoint: http://gateway-collector.otel-collectors.svc.cluster.local:4318
+  propagators: [tracecontext, baggage]
+  sampler:
+    type: parentbased_traceidratio
+    argument: "1"
+  python:
+    resourceRequirements:
+      requests: { cpu: 10m, memory: 64Mi }
+      limits: { cpu: 500m, memory: 256Mi }
+---
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: python
+  namespace: otel-tls
+spec:
+  exporter:
+    endpoint: https://gateway-collector.otel-collectors.svc.cluster.local:4318
+    tls:
+      secretName: otel-ca
+  propagators: [tracecontext, baggage]
+  sampler:
+    type: parentbased_traceidratio
+    argument: "1"
+  python:
+    resourceRequirements:
+      requests: { cpu: 10m, memory: 64Mi }
+      limits: { cpu: 500m, memory: 256Mi }
