@@ -1,8 +1,7 @@
 import type { Session } from "./cdp";
-import { typeInto, waitFor } from "./freelens";
+import { notifications, proxyFetch, sleep, typeInto, waitFor, waitForNoDialog } from "./freelens";
 
-// The write suites change the cluster through the extension and read the effect back through the
-// window's own proxy, so they can only ever reach the cluster openWorkbench checked.
+// Effects are read back through the window's proxy: a suite reaches only the verified cluster.
 
 // biome-ignore lint/suspicious/noExplicitAny: Kubernetes objects are read loosely here.
 export type KubeObject = Record<string, any>;
@@ -12,10 +11,7 @@ export async function clusterObject(
   contextId: number,
   apiPath: string,
 ): Promise<KubeObject | undefined> {
-  const { status, body } = await session.evaluate<{ status: number; body: string }>(
-    `fetch(${JSON.stringify(`/api-kube${apiPath}`)}).then(async (response) => ({ status: response.status, body: await response.text() }))`,
-    contextId,
-  );
+  const { status, body } = await proxyFetch(session, contextId, apiPath);
 
   if (status === 404) return undefined;
   if (status >= 300) throw new Error(`GET ${apiPath}: ${status} ${body.slice(0, 200)}`);
@@ -23,27 +19,35 @@ export async function clusterObject(
   return JSON.parse(body) as KubeObject;
 }
 
-/** Only to put the seed back after a test: the write under test always goes through the UI. */
+// Only to put the seed back; a POST re-creating a deleted object passes contentType "application/json".
 export async function restore(
   session: Session,
   contextId: number,
-  method: "PATCH" | "DELETE",
+  method: "PATCH" | "DELETE" | "POST",
   apiPath: string,
-  patch?: object,
+  body?: object,
   contentType = "application/merge-patch+json",
 ): Promise<void> {
-  const { status, body } = await session.evaluate<{ status: number; body: string }>(
-    `fetch(${JSON.stringify(`/api-kube${apiPath}`)}, {
-      method: ${JSON.stringify(method)},
-      headers: { "Content-Type": ${JSON.stringify(contentType)} },
-      body: ${patch ? JSON.stringify(JSON.stringify(patch)) : "undefined"},
-    }).then(async (response) => ({ status: response.status, body: await response.text() }))`,
-    contextId,
-  );
+  const reply = await proxyFetch(session, contextId, apiPath, {
+    method,
+    contentType,
+    body: body ? JSON.stringify(body) : undefined,
+  });
 
-  if (status >= 300 && status !== 404) {
-    throw new Error(`${method} ${apiPath}: ${status} ${body.slice(0, 200)}`);
+  // Gone already is fine when putting back; a create that 404s has nowhere to go.
+  if (reply.status >= 300 && !(reply.status === 404 && method !== "POST")) {
+    throw new Error(`${method} ${apiPath}: ${reply.status} ${reply.body.slice(0, 200)}`);
   }
+}
+
+// Runs the step however the test ends; build/e2e cannot resolve vitest, so it takes onTestFinished.
+export function putBackWith(
+  onTestFinished: (fn: () => Promise<void>, timeoutMs?: number) => void,
+): (step: () => Promise<unknown>, timeoutMs?: number) => void {
+  return (step, timeoutMs) =>
+    onTestFinished(async () => {
+      await step();
+    }, timeoutMs);
 }
 
 /** Polls the cluster every 3s: operators take seconds to minutes to act. */
@@ -57,14 +61,12 @@ export function untilCluster<T>(
     async () => {
       const value = await check();
 
-      if (value === undefined || value === false) {
-        await new Promise((resolve) => setTimeout(resolve, 2500));
-      }
+      if (value === undefined || value === false) await sleep(2500);
 
       return value;
     },
     timeoutMs,
-  ) as Promise<T>;
+  );
 }
 
 /** Runs a command in a container through the window's proxy, as kubectl exec does; returns stdout. */
@@ -136,24 +138,9 @@ export async function confirmDialog(
 
   if (!pressed) throw new Error(`no "${okLabel}" button in the dialog: ${text.slice(-300)}`);
 
-  await waitFor("the dialog to close", async () =>
-    (await session.evaluate<number>(
-      "document.querySelectorAll('.ConfirmDialog').length",
-      contextId,
-    )) === 0
-      ? true
-      : undefined,
-  );
+  await waitForNoDialog(session, contextId, "the dialog to close");
 
   return text;
-}
-
-/** Every notification on screen, newest last; the suites wait on the one their write reports. */
-export function notifications(session: Session, contextId: number): Promise<string[]> {
-  return session.evaluate<string[]>(
-    `[...document.querySelectorAll('[class*="notification"]')].map((each) => each.textContent.trim())`,
-    contextId,
-  );
 }
 
 export function notificationMatching(
@@ -169,10 +156,7 @@ export function notificationMatching(
   );
 }
 
-/**
- * Clicks the Undo in the notification matching `notice`, and waits for the notification it adds.
- * Several can offer the same label at once: an earlier test's may still be on screen.
- */
+// Several notifications can offer the same label at once: an earlier test's may still be on screen.
 export async function clickUndo(
   session: Session,
   contextId: number,
@@ -196,12 +180,10 @@ export async function clickUndo(
   if (!clicked)
     throw new Error(`no notification matching ${notice} offers ${JSON.stringify(label)}`);
 
-  await waitFor(
-    `a notification matching ${done}`,
-    async () =>
-      (await session.evaluate<boolean>(
-        `[...document.querySelectorAll('[class*="notification"]:not([data-seen])')].some((each) => new RegExp(${JSON.stringify(done.source)}).test(each.textContent))`,
-        contextId,
-      )) || undefined,
+  await waitFor(`a notification matching ${done}`, async () =>
+    session.evaluate<boolean>(
+      `[...document.querySelectorAll('[class*="notification"]:not([data-seen])')].some((each) => new RegExp(${JSON.stringify(done.source)}).test(each.textContent))`,
+      contextId,
+    ),
   );
 }

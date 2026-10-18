@@ -1,12 +1,16 @@
 import { type ExecutionContext, listTargets, Session } from "./cdp";
 
-export const DEBUG_PORT = Number(process.env.FREELENS_DEBUG_PORT ?? 9222);
+const DEBUG_PORT = Number(process.env.FREELENS_DEBUG_PORT ?? 9222);
 
 const CLUSTER_ORIGIN = /^https:\/\/[0-9a-f]+\.renderer\.freelens\.app/;
 
+export function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export async function waitFor<T>(
   what: string,
-  attempt: () => Promise<T | undefined>,
+  attempt: () => Promise<T | undefined | null | false>,
   timeoutMs = 60_000,
 ): Promise<T> {
   const deadline = Date.now() + timeoutMs;
@@ -21,7 +25,7 @@ export async function waitFor<T>(
       lastError = error;
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await sleep(500);
   }
 
   throw new Error(`timed out waiting for ${what}${lastError ? `: ${lastError}` : ""}`);
@@ -32,32 +36,71 @@ export interface ConsoleError {
   text: string;
 }
 
-export function collectErrors(session: Session): { drain: () => ConsoleError[] } {
+export interface ErrorLog {
+  drain(): ConsoleError[];
+}
+
+export interface Workbench {
+  session: Session;
+  frame: number;
+  errors: ErrorLog;
+}
+
+interface StackTrace {
+  callFrames: { url: string }[];
+}
+
+// Leaving the cluster view (a reload, or the catalog) makes the host's main frame throw "illegal access" as it unmounts.
+const leaving = new WeakMap<Session, number>();
+const MAIN_FRAME_SCRIPT = /^https:\/\/renderer\.freelens\.app[:/]/;
+
+async function whileLeaving<T>(session: Session, run: () => Promise<T>): Promise<T> {
+  leaving.set(session, (leaving.get(session) ?? 0) + 1);
+
+  try {
+    return await run();
+  } finally {
+    leaving.set(session, (leaving.get(session) ?? 1) - 1);
+  }
+}
+
+export function collectErrors(session: Session): ErrorLog {
   const seen: ConsoleError[] = [];
+  const reloadNoise = (url = "") => (leaving.get(session) ?? 0) > 0 && MAIN_FRAME_SCRIPT.test(url);
 
-  session.on<{ type: string; args: { value?: unknown; description?: string }[] }>(
-    "Runtime.consoleAPICalled",
-    (params) => {
-      if (params.type !== "error") return;
+  session.on<{
+    type: string;
+    args: { value?: unknown; description?: string }[];
+    stackTrace?: StackTrace;
+  }>("Runtime.consoleAPICalled", (params) => {
+    if (params.type !== "error" || reloadNoise(params.stackTrace?.callFrames[0]?.url)) return;
 
-      const text = params.args
-        .map((arg) => String(arg.description ?? arg.value ?? ""))
-        .join(" ")
-        .trim();
+    const text = params.args
+      .map((arg) => String(arg.description ?? arg.value ?? ""))
+      .join(" ")
+      .trim();
 
-      if (text) seen.push({ source: "console", text });
-    },
-  );
+    if (text) seen.push({ source: "console", text });
+  });
 
-  session.on<{ exceptionDetails: { text: string; exception?: { description?: string } } }>(
-    "Runtime.exceptionThrown",
-    (params) => {
-      seen.push({
-        source: "exception",
-        text: params.exceptionDetails.exception?.description ?? params.exceptionDetails.text,
-      });
-    },
-  );
+  session.on<{
+    exceptionDetails: {
+      text: string;
+      url?: string;
+      exception?: { description?: string; value?: unknown };
+    };
+  }>("Runtime.exceptionThrown", (params) => {
+    const { exception, text, url } = params.exceptionDetails;
+
+    if (reloadNoise(url)) return;
+
+    seen.push({
+      source: "exception",
+      text:
+        exception?.description ??
+        (exception?.value === undefined ? text : `${text} ${String(exception.value)}`),
+    });
+  });
 
   return {
     drain: () => seen.splice(0, seen.length),
@@ -79,9 +122,8 @@ export async function connect(): Promise<Session> {
   return session;
 }
 
-// Contexts are replaced on reload, so never cached. Re-enabling Runtime replays one creation
-// event per live context; CDP has no call that lists them.
-async function contexts(session: Session): Promise<ExecutionContext[]> {
+// Re-enabling Runtime replays one creation event per live context; CDP has no call that lists them.
+async function liveExecutionContexts(session: Session): Promise<ExecutionContext[]> {
   const found = new Map<number, ExecutionContext>();
 
   session.on<{ context: ExecutionContext }>("Runtime.executionContextCreated", (params) =>
@@ -93,16 +135,15 @@ async function contexts(session: Session): Promise<ExecutionContext[]> {
 
   await session.send("Runtime.disable");
   await session.send("Runtime.enable");
-  await new Promise((resolve) => setTimeout(resolve, 400));
+  await sleep(400);
 
   return [...found.values()];
 }
 
-// Newest first and only once it answers: a reload creates the new context before the old one
-// is reported destroyed.
+// A reload creates the new context before the old one is reported destroyed.
 export async function clusterFrame(session: Session): Promise<number> {
   return waitFor("the cluster frame", async () => {
-    const candidates = (await contexts(session))
+    const candidates = (await liveExecutionContexts(session))
       .filter((context) => CLUSTER_ORIGIN.test(context.origin))
       .sort((a, b) => b.id - a.id);
 
@@ -119,11 +160,12 @@ export async function clusterFrame(session: Session): Promise<number> {
 }
 
 export async function openCluster(session: Session): Promise<void> {
-  await session.evaluate("location.pathname = '/catalog'");
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  await whileLeaving(session, async () => {
+    await session.evaluate("location.pathname = '/catalog'");
+    await sleep(1500);
+  });
 
-  // A fresh Freelens answers before its catalog renders, and opens it on every kind, its own
-  // entries first: no row is clicked until the clusters tab is the selected one.
+  // A fresh Freelens opens the catalog on another kind: wait for the clusters tab first.
   await waitFor("the catalog's clusters tab", async () =>
     session.evaluate<boolean>(
       "(() => { const tab = document.querySelector(" +
@@ -140,6 +182,28 @@ export async function openCluster(session: Session): Promise<void> {
         " row?.dispatchEvent(new MouseEvent('click', {bubbles: true})); return false; })()",
     ),
   );
+}
+
+/** Reloads the cluster frame so a suite inherits no stores, namespace scope or loaded list. */
+export async function freshClusterFrame(session: Session): Promise<number> {
+  const frame = await whileLeaving(session, async () => {
+    await openCluster(session);
+
+    const stale = await clusterFrame(session);
+
+    // Deferred, so the evaluation answers before its context goes away.
+    await session.evaluate("setTimeout(() => location.reload(), 0)", stale);
+
+    return waitFor("the reloaded cluster frame", async () => {
+      const next = await clusterFrame(session);
+
+      return next > stale ? next : undefined;
+    });
+  });
+
+  await assertDevCluster(session, frame);
+
+  return frame;
 }
 
 export async function sidebarItems(session: Session, contextId: number): Promise<string[]> {
@@ -165,8 +229,7 @@ async function expandGroup(session: Session, contextId: number, groupId: string)
   );
 }
 
-// Groups are listed outermost first. Expanding runs on every pass: the context exists before
-// the sidebar renders into it.
+// Groups are listed outermost first; expanding runs on every pass: the sidebar renders after the context exists.
 export async function clickSidebar(
   session: Session,
   contextId: number,
@@ -200,51 +263,57 @@ export async function clickSidebar(
     throw new Error(`no sidebar entry with id "${pageId}". Sidebar shows: ${items.join(" | ")}`);
   });
 
-  await new Promise((resolve) => setTimeout(resolve, 1200));
+  await sleep(1200);
 }
 
-// Needs a `KubeObjectListLayout` page. react-select opens on a pointer sequence and its menu
-// closes on a protocol round-trip, so it all runs in one page-side routine.
 export async function selectAllNamespaces(session: Session, contextId: number): Promise<void> {
-  const outcome = await session.evaluate<string>(
-    `(async () => {
-      const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-      const fire = (element) => {
-        for (const type of ["pointerdown", "mousedown", "mouseup", "click"]) {
-          element.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, button: 0 }));
-        }
-      };
-
-      const control = document.querySelector('[class*="Select__control"]');
-      if (!control) return "no namespace select on this page";
-
-      fire(control);
-
-      for (let attempt = 0; attempt < 25; attempt++) {
-        const all = [...document.querySelectorAll('[id*="option"]')]
-          .find((option) => option.textContent.trim() === "All Namespaces");
-
-        if (all) { fire(all); return "selected"; }
-
-        await wait(200);
-      }
-
-      return "the namespace menu never opened";
-    })()`,
+  await pickNamespaceOption(
+    session,
     contextId,
+    "All Namespaces",
+    "the namespace menu never opened",
+    "could not widen the namespace scope",
+    false,
   );
-
-  if (outcome !== "selected") throw new Error(`could not widen the namespace scope: ${outcome}`);
-
-  await new Promise((resolve) => setTimeout(resolve, 2500));
 }
 
-// As selectAllNamespaces. An option's text includes the `layers` and `check` icon ligatures.
 export async function selectNamespace(
   session: Session,
   contextId: number,
   namespace: string,
 ): Promise<void> {
+  await pickNamespaceOption(
+    session,
+    contextId,
+    namespace,
+    "no option for that namespace",
+    `could not scope to ${namespace}`,
+    true,
+  );
+}
+
+// Needs a KubeObjectListLayout page. react-select's menu closes on a protocol round-trip, so the pick runs in one page-side routine.
+async function pickNamespaceOption(
+  session: Session,
+  contextId: number,
+  optionLabel: string,
+  missing: string,
+  failure: string,
+  stripIcons: boolean,
+): Promise<void> {
+  // A page renders its selector only once its lists have landed.
+  const ready = await waitFor(
+    "the namespace select",
+    () =>
+      session.evaluate<boolean>(
+        `Boolean(document.querySelector('[class*="Select__control"]'))`,
+        contextId,
+      ),
+    30_000,
+  ).catch(() => false);
+
+  if (!ready) throw new Error(`${failure}: no namespace select on this page`);
+
   const outcome = await session.evaluate<string>(
     `(async () => {
       const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -253,8 +322,10 @@ export async function selectNamespace(
           element.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, button: 0 }));
         }
       };
-      const named = (option) =>
-        option.textContent.replace("layers", "").replace("check", "").trim();
+      // An option's text includes the layers and check icon ligatures.
+      const named = (option) => ${stripIcons}
+        ? option.textContent.replace("layers", "").replace("check", "").trim()
+        : option.textContent.trim();
 
       const control = document.querySelector('[class*="Select__control"]');
       if (!control) return "no namespace select on this page";
@@ -263,28 +334,26 @@ export async function selectNamespace(
 
       for (let attempt = 0; attempt < 25; attempt++) {
         const wanted = [...document.querySelectorAll('[id*="option"]')]
-          .find((option) => named(option) === ${JSON.stringify(namespace)});
+          .find((option) => named(option) === ${JSON.stringify(optionLabel)});
 
         if (wanted) { fire(wanted); return "selected"; }
 
         await wait(200);
       }
 
-      return "no option for that namespace";
+      return ${JSON.stringify(missing)};
     })()`,
     contextId,
   );
 
-  if (outcome !== "selected") {
-    throw new Error(`could not scope to ${namespace}: ${outcome}`);
-  }
+  if (outcome !== "selected") throw new Error(`${failure}: ${outcome}`);
 
-  await new Promise((resolve) => setTimeout(resolve, 2500));
+  await sleep(2500);
 }
 
 export const DEV_NODE = "freelens-addons-dev";
 
-/** The suites click buttons that write: they must never drive a window opened on another cluster. */
+/** The suites click buttons that write: never drive a window opened on another cluster. */
 export async function assertDevCluster(session: Session, contextId: number): Promise<void> {
   const nodes = await session.evaluate<string[]>(
     `fetch("/api-kube/api/v1/nodes").then((response) => response.json()).then((list) => (list.items ?? []).map((node) => node.metadata.name))`,
@@ -298,27 +367,36 @@ export async function assertDevCluster(session: Session, contextId: number): Pro
   }
 }
 
-export async function openWorkbench(): Promise<{
-  session: Session;
-  frame: number;
-  errors: { drain: () => ConsoleError[] };
-}> {
-  const session = await connect();
-  const errors = collectErrors(session);
-
+export async function openDevCluster(session: Session): Promise<number> {
   await openCluster(session);
 
-  let frame = await clusterFrame(session);
+  const frame = await clusterFrame(session);
 
   await assertDevCluster(session, frame);
 
-  // A host list page: the namespace control lives there.
+  return frame;
+}
+
+// A host list page: the namespace control lives there.
+async function widenToAllNamespaces(session: Session, frame: number): Promise<void> {
   await clickSidebar(session, frame, "pods", "workloads");
   await selectAllNamespaces(session, frame);
+}
 
-  frame = await clusterFrame(session);
+export async function openWorkbench(): Promise<Workbench> {
+  const session = await connect();
+  const errors = collectErrors(session);
+  const openedFrame = await openDevCluster(session);
+
+  await widenToAllNamespaces(session, openedFrame);
+
+  const frame = await clusterFrame(session);
 
   return { session, frame, errors };
+}
+
+function queryOrThrow(selector: string): string {
+  return `const element = document.querySelector(${JSON.stringify(selector)}); if (!element) throw new Error('nothing matching ' + ${JSON.stringify(selector)});`;
 }
 
 // Tooltips open on a pointer sequence, not a bare `mouseover`. "" means none appeared.
@@ -329,11 +407,10 @@ export async function hoverForTooltip(
 ): Promise<string> {
   return session.evaluate<string>(
     `(async () => {
-      const target = document.querySelector(${JSON.stringify(selector)});
-      if (!target) throw new Error('nothing matching ' + ${JSON.stringify(selector)});
+      ${queryOrThrow(selector)}
 
       for (const type of ["pointerenter", "pointerover", "mouseenter", "mouseover", "mousemove"]) {
-        target.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true }));
+        element.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true }));
       }
 
       await new Promise((resolve) => setTimeout(resolve, 1200));
@@ -355,8 +432,7 @@ export async function computedStyle(
 ): Promise<string> {
   return session.evaluate<string>(
     `(() => {
-      const element = document.querySelector(${JSON.stringify(selector)});
-      if (!element) throw new Error('nothing matching ' + ${JSON.stringify(selector)});
+      ${queryOrThrow(selector)}
       return getComputedStyle(element).getPropertyValue(${JSON.stringify(property)}).trim();
     })()`,
     contextId,
@@ -389,10 +465,30 @@ export async function overflowsSideways(
 ): Promise<number> {
   return session.evaluate<number>(
     `(() => {
-      const element = document.querySelector(${JSON.stringify(selector)});
-      if (!element) throw new Error('nothing matching ' + ${JSON.stringify(selector)});
+      ${queryOrThrow(selector)}
       return element.scrollWidth - element.clientWidth;
     })()`,
+    contextId,
+  );
+}
+
+export async function proxyFetch(
+  session: Session,
+  contextId: number,
+  apiPath: string,
+  init?: { method: string; contentType: string; body?: string },
+): Promise<{ status: number; body: string }> {
+  const url = JSON.stringify(`/api-kube${apiPath}`);
+  const options = init
+    ? `, {
+      method: ${JSON.stringify(init.method)},
+      headers: { "Content-Type": ${JSON.stringify(init.contentType)} },
+      body: ${init.body === undefined ? "undefined" : JSON.stringify(init.body)},
+    }`
+    : "";
+
+  return session.evaluate<{ status: number; body: string }>(
+    `fetch(${url}${options}).then(async (response) => ({ status: response.status, body: await response.text() }))`,
     contextId,
   );
 }
@@ -402,10 +498,7 @@ export async function clusterItems<Item = Record<string, unknown>>(
   contextId: number,
   apiPath: string,
 ): Promise<Item[]> {
-  const body = await session.evaluate<string>(
-    `fetch(${JSON.stringify(`/api-kube${apiPath}`)}).then((response) => response.text())`,
-    contextId,
-  );
+  const { body } = await proxyFetch(session, contextId, apiPath);
 
   const parsed = JSON.parse(body) as { items?: Item[] };
 
@@ -416,44 +509,143 @@ export async function clusterItems<Item = Record<string, unknown>>(
   return parsed.items;
 }
 
-export async function clickByText(
+function clickIfShown(
   session: Session,
   contextId: number,
   selector: string,
   text: string,
-): Promise<void> {
-  const clicked = await session.evaluate<boolean>(
+): Promise<boolean> {
+  return session.evaluate<boolean>(
     `(() => {
-      const found = [...document.querySelectorAll(${JSON.stringify(selector)})]
-        .find((each) => each.textContent.includes(${JSON.stringify(text)}));
+      const found = ${firstWithText(selector, text)};
       if (!found) return false;
       found.click();
       return true;
     })()`,
     contextId,
   );
+}
 
-  if (!clicked) throw new Error(`no ${selector} containing ${JSON.stringify(text)}`);
+function firstWithText(selector: string, text: string): string {
+  return `[...document.querySelectorAll(${JSON.stringify(selector)})].find((each) => each.textContent.includes(${JSON.stringify(text)}))`;
+}
 
-  await new Promise((resolve) => setTimeout(resolve, 900));
+export async function clickWhenShown(
+  session: Session,
+  contextId: number,
+  selector: string,
+  text: string,
+  timeoutMs = 30_000,
+): Promise<void> {
+  await waitFor(
+    `a ${selector} containing ${JSON.stringify(text)}`,
+    async () => clickIfShown(session, contextId, selector, text),
+    timeoutMs,
+  );
+}
+
+/** Clicks until a dialog opens and returns its text: a list that learns of a write late refuses until then. */
+export function clickUntilDialog(
+  session: Session,
+  contextId: number,
+  selector: string,
+  text: string,
+  timeoutMs = 60_000,
+): Promise<string> {
+  return waitFor(
+    `a dialog from ${JSON.stringify(text)}`,
+    async () => {
+      await clickWhenShown(session, contextId, selector, text);
+
+      // Throws when none opens, so the outer wait clicks again.
+      return waitFor(
+        "the dialog",
+        async () =>
+          (await session.evaluate<string>(
+            "document.querySelector('.ConfirmDialog')?.textContent ?? ''",
+            contextId,
+          )) || undefined,
+        3_000,
+      );
+    },
+    timeoutMs,
+  );
+}
+
+/** Clicks a chip and waits until it shows pressed: what it filters renders in that same pass. */
+export async function pressChip(
+  session: Session,
+  contextId: number,
+  selector: string,
+  text: string,
+): Promise<void> {
+  await clickWhenShown(session, contextId, selector, text);
+  await waitFor(`${JSON.stringify(text)} to show pressed`, async () =>
+    session.evaluate<boolean>(
+      `${firstWithText(selector, text)}?.getAttribute("aria-pressed") === "true"`,
+      contextId,
+    ),
+  );
+}
+
+/** Clicks a header's sort and waits until its aria-sort changes: the rows reorder in that same pass. */
+export async function pressSort(
+  session: Session,
+  contextId: number,
+  selector: string,
+  text: string,
+): Promise<void> {
+  const sortOf = () =>
+    session.evaluate<string>(
+      `${firstWithText(selector, text)}?.closest("th")?.getAttribute("aria-sort") ?? ""`,
+      contextId,
+    );
+  const before = await sortOf();
+
+  await clickWhenShown(session, contextId, selector, text);
+  await waitFor(`${JSON.stringify(text)} to sort`, async () => (await sortOf()) !== before);
+}
+
+/** Clicks `icon` when given, then waits for its menu: it renders a moment after the click. */
+export async function openMenu(session: Session, contextId: number, icon?: string): Promise<void> {
+  if (icon) {
+    const clicked = await session.evaluate<boolean>(
+      `(() => { const icon = document.querySelector(${JSON.stringify(icon)}); icon?.click(); return Boolean(icon); })()`,
+      contextId,
+    );
+
+    if (!clicked) throw new Error(`no menu icon matching ${icon}`);
+  }
+
+  await waitFor(
+    "the menu to open",
+    async () =>
+      (await session.evaluate<number>("document.querySelectorAll('.MenuItem').length", contextId)) >
+      0,
+  );
+}
+
+export function clickMenuItem(session: Session, contextId: number, title: string): Promise<void> {
+  return clickWhenShown(session, contextId, ".MenuItem", title);
+}
+
+// Newest last.
+export function notifications(session: Session, contextId: number): Promise<string[]> {
+  return session.evaluate<string[]>(
+    `[...document.querySelectorAll('[class*="notification"]')].map((each) => each.textContent.trim())`,
+    contextId,
+  );
 }
 
 // Notifications stack, so the first one may be a previous action's.
-export async function notificationSaying(
+export function notificationSaying(
   session: Session,
   contextId: number,
   text: string,
 ): Promise<string> {
-  return waitFor(`a notification saying ${JSON.stringify(text)}`, async () => {
-    const found = await session.evaluate<string>(
-      `[...document.querySelectorAll('[class*="notification"]')]
-         .map((each) => each.textContent.trim())
-         .find((each) => each.includes(${JSON.stringify(text)})) ?? ""`,
-      contextId,
-    );
-
-    return found.length > 0 ? found : undefined;
-  });
+  return waitFor(`a notification saying ${JSON.stringify(text)}`, async () =>
+    (await notifications(session, contextId)).find((each) => each.includes(text)),
+  );
 }
 
 export async function notificationText(session: Session, contextId: number): Promise<string> {
@@ -503,15 +695,74 @@ export async function textOf(
 }
 
 /** The drawer on screen: one closing stays in the DOM, without its body, until it animates out. */
-export function openDrawer(drawer: string): string {
+export function shownDrawer(drawer: string): string {
   return `[...document.querySelectorAll(${JSON.stringify(drawer)})].filter((each) => each.querySelector("[data-section]")).at(-1)`;
 }
 
 /** Without the copy icon the host puts in the title. */
 export function drawerTitle(session: Session, contextId: number, drawer: string): Promise<string> {
   return session.evaluate<string>(
-    `[...(${openDrawer(drawer)}?.querySelector(".drawer-title-text")?.childNodes ?? [])]
+    `[...(${shownDrawer(drawer)}?.querySelector(".drawer-title-text")?.childNodes ?? [])]
        .filter((each) => each.nodeType === Node.TEXT_NODE).map((each) => each.textContent).join("").trim()`,
     contextId,
   );
+}
+
+export function waitForNoDialog(
+  session: Session,
+  contextId: number,
+  what: string,
+  timeoutMs?: number,
+): Promise<boolean> {
+  return waitFor(
+    what,
+    async () =>
+      (await session.evaluate<number>(
+        "document.querySelectorAll('.ConfirmDialog').length",
+        contextId,
+      )) === 0,
+    timeoutMs,
+  );
+}
+
+export function countOf(session: Session, contextId: number, selector: string): Promise<number> {
+  return session.evaluate<number>(
+    `document.querySelectorAll(${JSON.stringify(selector)}).length`,
+    contextId,
+  );
+}
+
+export function dialogText(session: Session, contextId: number): Promise<string> {
+  return waitFor("the confirmation", async () => {
+    const text = await session.evaluate<string>(
+      "document.querySelector('.ConfirmDialog')?.textContent ?? ''",
+      contextId,
+    );
+
+    return text || undefined;
+  });
+}
+
+export async function cancelDialog(session: Session, contextId: number): Promise<void> {
+  await clickWhenShown(session, contextId, ".ConfirmDialog button", "Cancel");
+  await waitForNoDialog(session, contextId, "the dialog to close");
+}
+
+/** Cancels any dialog and opens that page, so an afterEach leaves no ticks or dialog behind. */
+export async function leaveNothingBehind(
+  session: Session,
+  contextId: number,
+  pageId: string,
+  groupId?: string | string[],
+): Promise<void> {
+  try {
+    await session.evaluate(
+      `[...document.querySelectorAll(".ConfirmDialog button")].find((each) => each.textContent.trim() === "Cancel")?.click()`,
+      contextId,
+    );
+    await waitForNoDialog(session, contextId, "no dialog left open", 10_000);
+    await clickSidebar(session, contextId, pageId, groupId);
+  } catch (error) {
+    console.log(`  could not tidy up after the test: ${error}`);
+  }
 }
