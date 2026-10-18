@@ -1,0 +1,37 @@
+# states.sh creates it healthy, then asks for a version with no image. Never applied: a stopped
+# set takes no change until its agents reach their goal.
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: upgrade-rs
+  namespace: mongodb
+spec:
+  type: ReplicaSet
+  members: 2
+  version: "8.0.12"
+  # upgrade-rs-0 is the preferred primary, so upgrade-rs-1 is upgraded first.
+  memberConfig:
+    - votes: 1
+      priority: "2"
+    - votes: 1
+      priority: "1"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users: []
+  # Small requests: the whole seed has to fit a CI runner's four CPUs.
+  statefulSet:
+    spec:
+      template:
+        spec:
+          # The scheduler counts the largest init container too.
+          initContainers:
+            - name: mongod-posthook
+              resources: { requests: { cpu: 25m, memory: 50M } }
+            - name: mongodb-agent-readinessprobe
+              resources: { requests: { cpu: 25m, memory: 50M } }
+          containers:
+            - name: mongod
+              resources: { requests: { cpu: 25m, memory: 200M } }
+            - name: mongodb-agent
+              resources: { requests: { cpu: 25m, memory: 100M } }

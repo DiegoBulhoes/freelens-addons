@@ -1,32 +1,35 @@
 import { Renderer } from "@freelensapp/extensions";
 import { useState } from "react";
-
-import { deleteMemberPod, deleteReplicaSet, patchReplicaSet, runRestartAll } from "../api/actions";
-import { dataMembers, type Member, primaryOf } from "../api/members";
+import { type Member, primaryOf } from "../api/clusters/members";
+import type { ReplicaSetLike } from "../api/shared/types";
+import { plural } from "../api/shared/verdict";
+import {
+  deleteReplicaSet,
+  patchReplicaSet,
+  restartMember,
+  runRestartAll,
+  switchPrimary,
+} from "../api/writes/actions";
 import {
   describeStep,
   memberRestartRefusal,
   restartAllPlan,
-  rollingRestartPatch,
-  rollingRestartRefusal,
+  restartingRefusal,
+  scaleAdvice,
   scalePatch,
-  scaleRefusal,
-  scaleWarnings,
-  switchPatch,
-  switchRefusal,
-} from "../api/operations";
-import type { ReplicaSetLike } from "../api/types";
+  switchTarget,
+} from "../api/writes/operations";
 import { confirmWrite, notifyDone } from "../components/confirm";
 
 const {
   Component: { Input, Notifications },
 } = Renderer;
 
-function failed(error: unknown, what: string) {
+function notifyFailure(error: unknown, what: string) {
   Notifications.checkedError(error, `Could not ${what}`);
 }
 
-function stop(reason: string | undefined): boolean {
+function notifyRefusal(reason: string | undefined): boolean {
   if (reason) Notifications.error(reason);
 
   return Boolean(reason);
@@ -71,28 +74,39 @@ function Choice({
   );
 }
 
-function Field({
-  label,
+/** The count, with why it is refused or what to know about it, said as it is typed. */
+function ScaleField({
   initial,
+  advise,
   onType,
 }: {
-  label: string;
   initial: string;
+  advise: (text: string) => { refused?: string; warnings: string[] };
   onType: (text: string) => void;
 }) {
   const [value, setValue] = useState(initial);
+  const advice = advise(value);
 
   return (
     <div className="MongoDB-form__field">
-      <span>{label}</span>
+      <span>Data members</span>
       <Input
-        aria-label={label}
+        aria-label="Data members"
         value={value}
         onChange={(next: string) => {
           setValue(next);
           onType(next);
         }}
       />
+      {value === initial ? null : advice.refused ? (
+        <span className="MongoDB-text--critical">{advice.refused}</span>
+      ) : (
+        advice.warnings.map((warning) => (
+          <span key={warning} className="MongoDB-text--warning">
+            {warning}
+          </span>
+        ))
+      )}
     </div>
   );
 }
@@ -101,17 +115,19 @@ export function confirmScale(rs: ReplicaSetLike): void {
   const name = rs.getName();
   let typed = String(rs.spec.members);
 
+  if (notifyRefusal(restartingRefusal(rs))) return;
+
   confirmWrite({
     question: (
       <>
         Change how many data members <b>{name}</b> has?
       </>
     ),
-    detail: `It has ${rs.spec.members}${rs.spec.arbiters ? ` and ${rs.spec.arbiters} arbiter${rs.spec.arbiters === 1 ? "" : "s"}` : ""}. The operator adds or removes them one at a time.`,
+    detail: `It has ${rs.spec.members}${rs.spec.arbiters ? ` and ${plural(rs.spec.arbiters, "arbiter")}` : ""}. The operator adds or removes them one at a time.`,
     form: (
-      <Field
-        label="Data members"
+      <ScaleField
         initial={typed}
+        advise={(text) => scaleAdvice(rs, text)}
         onType={(text) => {
           typed = text;
         }}
@@ -120,20 +136,17 @@ export function confirmScale(rs: ReplicaSetLike): void {
     label: "Scale",
     destructive: false,
     ok: async () => {
-      const count = Number(typed.trim());
+      const { count, refused } = scaleAdvice(rs, typed);
 
-      if (stop(scaleRefusal(rs, count))) return;
-
-      const warnings = scaleWarnings(rs, count);
+      if (notifyRefusal(refused)) return;
 
       try {
         await patchReplicaSet(rs, scalePatch(rs, count));
-        notifyDone(
-          `${name} scaled to ${count} member${count === 1 ? "" : "s"}.${warnings.length > 0 ? ` ${warnings.join(" ")}` : ""}`,
-          { run: () => patchReplicaSet(rs, scalePatch(rs, rs.spec.members)) },
-        );
+        notifyDone(`${name} scaled to ${plural(count, "member")}.`, {
+          run: () => patchReplicaSet(rs, scalePatch(rs, rs.spec.members)),
+        });
       } catch (error) {
-        failed(error, `scale ${name}`);
+        notifyFailure(error, `scale ${name}`);
       }
     },
   });
@@ -141,12 +154,15 @@ export function confirmScale(rs: ReplicaSetLike): void {
 
 export function confirmSwitch(rs: ReplicaSetLike, members: Member[], to?: string): void {
   const name = rs.getName();
-  const candidates = dataMembers(members)
-    .filter((each) => !switchRefusal(rs, members, each.name))
-    .map((each) => each.name);
-  let target = to ?? candidates[0] ?? "";
+  const chosen = switchTarget(rs, members, to);
 
-  if (stop(switchRefusal(rs, members, target))) return;
+  if ("refused" in chosen) {
+    Notifications.error(chosen.refused);
+    return;
+  }
+
+  const { candidates } = chosen;
+  let target = chosen.target;
 
   confirmWrite({
     question: (
@@ -170,18 +186,20 @@ export function confirmSwitch(rs: ReplicaSetLike, members: Member[], to?: string
     destructive: true,
     typed: () => name,
     ok: async () => {
+      if (notifyRefusal(restartingRefusal(rs))) return;
+
       try {
-        await patchReplicaSet(rs, switchPatch(rs, members, target));
+        await switchPrimary(rs, target);
         notifyDone(`${target} will be elected primary of ${name}.`);
       } catch (error) {
-        failed(error, `switch the primary of ${name}`);
+        notifyFailure(error, `switch the primary of ${name}`);
       }
     },
   });
 }
 
 export function confirmRestartMember(rs: ReplicaSetLike, members: Member[], member: string): void {
-  if (stop(memberRestartRefusal(members, member))) return;
+  if (notifyRefusal(memberRestartRefusal(rs, members, member))) return;
 
   const primary = primaryOf(members)?.name === member;
 
@@ -198,11 +216,13 @@ export function confirmRestartMember(rs: ReplicaSetLike, members: Member[], memb
     destructive: true,
     typed: () => member,
     ok: async () => {
+      if (notifyRefusal(restartingRefusal(rs))) return;
+
       try {
-        await deleteMemberPod(rs, member);
+        await restartMember(rs, member);
         notifyDone(`Restart of ${member} requested.`);
       } catch (error) {
-        failed(error, `restart ${member}`);
+        notifyFailure(error, `restart ${member}`);
       }
     },
   });
@@ -224,44 +244,19 @@ export function confirmRestartAll(rs: ReplicaSetLike, members: Member[]): void {
       </>
     ),
     detail: `In order: ${plan.steps.map(describeStep).join(", then ")}. The primary steps down as it stops and a secondary takes over at once; a preferred member takes the primary back when it returns. Each waits for the set to settle, and stops if anything changed. Keep Freelens open until it ends.`,
-    label: `Restart ${members.filter((each) => !each.extra).length}`,
+    label: `Restart ${plan.steps.length}`,
     destructive: true,
     typed: () => name,
     ok: async () => {
+      if (notifyRefusal(restartingRefusal(rs))) return;
+
       Notifications.info(`Restarting ${name}, one member at a time.`);
 
       try {
         await runRestartAll(rs, plan.steps, (done) => Notifications.ok(`${name}: ${done}, done.`));
         notifyDone(`Every member of ${name} was restarted.`);
       } catch (error) {
-        failed(error, `restart every member of ${name}`);
-      }
-    },
-  });
-}
-
-export function confirmRollingRestart(rs: ReplicaSetLike): void {
-  if (stop(rollingRestartRefusal(rs))) return;
-
-  const name = rs.getName();
-
-  confirmWrite({
-    question: (
-      <>
-        Ask the operator to restart <b>{name}</b>?
-      </>
-    ),
-    detail:
-      "Its StatefulSet restarts the members by index, highest first, whichever is primary. Restart all, in the drawer, keeps the primary for last.",
-    label: "Restart",
-    destructive: true,
-    typed: () => name,
-    ok: async () => {
-      try {
-        await patchReplicaSet(rs, rollingRestartPatch(Date.now()));
-        notifyDone(`Rolling restart of ${name} requested.`);
-      } catch (error) {
-        failed(error, `restart ${name}`);
+        notifyFailure(error, `restart every member of ${name}`);
       }
     },
   });
@@ -286,7 +281,7 @@ export function confirmDelete(rs: ReplicaSetLike): void {
         await deleteReplicaSet(rs);
         notifyDone(`Deleted ${name}.`);
       } catch (error) {
-        failed(error, `delete ${name}`);
+        notifyFailure(error, `delete ${name}`);
       }
     },
   });

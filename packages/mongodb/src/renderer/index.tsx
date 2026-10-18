@@ -1,7 +1,7 @@
 import { Renderer } from "@freelensapp/extensions";
 import { computed } from "mobx";
-
-import { isInstalled } from "./api/installed";
+import { isInstalled } from "./api/shared/installed";
+import type { OpenReplicaSets } from "./api/shared/navigation";
 import { MongoDBIcon } from "./icons/mongodb";
 import { OverviewPage } from "./pages/overview-page";
 import { ReplicaSetsPage, type ReplicaSetsPageParams } from "./pages/replica-sets-page";
@@ -12,14 +12,21 @@ const PAGES = {
   replicaSets: "clusters",
 } as const;
 
+// A card opens the list on a filter; a row opens its cluster's drawer by namespace and name.
+const LIST_PARAMS = { namespace: "", name: "", filter: "" };
+
 // Registration fields are read right after construction; computing them in onActivate is too late.
 const installed = computed(() =>
   isInstalled(Renderer.K8sApi.crdStore.items.map((crd) => crd.getName())),
 );
 
 export default class MongoDBRenderer extends Renderer.LensExtension {
-  private openReplicaSets = (name?: string) =>
-    void this.navigate(PAGES.replicaSets, { name: name ?? "" });
+  private openReplicaSets: OpenReplicaSets = (params = {}) =>
+    void this.navigate(PAGES.replicaSets, {
+      namespace: params.namespace ?? "",
+      name: params.name ?? "",
+      filter: params.filter ?? "",
+    });
 
   override clusterPages = [
     {
@@ -30,7 +37,7 @@ export default class MongoDBRenderer extends Renderer.LensExtension {
     },
     {
       id: PAGES.replicaSets,
-      params: { name: "" },
+      params: LIST_PARAMS,
       components: {
         Page: (props: { params?: ReplicaSetsPageParams }) => (
           <ReplicaSetsPage params={props.params} />

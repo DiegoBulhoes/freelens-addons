@@ -3,401 +3,27 @@
   "items": [
     {
       "apiVersion": "v1",
-      "count": 2,
+      "count": 461,
       "eventTime": null,
-      "firstTimestamp": "2026-10-04T13:21:48Z",
-      "involvedObject": {
-        "apiVersion": "v1",
-        "fieldPath": "spec.containers{mongodb-agent}",
-        "kind": "Pod",
-        "name": "catalog-rs-0",
-        "namespace": "mongodb",
-        "resourceVersion": "553154",
-        "uid": "1fe63ebb-812a-430c-a351-8344191c3a36"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:21:58Z",
-      "message": "Readiness probe errored and resulted in unknown state: rpc error: code = Canceled desc = context canceled",
-      "metadata": {
-        "creationTimestamp": "2026-10-04T13:21:48Z",
-        "name": "catalog-rs-0.18db563fc844da2d",
-        "namespace": "mongodb",
-        "resourceVersion": "581866",
-        "selfLink": "/api/v1/namespaces/mongodb/events/catalog-rs-0.18db563fc844da2d",
-        "uid": "6908a9b7-06b5-4e93-aaed-d7451baa77f1"
-      },
-      "reason": "Unhealthy",
-      "reportingComponent": "kubelet",
-      "reportingInstance": "freelens-addons-dev",
-      "source": {
-        "component": "kubelet",
-        "host": "freelens-addons-dev"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 1,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-04T13:22:21Z",
-      "involvedObject": {
-        "apiVersion": "v1",
-        "fieldPath": "spec.containers{mongodb-agent}",
-        "kind": "Pod",
-        "name": "catalog-rs-0",
-        "namespace": "mongodb",
-        "resourceVersion": "581905",
-        "uid": "9b929818-a7a8-4169-8e91-25d01485adf7"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:22:21Z",
-      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-04T13:22:21.170Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:22:21.203Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:22:21.203Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
-      "metadata": {
-        "creationTimestamp": "2026-10-04T13:22:21Z",
-        "name": "catalog-rs-0.18db564756fb0703",
-        "namespace": "mongodb",
-        "resourceVersion": "582002",
-        "selfLink": "/api/v1/namespaces/mongodb/events/catalog-rs-0.18db564756fb0703",
-        "uid": "dd6cc121-263b-4227-bf6e-36fb0690fe57"
-      },
-      "reason": "Unhealthy",
-      "reportingComponent": "kubelet",
-      "reportingInstance": "freelens-addons-dev",
-      "source": {
-        "component": "kubelet",
-        "host": "freelens-addons-dev"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 1,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-04T13:22:21Z",
-      "involvedObject": {
-        "apiVersion": "v1",
-        "fieldPath": "spec.containers{mongodb-agent}",
-        "kind": "Pod",
-        "name": "catalog-rs-0",
-        "namespace": "mongodb",
-        "resourceVersion": "581905",
-        "uid": "9b929818-a7a8-4169-8e91-25d01485adf7"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:22:21Z",
-      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-04T13:22:21.401Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:22:21.433Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:22:21.433Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
-      "metadata": {
-        "creationTimestamp": "2026-10-04T13:22:21Z",
-        "name": "catalog-rs-0.18db5647647c891f",
-        "namespace": "mongodb",
-        "resourceVersion": "582004",
-        "selfLink": "/api/v1/namespaces/mongodb/events/catalog-rs-0.18db5647647c891f",
-        "uid": "7d43c47e-94d5-4671-810f-97d9dee9a526"
-      },
-      "reason": "Unhealthy",
-      "reportingComponent": "kubelet",
-      "reportingInstance": "freelens-addons-dev",
-      "source": {
-        "component": "kubelet",
-        "host": "freelens-addons-dev"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 1,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-04T13:22:48Z",
-      "involvedObject": {
-        "apiVersion": "v1",
-        "fieldPath": "spec.containers{mongodb-agent}",
-        "kind": "Pod",
-        "name": "catalog-rs-1",
-        "namespace": "mongodb",
-        "resourceVersion": "553082",
-        "uid": "66701fbd-bf69-467d-abba-4948732bddb1"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:22:48Z",
-      "message": "Readiness probe errored and resulted in unknown state: rpc error: code = Canceled desc = context canceled",
-      "metadata": {
-        "creationTimestamp": "2026-10-04T13:22:48Z",
-        "name": "catalog-rs-1.18db564daa0a7360",
-        "namespace": "mongodb",
-        "resourceVersion": "582145",
-        "selfLink": "/api/v1/namespaces/mongodb/events/catalog-rs-1.18db564daa0a7360",
-        "uid": "1dcf7640-e867-4f9c-83e2-f338301539a0"
-      },
-      "reason": "Unhealthy",
-      "reportingComponent": "kubelet",
-      "reportingInstance": "freelens-addons-dev",
-      "source": {
-        "component": "kubelet",
-        "host": "freelens-addons-dev"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 1,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-04T13:23:10Z",
-      "involvedObject": {
-        "apiVersion": "v1",
-        "fieldPath": "spec.containers{mongodb-agent}",
-        "kind": "Pod",
-        "name": "catalog-rs-1",
-        "namespace": "mongodb",
-        "resourceVersion": "582183",
-        "uid": "366c6687-7e57-4a69-aad4-1aad997b9eea"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:23:10Z",
-      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-04T13:23:10.797Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:23:10.823Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:23:10.824Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
-      "metadata": {
-        "creationTimestamp": "2026-10-04T13:23:10Z",
-        "name": "catalog-rs-1.18db5652e488e64e",
-        "namespace": "mongodb",
-        "resourceVersion": "582269",
-        "selfLink": "/api/v1/namespaces/mongodb/events/catalog-rs-1.18db5652e488e64e",
-        "uid": "03f76664-1b12-4599-b51e-a7270693a4ae"
-      },
-      "reason": "Unhealthy",
-      "reportingComponent": "kubelet",
-      "reportingInstance": "freelens-addons-dev",
-      "source": {
-        "component": "kubelet",
-        "host": "freelens-addons-dev"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 1,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-04T13:23:10Z",
-      "involvedObject": {
-        "apiVersion": "v1",
-        "fieldPath": "spec.containers{mongodb-agent}",
-        "kind": "Pod",
-        "name": "catalog-rs-1",
-        "namespace": "mongodb",
-        "resourceVersion": "582183",
-        "uid": "366c6687-7e57-4a69-aad4-1aad997b9eea"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:23:10Z",
-      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-04T13:23:10.923Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:23:10.967Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:23:10.968Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
-      "metadata": {
-        "creationTimestamp": "2026-10-04T13:23:10Z",
-        "name": "catalog-rs-1.18db5652ed20bbdd",
-        "namespace": "mongodb",
-        "resourceVersion": "582271",
-        "selfLink": "/api/v1/namespaces/mongodb/events/catalog-rs-1.18db5652ed20bbdd",
-        "uid": "1682747f-b4b9-47ad-b0d5-059db555b938"
-      },
-      "reason": "Unhealthy",
-      "reportingComponent": "kubelet",
-      "reportingInstance": "freelens-addons-dev",
-      "source": {
-        "component": "kubelet",
-        "host": "freelens-addons-dev"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 1,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-04T13:23:20Z",
-      "involvedObject": {
-        "apiVersion": "v1",
-        "fieldPath": "spec.containers{mongodb-agent}",
-        "kind": "Pod",
-        "name": "catalog-rs-1",
-        "namespace": "mongodb",
-        "resourceVersion": "582183",
-        "uid": "366c6687-7e57-4a69-aad4-1aad997b9eea"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:23:20Z",
-      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-04T13:23:20.947Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:23:20.979Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:23:20.980Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
-      "metadata": {
-        "creationTimestamp": "2026-10-04T13:23:20Z",
-        "name": "catalog-rs-1.18db565541bc8738",
-        "namespace": "mongodb",
-        "resourceVersion": "582309",
-        "selfLink": "/api/v1/namespaces/mongodb/events/catalog-rs-1.18db565541bc8738",
-        "uid": "408ded2c-e4ce-4d20-ae3b-2cf7f93d1b06"
-      },
-      "reason": "Unhealthy",
-      "reportingComponent": "kubelet",
-      "reportingInstance": "freelens-addons-dev",
-      "source": {
-        "component": "kubelet",
-        "host": "freelens-addons-dev"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 2,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-04T13:23:39Z",
-      "involvedObject": {
-        "apiVersion": "v1",
-        "fieldPath": "spec.containers{mongodb-agent}",
-        "kind": "Pod",
-        "name": "catalog-rs-2",
-        "namespace": "mongodb",
-        "resourceVersion": "553132",
-        "uid": "6e8a7bc3-7dc6-4d1c-b0ad-da61c6a26314"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:23:49Z",
-      "message": "Readiness probe errored and resulted in unknown state: rpc error: code = Canceled desc = context canceled",
-      "metadata": {
-        "creationTimestamp": "2026-10-04T13:23:39Z",
-        "name": "catalog-rs-2.18db56598a36d3d7",
-        "namespace": "mongodb",
-        "resourceVersion": "582432",
-        "selfLink": "/api/v1/namespaces/mongodb/events/catalog-rs-2.18db56598a36d3d7",
-        "uid": "33995d01-0d24-4f89-a5aa-933bd1d7985f"
-      },
-      "reason": "Unhealthy",
-      "reportingComponent": "kubelet",
-      "reportingInstance": "freelens-addons-dev",
-      "source": {
-        "component": "kubelet",
-        "host": "freelens-addons-dev"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 1,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-04T13:24:10Z",
-      "involvedObject": {
-        "apiVersion": "v1",
-        "fieldPath": "spec.containers{mongodb-agent}",
-        "kind": "Pod",
-        "name": "catalog-rs-2",
-        "namespace": "mongodb",
-        "resourceVersion": "582476",
-        "uid": "31962f3b-3d41-42e8-964a-b2dda5a8156f"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:24:10Z",
-      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-04T13:24:10.556Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:24:10.588Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:24:10.589Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
-      "metadata": {
-        "creationTimestamp": "2026-10-04T13:24:10Z",
-        "name": "catalog-rs-2.18db5660cf0f3176",
-        "namespace": "mongodb",
-        "resourceVersion": "582567",
-        "selfLink": "/api/v1/namespaces/mongodb/events/catalog-rs-2.18db5660cf0f3176",
-        "uid": "f614222b-211a-4c47-8f59-d1473ee47f71"
-      },
-      "reason": "Unhealthy",
-      "reportingComponent": "kubelet",
-      "reportingInstance": "freelens-addons-dev",
-      "source": {
-        "component": "kubelet",
-        "host": "freelens-addons-dev"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 1,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-04T13:24:10Z",
-      "involvedObject": {
-        "apiVersion": "v1",
-        "fieldPath": "spec.containers{mongodb-agent}",
-        "kind": "Pod",
-        "name": "catalog-rs-2",
-        "namespace": "mongodb",
-        "resourceVersion": "582476",
-        "uid": "31962f3b-3d41-42e8-964a-b2dda5a8156f"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:24:10Z",
-      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-04T13:24:10.705Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:24:10.731Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:24:10.731Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
-      "metadata": {
-        "creationTimestamp": "2026-10-04T13:24:10Z",
-        "name": "catalog-rs-2.18db5660d6fef216",
-        "namespace": "mongodb",
-        "resourceVersion": "582569",
-        "selfLink": "/api/v1/namespaces/mongodb/events/catalog-rs-2.18db5660d6fef216",
-        "uid": "2ce69b99-73b7-4813-ab77-cf1a7d074c64"
-      },
-      "reason": "Unhealthy",
-      "reportingComponent": "kubelet",
-      "reportingInstance": "freelens-addons-dev",
-      "source": {
-        "component": "kubelet",
-        "host": "freelens-addons-dev"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 1,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-04T13:24:20Z",
-      "involvedObject": {
-        "apiVersion": "v1",
-        "fieldPath": "spec.containers{mongodb-agent}",
-        "kind": "Pod",
-        "name": "catalog-rs-2",
-        "namespace": "mongodb",
-        "resourceVersion": "582476",
-        "uid": "31962f3b-3d41-42e8-964a-b2dda5a8156f"
-      },
-      "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:24:20Z",
-      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-04T13:24:20.715Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:24:20.748Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:24:20.748Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
-      "metadata": {
-        "creationTimestamp": "2026-10-04T13:24:20Z",
-        "name": "catalog-rs-2.18db56632c3f5b93",
-        "namespace": "mongodb",
-        "resourceVersion": "582608",
-        "selfLink": "/api/v1/namespaces/mongodb/events/catalog-rs-2.18db56632c3f5b93",
-        "uid": "3c291227-c423-4d03-8f85-8869116e7427"
-      },
-      "reason": "Unhealthy",
-      "reportingComponent": "kubelet",
-      "reportingInstance": "freelens-addons-dev",
-      "source": {
-        "component": "kubelet",
-        "host": "freelens-addons-dev"
-      },
-      "type": "Warning"
-    },
-    {
-      "apiVersion": "v1",
-      "count": 362,
-      "eventTime": null,
-      "firstTimestamp": "2026-10-04T11:57:08Z",
+      "firstTimestamp": "2026-10-18T00:08:04Z",
       "involvedObject": {
         "apiVersion": "v1",
         "kind": "PersistentVolumeClaim",
         "name": "data-volume-legacy-rs-0",
         "namespace": "mongodb",
-        "resourceVersion": "517105",
-        "uid": "64fe9d8d-9ec6-4124-8bf4-a211feb18115"
+        "resourceVersion": "7947",
+        "uid": "d5f70421-77f2-4e1f-a6f4-6b08ea039838"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:27:08Z",
+      "lastTimestamp": "2026-10-18T02:03:04Z",
       "message": "storageclass.storage.k8s.io \"no-such-class\" not found",
       "metadata": {
-        "creationTimestamp": "2026-10-04T11:57:08Z",
-        "name": "data-volume-legacy-rs-0.18db51a0d4ee0126",
+        "creationTimestamp": "2026-10-18T00:08:04Z",
+        "name": "data-volume-legacy-rs-0.18df770f5b5bba3e",
         "namespace": "mongodb",
-        "resourceVersion": "583499",
-        "selfLink": "/api/v1/namespaces/mongodb/events/data-volume-legacy-rs-0.18db51a0d4ee0126",
-        "uid": "f561b006-7896-4f6a-a5a2-b892c1782922"
+        "resourceVersion": "478798",
+        "selfLink": "/api/v1/namespaces/mongodb/events/data-volume-legacy-rs-0.18df770f5b5bba3e",
+        "uid": "eb85fb4c-8348-4666-aa98-9b363d1269f1"
       },
       "reason": "ProvisioningFailed",
       "reportingComponent": "persistentvolume-controller",
@@ -408,36 +34,64 @@
       "type": "Warning"
     },
     {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:08:27Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "PersistentVolumeClaim",
+        "name": "data-volume-upgrade-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "455613",
+        "uid": "9c51764a-8e1c-4173-826e-166b1eba6b40"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:08:27Z",
+      "message": "failed to provision volume with StorageClass \"local-path\": failed to create volume pvc-9c51764a-8e1c-4173-826e-166b1eba6b40: create process timeout after 120 seconds",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:08:27Z",
+        "name": "data-volume-upgrade-rs-0.18df7a5ad90cbe47",
+        "namespace": "mongodb",
+        "resourceVersion": "456563",
+        "selfLink": "/api/v1/namespaces/mongodb/events/data-volume-upgrade-rs-0.18df7a5ad90cbe47",
+        "uid": "25b77448-0593-4f86-a753-1b9b64758b5b"
+      },
+      "reason": "ProvisioningFailed",
+      "reportingComponent": "rancher.io/local-path_local-path-provisioner-77b9867795-66hn2_3488a575-2120-4ed5-a34d-9b9ace36506c",
+      "reportingInstance": "",
+      "source": {
+        "component": "rancher.io/local-path_local-path-provisioner-77b9867795-66hn2_3488a575-2120-4ed5-a34d-9b9ace36506c"
+      },
+      "type": "Warning"
+    },
+    {
       "action": "Scheduling",
       "apiVersion": "v1",
-      "eventTime": "2026-10-04T11:57:05.934696Z",
+      "eventTime": "2026-10-18T01:10:07.171612Z",
       "firstTimestamp": null,
       "involvedObject": {
         "apiVersion": "v1",
         "kind": "Pod",
-        "name": "legacy-rs-0",
+        "name": "ledger-rs-0",
         "namespace": "mongodb",
-        "resourceVersion": "517124",
-        "uid": "d3e4c0e5-c59f-4fe6-b5a3-5dcd19bcb0aa"
+        "resourceVersion": "458848",
+        "uid": "bbb12595-fb8e-4f29-92e9-db3283d5ae41"
       },
       "kind": "Event",
       "lastTimestamp": null,
-      "message": "0/1 nodes are available: pod has unbound immediate PersistentVolumeClaims. not found",
+      "message": "0/1 nodes are available: 1 Too many pods. no new claims to deallocate, preemption: 0/1 nodes are available: 1 No preemption victims found for incoming pod.",
       "metadata": {
-        "creationTimestamp": "2026-10-04T11:57:05Z",
-        "name": "legacy-rs-0.18db51a058b3dc7a",
+        "creationTimestamp": "2026-10-18T01:10:07Z",
+        "name": "ledger-rs-0.18df7a7218703533",
         "namespace": "mongodb",
-        "resourceVersion": "583488",
-        "selfLink": "/api/v1/namespaces/mongodb/events/legacy-rs-0.18db51a058b3dc7a",
-        "uid": "3153f523-463c-4db1-9fd0-55f70217955a"
+        "resourceVersion": "458850",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-0.18df7a7218703533",
+        "uid": "11105667-02ba-4275-8043-f27b6fc729d3"
       },
       "reason": "FailedScheduling",
       "reportingComponent": "default-scheduler",
-      "reportingInstance": "default-scheduler-c4bd3b67d0bc",
-      "series": {
-        "count": 21,
-        "lastObservedTime": "2026-10-04T13:26:03.861473Z"
-      },
+      "reportingInstance": "default-scheduler-15faf5ee47ca",
       "source": {},
       "type": "Warning"
     },
@@ -445,26 +99,89 @@
       "apiVersion": "v1",
       "count": 1,
       "eventTime": null,
-      "firstTimestamp": "2026-10-04T13:26:21Z",
+      "firstTimestamp": "2026-10-18T01:10:15Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "ledger-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "459066",
+        "uid": "bbb12595-fb8e-4f29-92e9-db3283d5ae41"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:10:15Z",
+      "message": "Node didn't have enough resource: pods, requested: 1, used: 110, capacity: 110",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:10:15Z",
+        "name": "ledger-rs-0.18df7a7425ec2b9c",
+        "namespace": "mongodb",
+        "resourceVersion": "459068",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-0.18df7a7425ec2b9c",
+        "uid": "d17c5731-64e7-4ea4-9a2c-74944595443e"
+      },
+      "reason": "OutOfpods",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "action": "Scheduling",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-18T01:10:16.014213Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "ledger-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "459074",
+        "uid": "e58d823d-de6e-4cfb-836f-ea80e6964d24"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "0/1 nodes are available: 1 Too many pods. no new claims to deallocate, preemption: 0/1 nodes are available: 1 No preemption victims found for incoming pod.",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:10:16Z",
+        "name": "ledger-rs-0.18df7a74277f9b8a",
+        "namespace": "mongodb",
+        "resourceVersion": "459075",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-0.18df7a74277f9b8a",
+        "uid": "d2554259-0513-4315-8afa-d0c12eba0364"
+      },
+      "reason": "FailedScheduling",
+      "reportingComponent": "default-scheduler",
+      "reportingInstance": "default-scheduler-15faf5ee47ca",
+      "source": {},
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:10:34Z",
       "involvedObject": {
         "apiVersion": "v1",
         "fieldPath": "spec.containers{mongodb-agent}",
         "kind": "Pod",
-        "name": "secure-rs-0",
+        "name": "ledger-rs-0",
         "namespace": "mongodb",
-        "resourceVersion": "583171",
-        "uid": "472ba6aa-821e-47aa-bb72-1adfe6040fdf"
+        "resourceVersion": "459094",
+        "uid": "e58d823d-de6e-4cfb-836f-ea80e6964d24"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:26:21Z",
-      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-04T13:26:21.112Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:26:21.157Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:26:21.157Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "lastTimestamp": "2026-10-18T01:10:34Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:10:34.147Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:34.165Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:34.165Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
       "metadata": {
-        "creationTimestamp": "2026-10-04T13:26:21Z",
-        "name": "secure-rs-0.18db567f35ba2673",
+        "creationTimestamp": "2026-10-18T01:10:34Z",
+        "name": "ledger-rs-0.18df7a7861932553",
         "namespace": "mongodb",
-        "resourceVersion": "583262",
-        "selfLink": "/api/v1/namespaces/mongodb/events/secure-rs-0.18db567f35ba2673",
-        "uid": "0ef9f0ae-ea74-4c72-bd33-94cb1b34a59a"
+        "resourceVersion": "459328",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-0.18df7a7861932553",
+        "uid": "6e6fc592-c883-43ac-a91a-3f5dbef91aea"
       },
       "reason": "Unhealthy",
       "reportingComponent": "kubelet",
@@ -479,26 +196,26 @@
       "apiVersion": "v1",
       "count": 1,
       "eventTime": null,
-      "firstTimestamp": "2026-10-04T13:26:21Z",
+      "firstTimestamp": "2026-10-18T01:10:34Z",
       "involvedObject": {
         "apiVersion": "v1",
         "fieldPath": "spec.containers{mongodb-agent}",
         "kind": "Pod",
-        "name": "secure-rs-0",
+        "name": "ledger-rs-0",
         "namespace": "mongodb",
-        "resourceVersion": "583171",
-        "uid": "472ba6aa-821e-47aa-bb72-1adfe6040fdf"
+        "resourceVersion": "459094",
+        "uid": "e58d823d-de6e-4cfb-836f-ea80e6964d24"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:26:21Z",
-      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-04T13:26:21.253Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:26:21.276Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:26:21.276Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "lastTimestamp": "2026-10-18T01:10:34Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:10:34.234Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:34.248Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:34.248Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
       "metadata": {
-        "creationTimestamp": "2026-10-04T13:26:21Z",
-        "name": "secure-rs-0.18db567f3c2b5d5c",
+        "creationTimestamp": "2026-10-18T01:10:34Z",
+        "name": "ledger-rs-0.18df7a7866802220",
         "namespace": "mongodb",
-        "resourceVersion": "583265",
-        "selfLink": "/api/v1/namespaces/mongodb/events/secure-rs-0.18db567f3c2b5d5c",
-        "uid": "5182746c-6e44-4f07-8644-4ec226da1a53"
+        "resourceVersion": "459339",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-0.18df7a7866802220",
+        "uid": "b6017fc3-db0d-42d8-bece-bee0428e5394"
       },
       "reason": "Unhealthy",
       "reportingComponent": "kubelet",
@@ -513,26 +230,26 @@
       "apiVersion": "v1",
       "count": 1,
       "eventTime": null,
-      "firstTimestamp": "2026-10-04T13:26:31Z",
+      "firstTimestamp": "2026-10-18T01:10:44Z",
       "involvedObject": {
         "apiVersion": "v1",
         "fieldPath": "spec.containers{mongodb-agent}",
         "kind": "Pod",
-        "name": "secure-rs-0",
+        "name": "ledger-rs-0",
         "namespace": "mongodb",
-        "resourceVersion": "583171",
-        "uid": "472ba6aa-821e-47aa-bb72-1adfe6040fdf"
+        "resourceVersion": "459094",
+        "uid": "e58d823d-de6e-4cfb-836f-ea80e6964d24"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:26:31Z",
-      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-04T13:26:31.319Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:26:31.362Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:26:31.362Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "lastTimestamp": "2026-10-18T01:10:44Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:10:44.207Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:44.220Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:44.220Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
       "metadata": {
-        "creationTimestamp": "2026-10-04T13:26:31Z",
-        "name": "secure-rs-0.18db5681953a8c16",
+        "creationTimestamp": "2026-10-18T01:10:44Z",
+        "name": "ledger-rs-0.18df7a7ab8dd3d56",
         "namespace": "mongodb",
-        "resourceVersion": "583347",
-        "selfLink": "/api/v1/namespaces/mongodb/events/secure-rs-0.18db5681953a8c16",
-        "uid": "3872028d-16af-4bc7-a642-f8ae69f7b08f"
+        "resourceVersion": "459464",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-0.18df7a7ab8dd3d56",
+        "uid": "d97b92c2-b407-472f-9c37-2291217ec6de"
       },
       "reason": "Unhealthy",
       "reportingComponent": "kubelet",
@@ -547,26 +264,26 @@
       "apiVersion": "v1",
       "count": 1,
       "eventTime": null,
-      "firstTimestamp": "2026-10-04T13:26:41Z",
+      "firstTimestamp": "2026-10-18T01:10:54Z",
       "involvedObject": {
         "apiVersion": "v1",
         "fieldPath": "spec.containers{mongodb-agent}",
         "kind": "Pod",
-        "name": "secure-rs-0",
+        "name": "ledger-rs-0",
         "namespace": "mongodb",
-        "resourceVersion": "583171",
-        "uid": "472ba6aa-821e-47aa-bb72-1adfe6040fdf"
+        "resourceVersion": "459094",
+        "uid": "e58d823d-de6e-4cfb-836f-ea80e6964d24"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:26:41Z",
-      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-04T13:26:41.287Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"debug\",\"ts\":\"2026-10-04T13:26:41.305Z\",\"msg\":\"The Agent hasn't reported working on the new config yet, the last plan finished at 2026-10-04T13:26:39Z\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:26:41.306Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "lastTimestamp": "2026-10-18T01:10:54Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:10:54.204Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:54.217Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
       "metadata": {
-        "creationTimestamp": "2026-10-04T13:26:41Z",
-        "name": "secure-rs-0.18db5683e5f1a8b3",
+        "creationTimestamp": "2026-10-18T01:10:54Z",
+        "name": "ledger-rs-0.18df7a7d0cb94619",
         "namespace": "mongodb",
-        "resourceVersion": "583393",
-        "selfLink": "/api/v1/namespaces/mongodb/events/secure-rs-0.18db5683e5f1a8b3",
-        "uid": "b6a94079-a6cd-435e-bd41-130a1d8488bc"
+        "resourceVersion": "459573",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-0.18df7a7d0cb94619",
+        "uid": "a2c4dc65-2060-46ad-90bd-fe42f7ee934f"
       },
       "reason": "Unhealthy",
       "reportingComponent": "kubelet",
@@ -579,28 +296,1176 @@
     },
     {
       "apiVersion": "v1",
-      "count": 390,
+      "count": 1,
       "eventTime": null,
-      "firstTimestamp": "2026-10-04T11:57:38Z",
+      "firstTimestamp": "2026-10-18T01:11:23Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "ledger-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "459934",
+        "uid": "89b86450-358c-481f-9470-8dcc1d75e680"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:11:23Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:11:23.650Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:11:23.671Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:11:23.671Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:11:23Z",
+        "name": "ledger-rs-1.18df7a83e85e907e",
+        "namespace": "mongodb",
+        "resourceVersion": "460065",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-1.18df7a83e85e907e",
+        "uid": "0d230204-14fa-415d-9246-b08f07849638"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:11:23Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "ledger-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "459934",
+        "uid": "89b86450-358c-481f-9470-8dcc1d75e680"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:11:23Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:11:23.706Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:11:23.719Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:11:23.719Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:11:23Z",
+        "name": "ledger-rs-1.18df7a83eb27d64b",
+        "namespace": "mongodb",
+        "resourceVersion": "460067",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-1.18df7a83eb27d64b",
+        "uid": "1f69cb00-3330-4a12-9e7b-c78e1d69e900"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:11:33Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "ledger-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "459934",
+        "uid": "89b86450-358c-481f-9470-8dcc1d75e680"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:11:33Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:11:33.712Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:11:33.724Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:11:33Z",
+        "name": "ledger-rs-1.18df7a863f8cb8cf",
+        "namespace": "mongodb",
+        "resourceVersion": "460212",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-1.18df7a863f8cb8cf",
+        "uid": "2edbaf80-b25e-477f-a7f7-a7062f1b3b47"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:11:43Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "ledger-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "459934",
+        "uid": "89b86450-358c-481f-9470-8dcc1d75e680"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:11:43Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:11:43.706Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:11:43.719Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:11:43Z",
+        "name": "ledger-rs-1.18df7a88934d4b0f",
+        "namespace": "mongodb",
+        "resourceVersion": "460348",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-1.18df7a88934d4b0f",
+        "uid": "d5ee1148-b266-43fc-9fea-6e36a2e2cfd7"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:12:23Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "ledger-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "459934",
+        "uid": "89b86450-358c-481f-9470-8dcc1d75e680"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:12:23Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:12:23.719Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:12:23.764Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:12:23.764Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:12:23Z",
+        "name": "ledger-rs-1.18df7a91e6485ebf",
+        "namespace": "mongodb",
+        "resourceVersion": "460919",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-1.18df7a91e6485ebf",
+        "uid": "e133a8bf-12b9-4300-a12f-9cc8435a5902"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:12:13Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "ledger-rs-2",
+        "namespace": "mongodb",
+        "resourceVersion": "460586",
+        "uid": "1323a069-d8aa-424f-a91f-424f4ef87ae7"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:12:13Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:12:13.138Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:12:13.157Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:12:13.157Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:12:13Z",
+        "name": "ledger-rs-2.18df7a8f6df749fc",
+        "namespace": "mongodb",
+        "resourceVersion": "460784",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-2.18df7a8f6df749fc",
+        "uid": "5b366aed-fc81-48a9-93f9-656277020241"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:12:13Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "ledger-rs-2",
+        "namespace": "mongodb",
+        "resourceVersion": "460586",
+        "uid": "1323a069-d8aa-424f-a91f-424f4ef87ae7"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:12:13Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:12:13.205Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:12:13.216Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:12:13.216Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:12:13Z",
+        "name": "ledger-rs-2.18df7a8f71744e4c",
+        "namespace": "mongodb",
+        "resourceVersion": "460787",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-2.18df7a8f71744e4c",
+        "uid": "5dc7237c-a940-4429-b66e-b6bf74183fe6"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:12:43Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "ledger-rs-2",
+        "namespace": "mongodb",
+        "resourceVersion": "460586",
+        "uid": "1323a069-d8aa-424f-a91f-424f4ef87ae7"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:12:43Z",
+      "message": "Readiness probe errored and resulted in unknown state: rpc error: code = Canceled desc = context canceled",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:12:43Z",
+        "name": "ledger-rs-2.18df7a966a3bf27b",
+        "namespace": "mongodb",
+        "resourceVersion": "461258",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-2.18df7a966a3bf27b",
+        "uid": "6219f3ba-5783-4eb0-96f1-ba12f3be34d1"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "action": "Scheduling",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-18T01:12:52.878465Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "ledger-rs-2",
+        "namespace": "mongodb",
+        "resourceVersion": "461486",
+        "uid": "4cba51e6-7d72-40c9-ac8a-ee44ba78311a"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "0/1 nodes are available: 1 Insufficient memory, 1 Too many pods. no new claims to deallocate, preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:12:52Z",
+        "name": "ledger-rs-2.18df7a98ad561f33",
+        "namespace": "mongodb",
+        "resourceVersion": "461487",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-2.18df7a98ad561f33",
+        "uid": "4c1e1634-01ff-436f-a24e-7996d080a5fd"
+      },
+      "reason": "FailedScheduling",
+      "reportingComponent": "default-scheduler",
+      "reportingInstance": "default-scheduler-15faf5ee47ca",
+      "source": {},
+      "type": "Warning"
+    },
+    {
+      "action": "Scheduling",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-18T01:13:00.891624Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "ledger-rs-2",
+        "namespace": "mongodb",
+        "resourceVersion": "461490",
+        "uid": "4cba51e6-7d72-40c9-ac8a-ee44ba78311a"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "0/1 nodes are available: 1 Insufficient memory. no new claims to deallocate, preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:13:00Z",
+        "name": "ledger-rs-2.18df7a9a8af53f15",
+        "namespace": "mongodb",
+        "resourceVersion": "461564",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-2.18df7a9a8af53f15",
+        "uid": "1c39171d-644e-4520-8b3a-d18a25b8c370"
+      },
+      "reason": "FailedScheduling",
+      "reportingComponent": "default-scheduler",
+      "reportingInstance": "default-scheduler-15faf5ee47ca",
+      "source": {},
+      "type": "Warning"
+    },
+    {
+      "action": "Scheduling",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-18T01:13:03.760805Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "ledger-rs-2",
+        "namespace": "mongodb",
+        "resourceVersion": "461565",
+        "uid": "4cba51e6-7d72-40c9-ac8a-ee44ba78311a"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "0/1 nodes are available: 1 Insufficient memory. no new claims to deallocate, preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:13:03Z",
+        "name": "ledger-rs-2.18df7a9b35f97799",
+        "namespace": "mongodb",
+        "resourceVersion": "471017",
+        "selfLink": "/api/v1/namespaces/mongodb/events/ledger-rs-2.18df7a9b35f97799",
+        "uid": "3e1a97fb-5746-4d95-a662-039e2631cdf3"
+      },
+      "reason": "FailedScheduling",
+      "reportingComponent": "default-scheduler",
+      "reportingInstance": "default-scheduler-15faf5ee47ca",
+      "series": {
+        "count": 32,
+        "lastObservedTime": "2026-10-18T01:35:03.565753Z"
+      },
+      "source": {},
+      "type": "Warning"
+    },
+    {
+      "action": "Scheduling",
+      "apiVersion": "v1",
+      "eventTime": "2026-10-18T00:08:03.474745Z",
+      "firstTimestamp": null,
+      "involvedObject": {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "name": "legacy-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "62822",
+        "uid": "717bd0f2-8f73-4a8d-9d7f-ab1abbbc1600"
+      },
+      "kind": "Event",
+      "lastTimestamp": null,
+      "message": "0/1 nodes are available: pod has unbound immediate PersistentVolumeClaims. not found",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T00:08:03Z",
+        "name": "legacy-rs-0.18df770f1acf3123",
+        "namespace": "mongodb",
+        "resourceVersion": "471018",
+        "selfLink": "/api/v1/namespaces/mongodb/events/legacy-rs-0.18df770f1acf3123",
+        "uid": "74f73dab-c536-48d9-97dd-69786d398404"
+      },
+      "reason": "FailedScheduling",
+      "reportingComponent": "default-scheduler",
+      "reportingInstance": "default-scheduler-15faf5ee47ca",
+      "series": {
+        "count": 56,
+        "lastObservedTime": "2026-10-18T01:37:33.571272Z"
+      },
+      "source": {},
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 2,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:06:09Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "428949",
+        "uid": "05627808-1fb8-4e9f-a77c-0f6d617de150"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:06:19Z",
+      "message": "Readiness probe errored and resulted in unknown state: rpc error: code = Canceled desc = context canceled",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:06:09Z",
+        "name": "upgrade-rs-0.18df7a3ab19468f0",
+        "namespace": "mongodb",
+        "resourceVersion": "455521",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-0.18df7a3ab19468f0",
+        "uid": "cc4b05e2-99e4-4c63-ae8e-73170b97ad9d"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:08:44Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "456619",
+        "uid": "25c6b447-e596-478b-803a-d2292711a0a2"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:08:44Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:08:44.163Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:08:44.176Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:08:44.176Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:08:44Z",
+        "name": "upgrade-rs-0.18df7a5ec5b5b3bc",
+        "namespace": "mongodb",
+        "resourceVersion": "456717",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-0.18df7a5ec5b5b3bc",
+        "uid": "06f69261-b72b-4761-ba46-393869e71e18"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:08:44Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "456619",
+        "uid": "25c6b447-e596-478b-803a-d2292711a0a2"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:08:44Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:08:44.245Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:08:44.258Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:08:44.258Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:08:44Z",
+        "name": "upgrade-rs-0.18df7a5eca8a101a",
+        "namespace": "mongodb",
+        "resourceVersion": "456722",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-0.18df7a5eca8a101a",
+        "uid": "83bc937e-08c7-4b6e-b5c9-bbe2a316ddb2"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:08:54Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "456619",
+        "uid": "25c6b447-e596-478b-803a-d2292711a0a2"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:08:54Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:08:54.219Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:08:54.232Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:08:54.232Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:08:54Z",
+        "name": "upgrade-rs-0.18df7a611d0cd2f9",
+        "namespace": "mongodb",
+        "resourceVersion": "456783",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-0.18df7a611d0cd2f9",
+        "uid": "d813b77a-5d5d-4022-85b9-8b1fa978a6ae"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:09:04Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "456619",
+        "uid": "25c6b447-e596-478b-803a-d2292711a0a2"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:09:04Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:09:04.222Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:09:04.233Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:09:04Z",
+        "name": "upgrade-rs-0.18df7a637128ad2c",
+        "namespace": "mongodb",
+        "resourceVersion": "457468",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-0.18df7a637128ad2c",
+        "uid": "dde6a01b-65b7-47bc-bb7b-f1f0fb23781e"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:10:14Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "456619",
+        "uid": "25c6b447-e596-478b-803a-d2292711a0a2"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:10:14Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:10:14.223Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"debug\",\"ts\":\"2026-10-18T01:10:14.234Z\",\"msg\":\"The Agent hasn't reported working on the new config yet, the last plan finished at 2026-10-18T01:10:02Z\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:14.234Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:10:14Z",
+        "name": "upgrade-rs-0.18df7a73bd8bf68b",
+        "namespace": "mongodb",
+        "resourceVersion": "459003",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-0.18df7a73bd8bf68b",
+        "uid": "a89ddbb3-36f4-4df0-9bef-55d74739668e"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:10:24Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "456619",
+        "uid": "25c6b447-e596-478b-803a-d2292711a0a2"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:10:24Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:10:24.224Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"debug\",\"ts\":\"2026-10-18T01:10:24.238Z\",\"msg\":\"The Agent hasn't reported working on the new config yet, the last plan finished at 2026-10-18T01:10:02Z\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:24.238Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:10:24Z",
+        "name": "upgrade-rs-0.18df7a7611e4f883",
+        "namespace": "mongodb",
+        "resourceVersion": "459186",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-0.18df7a7611e4f883",
+        "uid": "c0398231-416a-4a9f-bce3-a3744c652b27"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:10:34Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "456619",
+        "uid": "25c6b447-e596-478b-803a-d2292711a0a2"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:10:34Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:10:34.226Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"debug\",\"ts\":\"2026-10-18T01:10:34.241Z\",\"msg\":\"The Agent hasn't reported working on the new config yet, the last plan finished at 2026-10-18T01:10:02Z\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:34.241Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:10:34Z",
+        "name": "upgrade-rs-0.18df7a786618729f",
+        "namespace": "mongodb",
+        "resourceVersion": "459337",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-0.18df7a786618729f",
+        "uid": "043410c9-7f72-4183-9a79-4ece7df540d6"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:10:44Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "456619",
+        "uid": "25c6b447-e596-478b-803a-d2292711a0a2"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:10:44Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:10:44.225Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"debug\",\"ts\":\"2026-10-18T01:10:44.237Z\",\"msg\":\"The Agent hasn't reported working on the new config yet, the last plan finished at 2026-10-18T01:10:02Z\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:44.238Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:10:44Z",
+        "name": "upgrade-rs-0.18df7a7ab9f74517",
+        "namespace": "mongodb",
+        "resourceVersion": "459465",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-0.18df7a7ab9f74517",
+        "uid": "cb2114bd-ee22-4d5e-a886-8f878f5e263b"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:10:54Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "456619",
+        "uid": "25c6b447-e596-478b-803a-d2292711a0a2"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:10:54Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:10:54.223Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"debug\",\"ts\":\"2026-10-18T01:10:54.236Z\",\"msg\":\"The Agent hasn't reported working on the new config yet, the last plan finished at 2026-10-18T01:10:02Z\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:54.236Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:10:54Z",
+        "name": "upgrade-rs-0.18df7a7d0ddac13e",
+        "namespace": "mongodb",
+        "resourceVersion": "459574",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-0.18df7a7d0ddac13e",
+        "uid": "b5c6e193-fa38-4a5c-8b61-f82cec24a1fc"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 6,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:11:04Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-0",
+        "namespace": "mongodb",
+        "resourceVersion": "456619",
+        "uid": "25c6b447-e596-478b-803a-d2292711a0a2"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:11:54Z",
+      "message": "(combined from similar events): Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:11:54.210Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:11:54.224Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:11:04Z",
+        "name": "upgrade-rs-0.18df7a7f61d3cbaf",
+        "namespace": "mongodb",
+        "resourceVersion": "460497",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-0.18df7a7f61d3cbaf",
+        "uid": "9989ac39-e241-440c-b077-74de52de4a58"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "",
+      "reportingInstance": "",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:09:32Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "458073",
+        "uid": "fea49ec9-fe33-495c-9136-7a10cce9ccb1"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:09:32Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:09:32.564Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:09:32.585Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:09:32.585Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:09:32Z",
+        "name": "upgrade-rs-1.18df7a6a0b112963",
+        "namespace": "mongodb",
+        "resourceVersion": "458439",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a6a0b112963",
+        "uid": "ad8e0105-3e9c-43c8-98a2-00f4dea76910"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:09:32Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "458073",
+        "uid": "fea49ec9-fe33-495c-9136-7a10cce9ccb1"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:09:32Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:09:32.626Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:09:32.638Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:09:32.639Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:09:32Z",
+        "name": "upgrade-rs-1.18df7a6a0e431d39",
+        "namespace": "mongodb",
+        "resourceVersion": "458443",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a6a0e431d39",
+        "uid": "9e615546-1348-4049-920c-40ecc50e5529"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:10:12Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "458073",
+        "uid": "fea49ec9-fe33-495c-9136-7a10cce9ccb1"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:10:12Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:10:12.681Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"debug\",\"ts\":\"2026-10-18T01:10:12.695Z\",\"msg\":\"The Agent hasn't reported working on the new config yet, the last plan finished at 2026-10-18T01:10:02Z\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:12.695Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:10:12Z",
+        "name": "upgrade-rs-1.18df7a7361cea930",
+        "namespace": "mongodb",
+        "resourceVersion": "458977",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a7361cea930",
+        "uid": "5d197239-02d5-4354-8464-02a9406463e9"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:10:22Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "458073",
+        "uid": "fea49ec9-fe33-495c-9136-7a10cce9ccb1"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:10:22Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:10:22.694Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"debug\",\"ts\":\"2026-10-18T01:10:22.707Z\",\"msg\":\"The Agent hasn't reported working on the new config yet, the last plan finished at 2026-10-18T01:10:02Z\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:22.707Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:10:22Z",
+        "name": "upgrade-rs-1.18df7a75b68f9f6f",
+        "namespace": "mongodb",
+        "resourceVersion": "459173",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a75b68f9f6f",
+        "uid": "18e762bb-39bb-42c5-b560-5aa5576de7eb"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:10:32Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "458073",
+        "uid": "fea49ec9-fe33-495c-9136-7a10cce9ccb1"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:10:32Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:10:32.690Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"debug\",\"ts\":\"2026-10-18T01:10:32.704Z\",\"msg\":\"The Agent hasn't reported working on the new config yet, the last plan finished at 2026-10-18T01:10:02Z\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:32.704Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:10:32Z",
+        "name": "upgrade-rs-1.18df7a780a6b692b",
+        "namespace": "mongodb",
+        "resourceVersion": "459302",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a780a6b692b",
+        "uid": "925e2add-a410-47a0-b1e9-8471f1738704"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:10:42Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "458073",
+        "uid": "fea49ec9-fe33-495c-9136-7a10cce9ccb1"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:10:42Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:10:42.683Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"debug\",\"ts\":\"2026-10-18T01:10:42.692Z\",\"msg\":\"The Agent hasn't reported working on the new config yet, the last plan finished at 2026-10-18T01:10:02Z\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:42.692Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:10:42Z",
+        "name": "upgrade-rs-1.18df7a7a5dcdeba9",
+        "namespace": "mongodb",
+        "resourceVersion": "459456",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a7a5dcdeba9",
+        "uid": "e9b20854-2e91-4fd0-98e6-8017888da420"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:10:52Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "458073",
+        "uid": "fea49ec9-fe33-495c-9136-7a10cce9ccb1"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:10:52Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:10:52.683Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"debug\",\"ts\":\"2026-10-18T01:10:52.696Z\",\"msg\":\"The Agent hasn't reported working on the new config yet, the last plan finished at 2026-10-18T01:10:02Z\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:10:52.696Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:10:52Z",
+        "name": "upgrade-rs-1.18df7a7cb2162e08",
+        "namespace": "mongodb",
+        "resourceVersion": "459565",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a7cb2162e08",
+        "uid": "24426aad-575a-4dea-bb1e-3f7d7c40e2a3"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:11:02Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "458073",
+        "uid": "fea49ec9-fe33-495c-9136-7a10cce9ccb1"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:11:02Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:11:02.694Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"debug\",\"ts\":\"2026-10-18T01:11:02.708Z\",\"msg\":\"The Agent hasn't reported working on the new config yet, the last plan finished at 2026-10-18T01:10:02Z\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:11:02.708Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:11:02Z",
+        "name": "upgrade-rs-1.18df7a7f06d0aaac",
+        "namespace": "mongodb",
+        "resourceVersion": "459733",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a7f06d0aaac",
+        "uid": "7f9cb7c8-67ae-4d91-9f6b-33c9cdc32ff5"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:11:12Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "458073",
+        "uid": "fea49ec9-fe33-495c-9136-7a10cce9ccb1"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:11:12Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:11:12.683Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:11:12.696Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:11:12Z",
+        "name": "upgrade-rs-1.18df7a815a281b21",
+        "namespace": "mongodb",
+        "resourceVersion": "459990",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a815a281b21",
+        "uid": "a42b3abc-e742-42ce-92bd-1dfa64aad212"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 6,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:11:22Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "458073",
+        "uid": "fea49ec9-fe33-495c-9136-7a10cce9ccb1"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:12:12Z",
+      "message": "(combined from similar events): Readiness probe errored and resulted in unknown state: rpc error: code = Canceled desc = context canceled",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:11:22Z",
+        "name": "upgrade-rs-1.18df7a83aefc0524",
+        "namespace": "mongodb",
+        "resourceVersion": "460782",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a83aefc0524",
+        "uid": "74530f70-b920-4cdb-9d5a-9e5aa6313d92"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "",
+      "reportingInstance": "",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 2,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:12:22Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "458073",
+        "uid": "fea49ec9-fe33-495c-9136-7a10cce9ccb1"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:12:32Z",
+      "message": "Readiness probe errored and resulted in unknown state: rpc error: code = Canceled desc = context canceled",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:12:22Z",
+        "name": "upgrade-rs-1.18df7a91a37291de",
+        "namespace": "mongodb",
+        "resourceVersion": "461022",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a91a37291de",
+        "uid": "1944ffd1-0f96-491a-9d89-55adb4864d05"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 3,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:12:39Z",
       "involvedObject": {
         "apiVersion": "v1",
         "fieldPath": "spec.containers{mongod}",
         "kind": "Pod",
-        "name": "upgrade-rs-0",
+        "name": "upgrade-rs-1",
         "namespace": "mongodb",
-        "resourceVersion": "555671",
-        "uid": "092f2105-d305-4dab-a774-2d54aaba9a2c"
+        "resourceVersion": "461080",
+        "uid": "a05b6e51-c3dd-45a4-a4a9-b0cf01691e91"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:27:13Z",
-      "message": "Error: ImagePullBackOff",
+      "lastTimestamp": "2026-10-18T01:13:20Z",
+      "message": "Failed to pull image \"quay.io/mongodb/mongodb-community-server:8.0.999-ubi8\": rpc error: code = NotFound desc = failed to pull and unpack image \"quay.io/mongodb/mongodb-community-server:8.0.999-ubi8\": failed to resolve reference \"quay.io/mongodb/mongodb-community-server:8.0.999-ubi8\": quay.io/mongodb/mongodb-community-server:8.0.999-ubi8: not found",
       "metadata": {
-        "creationTimestamp": "2026-10-04T11:57:38Z",
-        "name": "upgrade-rs-0.18db51a7e8a21e47",
+        "creationTimestamp": "2026-10-18T01:12:39Z",
+        "name": "upgrade-rs-1.18df7a9577075127",
         "namespace": "mongodb",
-        "resourceVersion": "583525",
-        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-0.18db51a7e8a21e47",
-        "uid": "fd7b8084-0dbd-46bb-83be-301c52abeb54"
+        "resourceVersion": "461824",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a9577075127",
+        "uid": "c3090bcb-6341-4972-8c42-c17f80519dee"
       },
       "reason": "Failed",
       "reportingComponent": "kubelet",
@@ -613,28 +1478,402 @@
     },
     {
       "apiVersion": "v1",
-      "count": 762,
+      "count": 3,
       "eventTime": null,
-      "firstTimestamp": "2026-10-04T11:58:42Z",
+      "firstTimestamp": "2026-10-18T01:12:39Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongod}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "461080",
+        "uid": "a05b6e51-c3dd-45a4-a4a9-b0cf01691e91"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:13:20Z",
+      "message": "Error: ErrImagePull",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:12:39Z",
+        "name": "upgrade-rs-1.18df7a9577096a12",
+        "namespace": "mongodb",
+        "resourceVersion": "461825",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a9577096a12",
+        "uid": "0231323f-b0fd-4713-bb6c-7df638c0a7ba"
+      },
+      "reason": "Failed",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 222,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:12:40Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongod}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "461080",
+        "uid": "a05b6e51-c3dd-45a4-a4a9-b0cf01691e91"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T02:02:40Z",
+      "message": "Error: ImagePullBackOff",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:12:40Z",
+        "name": "upgrade-rs-1.18df7a95c7b674b1",
+        "namespace": "mongodb",
+        "resourceVersion": "478648",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a95c7b674b1",
+        "uid": "38d75a83-1065-4bb2-b4d1-ff5639e07cfb"
+      },
+      "reason": "Failed",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:12:51Z",
       "involvedObject": {
         "apiVersion": "v1",
         "fieldPath": "spec.containers{mongodb-agent}",
         "kind": "Pod",
-        "name": "upgrade-rs-0",
+        "name": "upgrade-rs-1",
         "namespace": "mongodb",
-        "resourceVersion": "555671",
-        "uid": "092f2105-d305-4dab-a774-2d54aaba9a2c"
+        "resourceVersion": "461080",
+        "uid": "a05b6e51-c3dd-45a4-a4a9-b0cf01691e91"
       },
       "kind": "Event",
-      "lastTimestamp": "2026-10-04T13:22:15Z",
-      "message": "(combined from similar events): Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-04T13:22:15.068Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:22:15.096Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-04T13:22:15.097Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "lastTimestamp": "2026-10-18T01:12:51Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:12:51.528Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:12:51.544Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:12:51.544Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
       "metadata": {
-        "creationTimestamp": "2026-10-04T11:58:42Z",
-        "name": "upgrade-rs-0.18db51b6b78efd32",
+        "creationTimestamp": "2026-10-18T01:12:51Z",
+        "name": "upgrade-rs-1.18df7a985df7f53a",
         "namespace": "mongodb",
-        "resourceVersion": "581975",
-        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-0.18db51b6b78efd32",
-        "uid": "f3355666-b733-44f4-b7c0-593fcf585e9e"
+        "resourceVersion": "461400",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a985df7f53a",
+        "uid": "ef3613c2-b8ae-4cf3-92d0-ae966264b508"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:12:51Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "461080",
+        "uid": "a05b6e51-c3dd-45a4-a4a9-b0cf01691e91"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:12:51Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:12:51.592Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:12:51.606Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:12:51.606Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:12:51Z",
+        "name": "upgrade-rs-1.18df7a9861bc6490",
+        "namespace": "mongodb",
+        "resourceVersion": "461406",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a9861bc6490",
+        "uid": "9ddd4460-04d6-4569-be9e-47fc14f941db"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:13:01Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "461080",
+        "uid": "a05b6e51-c3dd-45a4-a4a9-b0cf01691e91"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:13:01Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:13:01.584Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:13:01.598Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:13:01.598Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:13:01Z",
+        "name": "upgrade-rs-1.18df7a9ab53bead6",
+        "namespace": "mongodb",
+        "resourceVersion": "461574",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a9ab53bead6",
+        "uid": "09654737-8027-4671-b702-561899dc7865"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:13:04Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "461080",
+        "uid": "a05b6e51-c3dd-45a4-a4a9-b0cf01691e91"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:13:04Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:13:04.536Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:13:04.549Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:13:04.549Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:13:04Z",
+        "name": "upgrade-rs-1.18df7a9b653acc6b",
+        "namespace": "mongodb",
+        "resourceVersion": "461674",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a9b653acc6b",
+        "uid": "0e6e2ae9-28a2-4d22-80c2-3faa3e02f693"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:13:14Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "461080",
+        "uid": "a05b6e51-c3dd-45a4-a4a9-b0cf01691e91"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:13:14Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:13:14.525Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:13:14.536Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:13:14.536Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:13:14Z",
+        "name": "upgrade-rs-1.18df7a9db86aa2d8",
+        "namespace": "mongodb",
+        "resourceVersion": "461784",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a9db86aa2d8",
+        "uid": "99198b36-5da3-44d4-be8e-5b1f17f4a9d4"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:13:19Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "461080",
+        "uid": "a05b6e51-c3dd-45a4-a4a9-b0cf01691e91"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:13:19Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:13:19.523Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:13:19.535Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:13:19.536Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:13:19Z",
+        "name": "upgrade-rs-1.18df7a9ee25f5530",
+        "namespace": "mongodb",
+        "resourceVersion": "461817",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7a9ee25f5530",
+        "uid": "041f1d00-696a-4242-9a57-d4d3f1f7ef49"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:13:29Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "461080",
+        "uid": "a05b6e51-c3dd-45a4-a4a9-b0cf01691e91"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:13:29Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:13:29.532Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:13:29.545Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:13:29.545Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:13:29Z",
+        "name": "upgrade-rs-1.18df7aa13707e1fa",
+        "namespace": "mongodb",
+        "resourceVersion": "461935",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7aa13707e1fa",
+        "uid": "187b7c5d-4d74-487c-8e08-960a18fd285d"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:13:31Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "461080",
+        "uid": "a05b6e51-c3dd-45a4-a4a9-b0cf01691e91"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:13:31Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:13:31.537Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:13:31.550Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:13:31.550Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:13:31Z",
+        "name": "upgrade-rs-1.18df7aa1ae86cec7",
+        "namespace": "mongodb",
+        "resourceVersion": "461957",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7aa1ae86cec7",
+        "uid": "671a2e28-eb27-4f12-a151-1d1124152a21"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 1,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:13:41Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "461080",
+        "uid": "a05b6e51-c3dd-45a4-a4a9-b0cf01691e91"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:13:41Z",
+      "message": "Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:13:41.533Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:13:41.546Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:13:41.546Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:13:41Z",
+        "name": "upgrade-rs-1.18df7aa4024c0d2a",
+        "namespace": "mongodb",
+        "resourceVersion": "462089",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7aa4024c0d2a",
+        "uid": "08a3166c-f6a2-4ca8-82d6-8d08ca93f9ec"
+      },
+      "reason": "Unhealthy",
+      "reportingComponent": "kubelet",
+      "reportingInstance": "freelens-addons-dev",
+      "source": {
+        "component": "kubelet",
+        "host": "freelens-addons-dev"
+      },
+      "type": "Warning"
+    },
+    {
+      "apiVersion": "v1",
+      "count": 364,
+      "eventTime": null,
+      "firstTimestamp": "2026-10-18T01:13:42Z",
+      "involvedObject": {
+        "apiVersion": "v1",
+        "fieldPath": "spec.containers{mongodb-agent}",
+        "kind": "Pod",
+        "name": "upgrade-rs-1",
+        "namespace": "mongodb",
+        "resourceVersion": "461080",
+        "uid": "a05b6e51-c3dd-45a4-a4a9-b0cf01691e91"
+      },
+      "kind": "Event",
+      "lastTimestamp": "2026-10-18T01:52:41Z",
+      "message": "(combined from similar events): Readiness probe failed: {\"level\":\"info\",\"ts\":\"2026-10-18T01:52:41.524Z\",\"msg\":\"logging configuration: &{Filename:/var/log/mongodb-mms-automation/readiness.log MaxSize:5 MaxAge:0 MaxBackups:5 LocalTime:false Compress:false size:0 file:<nil> mu:{_:{} mu:{state:0 sema:0}} millCh:<nil> startMill:{_:{} done:{_:{} v:0} m:{_:{} mu:{state:0 sema:0}}}}\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:52:41.538Z\",\"msg\":\"Mongod is not ready\"}\n{\"level\":\"info\",\"ts\":\"2026-10-18T01:52:41.538Z\",\"msg\":\"Reached the end of the check. Returning not ready.\"}\n",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:13:42Z",
+        "name": "upgrade-rs-1.18df7aa43e6f81ea",
+        "namespace": "mongodb",
+        "resourceVersion": "475597",
+        "selfLink": "/api/v1/namespaces/mongodb/events/upgrade-rs-1.18df7aa43e6f81ea",
+        "uid": "7d6df2a3-49c0-4fbc-a5e6-d74eba7340e8"
       },
       "reason": "Unhealthy",
       "reportingComponent": "",

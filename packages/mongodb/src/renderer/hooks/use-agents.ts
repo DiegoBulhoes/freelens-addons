@@ -1,12 +1,33 @@
 import { useEffect, useState } from "react";
+import {
+  type AgentRead,
+  type AgentReadOutcome,
+  type AgentView,
+  afterAgentRead,
+  agentsError,
+  startAgentRead,
+} from "../api/clusters/agent";
+import { dueReads, FRESH_MS } from "../api/shared/polling";
+import { readAgentOf } from "../api/writes/actions";
 
-import { readAgentOf } from "../api/actions";
-import type { AgentView } from "../api/agent";
+const reads = new Map<string, AgentRead>();
+// Module-wide, so the overview and a drawer together stay under the cap.
+let inFlight = 0;
 
-const FRESH_MS = 15_000;
-const cache = new Map<string, { at: number; view?: AgentView; failed?: string }>();
+const listeners = new Set<() => void>();
+let notifyPending = false;
 
-/** Each "namespace/pod" agent's view, refreshed every 15s while mounted. */
+// One re-render for a burst of answers, not one per answer.
+function notifySoon() {
+  if (notifyPending) return;
+  notifyPending = true;
+  setTimeout(() => {
+    notifyPending = false;
+    for (const listener of listeners) listener();
+  }, 200);
+}
+
+/** Each "namespace/pod" agent's view, refreshed every 15s while mounted and shown. */
 export function useAgents(keys: string[]): {
   agents: Record<string, AgentView | undefined>;
   /** Why the agents could not be read, when none could. */
@@ -16,45 +37,48 @@ export function useAgents(keys: string[]): {
   const joined = [...keys].sort().join(",");
 
   useEffect(() => {
-    let cancelled = false;
+    const wanted = joined ? joined.split(",") : [];
 
-    const refresh = () => {
-      for (const key of joined ? joined.split(",") : []) {
-        const known = cache.get(key);
+    const startDueReads = () => {
+      if (document.visibilityState === "hidden") return;
 
-        if (known && Date.now() - known.at < FRESH_MS) continue;
-
+      for (const key of dueReads(wanted, reads, Date.now(), inFlight)) {
         const [namespace = "", pod = ""] = key.split("/");
 
-        cache.set(key, { ...known, at: Date.now() });
+        reads.set(key, startAgentRead(reads.get(key)));
+        inFlight += 1;
         void readAgentOf(namespace, pod)
-          .then((view) => cache.set(key, { at: Date.now(), view }))
-          .catch((error: unknown) =>
-            cache.set(key, {
-              at: Date.now(),
+          .then(
+            (view): AgentReadOutcome => ({ view }),
+            (error: unknown): AgentReadOutcome => ({
               failed: error instanceof Error ? error.message : String(error),
             }),
           )
-          .then(() => {
-            if (!cancelled) setVersion((version) => version + 1);
+          .then((outcome) => reads.set(key, afterAgentRead(reads.get(key), Date.now(), outcome)))
+          .finally(() => {
+            inFlight -= 1;
+            notifySoon();
           });
       }
     };
+    // A read ending frees a slot, so the next due key starts then, not a tick later.
+    const onRead = () => {
+      setVersion((version) => version + 1);
+      startDueReads();
+    };
 
-    refresh();
-    const timer = setInterval(refresh, FRESH_MS);
+    listeners.add(onRead);
+    startDueReads();
+    const timer = setInterval(startDueReads, FRESH_MS);
 
     return () => {
-      cancelled = true;
+      listeners.delete(onRead);
       clearInterval(timer);
     };
   }, [joined]);
 
-  const read = keys.map((key) => cache.get(key));
-  const allFailed = read.length > 0 && read.every((each) => each?.failed);
-
   return {
-    agents: Object.fromEntries(keys.map((key) => [key, cache.get(key)?.view])),
-    error: allFailed ? read[0]?.failed : undefined,
+    agents: Object.fromEntries(keys.map((key) => [key, reads.get(key)?.view])),
+    error: agentsError(keys.map((key) => reads.get(key))),
   };
 }

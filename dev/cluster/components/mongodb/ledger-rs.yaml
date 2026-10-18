@@ -1,0 +1,39 @@
+# states.sh creates it healthy, then asks for more memory than a node has: the rollout stops at
+# its last member. Never applied, like upgrade-rs.
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: ledger-rs
+  namespace: mongodb
+spec:
+  type: ReplicaSet
+  members: 3
+  version: "8.0.12"
+  # ledger-rs-2 has no vote, so it may never be primary.
+  memberConfig:
+    - votes: 1
+      priority: "1"
+    - votes: 1
+      priority: "1"
+    - votes: 0
+      priority: "0"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users: []
+  # Small requests: the whole seed has to fit a CI runner's four CPUs.
+  statefulSet:
+    spec:
+      template:
+        spec:
+          # The scheduler counts the largest init container too.
+          initContainers:
+            - name: mongod-posthook
+              resources: { requests: { cpu: 25m, memory: 50M } }
+            - name: mongodb-agent-readinessprobe
+              resources: { requests: { cpu: 25m, memory: 50M } }
+          containers:
+            - name: mongod
+              resources: { requests: { cpu: 25m, memory: 200M } }
+            - name: mongodb-agent
+              resources: { requests: { cpu: 25m, memory: 100M } }

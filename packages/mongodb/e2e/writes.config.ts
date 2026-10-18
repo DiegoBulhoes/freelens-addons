@@ -9,7 +9,7 @@ export default defineConfig({
     fs: { allow: [repositoryRoot] },
   },
   test: {
-    include: ["**/*.writes.ts"],
+    include: ["e2e/writes/**/*.writes.ts"],
     testTimeout: 15 * 60_000,
     hookTimeout: 180_000,
     fileParallelism: false,

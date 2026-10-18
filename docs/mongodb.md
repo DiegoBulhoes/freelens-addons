@@ -26,12 +26,14 @@ flowchart LR
   R["Clusters<br/><i>worst first</i>"]
   D["Cluster drawer<br/><i>members, users, actions</i>"]
 
-  O -->|a row, a card| R
+  O -->|a card, on its filter| R
+  O -->|a row| D
   R --> D
 ```
 
 The group appears only where the `mongodbcommunity.mongodbcommunity.mongodb.com` CRD exists. Every
-page has the host's namespace selector.
+page has the host's namespace selector. Until the clusters are read, the pages say they are
+connecting, or could not read them, instead of saying there are none.
 
 ## Where the answers come from
 
@@ -40,45 +42,68 @@ flowchart TD
   RS["MongoDBCommunity<br/><i>phase, version, members wanted</i>"]
   P["Pods and volumes<br/><i>scheduled, pulled, bound, ready</i>"]
   A["Each member's automation agent<br/><i>replication state, its plan</i>"]
+  S["Secrets, metadata only<br/><i>password, TLS, connection</i>"]
   RS --> V["State and cause"]
   P --> V
   A --> V
+  S --> V
   A --> M["Primary, secondaries, arbiters"]
 ```
 
-The status names no primary. Each member's agent writes its replication state and the plan it is
-working through to a file in its pod; the extension reads that file through the API server, as
-`kubectl exec` does, so it needs `pods/exec`. Without it the members show no role and the pages say
-why. A plan's failed step is a cause only while the member is short of its goal: old plans keep
-failed steps after a member recovers.
+The status names no primary. Each member's agent writes its replication state and plan to a file
+in its pod; the extension reads it as `kubectl exec` does, so it needs `pods/exec`. Without it the
+members show no role and a banner says why. Agents are read a few at a time, each with a time
+limit. A failed step in a plan is a cause only while the member is short of its goal.
 
-Secrets are listed as metadata only: names, and cert-manager's annotations to tell who issued a
-certificate. Never their values.
+| Not read | What the cluster shows |
+|----------|------------------------|
+| Its pods | Members unknown, not Down |
+| One agent | Its last role for a short while, then Primary unknown |
+| A ready member's role, with no other primary | Primary unknown; No primary only once every role is read |
+| The Secrets of a namespace | Its users and TLS are not judged; one listed before keeps what it listed |
+| The events of its namespace | The drawer says so and keeps the warnings it read before |
+
+| Topic | Rule |
+|-------|------|
+| Secrets | Listed as metadata only: names and cert-manager's annotations, never values |
+| Version | A cluster that never ran shows its version as not reached yet |
+| Missing TLS Secret | With no member up it is the cluster's cause; otherwise its own attention row. A CA in a ConfigMap is not checked |
 
 ## Features
 
 | Page | Features |
 |------|----------|
-| Overview | Clusters down or failed, degraded, changing version; users whose password Secret is missing; a list of what needs attention, worst first, each with its cause |
-| Clusters | State and cause, ready members, primary, TLS (and whether cert-manager issued it), version; searched and sorted; a row opens the drawer |
-| Cluster drawer | Primary, version and feature compatibility, data members and arbiters, TLS with its Secret, its CA and whether cert-manager issued it, authentication, metrics, the connection URL to copy (without the password; a command gives the full one); members with their role, node, volume size, readiness, uptime, restarts and cause, the preferred primary marked; users with their roles and connection Secret, or the missing password Secret; recent warning events of the replica set, its pods and volumes, without the readiness-probe noise; commands to copy |
+| Overview | Once the lists are read, cards for every cluster, then down, failed or no primary, degraded, changing version, missing a password Secret, missing a TLS Secret; each opens the list on its filter |
+| Overview, attention | What needs attention, worst first, each with its cause; a row opens the drawer. A banner when agents cannot be read |
+| Clusters | State and cause, ready members, primary, TLS and its issuer, version; filters per card with counts |
+| Cluster drawer, status | Primary, version and feature compatibility, TLS Secret and CA, authentication, metrics, connection URL to copy without the password |
+| Cluster drawer, members | Role, node, volume size, readiness, uptime, restarts and cause; the preferred primary, a member left from a scale-down, and the change an agent is applying |
+| Cluster drawer, more | Users with roles and connection Secret; recent warning events of the set, its pods, StatefulSets and volumes; commands to copy |
 
 ## Actions
 
-Cluster actions are in the drawer's title bar; member actions in each member's row. Every write
-asks first; the dialog closes on OK and the write reports by notification.
+Every write asks first; the dialog closes on OK and the result comes as a notification.
+
+| Where | Actions |
+|-------|---------|
+| Drawer title bar | mongosh, Switch primary, Scale, Delete |
+| Members section | Restart all |
+| Each member's row | mongosh, Make primary, Restart, Logs |
+| Ticked rows | Restart, Delete; Restart skips clusters not running; both ask you to type `confirm` |
 
 | Action | Note |
 |--------|------|
-| mongosh | Opens a terminal tab running mongosh on the primary (title bar) or a member (its row), with the first user's connection string, and the cluster's CA when TLS is on. The password is read in the terminal's shell, never by Freelens |
-| Switch primary | Elects a ready secondary you pick by raising its priority in `memberConfig`, so it stays the preferred primary. Asks for the cluster's name |
-| Scale | Changes the number of data members. Warns of an even vote, of the members removed and of a lone member |
-| Restart all | Restarts the secondaries and arbiters one at a time, then the primary, which steps down as it stops so a secondary takes over at once; a preferred member takes the primary back when it returns. No priority is changed: the agents see a change at different times and would hand the primary back and forth. Each step waits for the set to settle, re-reads it, and stops if anything changed. Asks for the name |
-| Restart a member | Deletes its pod; refused when the rest would be short of a majority. Asks for the member's name |
+| mongosh | A terminal tab on the primary or a member, with the first user's connection string. The password is read in the shell, never by Freelens |
+| Switch primary | Raises a ready secondary's priority so it stays preferred. Refused unless the set is running and no member is applying a change |
+| Scale | Changes the data members; past the seventh voter they join without a vote. The dialog warns as you type. Undo restores the count |
+| Restart all | Secondaries and arbiters one at a time, then the primary. Refused unless every member is ready and the primary is read. A step not done in ten minutes stops it |
+| Restart a member | Deletes its pod. Refused when the rest would lose the majority |
 | Logs | A member's mongod or agent log in a log tab |
-| Delete | Removes the cluster; its volumes are kept. Asks for the name |
-| Restart, Delete (ticked rows) | Restart asks the operator for a rolling restart, which goes by index whatever the primary is. Both ask you to type `confirm` |
-| Copy commands | `kubectl describe`, pods, an agent's log, the full connection string, `rs.stepDown()` |
+| Delete | Removes the cluster; its volumes are kept |
+| Copy commands | `kubectl describe`, pods, agent logs, the operator's log, the full connection string, `rs.stepDown()` |
+
+While Restart all runs, every other write to that cluster's members is refused. Destructive actions
+ask for the object's name.
 
 ## What it will not do
 

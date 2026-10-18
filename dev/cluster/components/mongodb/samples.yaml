@@ -1,5 +1,5 @@
-# MongoDB Community replica sets, one per state the pages rank. The operator watches its own
-# namespace, so they live beside it. The passwords exist only inside this disposable cluster.
+# MongoDB Community replica sets, one per state the pages rank, beside the operator; apps.yaml
+# holds one more in a second namespace. The passwords exist only inside this disposable cluster.
 apiVersion: v1
 kind: Secret
 metadata:
@@ -186,37 +186,6 @@ spec:
             resources:
               requests:
                 storage: 1Gi
----
-# A version with no image: the upgrade never completes.
-apiVersion: mongodbcommunity.mongodb.com/v1
-kind: MongoDBCommunity
-metadata:
-  name: upgrade-rs
-  namespace: mongodb
-spec:
-  type: ReplicaSet
-  members: 1
-  version: "8.0.999"
-  security:
-    authentication:
-      modes: ["SCRAM"]
-  users: []
-  # Small requests: the whole seed has to fit a CI runner's four CPUs.
-  statefulSet:
-    spec:
-      template:
-        spec:
-          # The scheduler counts the largest init container too.
-          initContainers:
-            - name: mongod-posthook
-              resources: { requests: { cpu: 25m, memory: 50M } }
-            - name: mongodb-agent-readinessprobe
-              resources: { requests: { cpu: 25m, memory: 50M } }
-          containers:
-            - name: mongod
-              resources: { requests: { cpu: 25m, memory: 200M } }
-            - name: mongodb-agent
-              resources: { requests: { cpu: 25m, memory: 100M } }
 ---
 # TLS from cert-manager: the demo CA issues it, and its Secret carries the CA too.
 apiVersion: cert-manager.io/v1

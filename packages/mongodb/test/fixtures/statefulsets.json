@@ -5,8 +5,783 @@
       "apiVersion": "apps/v1",
       "kind": "StatefulSet",
       "metadata": {
-        "creationTimestamp": "2026-10-04T04:13:49Z",
-        "generation": 4,
+        "creationTimestamp": "2026-10-17T19:53:45Z",
+        "generation": 1,
+        "name": "orders-rs",
+        "namespace": "mongodb-apps",
+        "ownerReferences": [
+          {
+            "apiVersion": "mongodbcommunity.mongodb.com/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "MongoDBCommunity",
+            "name": "orders-rs",
+            "uid": "a6236f36-84f2-42f7-9970-8fd0746bfd60"
+          }
+        ],
+        "resourceVersion": "435041",
+        "selfLink": "/apis/apps/v1/namespaces/mongodb-apps/statefulsets/orders-rs",
+        "uid": "7fb22884-75c8-4cd0-aeec-554b4ee935da"
+      },
+      "spec": {
+        "persistentVolumeClaimRetentionPolicy": {
+          "whenDeleted": "Retain",
+          "whenScaled": "Retain"
+        },
+        "podManagementPolicy": "OrderedReady",
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "orders-rs-svc"
+          }
+        },
+        "serviceName": "orders-rs-svc",
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "orders-rs-svc"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  ""
+                ],
+                "command": [
+                  "/bin/sh",
+                  "-c",
+                  "\nif [ -e \"/hooks/version-upgrade\" ]; then\n\t#run post-start hook to handle version changes (if exists)\n    /hooks/version-upgrade\nfi\n\n# wait for config and keyfile to be created by the agent\necho \"Waiting for config and keyfile files to be created by the agent...\"\nwhile ! [ -f /data/automation-mongod.conf -a -f /var/lib/mongodb-mms-automation/authentication/keyfile ]; do\n\tsleep 3;\n\techo \"Waiting...\"\ndone\n\n# sleep is important after agent issues shutdown command\n# k8s restarts the mongod container too quickly for the agent to realize mongod is down\necho \"Sleeping for 15s...\"\nsleep 15\n\n# start mongod with this configuration\necho \"Starting mongod...\"\nexec mongod -f /data/automation-mongod.conf\n"
+                ],
+                "env": [
+                  {
+                    "name": "AGENT_STATUS_FILEPATH",
+                    "value": "redacted-by-fixture-export"
+                  }
+                ],
+                "image": "quay.io/mongodb/mongodb-community-server:8.0.12-ubi8",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "mongod",
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "500M"
+                  },
+                  "requests": {
+                    "cpu": "25m",
+                    "memory": "200M"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/data",
+                    "name": "data-volume"
+                  },
+                  {
+                    "mountPath": "/healthstatus",
+                    "name": "healthstatus"
+                  },
+                  {
+                    "mountPath": "/hooks",
+                    "name": "hooks"
+                  },
+                  {
+                    "mountPath": "/var/log/mongodb-mms-automation",
+                    "name": "logs-volume"
+                  },
+                  {
+                    "mountPath": "/var/lib/mongodb-mms-automation/authentication",
+                    "name": "orders-rs-keyfile"
+                  },
+                  {
+                    "mountPath": "/tmp",
+                    "name": "tmp"
+                  }
+                ]
+              },
+              {
+                "command": [
+                  "/bin/bash",
+                  "-c",
+                  "current_uid=$(id -u)\ndeclare -r current_uid\nif ! grep -q \"${current_uid}\" /etc/passwd ; then\nsed -e \"s/^mongodb:/builder:/\" /etc/passwd > /tmp/passwd\necho \"mongodb:x:$(id -u):$(id -g):,,,:/:/bin/bash\" >> /tmp/passwd\nexport NSS_WRAPPER_PASSWD=/tmp/passwd\nexport LD_PRELOAD=libnss_wrapper.so\nexport NSS_WRAPPER_GROUP=/etc/group\nfi\nagent/mongodb-agent -healthCheckFilePath=/var/log/mongodb-mms-automation/healthstatus/agent-health-status.json -serveStatusPort=5000 -cluster=/var/lib/automation/config/cluster-config.json -skipMongoStart -noDaemonize -useLocalMongoDbTools -logFile /var/log/mongodb-mms-automation/automation-agent.log -logLevel INFO -maxLogFileDurationHrs 24"
+                ],
+                "env": [
+                  {
+                    "name": "AGENT_STATUS_FILEPATH",
+                    "value": "redacted-by-fixture-export"
+                  },
+                  {
+                    "name": "AUTOMATION_CONFIG_MAP",
+                    "value": "redacted-by-fixture-export"
+                  },
+                  {
+                    "name": "HEADLESS_AGENT",
+                    "value": "redacted-by-fixture-export"
+                  },
+                  {
+                    "name": "POD_NAMESPACE",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      }
+                    }
+                  }
+                ],
+                "image": "quay.io/mongodb/mongodb-agent:108.0.26.9062-1",
+                "imagePullPolicy": "Always",
+                "name": "mongodb-agent",
+                "readinessProbe": {
+                  "exec": {
+                    "command": [
+                      "/opt/scripts/readinessprobe"
+                    ]
+                  },
+                  "failureThreshold": 40,
+                  "initialDelaySeconds": 5,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "500M"
+                  },
+                  "requests": {
+                    "cpu": "25m",
+                    "memory": "100M"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/opt/scripts",
+                    "name": "agent-scripts"
+                  },
+                  {
+                    "mountPath": "/var/lib/automation/config",
+                    "name": "automation-config",
+                    "readOnly": true
+                  },
+                  {
+                    "mountPath": "/data",
+                    "name": "data-volume"
+                  },
+                  {
+                    "mountPath": "/var/log/mongodb-mms-automation/healthstatus",
+                    "name": "healthstatus"
+                  },
+                  {
+                    "mountPath": "/var/log/mongodb-mms-automation",
+                    "name": "logs-volume"
+                  },
+                  {
+                    "mountPath": "/var/lib/mongodb-mms-automation/authentication",
+                    "name": "orders-rs-keyfile"
+                  },
+                  {
+                    "mountPath": "/tmp",
+                    "name": "tmp"
+                  }
+                ]
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "initContainers": [
+              {
+                "command": [
+                  "cp",
+                  "version-upgrade-hook",
+                  "/hooks/version-upgrade"
+                ],
+                "image": "quay.io/mongodb/mongodb-kubernetes-operator-version-upgrade-post-start-hook:1.0.10",
+                "imagePullPolicy": "Always",
+                "name": "mongod-posthook",
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "500M"
+                  },
+                  "requests": {
+                    "cpu": "25m",
+                    "memory": "50M"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/hooks",
+                    "name": "hooks"
+                  }
+                ]
+              },
+              {
+                "command": [
+                  "cp",
+                  "/probes/readinessprobe",
+                  "/opt/scripts/readinessprobe"
+                ],
+                "image": "quay.io/mongodb/mongodb-kubernetes-readinessprobe:1.0.24",
+                "imagePullPolicy": "Always",
+                "name": "mongodb-agent-readinessprobe",
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "500M"
+                  },
+                  "requests": {
+                    "cpu": "25m",
+                    "memory": "50M"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/opt/scripts",
+                    "name": "agent-scripts"
+                  }
+                ]
+              }
+            ],
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {
+              "fsGroup": 2000,
+              "runAsNonRoot": true,
+              "runAsUser": 2000,
+              "seccompProfile": {
+                "type": "RuntimeDefault"
+              }
+            },
+            "serviceAccount": "mongodb-kubernetes-appdb",
+            "serviceAccountName": "mongodb-kubernetes-appdb",
+            "terminationGracePeriodSeconds": 30,
+            "volumes": [
+              {
+                "emptyDir": {},
+                "name": "agent-scripts"
+              },
+              {
+                "name": "automation-config",
+                "secret": {
+                  "defaultMode": 416,
+                  "secretName": "orders-rs-config"
+                }
+              },
+              {
+                "emptyDir": {},
+                "name": "healthstatus"
+              },
+              {
+                "emptyDir": {},
+                "name": "hooks"
+              },
+              {
+                "emptyDir": {},
+                "name": "orders-rs-keyfile"
+              },
+              {
+                "emptyDir": {},
+                "name": "tmp"
+              }
+            ]
+          }
+        },
+        "updateStrategy": {
+          "type": "RollingUpdate"
+        },
+        "volumeClaimTemplates": [
+          {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "metadata": {
+              "name": "data-volume"
+            },
+            "spec": {
+              "accessModes": [
+                "ReadWriteOnce"
+              ],
+              "resources": {
+                "requests": {
+                  "storage": "10G"
+                }
+              },
+              "volumeMode": "Filesystem"
+            },
+            "status": {
+              "phase": "Pending"
+            }
+          },
+          {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "metadata": {
+              "name": "logs-volume"
+            },
+            "spec": {
+              "accessModes": [
+                "ReadWriteOnce"
+              ],
+              "resources": {
+                "requests": {
+                  "storage": "2G"
+                }
+              },
+              "volumeMode": "Filesystem"
+            },
+            "status": {
+              "phase": "Pending"
+            }
+          }
+        ]
+      },
+      "status": {
+        "availableReplicas": 1,
+        "collisionCount": 0,
+        "currentReplicas": 1,
+        "currentRevision": "orders-rs-6bdbbc557d",
+        "observedGeneration": 1,
+        "readyReplicas": 1,
+        "replicas": 1,
+        "updateRevision": "orders-rs-6bdbbc557d",
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "StatefulSet",
+      "metadata": {
+        "creationTimestamp": "2026-10-17T19:53:45Z",
+        "generation": 1,
+        "name": "orders-rs-arb",
+        "namespace": "mongodb-apps",
+        "ownerReferences": [
+          {
+            "apiVersion": "mongodbcommunity.mongodb.com/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "MongoDBCommunity",
+            "name": "orders-rs",
+            "uid": "a6236f36-84f2-42f7-9970-8fd0746bfd60"
+          }
+        ],
+        "resourceVersion": "427352",
+        "selfLink": "/apis/apps/v1/namespaces/mongodb-apps/statefulsets/orders-rs-arb",
+        "uid": "c7581794-ab45-445a-801a-0da4e3ef6d2e"
+      },
+      "spec": {
+        "persistentVolumeClaimRetentionPolicy": {
+          "whenDeleted": "Retain",
+          "whenScaled": "Retain"
+        },
+        "podManagementPolicy": "OrderedReady",
+        "replicas": 0,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "orders-rs-svc"
+          }
+        },
+        "serviceName": "orders-rs-svc",
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "orders-rs-svc"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  ""
+                ],
+                "command": [
+                  "/bin/sh",
+                  "-c",
+                  "\nif [ -e \"/hooks/version-upgrade\" ]; then\n\t#run post-start hook to handle version changes (if exists)\n    /hooks/version-upgrade\nfi\n\n# wait for config and keyfile to be created by the agent\necho \"Waiting for config and keyfile files to be created by the agent...\"\nwhile ! [ -f /data/automation-mongod.conf -a -f /var/lib/mongodb-mms-automation/authentication/keyfile ]; do\n\tsleep 3;\n\techo \"Waiting...\"\ndone\n\n# sleep is important after agent issues shutdown command\n# k8s restarts the mongod container too quickly for the agent to realize mongod is down\necho \"Sleeping for 15s...\"\nsleep 15\n\n# start mongod with this configuration\necho \"Starting mongod...\"\nexec mongod -f /data/automation-mongod.conf\n"
+                ],
+                "env": [
+                  {
+                    "name": "AGENT_STATUS_FILEPATH",
+                    "value": "redacted-by-fixture-export"
+                  }
+                ],
+                "image": "quay.io/mongodb/mongodb-community-server:8.0.12-ubi8",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "mongod",
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "500M"
+                  },
+                  "requests": {
+                    "cpu": "25m",
+                    "memory": "200M"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/data",
+                    "name": "data-volume"
+                  },
+                  {
+                    "mountPath": "/healthstatus",
+                    "name": "healthstatus"
+                  },
+                  {
+                    "mountPath": "/hooks",
+                    "name": "hooks"
+                  },
+                  {
+                    "mountPath": "/var/log/mongodb-mms-automation",
+                    "name": "logs-volume"
+                  },
+                  {
+                    "mountPath": "/var/lib/mongodb-mms-automation/authentication",
+                    "name": "orders-rs-keyfile"
+                  },
+                  {
+                    "mountPath": "/tmp",
+                    "name": "tmp"
+                  }
+                ]
+              },
+              {
+                "command": [
+                  "/bin/bash",
+                  "-c",
+                  "current_uid=$(id -u)\ndeclare -r current_uid\nif ! grep -q \"${current_uid}\" /etc/passwd ; then\nsed -e \"s/^mongodb:/builder:/\" /etc/passwd > /tmp/passwd\necho \"mongodb:x:$(id -u):$(id -g):,,,:/:/bin/bash\" >> /tmp/passwd\nexport NSS_WRAPPER_PASSWD=/tmp/passwd\nexport LD_PRELOAD=libnss_wrapper.so\nexport NSS_WRAPPER_GROUP=/etc/group\nfi\nagent/mongodb-agent -healthCheckFilePath=/var/log/mongodb-mms-automation/healthstatus/agent-health-status.json -serveStatusPort=5000 -cluster=/var/lib/automation/config/cluster-config.json -skipMongoStart -noDaemonize -useLocalMongoDbTools -logFile /var/log/mongodb-mms-automation/automation-agent.log -logLevel INFO -maxLogFileDurationHrs 24"
+                ],
+                "env": [
+                  {
+                    "name": "AGENT_STATUS_FILEPATH",
+                    "value": "redacted-by-fixture-export"
+                  },
+                  {
+                    "name": "AUTOMATION_CONFIG_MAP",
+                    "value": "redacted-by-fixture-export"
+                  },
+                  {
+                    "name": "HEADLESS_AGENT",
+                    "value": "redacted-by-fixture-export"
+                  },
+                  {
+                    "name": "POD_NAMESPACE",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      }
+                    }
+                  }
+                ],
+                "image": "quay.io/mongodb/mongodb-agent:108.0.26.9062-1",
+                "imagePullPolicy": "Always",
+                "name": "mongodb-agent",
+                "readinessProbe": {
+                  "exec": {
+                    "command": [
+                      "/opt/scripts/readinessprobe"
+                    ]
+                  },
+                  "failureThreshold": 40,
+                  "initialDelaySeconds": 5,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "500M"
+                  },
+                  "requests": {
+                    "cpu": "25m",
+                    "memory": "100M"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/opt/scripts",
+                    "name": "agent-scripts"
+                  },
+                  {
+                    "mountPath": "/var/lib/automation/config",
+                    "name": "automation-config",
+                    "readOnly": true
+                  },
+                  {
+                    "mountPath": "/data",
+                    "name": "data-volume"
+                  },
+                  {
+                    "mountPath": "/var/log/mongodb-mms-automation/healthstatus",
+                    "name": "healthstatus"
+                  },
+                  {
+                    "mountPath": "/var/log/mongodb-mms-automation",
+                    "name": "logs-volume"
+                  },
+                  {
+                    "mountPath": "/var/lib/mongodb-mms-automation/authentication",
+                    "name": "orders-rs-keyfile"
+                  },
+                  {
+                    "mountPath": "/tmp",
+                    "name": "tmp"
+                  }
+                ]
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "initContainers": [
+              {
+                "command": [
+                  "cp",
+                  "version-upgrade-hook",
+                  "/hooks/version-upgrade"
+                ],
+                "image": "quay.io/mongodb/mongodb-kubernetes-operator-version-upgrade-post-start-hook:1.0.10",
+                "imagePullPolicy": "Always",
+                "name": "mongod-posthook",
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "500M"
+                  },
+                  "requests": {
+                    "cpu": "25m",
+                    "memory": "50M"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/hooks",
+                    "name": "hooks"
+                  }
+                ]
+              },
+              {
+                "command": [
+                  "cp",
+                  "/probes/readinessprobe",
+                  "/opt/scripts/readinessprobe"
+                ],
+                "image": "quay.io/mongodb/mongodb-kubernetes-readinessprobe:1.0.24",
+                "imagePullPolicy": "Always",
+                "name": "mongodb-agent-readinessprobe",
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "500M"
+                  },
+                  "requests": {
+                    "cpu": "25m",
+                    "memory": "50M"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/opt/scripts",
+                    "name": "agent-scripts"
+                  }
+                ]
+              }
+            ],
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {
+              "fsGroup": 2000,
+              "runAsNonRoot": true,
+              "runAsUser": 2000,
+              "seccompProfile": {
+                "type": "RuntimeDefault"
+              }
+            },
+            "serviceAccount": "mongodb-kubernetes-appdb",
+            "serviceAccountName": "mongodb-kubernetes-appdb",
+            "terminationGracePeriodSeconds": 30,
+            "volumes": [
+              {
+                "emptyDir": {},
+                "name": "agent-scripts"
+              },
+              {
+                "name": "automation-config",
+                "secret": {
+                  "defaultMode": 416,
+                  "secretName": "orders-rs-config"
+                }
+              },
+              {
+                "emptyDir": {},
+                "name": "healthstatus"
+              },
+              {
+                "emptyDir": {},
+                "name": "hooks"
+              },
+              {
+                "emptyDir": {},
+                "name": "orders-rs-keyfile"
+              },
+              {
+                "emptyDir": {},
+                "name": "tmp"
+              }
+            ]
+          }
+        },
+        "updateStrategy": {
+          "type": "RollingUpdate"
+        },
+        "volumeClaimTemplates": [
+          {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "metadata": {
+              "name": "data-volume"
+            },
+            "spec": {
+              "accessModes": [
+                "ReadWriteOnce"
+              ],
+              "resources": {
+                "requests": {
+                  "storage": "10G"
+                }
+              },
+              "volumeMode": "Filesystem"
+            },
+            "status": {
+              "phase": "Pending"
+            }
+          },
+          {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "metadata": {
+              "name": "logs-volume"
+            },
+            "spec": {
+              "accessModes": [
+                "ReadWriteOnce"
+              ],
+              "resources": {
+                "requests": {
+                  "storage": "2G"
+                }
+              },
+              "volumeMode": "Filesystem"
+            },
+            "status": {
+              "phase": "Pending"
+            }
+          }
+        ]
+      },
+      "status": {
+        "availableReplicas": 0,
+        "collisionCount": 0,
+        "currentRevision": "orders-rs-arb-6bdbbc557d",
+        "observedGeneration": 1,
+        "replicas": 0,
+        "updateRevision": "orders-rs-arb-6bdbbc557d"
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "StatefulSet",
+      "metadata": {
+        "creationTimestamp": "2026-10-05T13:37:40Z",
+        "generation": 1,
         "name": "catalog-rs",
         "namespace": "mongodb",
         "ownerReferences": [
@@ -16,12 +791,12 @@
             "controller": true,
             "kind": "MongoDBCommunity",
             "name": "catalog-rs",
-            "uid": "ac1b67ad-61a8-413a-98f2-6549cc8fcdb4"
+            "uid": "0cd4fa30-d182-445d-b1f9-8bea32715e80"
           }
         ],
-        "resourceVersion": "582676",
+        "resourceVersion": "435288",
         "selfLink": "/apis/apps/v1/namespaces/mongodb/statefulsets/catalog-rs",
-        "uid": "aa2ae553-b9c5-44a9-a360-65f1f4513bc7"
+        "uid": "358e65bc-af8f-496f-9de0-5b38f0bb4b22"
       },
       "spec": {
         "persistentVolumeClaimRetentionPolicy": {
@@ -39,9 +814,6 @@
         "serviceName": "catalog-rs-svc",
         "template": {
           "metadata": {
-            "annotations": {
-              "mongodb.com/restartedAt": "2026-10-04T04:26:10Z"
-            },
             "labels": {
               "app": "catalog-rs-svc"
             }
@@ -60,7 +832,7 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   }
                 ],
                 "image": "quay.io/mongodb/mongodb-community-server:8.0.12-ubi8",
@@ -72,8 +844,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "200M"
                   }
                 },
                 "securityContext": {
@@ -123,15 +895,15 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/var/log/mongodb-mms-automation/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "AUTOMATION_CONFIG_MAP",
-                    "value": "catalog-rs-config"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "HEADLESS_AGENT",
-                    "value": "true"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "POD_NAMESPACE",
@@ -164,8 +936,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "100M"
                   }
                 },
                 "securityContext": {
@@ -229,8 +1001,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -266,8 +1038,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -385,11 +1157,11 @@
         "availableReplicas": 3,
         "collisionCount": 0,
         "currentReplicas": 3,
-        "currentRevision": "catalog-rs-9589d7844",
-        "observedGeneration": 4,
+        "currentRevision": "catalog-rs-6bd477fd84",
+        "observedGeneration": 1,
         "readyReplicas": 3,
         "replicas": 3,
-        "updateRevision": "catalog-rs-9589d7844",
+        "updateRevision": "catalog-rs-6bd477fd84",
         "updatedReplicas": 3
       }
     },
@@ -397,8 +1169,8 @@
       "apiVersion": "apps/v1",
       "kind": "StatefulSet",
       "metadata": {
-        "creationTimestamp": "2026-10-04T04:13:49Z",
-        "generation": 2,
+        "creationTimestamp": "2026-10-05T13:37:40Z",
+        "generation": 1,
         "name": "catalog-rs-arb",
         "namespace": "mongodb",
         "ownerReferences": [
@@ -408,12 +1180,12 @@
             "controller": true,
             "kind": "MongoDBCommunity",
             "name": "catalog-rs",
-            "uid": "ac1b67ad-61a8-413a-98f2-6549cc8fcdb4"
+            "uid": "0cd4fa30-d182-445d-b1f9-8bea32715e80"
           }
         ],
-        "resourceVersion": "522902",
+        "resourceVersion": "62775",
         "selfLink": "/apis/apps/v1/namespaces/mongodb/statefulsets/catalog-rs-arb",
-        "uid": "6f1e7b82-fab6-443f-9489-119aaa581467"
+        "uid": "1f855d19-24bf-40b5-9ebc-2f09d43166dd"
       },
       "spec": {
         "persistentVolumeClaimRetentionPolicy": {
@@ -431,9 +1203,6 @@
         "serviceName": "catalog-rs-svc",
         "template": {
           "metadata": {
-            "annotations": {
-              "mongodb.com/restartedAt": "2026-10-04T04:26:10Z"
-            },
             "labels": {
               "app": "catalog-rs-svc"
             }
@@ -452,7 +1221,7 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   }
                 ],
                 "image": "quay.io/mongodb/mongodb-community-server:8.0.12-ubi8",
@@ -464,8 +1233,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "200M"
                   }
                 },
                 "securityContext": {
@@ -515,15 +1284,15 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/var/log/mongodb-mms-automation/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "AUTOMATION_CONFIG_MAP",
-                    "value": "catalog-rs-config"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "HEADLESS_AGENT",
-                    "value": "true"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "POD_NAMESPACE",
@@ -556,8 +1325,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "100M"
                   }
                 },
                 "securityContext": {
@@ -621,8 +1390,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -658,8 +1427,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -776,17 +1545,790 @@
       "status": {
         "availableReplicas": 0,
         "collisionCount": 0,
-        "currentRevision": "catalog-rs-arb-9589d7844",
-        "observedGeneration": 2,
+        "currentRevision": "catalog-rs-arb-6bd477fd84",
+        "observedGeneration": 1,
         "replicas": 0,
-        "updateRevision": "catalog-rs-arb-9589d7844"
+        "updateRevision": "catalog-rs-arb-6bd477fd84"
       }
     },
     {
       "apiVersion": "apps/v1",
       "kind": "StatefulSet",
       "metadata": {
-        "creationTimestamp": "2026-10-04T04:11:05Z",
+        "creationTimestamp": "2026-10-18T01:10:07Z",
+        "generation": 2,
+        "name": "ledger-rs",
+        "namespace": "mongodb",
+        "ownerReferences": [
+          {
+            "apiVersion": "mongodbcommunity.mongodb.com/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "MongoDBCommunity",
+            "name": "ledger-rs",
+            "uid": "ce56a993-e521-4e7b-a565-9ba3df42e20d"
+          }
+        ],
+        "resourceVersion": "461491",
+        "selfLink": "/apis/apps/v1/namespaces/mongodb/statefulsets/ledger-rs",
+        "uid": "4ecc049f-59c8-4e36-9be7-548a44a1b64c"
+      },
+      "spec": {
+        "persistentVolumeClaimRetentionPolicy": {
+          "whenDeleted": "Retain",
+          "whenScaled": "Retain"
+        },
+        "podManagementPolicy": "OrderedReady",
+        "replicas": 3,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "ledger-rs-svc"
+          }
+        },
+        "serviceName": "ledger-rs-svc",
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "ledger-rs-svc"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  ""
+                ],
+                "command": [
+                  "/bin/sh",
+                  "-c",
+                  "\nif [ -e \"/hooks/version-upgrade\" ]; then\n\t#run post-start hook to handle version changes (if exists)\n    /hooks/version-upgrade\nfi\n\n# wait for config and keyfile to be created by the agent\necho \"Waiting for config and keyfile files to be created by the agent...\"\nwhile ! [ -f /data/automation-mongod.conf -a -f /var/lib/mongodb-mms-automation/authentication/keyfile ]; do\n\tsleep 3;\n\techo \"Waiting...\"\ndone\n\n# sleep is important after agent issues shutdown command\n# k8s restarts the mongod container too quickly for the agent to realize mongod is down\necho \"Sleeping for 15s...\"\nsleep 15\n\n# start mongod with this configuration\necho \"Starting mongod...\"\nexec mongod -f /data/automation-mongod.conf\n"
+                ],
+                "env": [
+                  {
+                    "name": "AGENT_STATUS_FILEPATH",
+                    "value": "redacted-by-fixture-export"
+                  }
+                ],
+                "image": "quay.io/mongodb/mongodb-community-server:8.0.12-ubi8",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "mongod",
+                "resources": {
+                  "limits": {
+                    "memory": "1Ti"
+                  },
+                  "requests": {
+                    "cpu": "25m",
+                    "memory": "1Ti"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/data",
+                    "name": "data-volume"
+                  },
+                  {
+                    "mountPath": "/healthstatus",
+                    "name": "healthstatus"
+                  },
+                  {
+                    "mountPath": "/hooks",
+                    "name": "hooks"
+                  },
+                  {
+                    "mountPath": "/var/lib/mongodb-mms-automation/authentication",
+                    "name": "ledger-rs-keyfile"
+                  },
+                  {
+                    "mountPath": "/var/log/mongodb-mms-automation",
+                    "name": "logs-volume"
+                  },
+                  {
+                    "mountPath": "/tmp",
+                    "name": "tmp"
+                  }
+                ]
+              },
+              {
+                "command": [
+                  "/bin/bash",
+                  "-c",
+                  "current_uid=$(id -u)\ndeclare -r current_uid\nif ! grep -q \"${current_uid}\" /etc/passwd ; then\nsed -e \"s/^mongodb:/builder:/\" /etc/passwd > /tmp/passwd\necho \"mongodb:x:$(id -u):$(id -g):,,,:/:/bin/bash\" >> /tmp/passwd\nexport NSS_WRAPPER_PASSWD=/tmp/passwd\nexport LD_PRELOAD=libnss_wrapper.so\nexport NSS_WRAPPER_GROUP=/etc/group\nfi\nagent/mongodb-agent -healthCheckFilePath=/var/log/mongodb-mms-automation/healthstatus/agent-health-status.json -serveStatusPort=5000 -cluster=/var/lib/automation/config/cluster-config.json -skipMongoStart -noDaemonize -useLocalMongoDbTools -logFile /var/log/mongodb-mms-automation/automation-agent.log -logLevel INFO -maxLogFileDurationHrs 24"
+                ],
+                "env": [
+                  {
+                    "name": "AGENT_STATUS_FILEPATH",
+                    "value": "redacted-by-fixture-export"
+                  },
+                  {
+                    "name": "AUTOMATION_CONFIG_MAP",
+                    "value": "redacted-by-fixture-export"
+                  },
+                  {
+                    "name": "HEADLESS_AGENT",
+                    "value": "redacted-by-fixture-export"
+                  },
+                  {
+                    "name": "POD_NAMESPACE",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      }
+                    }
+                  }
+                ],
+                "image": "quay.io/mongodb/mongodb-agent:108.0.26.9062-1",
+                "imagePullPolicy": "Always",
+                "name": "mongodb-agent",
+                "readinessProbe": {
+                  "exec": {
+                    "command": [
+                      "/opt/scripts/readinessprobe"
+                    ]
+                  },
+                  "failureThreshold": 40,
+                  "initialDelaySeconds": 5,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "500M"
+                  },
+                  "requests": {
+                    "cpu": "25m",
+                    "memory": "100M"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/opt/scripts",
+                    "name": "agent-scripts"
+                  },
+                  {
+                    "mountPath": "/var/lib/automation/config",
+                    "name": "automation-config",
+                    "readOnly": true
+                  },
+                  {
+                    "mountPath": "/data",
+                    "name": "data-volume"
+                  },
+                  {
+                    "mountPath": "/var/log/mongodb-mms-automation/healthstatus",
+                    "name": "healthstatus"
+                  },
+                  {
+                    "mountPath": "/var/lib/mongodb-mms-automation/authentication",
+                    "name": "ledger-rs-keyfile"
+                  },
+                  {
+                    "mountPath": "/var/log/mongodb-mms-automation",
+                    "name": "logs-volume"
+                  },
+                  {
+                    "mountPath": "/tmp",
+                    "name": "tmp"
+                  }
+                ]
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "initContainers": [
+              {
+                "command": [
+                  "cp",
+                  "version-upgrade-hook",
+                  "/hooks/version-upgrade"
+                ],
+                "image": "quay.io/mongodb/mongodb-kubernetes-operator-version-upgrade-post-start-hook:1.0.10",
+                "imagePullPolicy": "Always",
+                "name": "mongod-posthook",
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "500M"
+                  },
+                  "requests": {
+                    "cpu": "25m",
+                    "memory": "50M"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/hooks",
+                    "name": "hooks"
+                  }
+                ]
+              },
+              {
+                "command": [
+                  "cp",
+                  "/probes/readinessprobe",
+                  "/opt/scripts/readinessprobe"
+                ],
+                "image": "quay.io/mongodb/mongodb-kubernetes-readinessprobe:1.0.24",
+                "imagePullPolicy": "Always",
+                "name": "mongodb-agent-readinessprobe",
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "500M"
+                  },
+                  "requests": {
+                    "cpu": "25m",
+                    "memory": "50M"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/opt/scripts",
+                    "name": "agent-scripts"
+                  }
+                ]
+              }
+            ],
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {
+              "fsGroup": 2000,
+              "runAsNonRoot": true,
+              "runAsUser": 2000,
+              "seccompProfile": {
+                "type": "RuntimeDefault"
+              }
+            },
+            "serviceAccount": "mongodb-kubernetes-appdb",
+            "serviceAccountName": "mongodb-kubernetes-appdb",
+            "terminationGracePeriodSeconds": 30,
+            "volumes": [
+              {
+                "emptyDir": {},
+                "name": "agent-scripts"
+              },
+              {
+                "name": "automation-config",
+                "secret": {
+                  "defaultMode": 416,
+                  "secretName": "ledger-rs-config"
+                }
+              },
+              {
+                "emptyDir": {},
+                "name": "healthstatus"
+              },
+              {
+                "emptyDir": {},
+                "name": "hooks"
+              },
+              {
+                "emptyDir": {},
+                "name": "ledger-rs-keyfile"
+              },
+              {
+                "emptyDir": {},
+                "name": "tmp"
+              }
+            ]
+          }
+        },
+        "updateStrategy": {
+          "type": "RollingUpdate"
+        },
+        "volumeClaimTemplates": [
+          {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "metadata": {
+              "name": "data-volume"
+            },
+            "spec": {
+              "accessModes": [
+                "ReadWriteOnce"
+              ],
+              "resources": {
+                "requests": {
+                  "storage": "10G"
+                }
+              },
+              "volumeMode": "Filesystem"
+            },
+            "status": {
+              "phase": "Pending"
+            }
+          },
+          {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "metadata": {
+              "name": "logs-volume"
+            },
+            "spec": {
+              "accessModes": [
+                "ReadWriteOnce"
+              ],
+              "resources": {
+                "requests": {
+                  "storage": "2G"
+                }
+              },
+              "volumeMode": "Filesystem"
+            },
+            "status": {
+              "phase": "Pending"
+            }
+          }
+        ]
+      },
+      "status": {
+        "availableReplicas": 2,
+        "collisionCount": 0,
+        "currentReplicas": 2,
+        "currentRevision": "ledger-rs-df8f7fc4",
+        "observedGeneration": 2,
+        "readyReplicas": 2,
+        "replicas": 3,
+        "updateRevision": "ledger-rs-766595549d",
+        "updatedReplicas": 1
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "StatefulSet",
+      "metadata": {
+        "creationTimestamp": "2026-10-18T01:10:07Z",
+        "generation": 2,
+        "name": "ledger-rs-arb",
+        "namespace": "mongodb",
+        "ownerReferences": [
+          {
+            "apiVersion": "mongodbcommunity.mongodb.com/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "MongoDBCommunity",
+            "name": "ledger-rs",
+            "uid": "ce56a993-e521-4e7b-a565-9ba3df42e20d"
+          }
+        ],
+        "resourceVersion": "461116",
+        "selfLink": "/apis/apps/v1/namespaces/mongodb/statefulsets/ledger-rs-arb",
+        "uid": "31773e53-f148-4e7d-a905-c35f8376816c"
+      },
+      "spec": {
+        "persistentVolumeClaimRetentionPolicy": {
+          "whenDeleted": "Retain",
+          "whenScaled": "Retain"
+        },
+        "podManagementPolicy": "OrderedReady",
+        "replicas": 0,
+        "revisionHistoryLimit": 10,
+        "selector": {
+          "matchLabels": {
+            "app": "ledger-rs-svc"
+          }
+        },
+        "serviceName": "ledger-rs-svc",
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "ledger-rs-svc"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "args": [
+                  ""
+                ],
+                "command": [
+                  "/bin/sh",
+                  "-c",
+                  "\nif [ -e \"/hooks/version-upgrade\" ]; then\n\t#run post-start hook to handle version changes (if exists)\n    /hooks/version-upgrade\nfi\n\n# wait for config and keyfile to be created by the agent\necho \"Waiting for config and keyfile files to be created by the agent...\"\nwhile ! [ -f /data/automation-mongod.conf -a -f /var/lib/mongodb-mms-automation/authentication/keyfile ]; do\n\tsleep 3;\n\techo \"Waiting...\"\ndone\n\n# sleep is important after agent issues shutdown command\n# k8s restarts the mongod container too quickly for the agent to realize mongod is down\necho \"Sleeping for 15s...\"\nsleep 15\n\n# start mongod with this configuration\necho \"Starting mongod...\"\nexec mongod -f /data/automation-mongod.conf\n"
+                ],
+                "env": [
+                  {
+                    "name": "AGENT_STATUS_FILEPATH",
+                    "value": "redacted-by-fixture-export"
+                  }
+                ],
+                "image": "quay.io/mongodb/mongodb-community-server:8.0.12-ubi8",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "mongod",
+                "resources": {
+                  "limits": {
+                    "memory": "1Ti"
+                  },
+                  "requests": {
+                    "cpu": "25m",
+                    "memory": "1Ti"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/data",
+                    "name": "data-volume"
+                  },
+                  {
+                    "mountPath": "/healthstatus",
+                    "name": "healthstatus"
+                  },
+                  {
+                    "mountPath": "/hooks",
+                    "name": "hooks"
+                  },
+                  {
+                    "mountPath": "/var/lib/mongodb-mms-automation/authentication",
+                    "name": "ledger-rs-keyfile"
+                  },
+                  {
+                    "mountPath": "/var/log/mongodb-mms-automation",
+                    "name": "logs-volume"
+                  },
+                  {
+                    "mountPath": "/tmp",
+                    "name": "tmp"
+                  }
+                ]
+              },
+              {
+                "command": [
+                  "/bin/bash",
+                  "-c",
+                  "current_uid=$(id -u)\ndeclare -r current_uid\nif ! grep -q \"${current_uid}\" /etc/passwd ; then\nsed -e \"s/^mongodb:/builder:/\" /etc/passwd > /tmp/passwd\necho \"mongodb:x:$(id -u):$(id -g):,,,:/:/bin/bash\" >> /tmp/passwd\nexport NSS_WRAPPER_PASSWD=/tmp/passwd\nexport LD_PRELOAD=libnss_wrapper.so\nexport NSS_WRAPPER_GROUP=/etc/group\nfi\nagent/mongodb-agent -healthCheckFilePath=/var/log/mongodb-mms-automation/healthstatus/agent-health-status.json -serveStatusPort=5000 -cluster=/var/lib/automation/config/cluster-config.json -skipMongoStart -noDaemonize -useLocalMongoDbTools -logFile /var/log/mongodb-mms-automation/automation-agent.log -logLevel INFO -maxLogFileDurationHrs 24"
+                ],
+                "env": [
+                  {
+                    "name": "AGENT_STATUS_FILEPATH",
+                    "value": "redacted-by-fixture-export"
+                  },
+                  {
+                    "name": "AUTOMATION_CONFIG_MAP",
+                    "value": "redacted-by-fixture-export"
+                  },
+                  {
+                    "name": "HEADLESS_AGENT",
+                    "value": "redacted-by-fixture-export"
+                  },
+                  {
+                    "name": "POD_NAMESPACE",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "metadata.namespace"
+                      }
+                    }
+                  }
+                ],
+                "image": "quay.io/mongodb/mongodb-agent:108.0.26.9062-1",
+                "imagePullPolicy": "Always",
+                "name": "mongodb-agent",
+                "readinessProbe": {
+                  "exec": {
+                    "command": [
+                      "/opt/scripts/readinessprobe"
+                    ]
+                  },
+                  "failureThreshold": 40,
+                  "initialDelaySeconds": 5,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "timeoutSeconds": 1
+                },
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "500M"
+                  },
+                  "requests": {
+                    "cpu": "25m",
+                    "memory": "100M"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/opt/scripts",
+                    "name": "agent-scripts"
+                  },
+                  {
+                    "mountPath": "/var/lib/automation/config",
+                    "name": "automation-config",
+                    "readOnly": true
+                  },
+                  {
+                    "mountPath": "/data",
+                    "name": "data-volume"
+                  },
+                  {
+                    "mountPath": "/var/log/mongodb-mms-automation/healthstatus",
+                    "name": "healthstatus"
+                  },
+                  {
+                    "mountPath": "/var/lib/mongodb-mms-automation/authentication",
+                    "name": "ledger-rs-keyfile"
+                  },
+                  {
+                    "mountPath": "/var/log/mongodb-mms-automation",
+                    "name": "logs-volume"
+                  },
+                  {
+                    "mountPath": "/tmp",
+                    "name": "tmp"
+                  }
+                ]
+              }
+            ],
+            "dnsPolicy": "ClusterFirst",
+            "initContainers": [
+              {
+                "command": [
+                  "cp",
+                  "version-upgrade-hook",
+                  "/hooks/version-upgrade"
+                ],
+                "image": "quay.io/mongodb/mongodb-kubernetes-operator-version-upgrade-post-start-hook:1.0.10",
+                "imagePullPolicy": "Always",
+                "name": "mongod-posthook",
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "500M"
+                  },
+                  "requests": {
+                    "cpu": "25m",
+                    "memory": "50M"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/hooks",
+                    "name": "hooks"
+                  }
+                ]
+              },
+              {
+                "command": [
+                  "cp",
+                  "/probes/readinessprobe",
+                  "/opt/scripts/readinessprobe"
+                ],
+                "image": "quay.io/mongodb/mongodb-kubernetes-readinessprobe:1.0.24",
+                "imagePullPolicy": "Always",
+                "name": "mongodb-agent-readinessprobe",
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "500M"
+                  },
+                  "requests": {
+                    "cpu": "25m",
+                    "memory": "50M"
+                  }
+                },
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "mountPath": "/opt/scripts",
+                    "name": "agent-scripts"
+                  }
+                ]
+              }
+            ],
+            "restartPolicy": "Always",
+            "schedulerName": "default-scheduler",
+            "securityContext": {
+              "fsGroup": 2000,
+              "runAsNonRoot": true,
+              "runAsUser": 2000,
+              "seccompProfile": {
+                "type": "RuntimeDefault"
+              }
+            },
+            "serviceAccount": "mongodb-kubernetes-appdb",
+            "serviceAccountName": "mongodb-kubernetes-appdb",
+            "terminationGracePeriodSeconds": 30,
+            "volumes": [
+              {
+                "emptyDir": {},
+                "name": "agent-scripts"
+              },
+              {
+                "name": "automation-config",
+                "secret": {
+                  "defaultMode": 416,
+                  "secretName": "ledger-rs-config"
+                }
+              },
+              {
+                "emptyDir": {},
+                "name": "healthstatus"
+              },
+              {
+                "emptyDir": {},
+                "name": "hooks"
+              },
+              {
+                "emptyDir": {},
+                "name": "ledger-rs-keyfile"
+              },
+              {
+                "emptyDir": {},
+                "name": "tmp"
+              }
+            ]
+          }
+        },
+        "updateStrategy": {
+          "type": "RollingUpdate"
+        },
+        "volumeClaimTemplates": [
+          {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "metadata": {
+              "name": "data-volume"
+            },
+            "spec": {
+              "accessModes": [
+                "ReadWriteOnce"
+              ],
+              "resources": {
+                "requests": {
+                  "storage": "10G"
+                }
+              },
+              "volumeMode": "Filesystem"
+            },
+            "status": {
+              "phase": "Pending"
+            }
+          },
+          {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "metadata": {
+              "name": "logs-volume"
+            },
+            "spec": {
+              "accessModes": [
+                "ReadWriteOnce"
+              ],
+              "resources": {
+                "requests": {
+                  "storage": "2G"
+                }
+              },
+              "volumeMode": "Filesystem"
+            },
+            "status": {
+              "phase": "Pending"
+            }
+          }
+        ]
+      },
+      "status": {
+        "availableReplicas": 0,
+        "collisionCount": 0,
+        "currentRevision": "ledger-rs-arb-766595549d",
+        "observedGeneration": 2,
+        "replicas": 0,
+        "updateRevision": "ledger-rs-arb-766595549d"
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "StatefulSet",
+      "metadata": {
+        "creationTimestamp": "2026-10-05T13:37:40Z",
         "generation": 1,
         "name": "legacy-rs",
         "namespace": "mongodb",
@@ -797,12 +2339,12 @@
             "controller": true,
             "kind": "MongoDBCommunity",
             "name": "legacy-rs",
-            "uid": "95523590-d8f3-4781-92ee-2b33daec4d0d"
+            "uid": "fa3b3fc9-cffe-4786-a181-717a2e68773a"
           }
         ],
-        "resourceVersion": "517129",
+        "resourceVersion": "62848",
         "selfLink": "/apis/apps/v1/namespaces/mongodb/statefulsets/legacy-rs",
-        "uid": "a04267b7-7f8c-4be9-943f-281998a178b3"
+        "uid": "797e832d-33ec-4fc3-96ae-530228c15c5f"
       },
       "spec": {
         "persistentVolumeClaimRetentionPolicy": {
@@ -838,7 +2380,7 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   }
                 ],
                 "image": "quay.io/mongodb/mongodb-community-server:8.0.12-ubi8",
@@ -850,8 +2392,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "200M"
                   }
                 },
                 "securityContext": {
@@ -901,15 +2443,15 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/var/log/mongodb-mms-automation/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "AUTOMATION_CONFIG_MAP",
-                    "value": "legacy-rs-config"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "HEADLESS_AGENT",
-                    "value": "true"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "POD_NAMESPACE",
@@ -942,8 +2484,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "100M"
                   }
                 },
                 "securityContext": {
@@ -1007,8 +2549,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -1044,8 +2586,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -1164,10 +2706,10 @@
         "availableReplicas": 0,
         "collisionCount": 0,
         "currentReplicas": 1,
-        "currentRevision": "legacy-rs-849b886dbc",
+        "currentRevision": "legacy-rs-54fb5cf46",
         "observedGeneration": 1,
         "replicas": 1,
-        "updateRevision": "legacy-rs-849b886dbc",
+        "updateRevision": "legacy-rs-54fb5cf46",
         "updatedReplicas": 1
       }
     },
@@ -1175,7 +2717,7 @@
       "apiVersion": "apps/v1",
       "kind": "StatefulSet",
       "metadata": {
-        "creationTimestamp": "2026-10-04T04:11:05Z",
+        "creationTimestamp": "2026-10-05T13:37:40Z",
         "generation": 1,
         "name": "legacy-rs-arb",
         "namespace": "mongodb",
@@ -1186,12 +2728,12 @@
             "controller": true,
             "kind": "MongoDBCommunity",
             "name": "legacy-rs",
-            "uid": "95523590-d8f3-4781-92ee-2b33daec4d0d"
+            "uid": "fa3b3fc9-cffe-4786-a181-717a2e68773a"
           }
         ],
-        "resourceVersion": "517107",
+        "resourceVersion": "62787",
         "selfLink": "/apis/apps/v1/namespaces/mongodb/statefulsets/legacy-rs-arb",
-        "uid": "f50900d3-7d99-409c-8e6d-37c3f0dcc878"
+        "uid": "f0743077-c152-4c03-81c8-26caa5e1499a"
       },
       "spec": {
         "persistentVolumeClaimRetentionPolicy": {
@@ -1227,7 +2769,7 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   }
                 ],
                 "image": "quay.io/mongodb/mongodb-community-server:8.0.12-ubi8",
@@ -1239,8 +2781,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "200M"
                   }
                 },
                 "securityContext": {
@@ -1290,15 +2832,15 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/var/log/mongodb-mms-automation/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "AUTOMATION_CONFIG_MAP",
-                    "value": "legacy-rs-config"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "HEADLESS_AGENT",
-                    "value": "true"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "POD_NAMESPACE",
@@ -1331,8 +2873,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "100M"
                   }
                 },
                 "securityContext": {
@@ -1396,8 +2938,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -1433,8 +2975,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -1552,17 +3094,17 @@
       "status": {
         "availableReplicas": 0,
         "collisionCount": 0,
-        "currentRevision": "legacy-rs-arb-849b886dbc",
+        "currentRevision": "legacy-rs-arb-54fb5cf46",
         "observedGeneration": 1,
         "replicas": 0,
-        "updateRevision": "legacy-rs-arb-849b886dbc"
+        "updateRevision": "legacy-rs-arb-54fb5cf46"
       }
     },
     {
       "apiVersion": "apps/v1",
       "kind": "StatefulSet",
       "metadata": {
-        "creationTimestamp": "2026-10-04T13:25:55Z",
+        "creationTimestamp": "2026-10-05T13:37:40Z",
         "generation": 1,
         "name": "secure-rs",
         "namespace": "mongodb",
@@ -1573,12 +3115,12 @@
             "controller": true,
             "kind": "MongoDBCommunity",
             "name": "secure-rs",
-            "uid": "8ccf89d5-35ca-4d3b-9736-7526328857e0"
+            "uid": "7192ddae-9aab-46ab-a8a9-fb843b60b1c1"
           }
         ],
-        "resourceVersion": "583433",
+        "resourceVersion": "435142",
         "selfLink": "/apis/apps/v1/namespaces/mongodb/statefulsets/secure-rs",
-        "uid": "124eed1a-a861-4d9a-8055-d82feb964989"
+        "uid": "01814229-5dfc-446c-857f-cefba4810f5b"
       },
       "spec": {
         "persistentVolumeClaimRetentionPolicy": {
@@ -1614,7 +3156,7 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   }
                 ],
                 "image": "quay.io/mongodb/mongodb-community-server:8.0.12-ubi8",
@@ -1626,8 +3168,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "200M"
                   }
                 },
                 "securityContext": {
@@ -1687,15 +3229,15 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/var/log/mongodb-mms-automation/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "AUTOMATION_CONFIG_MAP",
-                    "value": "secure-rs-config"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "HEADLESS_AGENT",
-                    "value": "true"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "POD_NAMESPACE",
@@ -1728,8 +3270,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "100M"
                   }
                 },
                 "securityContext": {
@@ -1803,8 +3345,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -1840,8 +3382,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -1973,11 +3515,11 @@
         "availableReplicas": 1,
         "collisionCount": 0,
         "currentReplicas": 1,
-        "currentRevision": "secure-rs-6b9bdfc848",
+        "currentRevision": "secure-rs-65888fdb5f",
         "observedGeneration": 1,
         "readyReplicas": 1,
         "replicas": 1,
-        "updateRevision": "secure-rs-6b9bdfc848",
+        "updateRevision": "secure-rs-65888fdb5f",
         "updatedReplicas": 1
       }
     },
@@ -1985,7 +3527,7 @@
       "apiVersion": "apps/v1",
       "kind": "StatefulSet",
       "metadata": {
-        "creationTimestamp": "2026-10-04T13:25:55Z",
+        "creationTimestamp": "2026-10-05T13:37:40Z",
         "generation": 1,
         "name": "secure-rs-arb",
         "namespace": "mongodb",
@@ -1996,12 +3538,12 @@
             "controller": true,
             "kind": "MongoDBCommunity",
             "name": "secure-rs",
-            "uid": "8ccf89d5-35ca-4d3b-9736-7526328857e0"
+            "uid": "7192ddae-9aab-46ab-a8a9-fb843b60b1c1"
           }
         ],
-        "resourceVersion": "583032",
+        "resourceVersion": "62789",
         "selfLink": "/apis/apps/v1/namespaces/mongodb/statefulsets/secure-rs-arb",
-        "uid": "797f4258-b865-41c8-bf57-fda05dfe4cbd"
+        "uid": "757a876a-b4a6-4dbd-9745-83de3665da37"
       },
       "spec": {
         "persistentVolumeClaimRetentionPolicy": {
@@ -2037,7 +3579,7 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   }
                 ],
                 "image": "quay.io/mongodb/mongodb-community-server:8.0.12-ubi8",
@@ -2049,8 +3591,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "200M"
                   }
                 },
                 "securityContext": {
@@ -2110,15 +3652,15 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/var/log/mongodb-mms-automation/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "AUTOMATION_CONFIG_MAP",
-                    "value": "secure-rs-config"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "HEADLESS_AGENT",
-                    "value": "true"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "POD_NAMESPACE",
@@ -2151,8 +3693,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "100M"
                   }
                 },
                 "securityContext": {
@@ -2226,8 +3768,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -2263,8 +3805,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -2395,18 +3937,18 @@
       "status": {
         "availableReplicas": 0,
         "collisionCount": 0,
-        "currentRevision": "secure-rs-arb-6b9bdfc848",
+        "currentRevision": "secure-rs-arb-65888fdb5f",
         "observedGeneration": 1,
         "replicas": 0,
-        "updateRevision": "secure-rs-arb-6b9bdfc848"
+        "updateRevision": "secure-rs-arb-65888fdb5f"
       }
     },
     {
       "apiVersion": "apps/v1",
       "kind": "StatefulSet",
       "metadata": {
-        "creationTimestamp": "2026-10-04T04:11:05Z",
-        "generation": 8,
+        "creationTimestamp": "2026-10-05T13:37:40Z",
+        "generation": 1,
         "name": "sessions-rs",
         "namespace": "mongodb",
         "ownerReferences": [
@@ -2416,12 +3958,12 @@
             "controller": true,
             "kind": "MongoDBCommunity",
             "name": "sessions-rs",
-            "uid": "f14e5625-ede8-49fd-934e-84948b80fc4f"
+            "uid": "92605b95-8da0-4b44-a2c3-54a214fb0555"
           }
         ],
-        "resourceVersion": "558528",
+        "resourceVersion": "435260",
         "selfLink": "/apis/apps/v1/namespaces/mongodb/statefulsets/sessions-rs",
-        "uid": "f5f50a4a-4704-4766-845c-866826d39e31"
+        "uid": "b57fe806-4b00-4768-bfaf-fc6e99c2d5b9"
       },
       "spec": {
         "persistentVolumeClaimRetentionPolicy": {
@@ -2439,9 +3981,6 @@
         "serviceName": "sessions-rs-svc",
         "template": {
           "metadata": {
-            "annotations": {
-              "mongodb.com/restartedAt": "2026-10-04T06:18:16.376Z"
-            },
             "labels": {
               "app": "sessions-rs-svc"
             }
@@ -2460,7 +3999,7 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   }
                 ],
                 "image": "quay.io/mongodb/mongodb-community-server:7.0.21-ubi8",
@@ -2472,8 +4011,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "200M"
                   }
                 },
                 "securityContext": {
@@ -2523,15 +4062,15 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/var/log/mongodb-mms-automation/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "AUTOMATION_CONFIG_MAP",
-                    "value": "sessions-rs-config"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "HEADLESS_AGENT",
-                    "value": "true"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "POD_NAMESPACE",
@@ -2564,8 +4103,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "100M"
                   }
                 },
                 "securityContext": {
@@ -2629,8 +4168,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -2666,8 +4205,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -2785,11 +4324,11 @@
         "availableReplicas": 2,
         "collisionCount": 0,
         "currentReplicas": 2,
-        "currentRevision": "sessions-rs-85f5c49d56",
-        "observedGeneration": 8,
+        "currentRevision": "sessions-rs-7589dcd8f9",
+        "observedGeneration": 1,
         "readyReplicas": 2,
         "replicas": 2,
-        "updateRevision": "sessions-rs-85f5c49d56",
+        "updateRevision": "sessions-rs-7589dcd8f9",
         "updatedReplicas": 2
       }
     },
@@ -2797,8 +4336,8 @@
       "apiVersion": "apps/v1",
       "kind": "StatefulSet",
       "metadata": {
-        "creationTimestamp": "2026-10-04T04:11:05Z",
-        "generation": 6,
+        "creationTimestamp": "2026-10-05T13:37:40Z",
+        "generation": 1,
         "name": "sessions-rs-arb",
         "namespace": "mongodb",
         "ownerReferences": [
@@ -2808,12 +4347,12 @@
             "controller": true,
             "kind": "MongoDBCommunity",
             "name": "sessions-rs",
-            "uid": "f14e5625-ede8-49fd-934e-84948b80fc4f"
+            "uid": "92605b95-8da0-4b44-a2c3-54a214fb0555"
           }
         ],
-        "resourceVersion": "558533",
+        "resourceVersion": "435285",
         "selfLink": "/apis/apps/v1/namespaces/mongodb/statefulsets/sessions-rs-arb",
-        "uid": "f05d59e6-bfb6-4a81-8614-17c7c7a03939"
+        "uid": "b84edfca-1546-4642-8400-b46a66bfed0b"
       },
       "spec": {
         "persistentVolumeClaimRetentionPolicy": {
@@ -2831,9 +4370,6 @@
         "serviceName": "sessions-rs-svc",
         "template": {
           "metadata": {
-            "annotations": {
-              "mongodb.com/restartedAt": "2026-10-04T06:18:16.376Z"
-            },
             "labels": {
               "app": "sessions-rs-svc"
             }
@@ -2852,7 +4388,7 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   }
                 ],
                 "image": "quay.io/mongodb/mongodb-community-server:7.0.21-ubi8",
@@ -2864,8 +4400,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "200M"
                   }
                 },
                 "securityContext": {
@@ -2915,15 +4451,15 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/var/log/mongodb-mms-automation/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "AUTOMATION_CONFIG_MAP",
-                    "value": "sessions-rs-config"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "HEADLESS_AGENT",
-                    "value": "true"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "POD_NAMESPACE",
@@ -2956,8 +4492,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "100M"
                   }
                 },
                 "securityContext": {
@@ -3021,8 +4557,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -3058,8 +4594,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -3177,11 +4713,11 @@
         "availableReplicas": 1,
         "collisionCount": 0,
         "currentReplicas": 1,
-        "currentRevision": "sessions-rs-arb-85f5c49d56",
-        "observedGeneration": 6,
+        "currentRevision": "sessions-rs-arb-7589dcd8f9",
+        "observedGeneration": 1,
         "readyReplicas": 1,
         "replicas": 1,
-        "updateRevision": "sessions-rs-arb-85f5c49d56",
+        "updateRevision": "sessions-rs-arb-7589dcd8f9",
         "updatedReplicas": 1
       }
     },
@@ -3189,8 +4725,8 @@
       "apiVersion": "apps/v1",
       "kind": "StatefulSet",
       "metadata": {
-        "creationTimestamp": "2026-10-04T04:11:05Z",
-        "generation": 1,
+        "creationTimestamp": "2026-10-18T01:06:20Z",
+        "generation": 2,
         "name": "upgrade-rs",
         "namespace": "mongodb",
         "ownerReferences": [
@@ -3200,12 +4736,12 @@
             "controller": true,
             "kind": "MongoDBCommunity",
             "name": "upgrade-rs",
-            "uid": "04177199-8528-4952-bb07-9c322663505a"
+            "uid": "86ba640a-f4ae-4a7f-9a31-84d8e19610f1"
           }
         ],
-        "resourceVersion": "517279",
+        "resourceVersion": "461084",
         "selfLink": "/apis/apps/v1/namespaces/mongodb/statefulsets/upgrade-rs",
-        "uid": "1d14705f-54f4-4e7a-923a-7c902e7f6635"
+        "uid": "adc5befb-94dd-4389-9449-3156039d6c1e"
       },
       "spec": {
         "persistentVolumeClaimRetentionPolicy": {
@@ -3213,7 +4749,7 @@
           "whenScaled": "Retain"
         },
         "podManagementPolicy": "OrderedReady",
-        "replicas": 1,
+        "replicas": 2,
         "revisionHistoryLimit": 10,
         "selector": {
           "matchLabels": {
@@ -3241,7 +4777,7 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   }
                 ],
                 "image": "quay.io/mongodb/mongodb-community-server:8.0.999-ubi8",
@@ -3253,8 +4789,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "200M"
                   }
                 },
                 "securityContext": {
@@ -3304,15 +4840,15 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/var/log/mongodb-mms-automation/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "AUTOMATION_CONFIG_MAP",
-                    "value": "upgrade-rs-config"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "HEADLESS_AGENT",
-                    "value": "true"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "POD_NAMESPACE",
@@ -3345,8 +4881,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "100M"
                   }
                 },
                 "securityContext": {
@@ -3410,8 +4946,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -3447,8 +4983,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -3515,7 +5051,7 @@
           }
         },
         "updateStrategy": {
-          "type": "RollingUpdate"
+          "type": "OnDelete"
         },
         "volumeClaimTemplates": [
           {
@@ -3563,13 +5099,14 @@
         ]
       },
       "status": {
-        "availableReplicas": 0,
+        "availableReplicas": 1,
         "collisionCount": 0,
         "currentReplicas": 1,
-        "currentRevision": "upgrade-rs-545c6c5499",
-        "observedGeneration": 1,
-        "replicas": 1,
-        "updateRevision": "upgrade-rs-545c6c5499",
+        "currentRevision": "upgrade-rs-5499bff998",
+        "observedGeneration": 2,
+        "readyReplicas": 1,
+        "replicas": 2,
+        "updateRevision": "upgrade-rs-bc945cf64",
         "updatedReplicas": 1
       }
     },
@@ -3577,8 +5114,8 @@
       "apiVersion": "apps/v1",
       "kind": "StatefulSet",
       "metadata": {
-        "creationTimestamp": "2026-10-04T04:11:05Z",
-        "generation": 1,
+        "creationTimestamp": "2026-10-18T01:06:20Z",
+        "generation": 2,
         "name": "upgrade-rs-arb",
         "namespace": "mongodb",
         "ownerReferences": [
@@ -3588,12 +5125,12 @@
             "controller": true,
             "kind": "MongoDBCommunity",
             "name": "upgrade-rs",
-            "uid": "04177199-8528-4952-bb07-9c322663505a"
+            "uid": "86ba640a-f4ae-4a7f-9a31-84d8e19610f1"
           }
         ],
-        "resourceVersion": "517211",
+        "resourceVersion": "458723",
         "selfLink": "/apis/apps/v1/namespaces/mongodb/statefulsets/upgrade-rs-arb",
-        "uid": "c4b5ca3e-4d74-4fc5-85cb-16db008afa31"
+        "uid": "1418c5b3-3deb-4841-8187-e03c32de8f98"
       },
       "spec": {
         "persistentVolumeClaimRetentionPolicy": {
@@ -3629,7 +5166,7 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   }
                 ],
                 "image": "quay.io/mongodb/mongodb-community-server:8.0.999-ubi8",
@@ -3641,8 +5178,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "200M"
                   }
                 },
                 "securityContext": {
@@ -3692,15 +5229,15 @@
                 "env": [
                   {
                     "name": "AGENT_STATUS_FILEPATH",
-                    "value": "/var/log/mongodb-mms-automation/healthstatus/agent-health-status.json"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "AUTOMATION_CONFIG_MAP",
-                    "value": "upgrade-rs-config"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "HEADLESS_AGENT",
-                    "value": "true"
+                    "value": "redacted-by-fixture-export"
                   },
                   {
                     "name": "POD_NAMESPACE",
@@ -3733,8 +5270,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "100M"
                   }
                 },
                 "securityContext": {
@@ -3798,8 +5335,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -3835,8 +5372,8 @@
                     "memory": "500M"
                   },
                   "requests": {
-                    "cpu": "500m",
-                    "memory": "400M"
+                    "cpu": "25m",
+                    "memory": "50M"
                   }
                 },
                 "securityContext": {
@@ -3903,7 +5440,7 @@
           }
         },
         "updateStrategy": {
-          "type": "RollingUpdate"
+          "type": "OnDelete"
         },
         "volumeClaimTemplates": [
           {
@@ -3953,10 +5490,10 @@
       "status": {
         "availableReplicas": 0,
         "collisionCount": 0,
-        "currentRevision": "upgrade-rs-arb-545c6c5499",
-        "observedGeneration": 1,
+        "currentRevision": "upgrade-rs-arb-5499bff998",
+        "observedGeneration": 2,
         "replicas": 0,
-        "updateRevision": "upgrade-rs-arb-545c6c5499"
+        "updateRevision": "upgrade-rs-arb-bc945cf64"
       }
     }
   ],

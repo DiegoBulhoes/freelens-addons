@@ -1,0 +1,150 @@
+# A second namespace the operator watches, with one healthy set: the pages are keyed by namespace.
+# The operator's own Roles exist only in its namespace, so this one gets copies of them.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mongodb-kubernetes-appdb
+  namespace: mongodb-apps
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: mongodb-kubernetes-appdb
+  namespace: mongodb-apps
+rules:
+  - apiGroups: [""]
+    resources: [secrets]
+    verbs: [get]
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [patch, delete, get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: mongodb-kubernetes-appdb
+  namespace: mongodb-apps
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: mongodb-kubernetes-appdb
+subjects:
+  - kind: ServiceAccount
+    name: mongodb-kubernetes-appdb
+    namespace: mongodb-apps
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: mongodb-kubernetes-operator
+  namespace: mongodb-apps
+rules:
+  - apiGroups: [""]
+    resources: [services]
+    verbs: [get, list, watch, create, update, delete]
+  - apiGroups: [""]
+    resources: [secrets, configmaps]
+    verbs: [get, list, create, update, delete, watch]
+  - apiGroups: [apps]
+    resources: [statefulsets, deployments]
+    verbs: [create, get, list, watch, delete, update]
+  - apiGroups: [batch]
+    resources: [jobs]
+    verbs: [create, get, list, watch, delete]
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [get, list, watch, delete, deletecollection]
+  - apiGroups: [""]
+    resources: [persistentvolumeclaims]
+    verbs: [get, delete, list, watch, patch, update]
+  - apiGroups: [mongodbcommunity.mongodb.com]
+    resources:
+      - mongodbcommunity
+      - mongodbcommunity/status
+      - mongodbcommunity/spec
+      - mongodbcommunity/finalizers
+    verbs: ["*"]
+  # Its cache watches every MCK kind; one it cannot list stops it reconciling anything here.
+  - apiGroups: [mongodb.com]
+    resources:
+      - mongodb
+      - mongodb/finalizers
+      - mongodb/status
+      - mongodbusers
+      - mongodbusers/finalizers
+      - mongodbusers/status
+      - opsmanagers
+      - opsmanagers/finalizers
+      - opsmanagers/status
+      - mongodbmulticluster
+      - mongodbmulticluster/finalizers
+      - mongodbmulticluster/status
+      - mongodbsearch
+      - mongodbsearch/finalizers
+      - mongodbsearch/status
+    verbs: ["*"]
+  - apiGroups: [ai.mongodb.com]
+    resources: [voyageais, voyageais/finalizers, voyageais/status]
+    verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: mongodb-kubernetes-operator
+  namespace: mongodb-apps
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: mongodb-kubernetes-operator
+subjects:
+  - kind: ServiceAccount
+    name: mongodb-kubernetes-operator
+    namespace: mongodb
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: orders-admin-password
+  namespace: mongodb-apps
+stringData:
+  password: dev-orders-not-a-secret
+---
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: orders-rs
+  namespace: mongodb-apps
+spec:
+  type: ReplicaSet
+  members: 1
+  version: "8.0.12"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: orders-admin
+      db: admin
+      passwordSecretRef:
+        name: orders-admin-password
+      roles:
+        - name: clusterAdmin
+          db: admin
+        - name: readWriteAnyDatabase
+          db: admin
+      scramCredentialsSecretName: orders-admin-scram
+  # Small requests: the whole seed has to fit a CI runner's four CPUs.
+  statefulSet:
+    spec:
+      template:
+        spec:
+          # The scheduler counts the largest init container too.
+          initContainers:
+            - name: mongod-posthook
+              resources: { requests: { cpu: 25m, memory: 50M } }
+            - name: mongodb-agent-readinessprobe
+              resources: { requests: { cpu: 25m, memory: 50M } }
+          containers:
+            - name: mongod
+              resources: { requests: { cpu: 25m, memory: 200M } }
+            - name: mongodb-agent
+              resources: { requests: { cpu: 25m, memory: 100M } }

@@ -1,53 +1,85 @@
 import { useEffect, useState } from "react";
 
-/** 15 x 2s = 30s, to outlast a slow cluster connection. */
-const MAX_LOAD_ATTEMPTS = 15;
+import { afterLoad, failedNamespacesOf } from "../api/shared/store-state";
+
 const RETRY_DELAY_MS = 2000;
 
 interface LoadableStore {
-  loadAll(): Promise<unknown>;
+  loadAll(options: {
+    namespaces?: string[];
+    onLoadFailure: (error: unknown) => void;
+  }): Promise<unknown>;
   readonly isLoaded: boolean;
   subscribe(): () => void;
 }
 
+export interface LoadedStore {
+  gaveUp: boolean;
+  /** The scope this mount's own load completed for; undefined until it has. */
+  loadedFor?: string;
+  /** The namespaces whose last list was refused or never answered. */
+  failed: ReadonlySet<string>;
+}
+
+const NONE: ReadonlySet<string> = new Set();
+
 /**
- * Loads every store on every mount and scope change: the stores are shared with the host, and
+ * Loads the store on every mount and scope change: stores are shared with the host, and
  * isLoaded only says a list arrived once, under whatever scope was current then.
  */
-export function useLoadedStores(stores: (LoadableStore | undefined)[], scope = ""): boolean {
+export function useLoadedStore(
+  store: LoadableStore | undefined,
+  scope: string,
+  kind: string,
+): LoadedStore {
   const [gaveUp, setGaveUp] = useState(false);
-  const ready = stores.every(Boolean);
+  const [loadedFor, setLoadedFor] = useState<string>();
+  const [failed, setFailed] = useState<ReadonlySet<string>>(NONE);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: the stores themselves are the identity; the array is fresh every render.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: kind only names the store in a warning.
   useEffect(() => {
-    if (!ready) return;
+    if (!store) return;
 
-    const loaded = stores as LoadableStore[];
+    const namespaces = scope ? scope.split(",") : [];
     let attempts = 0;
-    setGaveUp(false);
     let retryTimer: ReturnType<typeof setTimeout> | undefined;
     let cancelled = false;
-    let unsubscribers: (() => void)[] = [];
+    let unsubscribe: (() => void) | undefined;
+
+    setGaveUp(false);
+    setFailed(NONE);
+    setLoadedFor(undefined);
 
     const loadUntilReady = async () => {
       if (cancelled) return;
 
-      // loadAll() swallows its failure, hence the retry.
-      await Promise.all(loaded.map((store) => store.loadAll()));
+      const refused = new Set<string>();
+
+      // Without onLoadFailure one refused namespace makes the host empty the shared store.
+      await store.loadAll({
+        namespaces: namespaces.length > 0 ? namespaces : undefined,
+        onLoadFailure: (error: unknown) => {
+          console.warn(`[mongodb] could not list ${kind}`, error);
+          for (const namespace of failedNamespacesOf(error, namespaces)) refused.add(namespace);
+        },
+      });
 
       attempts += 1;
 
       if (cancelled) return;
 
-      if (loaded.every((store) => store.isLoaded)) {
-        // Only now: subscribe() watches from the list's resource version, and before the list
-        // returns it has none, so it opens no watch at all and the page never updates.
-        unsubscribers = loaded.map((store) => store.subscribe());
-
-        return;
+      if (store.isLoaded) {
+        // Only now: a watch starts from the list's resource version, so a re-list subscribes again.
+        unsubscribe?.();
+        unsubscribe = store.subscribe();
+        setFailed(refused);
+        setLoadedFor(scope);
       }
 
-      if (attempts >= MAX_LOAD_ATTEMPTS) {
+      const next = afterLoad({ loaded: store.isLoaded, failed: refused.size, attempts });
+
+      if (next === "done") return;
+      if (next === "give-up") {
         setGaveUp(true);
 
         return;
@@ -61,9 +93,9 @@ export function useLoadedStores(stores: (LoadableStore | undefined)[], scope = "
     return () => {
       cancelled = true;
       if (retryTimer) clearTimeout(retryTimer);
-      for (const unsubscribe of unsubscribers) unsubscribe();
+      unsubscribe?.();
     };
-  }, [ready, scope, ...stores]);
+  }, [store, scope]);
 
-  return gaveUp;
+  return { gaveUp, loadedFor, failed };
 }
