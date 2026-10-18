@@ -1,5 +1,10 @@
-import { hasFix, identityOf, sortBySeverity } from "../api/findings";
-import type { Vulnerability } from "../api/types";
+import { useState } from "react";
+import { cutTo } from "../api/shared/cut";
+import type { Vulnerability } from "../api/shared/types";
+import { findingLink } from "../api/vulnerabilities/check-link";
+import { hasFix, identityOf, sortBySeverity } from "../api/vulnerabilities/findings";
+import { SeverityTag } from "../components/severity-tag";
+import { ShowAll } from "../components/show-all";
 
 const MAX_SHOWN = 100;
 
@@ -10,9 +15,11 @@ export function FindingTable({
   vulnerabilities: Vulnerability[];
   empty: string;
 }) {
+  const [all, setAll] = useState(false);
+
   if (vulnerabilities.length === 0) return <p className="Trivy-section__note">{empty}</p>;
 
-  const shown = sortBySeverity(vulnerabilities).slice(0, MAX_SHOWN);
+  const { shown, hidden } = cutTo(sortBySeverity(vulnerabilities), MAX_SHOWN, all);
 
   return (
     <>
@@ -26,44 +33,47 @@ export function FindingTable({
           </tr>
         </thead>
         <tbody>
-          {shown.map((finding) => (
-            <tr key={identityOf(finding)}>
-              <td className="Trivy-table__shrink">
-                <span className={`Trivy-tag Trivy-severity--${finding.severity ?? "UNKNOWN"}`}>
-                  {finding.severity ?? "UNKNOWN"}
-                </span>
-              </td>
-              <td className="Trivy-table__shrink">
-                {finding.primaryLink ? (
-                  <a
-                    className="Trivy-link"
-                    href={finding.primaryLink}
-                    target="_blank"
-                    rel="noreferrer"
-                    title="Opens the advisory for this CVE"
-                  >
-                    {finding.vulnerabilityID}
-                  </a>
-                ) : (
-                  <code>{finding.vulnerabilityID}</code>
-                )}
-              </td>
-              <td className="Trivy-muted">
-                <code>{finding.resource}</code>
-              </td>
-              <td className="Trivy-table__shrink Trivy-muted">
-                {hasFix(finding) ? <code>{finding.fixedVersion}</code> : "none published"}
-              </td>
-            </tr>
-          ))}
+          {shown.map((finding) => {
+            const link = findingLink(finding.primaryLink);
+
+            return (
+              <tr key={identityOf(finding)}>
+                <td className="Trivy-table__shrink">
+                  <SeverityTag severity={finding.severity} />
+                </td>
+                <td className="Trivy-table__shrink">
+                  {link ? (
+                    <a
+                      className="Trivy-link"
+                      href={link}
+                      target="_blank"
+                      rel="noreferrer"
+                      title="Opens the advisory for this CVE"
+                    >
+                      {finding.vulnerabilityID}
+                    </a>
+                  ) : (
+                    <code>{finding.vulnerabilityID}</code>
+                  )}
+                </td>
+                <td className="Trivy-muted">
+                  <code>{finding.resource}</code>
+                </td>
+                <td className="Trivy-table__shrink Trivy-muted">
+                  {hasFix(finding) ? <code>{finding.fixedVersion}</code> : "none published"}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
 
-      {vulnerabilities.length > shown.length && (
-        <p className="Trivy-section__note">
-          Showing {shown.length} of {vulnerabilities.length}. Narrow it with the filters above.
-        </p>
-      )}
+      <ShowAll
+        hidden={hidden}
+        total={vulnerabilities.length}
+        what="findings"
+        onShowAll={() => setAll(true)}
+      />
     </>
   );
 }

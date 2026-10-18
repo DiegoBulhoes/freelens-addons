@@ -1,4 +1,4 @@
-# The Trivy operator.
+# The Trivy operator, and a Deployment for states.sh to stall.
 
 TRIVY_OPERATOR_VERSION="v0.34.0"
 
@@ -10,3 +10,6 @@ kubectl -n trivy-system patch configmap trivy-operator-trivy-config --type merge
   -p '{"data":{"trivy.resources.requests.cpu":"25m"}}'
 kubectl -n trivy-system set env deployment/trivy-operator OPERATOR_CONCURRENT_SCAN_JOBS_LIMIT=5
 wait_deploy trivy-system trivy-operator
+
+echo "==> Trivy samples"
+apply samples.yaml

@@ -1,13 +1,22 @@
-import type { PackageUpgrade } from "../api/findings";
+import { useState } from "react";
+
+import { cutTo } from "../api/shared/cut";
+import type { PackageUpgrade } from "../api/vulnerabilities/findings";
+import { SeverityTag } from "../components/severity-tag";
+import { ShowAll } from "../components/show-all";
 
 const MAX_SHOWN = 12;
 
 export function PackageTable({ upgrades }: { upgrades: PackageUpgrade[] }) {
+  const [all, setAll] = useState(false);
+
   if (upgrades.length === 0) {
-    return <p className="Trivy-section__note">No package here has a published fix.</p>;
+    return (
+      <p className="Trivy-section__note">No upgrade clears a critical or high finding here.</p>
+    );
   }
 
-  const shown = upgrades.slice(0, MAX_SHOWN);
+  const { shown, hidden } = cutTo(upgrades, MAX_SHOWN, all);
 
   return (
     <>
@@ -23,9 +32,7 @@ export function PackageTable({ upgrades }: { upgrades: PackageUpgrade[] }) {
           {shown.map((upgrade) => (
             <tr key={`${upgrade.resource}@${upgrade.installedVersion}`}>
               <td className="Trivy-table__shrink">
-                <span className={`Trivy-tag Trivy-severity--${upgrade.worstSeverity}`}>
-                  {upgrade.worstSeverity}
-                </span>{" "}
+                <SeverityTag severity={upgrade.worstSeverity} />{" "}
                 <code>{upgrade.resource || "—"}</code>
               </td>
               <td className="Trivy-muted">
@@ -39,11 +46,12 @@ export function PackageTable({ upgrades }: { upgrades: PackageUpgrade[] }) {
         </tbody>
       </table>
 
-      {upgrades.length > shown.length && (
-        <p className="Trivy-section__note">
-          and {upgrades.length - shown.length} more packages with a published fix.
-        </p>
-      )}
+      <ShowAll
+        hidden={hidden}
+        total={upgrades.length}
+        what="packages with a fix for a critical or high finding"
+        onShowAll={() => setAll(true)}
+      />
     </>
   );
 }

@@ -1,12 +1,12 @@
-/* Domain only: everything else comes from design.css. Severities use Trivy's own palette. */
+/* Domain only: everything else comes from design.css. Severities map onto the host's tones. */
 /* Also on the severity marks: the host's Vulnerability Reports list has no `.Trivy` ancestor. */
 
 :is(.Trivy, [class*="Trivy-severity--"]) {
-  --trivy-critical: #d32029;
-  --trivy-high: #e8703a;
-  --trivy-medium: #e8b339;
-  --trivy-low: #3c9ae8;
-  --trivy-unknown: #8c8c8c;
+  --trivy-critical: var(--colorError);
+  --trivy-high: var(--colorWarning);
+  --trivy-medium: var(--colorInfo);
+  --trivy-low: var(--textColorSecondary);
+  --trivy-unknown: var(--textColorSecondary);
 }
 
 .Trivy-severity--CRITICAL {

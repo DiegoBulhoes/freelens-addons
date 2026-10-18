@@ -1,21 +1,29 @@
 import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 import { useState } from "react";
-
-import { COVERAGE_STATUS } from "../api/coverage";
-import { totalOf } from "../api/severity";
-import { subjectKey } from "../api/subjects";
+import { workloadCommandsFor } from "../api/shared/commands";
+import { cutTo } from "../api/shared/cut";
+import { hostListOf } from "../api/shared/host-links";
+import { subjectKey } from "../api/shared/subjects";
+import { describeAge, formatTime } from "../api/shared/time";
+import { fixPublished } from "../api/vulnerabilities/findings";
+import { COVERAGE_STATUS } from "../api/workloads/coverage";
 import {
+  describeLowerUpgrades,
   getWorkloadReport,
   ticketText,
   unfixableOf,
+  upgradesClearing,
   type WorkloadReport,
   workloadVerdict,
-} from "../api/workload-report";
-import type { WorkloadRow } from "../api/workload-rows";
+} from "../api/workloads/workload-report";
+import type { WorkloadRow } from "../api/workloads/workload-rows";
 import { CheckLink } from "../components/check-link";
+import { CommandsSection } from "../components/commands-section";
+import { DrawerLink } from "../components/drawer-link";
 import { ObjectDrawer } from "../components/object-drawer";
 import { SeverityCounts } from "../components/severity-counts";
+import { ShowAll } from "../components/show-all";
 import { Status } from "../components/status";
 import type { TrivyStores } from "../hooks/use-trivy-stores";
 import { useWorkloadPods } from "../hooks/use-workload-pods";
@@ -33,7 +41,7 @@ const SHOWN_CHECKS = 6;
 async function copyForTicket(report: WorkloadReport): Promise<void> {
   try {
     await navigator.clipboard.writeText(ticketText(report));
-    Notifications.ok(`${report.upgrades.length} upgrades copied.`);
+    Notifications.ok(`${upgradesClearing(report, "HIGH").length} upgrades copied.`);
   } catch (error) {
     Notifications.checkedError(error, "Could not copy the upgrade list");
   }
@@ -58,11 +66,12 @@ export const WorkloadDrawer = observer(
         state={row && report ? workloadVerdict(row.state, report) : undefined}
         section="trivy-workload"
         actions={
-          report && report.upgrades.length > 0
+          report && upgradesClearing(report, "HIGH").length > 0
             ? [
                 {
                   icon: "content_copy",
-                  title: "Copies the upgrades as text for a ticket; changes nothing in the cluster",
+                  title:
+                    "Copies the upgrades that clear critical and high findings as text for a ticket; changes nothing in the cluster",
                   onClick: () => void copyForTicket(report),
                 },
               ]
@@ -89,14 +98,64 @@ const WorkloadBody = observer(
   ({ row, report, onClose }: { row: WorkloadRow; report: WorkloadReport; onClose: () => void }) => {
     const pods = useWorkloadPods(row.subject);
     const [view, setView] = useState<View>("packages");
+    const [allChecks, setAllChecks] = useState(false);
+    const checks = cutTo(report.failedChecks, SHOWN_CHECKS, allChecks);
     const unfixable = unfixableOf(report, "HIGH");
+    const clearing = upgradesClearing(report, "HIGH");
+    const lowerUpgrades = describeLowerUpgrades(report, "HIGH");
     const coverage = COVERAGE_STATUS[row.state];
+    const fix = fixPublished(report.vulnerabilities);
+    const owner = row.deployment;
+    const views: { view: View; label: string; title: string; count: number }[] = [
+      {
+        view: "packages",
+        label: "By package",
+        title: "Shows the package upgrades that clear critical and high findings",
+        count: clearing.length,
+      },
+      {
+        view: "unfixable",
+        label: "No fix",
+        title: "Shows the critical and high findings no upgrade clears yet",
+        count: unfixable.length,
+      },
+      {
+        view: "all",
+        label: "All",
+        title: "Shows every finding, worst first",
+        count: report.vulnerabilities.length,
+      },
+    ];
 
     return (
       <>
         <dl className="Trivy-facts">
           <dt>Namespace</dt>
           <dd>{row.subject.namespace}</dd>
+          <dt>{row.subject.kind}</dt>
+          <dd>
+            <DrawerLink
+              title={`Opens the ${row.subject.kind}s list, narrowed to this one`}
+              path={hostListOf(row.subject.kind, row.subject.name)}
+              onLeave={onClose}
+            >
+              {row.subject.name}
+            </DrawerLink>
+          </dd>
+          {owner && (
+            <>
+              <dt>Deployment</dt>
+              <dd>
+                <DrawerLink
+                  title="Opens the Deployments list, narrowed to this ReplicaSet's owner"
+                  path={hostListOf("Deployment", owner)}
+                  onLeave={onClose}
+                >
+                  {owner}
+                </DrawerLink>
+              </dd>
+            </>
+          )}
           <dt>Coverage</dt>
           <dd>
             <Status tone={coverage.tone} label={coverage.label} />
@@ -110,13 +169,9 @@ const WorkloadBody = observer(
             )}
           </dd>
           <dt>Fix published</dt>
-          <dd>
-            {report.hasVulnerabilityReport
-              ? `${row.fixableCount} of ${totalOf(report.summary)}`
-              : "—"}
-          </dd>
+          <dd>{report.hasVulnerabilityReport ? `${fix.fixable} of ${fix.total}` : "—"}</dd>
           <dt>Last scan</dt>
-          <dd>{report.scannedAt ?? "—"}</dd>
+          <dd title={describeAge(report.scannedAt, Date.now())}>{formatTime(report.scannedAt)}</dd>
         </dl>
 
         {report.hasVulnerabilityReport && (
@@ -126,37 +181,28 @@ const WorkloadBody = observer(
                 {view === "packages" ? "Packages to upgrade" : "Findings"}
               </h3>
               <div className="Trivy-filters">
-                <button
-                  type="button"
-                  className="Trivy-filter"
-                  aria-pressed={view === "packages"}
-                  title="Shows the package upgrades that clear critical and high findings"
-                  onClick={() => setView("packages")}
-                >
-                  By package
-                </button>
-                <button
-                  type="button"
-                  className="Trivy-filter"
-                  aria-pressed={view === "unfixable"}
-                  title="Shows the critical and high findings no upgrade clears yet"
-                  onClick={() => setView("unfixable")}
-                >
-                  No fix ({unfixable.length})
-                </button>
-                <button
-                  type="button"
-                  className="Trivy-filter"
-                  aria-pressed={view === "all"}
-                  title="Shows every finding, worst first"
-                  onClick={() => setView("all")}
-                >
-                  All {totalOf(report.summary)}
-                </button>
+                {views.map(({ view: key, label, title, count }) => (
+                  <button
+                    key={key}
+                    type="button"
+                    className="Trivy-filter"
+                    aria-pressed={view === key}
+                    title={title}
+                    onClick={() => setView(key)}
+                  >
+                    {label}
+                    <span className="Trivy-filter__count">{count}</span>
+                  </button>
+                ))}
               </div>
             </div>
 
-            {view === "packages" && <PackageTable upgrades={report.upgrades} />}
+            {view === "packages" && (
+              <>
+                <PackageTable upgrades={clearing} />
+                {lowerUpgrades && <p className="Trivy-section__note">{lowerUpgrades}</p>}
+              </>
+            )}
             {view === "unfixable" && (
               <FindingTable
                 vulnerabilities={unfixable}
@@ -172,7 +218,7 @@ const WorkloadBody = observer(
           </section>
         )}
 
-        <PodList pods={pods} onLeave={onClose} />
+        <PodList pods={pods.pods} state={pods.state} onLeave={onClose} />
 
         <ContainerDetails containers={report.containers} now={Date.now()} />
 
@@ -181,13 +227,13 @@ const WorkloadBody = observer(
           <dl className="Trivy-facts">
             <dt>Config checks failing</dt>
             <dd>{report.hasConfigAuditReport ? report.failedChecks.length : "no audit report"}</dd>
-            <dt>Exposed secrets</dt>
-            <dd>{report.exposedSecretCount}</dd>
+            <dt>Exposed secrets, all severities</dt>
+            <dd>{report.exposedSecrets.length}</dd>
           </dl>
 
-          {report.failedChecks.length > 0 && (
+          {checks.shown.length > 0 && (
             <div className="Trivy-list">
-              {report.failedChecks.slice(0, SHOWN_CHECKS).map((check) => (
+              {checks.shown.map((check) => (
                 <div key={check.checkID} className="Trivy-row">
                   <span
                     className={`Trivy-row__state Trivy-severity--${check.severity ?? "UNKNOWN"}`}
@@ -205,12 +251,43 @@ const WorkloadBody = observer(
               ))}
             </div>
           )}
-          {report.failedChecks.length > SHOWN_CHECKS && (
-            <p className="Trivy-section__note">
-              and {report.failedChecks.length - SHOWN_CHECKS} more failing checks.
-            </p>
+          <ShowAll
+            hidden={checks.hidden}
+            total={report.failedChecks.length}
+            what="failing checks"
+            onShowAll={() => setAllChecks(true)}
+          />
+
+          {report.exposedSecrets.length > 0 && (
+            <div className="Trivy-list" data-section="trivy-workload-secrets">
+              {report.exposedSecrets.map((secret) => (
+                <div key={secret.key} className="Trivy-row">
+                  <span className={`Trivy-row__state Trivy-severity--${secret.severity}`}>
+                    {secret.severity}
+                  </span>
+                  <span className="Trivy-row__main">
+                    <span>{secret.title ?? secret.ruleID ?? "Secret"}</span>
+                    {secret.target && (
+                      <span className="Trivy-row__reason">
+                        <code>{secret.target}</code>
+                      </span>
+                    )}
+                  </span>
+                  {secret.ruleID && (
+                    <span className="Trivy-row__aside">
+                      <code>{secret.ruleID}</code>
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
           )}
         </section>
+
+        <CommandsSection
+          commands={workloadCommandsFor(row.subject, row.state)}
+          section="trivy-workload-commands"
+        />
       </>
     );
   },

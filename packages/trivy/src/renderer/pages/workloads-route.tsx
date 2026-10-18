@@ -1,34 +1,31 @@
-import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
-
-import { COVERAGE_STATUS } from "../api/coverage";
-import { subjectKey } from "../api/subjects";
-import type { ReportSubject } from "../api/types";
+import { subjectKey } from "../api/shared/subjects";
+import { countCell } from "../api/shared/table";
+import type { ReportSubject } from "../api/shared/types";
+import { COVERAGE_STATUS } from "../api/workloads/coverage";
 import {
-  countIn,
+  type CountColumn,
+  countInColumn,
   describeEmpty,
   FILTER_LABELS,
   FILTER_TITLES,
-  isWorkloadFilter,
+  filterCounts,
+  filterFromRoute,
   rowOf,
   selectWorkloads,
   type WorkloadColumn,
   type WorkloadFilter,
   workloadSearchTexts,
   workloadSortValue,
-} from "../api/workload-filter";
-import { getWorkloadRows, sortRows, type WorkloadRow } from "../api/workload-rows";
+} from "../api/workloads/workload-filter";
+import { getWorkloadRows, sortWorkloads, type WorkloadRow } from "../api/workloads/workload-rows";
 import { type Column, ListPage } from "../components/list-page";
-import { NamespaceFilter } from "../components/namespace-filter";
+import { LoadGaps } from "../components/load-gaps";
 import { Status } from "../components/status";
-import { TrivyStyles } from "../components/styles";
 import { useTrivyStores } from "../hooks/use-trivy-stores";
 import { WorkloadDrawer } from "../workload/workload-drawer";
-
-const {
-  Component: { Spinner },
-} = Renderer;
+import { PageGate } from "./page-head";
 
 // A link names a workload and a filter in the route params; the page opens on them.
 export interface WorkloadsRouteParams {
@@ -38,7 +35,7 @@ export interface WorkloadsRouteParams {
   filter?: { get(): string };
 }
 
-export function subjectFrom(params?: WorkloadsRouteParams): ReportSubject | undefined {
+function subjectFromParams(params?: WorkloadsRouteParams): ReportSubject | undefined {
   const namespace = params?.namespace.get() ?? "";
   const kind = params?.kind.get() ?? "";
   const name = params?.name.get() ?? "";
@@ -48,21 +45,24 @@ export function subjectFrom(params?: WorkloadsRouteParams): ReportSubject | unde
   return { namespace, kind, name };
 }
 
-function countColumn(
-  title: "Critical" | "High" | "Other" | "Fix published",
-  severity?: "CRITICAL" | "HIGH",
-): Column<WorkloadRow> {
+export function paramsOf({ namespace, kind, name }: ReportSubject) {
+  return { namespace, kind, name };
+}
+
+function countColumn(title: CountColumn, severity?: "CRITICAL" | "HIGH"): Column<WorkloadRow> {
   return {
     title,
     className: "Trivy-table__number",
     cell: (row) => {
-      if (row.state !== "scanned") return <span className="Trivy-muted">—</span>;
+      const cell = countCell(row.state === "scanned" ? countInColumn(row, title) : undefined);
 
-      const count = countIn(row, title);
+      if (cell.muted) return <span className="Trivy-muted">{cell.text}</span>;
 
-      if (count === 0) return <span className="Trivy-muted">0</span>;
-
-      return severity ? <span className={`Trivy-severity--${severity}`}>{count}</span> : count;
+      return severity ? (
+        <span className={`Trivy-severity--${severity}`}>{cell.text}</span>
+      ) : (
+        cell.text
+      );
     },
     sortValue: (row) => workloadSortValue(row, title),
   };
@@ -74,7 +74,15 @@ const COLUMNS: Column<WorkloadRow>[] = [
   {
     title: "Workload",
     className: "Trivy-table__fill",
-    cell: (row) => <span title={row.subject.name}>{row.subject.name}</span>,
+    cell: (row) => {
+      const owner = row.deployment;
+
+      return (
+        <span title={owner ? `${row.subject.name}, of Deployment ${owner}` : row.subject.name}>
+          {row.subject.name}
+        </span>
+      );
+    },
     sortValue: sortBy("Workload"),
   },
   {
@@ -105,12 +113,9 @@ const COLUMNS: Column<WorkloadRow>[] = [
 
 export const WorkloadsRoute = observer(({ params }: { params?: WorkloadsRouteParams }) => {
   const stores = useTrivyStores();
-  const [filter, setFilter] = useState<WorkloadFilter>(() => {
-    const fromRoute = params?.filter?.get();
-
-    return isWorkloadFilter(fromRoute) ? fromRoute : "all";
-  });
-  const routed = subjectFrom(params);
+  const routedFilter = params?.filter?.get();
+  const [filter, setFilter] = useState<WorkloadFilter>(() => filterFromRoute(routedFilter));
+  const routed = subjectFromParams(params);
   const routedKey = routed ? subjectKey(routed) : undefined;
   const [openKey, setOpenKey] = useState(routedKey);
 
@@ -119,68 +124,48 @@ export const WorkloadsRoute = observer(({ params }: { params?: WorkloadsRoutePar
     setOpenKey(routedKey);
   }, [routedKey]);
 
-  if (!stores.isReady) {
-    return (
-      <div className="Trivy Trivy-page">
-        <TrivyStyles />
-        <div className="Trivy-page__head">
-          <div>
-            <h1 className="Trivy-page__headline">Workloads</h1>
-            <p className="Trivy-page__subline">
-              Waiting for the Trivy operator's report CRDs. If the operator is not installed here,
-              there is nothing to list.
-            </p>
-          </div>
-          <div className="Trivy-page__actions">
-            <NamespaceFilter />
-          </div>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (routedFilter) setFilter(filterFromRoute(routedFilter));
+  }, [routedFilter]);
 
   // Rows from a partial load would grow under the reader as the other report kinds arrive.
-  if (!stores.hasLoaded) {
+  if (!stores.registered || stores.state !== "ready") {
     return (
-      <div className="Trivy Trivy-page">
-        <TrivyStyles />
-        {stores.gaveUp ? (
-          <div className="Trivy-page__head">
-            <div>
-              <h1 className="Trivy-page__headline">Workloads</h1>
-              <p className="Trivy-page__subline Trivy-page__subline--alarm">
-                The Trivy operator's reports could not be read. Check the connection to the cluster
-                and the permission to list them.
-              </p>
-            </div>
-          </div>
-        ) : (
-          <Spinner center />
-        )}
-      </div>
+      <PageGate
+        title="Workloads"
+        registered={stores.registered}
+        state={stores.state}
+        waiting="Waiting for the Trivy operator's report CRDs. If the operator is not installed here, there is nothing to list."
+        unreachable="The Trivy operator's reports could not be read. Check the connection to the cluster and the permission to list them."
+      />
     );
   }
 
-  const rows = sortRows(getWorkloadRows(stores));
+  const rows = sortWorkloads(getWorkloadRows(stores));
+  const counts = filterCounts(rows);
 
   return (
     <ListPage
       title="Workloads"
       filters={
-        <div className="Trivy-filters">
-          {(Object.keys(FILTER_LABELS) as WorkloadFilter[]).map((key) => (
-            <button
-              key={key}
-              type="button"
-              className="Trivy-filter"
-              aria-pressed={filter === key}
-              title={FILTER_TITLES[key]}
-              onClick={() => setFilter(key)}
-            >
-              {FILTER_LABELS[key]}
-            </button>
-          ))}
-        </div>
+        <>
+          <LoadGaps gaps={stores.gaps} />
+          <div className="Trivy-filters">
+            {(Object.keys(FILTER_LABELS) as WorkloadFilter[]).map((key) => (
+              <button
+                key={key}
+                type="button"
+                className="Trivy-filter"
+                aria-pressed={filter === key}
+                title={FILTER_TITLES[key]}
+                onClick={() => setFilter(key)}
+              >
+                {FILTER_LABELS[key]}
+                <span className="Trivy-filter__count">{counts[key]}</span>
+              </button>
+            ))}
+          </div>
+        </>
       }
       rows={selectWorkloads(rows, filter)}
       columns={COLUMNS}

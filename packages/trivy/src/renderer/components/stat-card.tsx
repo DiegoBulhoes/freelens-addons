@@ -5,7 +5,7 @@ export function StatCard({
   label,
   tone,
   onOpen,
-  title,
+  title = `Opens the list behind ${label}`,
 }: {
   value: number;
   label: string;

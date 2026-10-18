@@ -1,44 +1,79 @@
 import { useEffect, useState } from "react";
-
-// 30s in total: has to outlast a slow cluster connection.
-const MAX_LOAD_ATTEMPTS = 15;
-const RETRY_DELAY_MS = 2000;
+import { MAX_LOAD_ATTEMPTS, RETRY_DELAY_MS } from "../api/shared/retry";
+import {
+  addFailure,
+  afterPass,
+  type Failures,
+  failedNamespacesOf,
+  type LoadedKind,
+  scopeOfKind,
+  settleFailures,
+} from "../api/shared/store-state";
 
 interface LoadableStore {
-  loadAll(options: { onLoadFailure: (error: unknown) => void }): Promise<unknown>;
+  loadAll(options: {
+    namespaces: string[];
+    onLoadFailure: (error: unknown) => void;
+  }): Promise<unknown>;
   readonly isLoaded: boolean;
   subscribe(): () => void;
 }
 
-// Loads every store each pass: a shared store's isLoaded may reflect another page's scope.
-// onLoadFailure stops the host's resetOnError from emptying a shared store and deafening its watches.
-export function useLoadedStores(
-  stores: (LoadableStore | undefined)[],
-  scope: string,
-  what: string,
-): boolean {
+export interface StoreEntry extends LoadedKind {
+  /** Undefined until Freelens registers the kind's API. */
+  store?: LoadableStore;
+}
+
+export interface LoadedStores {
+  gaveUp: boolean;
+  /** The scope this mount's own load completed for; undefined until it has. */
+  loadedFor?: string;
+  failures: Failures;
+}
+
+const NO_FAILURES: Failures = new Map();
+
+// With onLoadFailure the host keeps a shared store's watches but marks it loaded even after a refusal.
+export function useLoadedStores(entries: StoreEntry[], scope: string): LoadedStores {
   const [gaveUp, setGaveUp] = useState(false);
+  const [loadedFor, setLoadedFor] = useState<string>();
+  const [failures, setFailures] = useState<Failures>(NO_FAILURES);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: the stores themselves are the identity; the array is fresh every render.
   useEffect(() => {
-    const loaded = stores.filter((store) => store !== undefined);
+    const registered = entries.filter(
+      (entry): entry is StoreEntry & { store: LoadableStore } => entry.store !== undefined,
+    );
 
-    if (loaded.length === 0) return;
+    if (registered.length === 0) return;
 
+    const namespaces = scope ? scope.split(",") : [];
     let attempts = 0;
-    setGaveUp(false);
+    let pending = registered;
     let retryTimer: ReturnType<typeof setTimeout> | undefined;
     let cancelled = false;
-    let unsubscribers: (() => void)[] = [];
+    const unsubscribers = new Map<string, () => void>();
+
+    setGaveUp(false);
+    setFailures(NO_FAILURES);
+    // A kind registered late may never have loaded, whatever the scope.
+    setLoadedFor(undefined);
 
     const loadUntilReady = async () => {
       if (cancelled) return;
 
+      const failed = new Map<string, Set<string>>();
+
       await Promise.all(
-        loaded.map((store) =>
-          store.loadAll({
-            onLoadFailure: (error: unknown) =>
-              console.warn(`[trivy] could not load ${what}`, error),
+        pending.map((entry) =>
+          entry.store.loadAll({
+            namespaces,
+            onLoadFailure: (error: unknown) => {
+              console.warn(`[trivy] could not load ${entry.kind}s`, error);
+              const where = failedNamespacesOf(error, scopeOfKind(entry, namespaces));
+
+              addFailure(failed, entry.kind, where);
+            },
           }),
         ),
       );
@@ -47,15 +82,23 @@ export function useLoadedStores(
 
       if (cancelled) return;
 
-      if (loaded.every((store) => store.isLoaded)) {
-        // Only now: subscribe() watches from the list's resource version, and before the list
-        // returns it has none, so it opens no watch at all and the page never updates.
-        unsubscribers = loaded.map((store) => store.subscribe());
+      const outcome = afterPass(
+        pending.map((entry) => ({ kind: entry.kind, isLoaded: entry.store.isLoaded })),
+        registered.map((entry) => ({ kind: entry.kind, isLoaded: entry.store.isLoaded })),
+        failed,
+      );
+      const retried = pending.map((entry) => entry.kind);
 
-        return;
+      // A watch starts from its own list's resource version, so a relisted kind subscribes again.
+      for (const entry of pending.filter((each) => outcome.watch.includes(each.kind))) {
+        unsubscribers.get(entry.kind)?.();
+        unsubscribers.set(entry.kind, entry.store.subscribe());
       }
 
-      // Retry only while something has never loaded.
+      setFailures((before) => settleFailures(before, retried, failed));
+      if (outcome.settled) setLoadedFor(scope);
+
+      if (outcome.retry.length === 0) return;
 
       if (attempts >= MAX_LOAD_ATTEMPTS) {
         setGaveUp(true);
@@ -63,6 +106,7 @@ export function useLoadedStores(
         return;
       }
 
+      pending = registered.filter((entry) => outcome.retry.includes(entry.kind));
       retryTimer = setTimeout(() => void loadUntilReady(), RETRY_DELAY_MS);
     };
 
@@ -71,9 +115,9 @@ export function useLoadedStores(
     return () => {
       cancelled = true;
       if (retryTimer) clearTimeout(retryTimer);
-      for (const unsubscribe of unsubscribers) unsubscribe();
+      for (const unsubscribe of unsubscribers.values()) unsubscribe();
     };
-  }, [scope, what, ...stores]);
+  }, [scope, ...entries.map((entry) => entry.store)]);
 
-  return gaveUp;
+  return { gaveUp, loadedFor, failures };
 }

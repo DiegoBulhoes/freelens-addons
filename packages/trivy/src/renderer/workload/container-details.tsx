@@ -1,5 +1,5 @@
-import { describeDuration } from "../api/scan-progress";
-import type { ScannedContainer } from "../api/workload-report";
+import { describeAge, formatTime } from "../api/shared/time";
+import { END_OF_LIFE, type ScannedContainer } from "../api/workloads/workload-report";
 
 const SHORT_DIGEST = 19;
 
@@ -54,13 +54,20 @@ export function ContainerDetails({
             {container.operatingSystem && (
               <>
                 <dt>Base</dt>
-                <dd>{container.operatingSystem}</dd>
+                <dd>
+                  {container.operatingSystem}
+                  {container.endOfLife && (
+                    <span className="Trivy-text--warning">, {END_OF_LIFE}</span>
+                  )}
+                </dd>
               </>
             )}
             {container.scannedAt && (
               <>
                 <dt>Scanned</dt>
-                <dd>{describeAge(container.scannedAt, now)}</dd>
+                <dd title={describeAge(container.scannedAt, now)}>
+                  {formatTime(container.scannedAt)}
+                </dd>
               </>
             )}
             {container.scanner && (
@@ -74,12 +81,4 @@ export function ContainerDetails({
       </div>
     </section>
   );
-}
-
-function describeAge(timestamp: string, now: number): string {
-  const at = Date.parse(timestamp);
-
-  if (Number.isNaN(at)) return timestamp;
-
-  return `${describeDuration(Math.max(0, now - at))} ago`;
 }

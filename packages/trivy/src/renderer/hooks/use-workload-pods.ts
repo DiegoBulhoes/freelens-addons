@@ -1,24 +1,35 @@
 import { Renderer } from "@freelensapp/extensions";
-import { useEffect } from "react";
 
-import type { ReportSubject } from "../api/types";
-import { describePod, type RunningPod, selectPodsOf, sortPods } from "../api/workload-pods";
+import { POD_KIND } from "../api/shared/kinds";
+import type { ReportSubject } from "../api/shared/types";
+import {
+  describePod,
+  type PodListState,
+  podListState,
+  type RunningPod,
+  selectPodsOf,
+  sortPods,
+} from "../api/workloads/workload-pods";
+import { useLoadedStores } from "./load-stores";
 
 const {
   K8sApi: { podsStore },
 } = Renderer;
 
-export function useWorkloadPods(subject: ReportSubject): RunningPod[] {
-  useEffect(() => {
-    // Without onLoadFailure the host's resetOnError empties the shared store and deafens its watches.
-    void podsStore.loadAll({
-      namespaces: [subject.namespace],
-      onLoadFailure: (error: unknown) =>
-        console.warn(`[trivy] could not list pods in ${subject.namespace}`, error),
-    });
+export interface WorkloadPods {
+  pods: RunningPod[];
+  state: PodListState;
+}
 
-    return podsStore.subscribe();
-  }, [subject.namespace]);
+// The shared loader subscribes only after the list lands, so the watch starts from its resourceVersion.
+export function useWorkloadPods(subject: ReportSubject): WorkloadPods {
+  const load = useLoadedStores(
+    [{ kind: POD_KIND, namespaced: true, store: podsStore }],
+    subject.namespace,
+  );
 
-  return sortPods(selectPodsOf(podsStore.items, subject).map(describePod));
+  return {
+    pods: sortPods(selectPodsOf(podsStore.items, subject).map(describePod)),
+    state: podListState(subject.namespace, POD_KIND, load),
+  };
 }

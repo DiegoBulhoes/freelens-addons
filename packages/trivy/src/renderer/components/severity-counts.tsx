@@ -1,5 +1,5 @@
-import { countOf } from "../api/severity";
-import type { Severity, SeveritySummary } from "../api/types";
+import { countOf } from "../api/shared/severity";
+import type { Severity, SeveritySummary } from "../api/shared/types";
 
 const SEVERITIES: Severity[] = ["CRITICAL", "HIGH", "MEDIUM", "LOW", "UNKNOWN"];
 

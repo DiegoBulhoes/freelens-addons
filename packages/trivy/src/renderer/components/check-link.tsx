@@ -1,13 +1,23 @@
-import { checkLink } from "../api/check-link";
+import type { ReactNode } from "react";
 
-export function CheckLink({ checkID }: { checkID: string | undefined }) {
+import { checkLink } from "../api/vulnerabilities/check-link";
+
+export function CheckLink({
+  checkID,
+  className = "Trivy-row__aside",
+  fallback = null,
+}: {
+  checkID: string | undefined;
+  className?: string;
+  fallback?: ReactNode;
+}) {
   const href = checkLink(checkID);
 
-  if (!href) return null;
+  if (!href) return <>{fallback}</>;
 
   return (
     <a
-      className="Trivy-row__aside"
+      className={className}
       href={href}
       target="_blank"
       rel="noreferrer"

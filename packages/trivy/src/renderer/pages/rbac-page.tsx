@@ -2,7 +2,6 @@ import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 import { useState } from "react";
 
-import { checkLink } from "../api/check-link";
 import {
   type CheckGroup,
   checkSearchTexts,
@@ -10,34 +9,28 @@ import {
   describeRbac,
   getRoleFindings,
   groupByCheck,
-  hostListOf,
   roleCounts,
-} from "../api/rbac";
-import { toneOf } from "../api/severity";
-import { subjectKey } from "../api/subjects";
+  roleListOf,
+} from "../api/rbac/rbac";
+import { toneOf } from "../api/shared/severity";
+import { subjectKey } from "../api/shared/subjects";
+import { CheckLink } from "../components/check-link";
 import { type Column, ListPage } from "../components/list-page";
-import { NamespaceFilter } from "../components/namespace-filter";
+import { LoadGaps } from "../components/load-gaps";
 import { ObjectDrawer } from "../components/object-drawer";
-import { TrivyStyles } from "../components/styles";
+import { SeverityTag } from "../components/severity-tag";
 import { useRbacStores } from "../hooks/use-rbac-stores";
+import { PageGate } from "./page-head";
 
 const {
   Navigation: { navigate },
 } = Renderer;
 
-function SeverityMark({ severity }: { severity: CheckGroup["severity"] }) {
-  return (
-    <span className={`Trivy-tag Trivy-severity--${severity ?? "UNKNOWN"}`}>
-      {severity ?? "UNKNOWN"}
-    </span>
-  );
-}
-
 const COLUMNS: Column<CheckGroup>[] = [
   {
     title: "Severity",
     className: "Trivy-table__shrink",
-    cell: (group) => <SeverityMark severity={group.severity} />,
+    cell: (group) => <SeverityTag severity={group.severity} />,
     sortValue: (group) => checkSortValue(group, "Severity"),
   },
   {
@@ -67,26 +60,19 @@ const COLUMNS: Column<CheckGroup>[] = [
 ];
 
 export const RbacPage = observer(() => {
-  const { reports, isReady, gaveUp } = useRbacStores();
+  const { reports, registered, state, gaps } = useRbacStores();
   const [openCheck, setOpenCheck] = useState<string | undefined>();
 
-  if (!isReady) {
+  // Before the list lands, an empty table would read as "no role fails a check".
+  if (!registered || state !== "ready") {
     return (
-      <div className="Trivy Trivy-page">
-        <TrivyStyles />
-        <div className="Trivy-page__head">
-          <div>
-            <h1 className="Trivy-page__headline">RBAC checks</h1>
-            <p className="Trivy-page__subline">
-              Waiting for the Trivy operator's RBAC assessment CRDs. If the operator is not
-              installed here, there is nothing to show.
-            </p>
-          </div>
-          <div className="Trivy-page__actions">
-            <NamespaceFilter />
-          </div>
-        </div>
-      </div>
+      <PageGate
+        title="RBAC checks"
+        registered={registered}
+        state={state}
+        waiting="Waiting for the Trivy operator's RBAC assessment CRDs. If the operator is not installed here, there is nothing to show."
+        unreachable="The RBAC assessments could not be read. Check the connection to the cluster and the permission to list them."
+      />
     );
   }
 
@@ -97,16 +83,8 @@ export const RbacPage = observer(() => {
   return (
     <ListPage
       title="RBAC checks"
-      subline={
-        gaveUp ? (
-          <span className="Trivy-text--critical">
-            The RBAC assessments could not be read. Check the connection to the cluster and the
-            permission to list them.
-          </span>
-        ) : (
-          describeRbac(findings)
-        )
-      }
+      subline={describeRbac(findings)}
+      filters={<LoadGaps gaps={gaps} />}
       rows={groups}
       columns={COLUMNS}
       keyOf={(group) => group.checkID}
@@ -120,7 +98,6 @@ export const RbacPage = observer(() => {
 });
 
 function CheckDrawer({ group, onClose }: { group?: CheckGroup; onClose: () => void }) {
-  const link = checkLink(group?.checkID);
   const counts = group ? roleCounts(group) : { roles: 0, clusterRoles: 0 };
 
   return (
@@ -142,23 +119,11 @@ function CheckDrawer({ group, onClose }: { group?: CheckGroup; onClose: () => vo
           <dl className="Trivy-facts">
             <dt>Check</dt>
             <dd>
-              {link ? (
-                <a
-                  className="Trivy-link"
-                  href={link}
-                  target="_blank"
-                  rel="noreferrer"
-                  title="What this check looks for, and how to fix it"
-                >
-                  {group.checkID}
-                </a>
-              ) : (
-                group.checkID
-              )}
+              <CheckLink className="Trivy-link" checkID={group.checkID} fallback={group.checkID} />
             </dd>
             <dt>Severity</dt>
             <dd>
-              <SeverityMark severity={group.severity} />
+              <SeverityTag severity={group.severity} />
             </dd>
             <dt>Roles</dt>
             <dd>{counts.roles}</dd>
@@ -188,7 +153,7 @@ function CheckDrawer({ group, onClose }: { group?: CheckGroup; onClose: () => vo
                         onClick={() => {
                           // Close the drawer before the page under it changes.
                           onClose();
-                          navigate(hostListOf(finding));
+                          navigate(roleListOf(finding));
                         }}
                       >
                         {finding.subject.name}

@@ -1,6 +1,11 @@
 import { Renderer } from "@freelensapp/extensions";
 
-import { interestingLabels, type RunningPod } from "../api/workload-pods";
+import { hostListOf } from "../api/shared/host-links";
+import {
+  interestingLabels,
+  type PodListState,
+  type RunningPod,
+} from "../api/workloads/workload-pods";
 
 const {
   Navigation: { navigate },
@@ -8,7 +13,7 @@ const {
 
 // Not showDetails: the drawer is not rendered on an extension page.
 function openPod(pod: RunningPod): void {
-  navigate(`/pods?search=${encodeURIComponent(pod.name)}`);
+  navigate(hostListOf("Pod", pod.name) ?? "/pods");
 }
 
 const PHASE_TONE: Record<string, string> = {
@@ -17,14 +22,31 @@ const PHASE_TONE: Record<string, string> = {
   Pending: "warning",
 };
 
-export function PodList({ pods, onLeave }: { pods: RunningPod[]; onLeave: () => void }) {
+const NOTE: Record<Exclude<PodListState, "listed">, string> = {
+  loading: "Loading pods…",
+  unreadable: "The pods in this namespace could not be read, so whether any runs is unknown.",
+};
+
+export function PodList({
+  pods,
+  state,
+  onLeave,
+}: {
+  pods: RunningPod[];
+  state: PodListState;
+  onLeave: () => void;
+}) {
   return (
-    <section className="Trivy-section" data-section="trivy-workload-pods">
+    <section className="Trivy-section" data-section="trivy-workload-pods" data-state={state}>
       <h3 className="Trivy-section__title">
-        {pods.length === 0 ? "Pods" : `${pods.length} ${pods.length === 1 ? "pod" : "pods"}`}
+        {state !== "listed" || pods.length === 0
+          ? "Pods"
+          : `${pods.length} ${pods.length === 1 ? "pod" : "pods"}`}
       </h3>
 
-      {pods.length === 0 ? (
+      {state !== "listed" ? (
+        <p className="Trivy-section__note">{NOTE[state]}</p>
+      ) : pods.length === 0 ? (
         <p className="Trivy-section__note">
           No pod of this workload is running. The report is about its controller, which can outlive
           its pods.

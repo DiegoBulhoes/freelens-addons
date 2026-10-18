@@ -1,7 +1,7 @@
-import { countOf } from "../api/severity";
-import { subjectKey } from "../api/subjects";
-import type { ReportSubject } from "../api/types";
-import type { WorkloadRow } from "../api/workload-rows";
+import { countOf } from "../api/shared/severity";
+import { subjectKey } from "../api/shared/subjects";
+import type { ReportSubject } from "../api/shared/types";
+import type { WorkloadRow } from "../api/workloads/workload-rows";
 
 export function ExposureSection({
   rows,

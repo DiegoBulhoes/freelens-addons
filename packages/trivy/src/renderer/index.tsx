@@ -1,7 +1,7 @@
 import { Renderer } from "@freelensapp/extensions";
 import { computed } from "mobx";
-import { isInstalled } from "./api/installed";
-import { VulnerabilityReport } from "./api/reports";
+import { isInstalled } from "./api/shared/installed";
+import { VulnerabilityReport } from "./api/shared/kinds";
 import { VulnerabilityReportDetails } from "./details/vulnerability-report-details";
 import { TrivyIcon } from "./icons/trivy";
 import { DashboardPage } from "./pages/dashboard-page";
