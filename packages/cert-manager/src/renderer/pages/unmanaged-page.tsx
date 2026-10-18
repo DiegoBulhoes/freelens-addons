@@ -2,33 +2,61 @@ import type { Renderer as RendererTypes } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 import { useState } from "react";
 
-import { describeMoment } from "../api/expiry";
-import { describeCount, searchRows } from "../api/table";
-import type { SecretLike } from "../api/types";
+import { describeMoment, parsedTime } from "../api/certificates/expiry";
+import { bannerFailures } from "../api/shared/listing";
+import { keyOf } from "../api/shared/namespace-scope";
+import { rowsFor, worstOf } from "../api/shared/store-state";
+import { describeCount, searchRows } from "../api/shared/table";
+import type { SecretLike } from "../api/shared/types";
 import {
+  describeServedHeadline,
   getServedTls,
   getUnmanagedSecrets,
+  hostsOf,
   isGap,
+  isServedFilter,
+  matchesServedFilter,
+  SERVED_FILTER_LABELS,
+  SERVED_FILTER_TITLES,
   SERVED_STATES,
   type ServedTls,
   secretSearchTexts,
+  servedEmptyText,
   servedSearchTexts,
-} from "../api/unmanaged";
+  unmanagedSecretsEmptyText,
+} from "../api/unmanaged/unmanaged";
+import { FilterChips } from "../components/filter-chips";
+import { ListingBanner, SecretsRefusedBanner } from "../components/listing-banner";
 import { NamespaceFilter } from "../components/namespace-filter";
 import { Status } from "../components/status";
 import { CertManagerStyles } from "../components/styles";
 import { CellLink, type Column, Table } from "../components/table";
 import { useCertManagerStores } from "../hooks/use-cert-manager-stores";
+import { useRequestedFilter } from "../hooks/use-list-params";
 import { useTlsInventory } from "../hooks/use-tls-inventory";
 import { openHostList, SecretDrawer, ServedDrawer } from "./drawers";
 
 const servedKey = (entry: ServedTls) => `${entry.namespace}/${entry.ingress}/${entry.secretName}`;
-const secretKey = (secret: SecretLike) => `${secret.getNs()}/${secret.getName()}`;
+
+export interface UnmanagedPageParams {
+  filter: { get(): string };
+}
 
 export const UnmanagedPage = observer(
-  ({ extension }: { extension: RendererTypes.LensExtension }) => {
+  ({
+    params,
+    extension,
+  }: {
+    params?: UnmanagedPageParams;
+    extension: RendererTypes.LensExtension;
+  }) => {
     const stores = useCertManagerStores();
     const tls = useTlsInventory();
+    const [filter, setFilter] = useRequestedFilter(
+      params?.filter.get() ?? "",
+      isServedFilter,
+      "all",
+    );
     const [query, setQuery] = useState("");
     const [openServed, setOpenServed] = useState<string>();
     const [openSecret, setOpenSecret] = useState<string>();
@@ -36,10 +64,22 @@ export const UnmanagedPage = observer(
     const openCertificate = (namespace: string, name: string) =>
       void extension.navigate("certificates", { namespace, name });
 
-    const served = getServedTls(tls.ingresses, tls.secrets, stores.certificates);
+    const servedState = worstOf(stores.state, tls.ingressListing.state);
+    // A refused Certificate list reads empty, which would make every served Secret a gap.
+    const { certificatesKnown } = stores;
+    const served = rowsFor(
+      servedState,
+      certificatesKnown
+        ? getServedTls(tls.ingresses, tls.secrets, stores.certificates, tls.secretsListedIn)
+        : [],
+    );
     const gaps = served.filter(isGap);
-    const unmanagedSecrets = getUnmanagedSecrets(tls.secrets, stores.certificates);
-    const shownServed = searchRows(served, query, servedSearchTexts);
+    const filtered = served.filter((entry) => matchesServedFilter(entry, filter));
+    const unmanagedSecrets = rowsFor(
+      stores.state,
+      certificatesKnown ? getUnmanagedSecrets(tls.secrets, stores.certificates) : [],
+    );
+    const shownServed = searchRows(filtered, query, servedSearchTexts);
     const shownSecrets = searchRows(unmanagedSecrets, query, secretSearchTexts);
 
     const servedColumns: Column<ServedTls>[] = [
@@ -98,7 +138,7 @@ export const UnmanagedPage = observer(
       {
         title: "Hosts",
         className: "CertManager-table__fill",
-        cell: (entry) => entry.hosts.join(", "),
+        cell: hostsOf,
       },
     ];
 
@@ -119,9 +159,9 @@ export const UnmanagedPage = observer(
         title: "Created",
         className: "CertManager-table__shrink",
         cell: (secret) => {
-          const created = Date.parse(secret.metadata.creationTimestamp ?? "");
+          const created = parsedTime(secret.metadata.creationTimestamp);
 
-          return Number.isNaN(created) ? "" : describeMoment(created, now);
+          return created === undefined ? "" : describeMoment(created, now);
         },
         sortValue: (secret) => secret.metadata.creationTimestamp,
       },
@@ -133,11 +173,7 @@ export const UnmanagedPage = observer(
         <div className="CertManager-page__head">
           <div>
             <h1 className="CertManager-page__headline">
-              {served.length === 0
-                ? "No Ingress serves TLS from a Secret"
-                : gaps.length === 0
-                  ? `All ${served.length} TLS ${served.length === 1 ? "Secret" : "Secrets"} served by an Ingress have a Certificate`
-                  : `${gaps.length} of ${served.length} served TLS ${served.length === 1 ? "Secret has" : "Secrets have"} no Certificate`}
+              {describeServedHeadline(servedState, tls.ingressListing, served, certificatesKnown)}
             </h1>
             <p
               className={`CertManager-page__subline${gaps.length > 0 ? " CertManager-page__subline--alarm" : ""}`}
@@ -159,15 +195,12 @@ export const UnmanagedPage = observer(
           </div>
         </div>
 
-        {tls.secretsError && (
-          <div className="CertManager-banner CertManager-banner--critical">
-            <span className="CertManager-banner__title">TLS Secrets could not be listed.</span>
-            <span className="CertManager-banner__body">
-              {tls.secretsError}. Without them every served Secret reads as missing; listing them
-              needs permission to list Secrets.
-            </span>
-          </div>
-        )}
+        <ListingBanner
+          failed={bannerFailures(stores.failed, tls.ingressListing)}
+          gaveUp={stores.gaveUp}
+        />
+
+        {tls.secretsRefused && <SecretsRefusedBanner refused={tls.secretsRefused} />}
 
         <section className="CertManager-section" data-section="served">
           <div className="CertManager-section__bar">
@@ -176,11 +209,20 @@ export const UnmanagedPage = observer(
               {describeCount(shownServed.length, served.length)}
             </span>
           </div>
+          <FilterChips
+            labels={SERVED_FILTER_LABELS}
+            titles={SERVED_FILTER_TITLES}
+            current={filter}
+            onChange={setFilter}
+            section="served-filters"
+          />
           {shownServed.length === 0 ? (
             <p className="CertManager-section__note">
               {query
                 ? "Nothing matches the search."
-                : "No Ingress in the chosen namespaces serves TLS from a Secret."}
+                : served.length > 0
+                  ? "Every served TLS Secret has a Certificate."
+                  : servedEmptyText(servedState, tls.ingressListing, certificatesKnown)}
             </p>
           ) : (
             <Table
@@ -216,20 +258,20 @@ export const UnmanagedPage = observer(
               <p className="CertManager-section__note">
                 {query
                   ? "Nothing matches the search."
-                  : "Every TLS Secret in the chosen namespaces is written by a Certificate."}
+                  : unmanagedSecretsEmptyText(stores.state, certificatesKnown, tls.secretsRefused)}
               </p>
             )
           ) : (
             <Table
               rows={shownSecrets}
               columns={secretColumns}
-              keyOf={secretKey}
+              keyOf={keyOf}
               openTitle={(secret) =>
                 `Opens ${secret.getName()}: why it is unmanaged, and who serves it`
               }
               onOpen={(secret) => {
                 setOpenServed(undefined);
-                setOpenSecret(secretKey(secret));
+                setOpenSecret(keyOf(secret));
               }}
             />
           )}
@@ -237,11 +279,12 @@ export const UnmanagedPage = observer(
 
         <ServedDrawer
           served={served.find((entry) => servedKey(entry) === openServed)}
+          refused={tls.secretsRefused}
           onClose={() => setOpenServed(undefined)}
           onOpenCertificate={openCertificate}
         />
         <SecretDrawer
-          secret={unmanagedSecrets.find((secret) => secretKey(secret) === openSecret)}
+          secret={unmanagedSecrets.find((secret) => keyOf(secret) === openSecret)}
           certificates={stores.certificates}
           ingresses={tls.ingresses}
           onClose={() => setOpenSecret(undefined)}

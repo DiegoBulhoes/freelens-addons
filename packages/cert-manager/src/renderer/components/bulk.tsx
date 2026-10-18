@@ -1,6 +1,6 @@
 import { Renderer } from "@freelensapp/extensions";
-
-import { describeOutcome, planFor } from "../api/bulk";
+import { reasonOf } from "../api/shared/errors";
+import { describeOutcome, listNames, planFor, planWarning } from "../api/writes/bulk";
 import { confirmWrite } from "./confirm";
 import type { SelectionAction } from "./selection-bar";
 import { CertManagerStyles } from "./styles";
@@ -8,14 +8,6 @@ import { CertManagerStyles } from "./styles";
 const {
   Component: { Notifications },
 } = Renderer;
-
-const SHOWN = 8;
-
-function names(list: string[]): string {
-  return list.length > SHOWN
-    ? `${list.slice(0, SHOWN).join(", ")} and ${list.length - SHOWN} more`
-    : list.join(", ");
-}
 
 /** A selection-bar action: plans over the ticked items, lists what it skips and why, asks for "confirm". */
 export function bulkAction<Item>(spec: {
@@ -26,6 +18,8 @@ export function bulkAction<Item>(spec: {
   caution?: boolean;
   nameOf: (item: Item) => string;
   refuse?: (item: Item) => string | undefined;
+  /** A warning about an item it will still act on, shown when confirming. */
+  warnOf?: (item: Item) => string | undefined;
   detail?: string;
   run: (item: Item) => Promise<void>;
 }): SelectionAction<Item> {
@@ -54,7 +48,7 @@ export function bulkAction<Item>(spec: {
         ),
         detail: (
           <>
-            {names(plan.ready.map(spec.nameOf))}.{spec.detail ? ` ${spec.detail}` : ""}
+            {listNames(plan.ready.map(spec.nameOf))}.{spec.detail ? ` ${spec.detail}` : ""}
             {plan.skipped.length > 0 && (
               <>
                 <br />
@@ -66,6 +60,7 @@ export function bulkAction<Item>(spec: {
             )}
           </>
         ),
+        warning: planWarning(plan.ready, spec.warnOf, spec.nameOf),
         label: `${spec.label} ${count}`,
         destructive: spec.caution === true,
         typed: () => "confirm",
@@ -79,9 +74,7 @@ export function bulkAction<Item>(spec: {
               await spec.run(item);
               succeeded += 1;
             } catch (error) {
-              failed.push(
-                `${spec.nameOf(item)} (${error instanceof Error ? error.message : String(error)})`,
-              );
+              failed.push(`${spec.nameOf(item)} (${reasonOf(error)})`);
             }
           }
 

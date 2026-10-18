@@ -11,7 +11,7 @@ spec:
   ca:
     secretName: no-such-secret
 ---
-# states.sh deletes this CA once renewal-stalls is issued: valid but failing to renew.
+# states.sh deletes this CA once renewal-stalls and issuer-broken are issued.
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
@@ -69,7 +69,7 @@ spec:
     kind: ClusterIssuer
     name: demo-ca
 ---
-# Ends within the month: expiring.
+# Ends within the month, never within the week: it renews eight days before its end.
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -79,7 +79,7 @@ spec:
   secretName: ends-this-month
   dnsNames: [month.demo.test]
   duration: 480h
-  renewBefore: 120h
+  renewBefore: 192h
   issuerRef:
     kind: ClusterIssuer
     name: demo-ca
@@ -114,6 +114,37 @@ spec:
   issuerRef:
     kind: Issuer
     name: flaky-ca
+---
+# Issued on flaky-ca before states.sh breaks it: Ready, not issuing, no renewal due for months.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: issuer-broken
+  namespace: demo
+spec:
+  secretName: issuer-broken
+  dnsNames: [issuer-broken.demo.test]
+  duration: 2160h
+  issuerRef:
+    kind: Issuer
+    name: flaky-ca
+---
+# states.sh moves it, once issued, to the pebble issuer, whose server blocks its name: the new
+# issue fails while the old certificate is served. The group is explicit so a re-apply restores it.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: out-of-date
+  namespace: demo
+spec:
+  secretName: out-of-date
+  dnsNames: [out-of-date.demo.test]
+  duration: 2160h
+  renewBefore: 360h
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: demo-ca
 ---
 # Its issuer does not exist.
 apiVersion: cert-manager.io/v1
@@ -153,6 +184,21 @@ spec:
   issuerRef:
     kind: ClusterIssuer
     name: pebble
+---
+# states.sh deletes it once issued: its Secret stays behind, naming a Certificate that is gone.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: retired-tls
+  namespace: demo
+spec:
+  secretName: retired-tls
+  dnsNames: [retired.demo.test]
+  duration: 2160h
+  renewBefore: 360h
+  issuerRef:
+    kind: ClusterIssuer
+    name: demo-ca
 ---
 
 # Managed: ingress-shim creates the Certificate.
@@ -213,6 +259,28 @@ spec:
       secretName: nowhere-tls
   rules:
     - host: missing.demo.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port:
+                  number: 80
+---
+# Serves acme-web's Secret, which its Certificate never writes: being issued.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: acme-web
+  namespace: demo
+spec:
+  tls:
+    - hosts: [acme.demo.test]
+      secretName: acme-web
+  rules:
+    - host: acme.demo.test
       http:
         paths:
           - path: /

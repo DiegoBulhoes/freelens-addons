@@ -8,9 +8,9 @@
         "annotations": {
           "cert-manager.io/certificate-name": "acme-web",
           "cert-manager.io/certificate-revision": "1",
-          "cert-manager.io/private-key-secret-name": "acme-web-48q29"
+          "cert-manager.io/private-key-secret-name": "acme-web-8sbfc"
         },
-        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "creationTimestamp": "2026-10-04T20:32:18Z",
         "generation": 1,
         "name": "acme-web-1-751204009",
         "namespace": "demo",
@@ -21,12 +21,12 @@
             "controller": true,
             "kind": "CertificateRequest",
             "name": "acme-web-1",
-            "uid": "2db1a026-dd19-4fee-a59f-a21835c503aa"
+            "uid": "5917af2b-2150-43e4-ac8c-2dba4c1fd419"
           }
         ],
-        "resourceVersion": "12141",
+        "resourceVersion": "3824",
         "selfLink": "/apis/acme.cert-manager.io/v1/namespaces/demo/orders/acme-web-1-751204009",
-        "uid": "9ec33193-a392-4a04-974b-0c24d9794a74"
+        "uid": "fdbfc98c-f9fd-4a61-9398-4104cbbb35e5"
       },
       "spec": {
         "dnsNames": [
@@ -42,35 +42,78 @@
           {
             "challenges": [
               {
-                "type": "tls-alpn-01",
-                "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/aW_5XdMA9oYAqabbmVLwSyHdux_YF-eBGsUzSyWk8Xc"
-              },
-              {
-                "type": "http-01",
-                "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/35XUQ7uODBpTzobPn02zLv_qlWDPeMS20LEZB08EJ_U"
-              },
-              {
-                "type": "dns-01",
-                "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/5k5PPRt8NU176cgZfawxIDhpnjYjeAS13xCeTYKm4ig"
-              },
-              {
                 "type": "dns-persist-01",
-                "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/RQO0i2_IDl1smdVCJy9JKR1VnGStR1vvhZwTFR9VmrU"
+                "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/KEi-82z0uQALNR7bWjmUrYyCMfyy_edDUvxoygVGxFI"
               },
               {
                 "type": "dns-account-01",
-                "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/w7Hl5Do7mqtfmp8Da7RBxMLxMALLj9_KjhDMuoMV5aw"
+                "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/IRwz8NxVx-34pyi8ImLFsqhPrEXj1zMsxFLv0BOPMuE"
+              },
+              {
+                "type": "dns-01",
+                "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/qXhXlA0ESG7yJeLMbQ-s1VTunGITzvZbWx7BlX9v1Os"
+              },
+              {
+                "type": "http-01",
+                "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/RdIKOfz34CORVY5TpwMbAL0VJLtQZImkzMLJQwqxiVA"
+              },
+              {
+                "type": "tls-alpn-01",
+                "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/FNhW26ZtN0-2FSPiYSuMJiKlS8dscS7K0W6D1NxBOKg"
               }
             ],
             "identifier": "acme.demo.test",
             "initialState": "pending",
-            "url": "https://pebble.acme-test.svc.cluster.local:14000/authZ/Ij8tfjupVPvnJB3mq_cnvhIOTTd4DTxO-xBNeIUfLOk",
+            "url": "https://pebble.acme-test.svc.cluster.local:14000/authZ/q3JeRZmwdkKfHFmolFksXq6rOnn3aznFihxwiJKOWD8",
             "wildcard": false
           }
         ],
-        "finalizeURL": "https://pebble.acme-test.svc.cluster.local:14000/finalize-order/LKxtnCQunmQ2rdB-oe5OTBAZOhoEJxclTh35PuPzkJU",
+        "finalizeURL": "https://pebble.acme-test.svc.cluster.local:14000/finalize-order/bVBPaMbi_T0pCcWCURwry4R7UO4AIx2EGdk1Z32jqQ0",
         "state": "pending",
-        "url": "https://pebble.acme-test.svc.cluster.local:14000/my-order/LKxtnCQunmQ2rdB-oe5OTBAZOhoEJxclTh35PuPzkJU"
+        "url": "https://pebble.acme-test.svc.cluster.local:14000/my-order/bVBPaMbi_T0pCcWCURwry4R7UO4AIx2EGdk1Z32jqQ0"
+      }
+    },
+    {
+      "apiVersion": "acme.cert-manager.io/v1",
+      "kind": "Order",
+      "metadata": {
+        "annotations": {
+          "cert-manager.io/certificate-name": "out-of-date",
+          "cert-manager.io/certificate-revision": "3",
+          "cert-manager.io/private-key-secret-name": "out-of-date-tff49"
+        },
+        "creationTimestamp": "2026-10-18T01:28:41Z",
+        "generation": 1,
+        "name": "out-of-date-3-3818100267",
+        "namespace": "demo",
+        "ownerReferences": [
+          {
+            "apiVersion": "cert-manager.io/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "CertificateRequest",
+            "name": "out-of-date-3",
+            "uid": "3cf0c6ac-56aa-46d0-9a31-3870f27d4c59"
+          }
+        ],
+        "resourceVersion": "468051",
+        "selfLink": "/apis/acme.cert-manager.io/v1/namespaces/demo/orders/out-of-date-3-3818100267",
+        "uid": "6acf51a5-7a6f-485b-b39a-8a1cf2086532"
+      },
+      "spec": {
+        "dnsNames": [
+          "out-of-date.demo.test"
+        ],
+        "issuerRef": {
+          "group": "cert-manager.io",
+          "kind": "ClusterIssuer",
+          "name": "pebble"
+        }
+      },
+      "status": {
+        "failureTime": "2026-10-18T01:28:41Z",
+        "reason": "Failed to create Order: 400 urn:ietf:params:acme:error:rejectedIdentifier: Order included an identifier for which issuance is forbidden by policy: \"out-of-date.demo.test\"; subproblems:\n\turn:ietf:params:acme:error:rejectedIdentifier: [dns: out-of-date.demo.test] out-of-date.demo.test is a forbidden domain",
+        "state": "errored"
       }
     }
   ],

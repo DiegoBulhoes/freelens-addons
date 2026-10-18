@@ -1,10 +1,11 @@
-import type { ChainLink } from "../api/chain";
+import type { ChainLink } from "../api/certificates/chain";
 
 const STATE_LABEL: Record<ChainLink["state"], string> = {
   ok: "ok",
   pending: "waiting",
   failed: "failing",
   missing: "missing",
+  unknown: "unknown",
 };
 
 const TONE: Record<ChainLink["state"], string> = {
@@ -12,6 +13,7 @@ const TONE: Record<ChainLink["state"], string> = {
   pending: " CertManager-row--warning",
   failed: " CertManager-row--critical",
   missing: " CertManager-row--critical",
+  unknown: " CertManager-row--info",
 };
 
 export function ChainView({ chain, explanation }: { chain: ChainLink[]; explanation?: ChainLink }) {

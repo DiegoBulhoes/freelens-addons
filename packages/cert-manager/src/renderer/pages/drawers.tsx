@@ -1,19 +1,23 @@
 import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 
-import { certificateStatusOf } from "../api/attention";
-import { issuerCommands } from "../api/commands";
-import { describeTimeLeft, formatUtc } from "../api/expiry";
-import { type IssuerEntry, issuerSettings } from "../api/issuers";
-import type { CertificateLike, IngressLike, SecretLike } from "../api/types";
+import { certificateStatusOf } from "../api/certificates/attention";
+import { describeTimeLeft, formatUtc, parsedTime } from "../api/certificates/expiry";
+import { type IssuerEntry, issuerSettings } from "../api/issuers/issuers";
+import { issuerCommands } from "../api/shared/commands";
+import { keyOf } from "../api/shared/namespace-scope";
+import type { CertificateLike, IngressLike, SecretLike } from "../api/shared/types";
 import {
   annotationsOfInterest,
   ingressesServing,
+  type SecretsRefusal,
   type ServedTls,
   secretVerdict,
   servedVerdict,
-} from "../api/unmanaged";
-import { CommandList } from "../components/command-list";
+  uncheckedSecretNote,
+} from "../api/unmanaged/unmanaged";
+import { CertificateRow } from "../certificate/certificate-row";
+import { CommandsSection } from "../components/commands-section";
 import { DrawerLink } from "../components/drawer-link";
 import { ObjectDrawer } from "../components/object-drawer";
 import { Status } from "../components/status";
@@ -59,7 +63,12 @@ export const IssuerDrawer = observer(
                 </>
               )}
               <dt>Type</dt>
-              <dd>{entry.type ?? "Unknown: it does not exist"}</dd>
+              <dd>
+                {entry.type ??
+                  (entry.state.tone === "info"
+                    ? "Unknown: it could not be listed"
+                    : "Unknown: it does not exist")}
+              </dd>
               <dt>State</dt>
               <dd>
                 <Status tone={entry.state.tone} label={entry.state.label} />
@@ -82,28 +91,18 @@ export const IssuerDrawer = observer(
                     const status = certificateStatusOf(certificate, now);
 
                     return (
-                      <button
-                        type="button"
-                        key={`${certificate.getNs()}/${certificate.getName()}`}
-                        className={`CertManager-row CertManager-row--${status.tone}`}
-                        title={`Opens ${certificate.getName()} in the certificates page`}
-                        onClick={(event) => {
-                          event.preventDefault();
+                      <CertificateRow
+                        key={keyOf(certificate)}
+                        certificate={certificate}
+                        state={status.label}
+                        tone={status.tone}
+                        meta={certificate.getNs()}
+                        aside={describeTimeLeft(certificate, now)}
+                        onOpen={() => {
                           onClose();
                           onOpenCertificate(certificate);
                         }}
-                      >
-                        <span className="CertManager-row__state">{status.label}</span>
-                        <span className="CertManager-row__main">
-                          <span className="CertManager-row__name">
-                            <b>{certificate.getName()}</b>
-                            <span className="CertManager-row__meta">{certificate.getNs()}</span>
-                          </span>
-                        </span>
-                        <span className="CertManager-row__aside">
-                          {describeTimeLeft(certificate, now)}
-                        </span>
-                      </button>
+                      />
                     );
                   })}
                 </div>
@@ -111,10 +110,10 @@ export const IssuerDrawer = observer(
             </section>
 
             {entry.issuer && (
-              <section className="CertManager-section" data-section="cert-manager-commands">
-                <h2 className="CertManager-section__title">Commands</h2>
-                <CommandList commands={issuerCommands(entry.kind, entry.name, entry.namespace)} />
-              </section>
+              <CommandsSection
+                commands={issuerCommands(entry.kind, entry.name, entry.namespace)}
+                section="cert-manager-commands"
+              />
             )}
           </>
         )}
@@ -134,10 +133,12 @@ function Fact({ term, value }: { term: string; value: string }) {
 
 export function ServedDrawer({
   served,
+  refused,
   onClose,
   onOpenCertificate,
 }: {
   served?: ServedTls;
+  refused?: SecretsRefusal;
   onClose: () => void;
   onOpenCertificate: (namespace: string, name: string) => void;
 }) {
@@ -163,7 +164,12 @@ export function ServedDrawer({
           <dd>{served.hosts.join(", ") || "Any: the TLS entry names no host"}</dd>
           <dt>Secret</dt>
           <dd>
-            {served.state === "managed" || served.state === "unmanaged" ? (
+            {served.state === "unchecked" ? (
+              <span>
+                {served.secretName}{" "}
+                <span className="CertManager-muted">{uncheckedSecretNote(served, refused)}</span>
+              </span>
+            ) : served.state === "managed" || served.state === "unmanaged" ? (
               <DrawerLink
                 title={`Opens the Secrets list narrowed to ${served.secretName}`}
                 onClick={() => leave(() => openHostList("/secrets", served.secretName))}
@@ -221,7 +227,7 @@ export function SecretDrawer({
     onClose();
     go();
   };
-  const created = Date.parse(secret?.metadata.creationTimestamp ?? "");
+  const created = parsedTime(secret?.metadata.creationTimestamp);
   const servedBy = secret ? ingressesServing(secret, ingresses) : [];
   const annotations = secret ? annotationsOfInterest(secret) : [];
 
@@ -241,7 +247,7 @@ export function SecretDrawer({
           <dt>Type</dt>
           <dd>{secret.type}</dd>
           <dt>Created</dt>
-          <dd>{Number.isNaN(created) ? "—" : formatUtc(created)}</dd>
+          <dd>{created === undefined ? "—" : formatUtc(created)}</dd>
           <dt>Served by</dt>
           <dd>
             {servedBy.length === 0

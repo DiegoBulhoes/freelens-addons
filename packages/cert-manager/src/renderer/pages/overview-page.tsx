@@ -2,18 +2,17 @@ import type { Renderer as RendererTypes } from "@freelensapp/extensions";
 import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 
-import { getAttentionItems, headlineOf } from "../api/attention";
-import { type ChainInputs, chainOf, explanationOf } from "../api/chain";
-import {
-  ALARM_DAYS,
-  describeTimeLeft,
-  EXPIRING_DAYS,
-  expiresWithin,
-  isReady,
-  isRenewalOverdue,
-} from "../api/expiry";
-import { getIssuerRows, getMissingIssuers, type IssuerIndex } from "../api/issuers";
-import { getServedTls, isGap } from "../api/unmanaged";
+import { describeHeadline, getAttentionItems } from "../api/certificates/attention";
+import { chainInputsOf, chainOf, explanationOf } from "../api/certificates/chain";
+import { describeTimeLeft } from "../api/certificates/expiry";
+import { matchesIssuerFilter, overviewSubline, summariseIssuers } from "../api/issuers/issuers";
+import { certificateCards } from "../api/overview/overview";
+import { bannerFailures, CERTIFICATES_UNKNOWN } from "../api/shared/listing";
+import { keyOf } from "../api/shared/namespace-scope";
+import { worstOf } from "../api/shared/store-state";
+import { getServedTls, matchesServedFilter } from "../api/unmanaged/unmanaged";
+import { CertificateRow } from "../certificate/certificate-row";
+import { ListingBanner } from "../components/listing-banner";
 import { NamespaceFilter } from "../components/namespace-filter";
 import { StatCard } from "../components/stat-card";
 import { CertManagerStyles } from "../components/styles";
@@ -29,7 +28,7 @@ export const OverviewPage = observer(
     const stores = useCertManagerStores();
     const tls = useTlsInventory();
 
-    if (!stores.isReady) {
+    if (stores.state === "not-installed") {
       return (
         <div className="CertManager CertManager-page">
           <CertManagerStyles />
@@ -46,7 +45,8 @@ export const OverviewPage = observer(
       );
     }
 
-    if (!stores.hasLoaded) {
+    // The TLS card stands on the Ingresses too: until they list, it would count none.
+    if (worstOf(stores.state, tls.ingressListing.state) === "connecting") {
       return (
         <div className="CertManager CertManager-page">
           <CertManagerStyles />
@@ -56,19 +56,17 @@ export const OverviewPage = observer(
     }
 
     const now = Date.now();
-    const index: IssuerIndex = { issuers: stores.issuers, clusterIssuers: stores.clusterIssuers };
-    const inputs: ChainInputs = {
-      index,
-      requests: stores.requests,
-      orders: stores.orders,
-      challenges: stores.challenges,
-    };
-    const certificates = stores.certificates;
+    const { certificates, certificatesKnown } = stores;
+    const inputs = chainInputsOf(stores);
     const attention = getAttentionItems(certificates, now);
-    const brokenIssuers = getIssuerRows(index, certificates).filter((row) => !row.ready);
-    const missingIssuers = getMissingIssuers(index, certificates);
-    const gaps = getServedTls(tls.ingresses, tls.secrets, certificates).filter(isGap);
-    const issuerTrouble = brokenIssuers.length + missingIssuers.length;
+    const issuers = summariseIssuers(inputs.index, certificates);
+    const served = certificatesKnown
+      ? getServedTls(tls.ingresses, tls.secrets, certificates, tls.secretsListedIn)
+      : [];
+    const gaps = served.filter((entry) => matchesServedFilter(entry, "gaps"));
+    const issuerTrouble = issuers.entries.filter((entry) =>
+      matchesIssuerFilter(entry, "trouble"),
+    ).length;
 
     const openCertificates = (params: Record<string, string>) =>
       void extension.navigate("certificates", params);
@@ -79,18 +77,14 @@ export const OverviewPage = observer(
         <div className="CertManager-page__head">
           <div>
             <h1 className="CertManager-page__headline">
-              {headlineOf(attention.length, certificates.length)}
+              {describeHeadline(attention.length, certificates.length, certificatesKnown)}
             </h1>
             <p
               className={`CertManager-page__subline${
                 issuerTrouble > 0 ? " CertManager-page__subline--alarm" : ""
               }`}
             >
-              {certificates.length === 0
-                ? "There is no Certificate in the namespaces chosen in the selector. Choose more to see theirs."
-                : issuerTrouble > 0
-                  ? `${brokenIssuers.length} ${brokenIssuers.length === 1 ? "issuer is" : "issuers are"} not ready, and ${missingIssuers.length} named ${missingIssuers.length === 1 ? "issuer does" : "issuers do"} not exist.`
-                  : "Every issuer in use exists and is ready."}
+              {overviewSubline(certificatesKnown, certificates.length, issuers)}
             </p>
           </div>
           <div className="CertManager-page__actions">
@@ -98,59 +92,45 @@ export const OverviewPage = observer(
           </div>
         </div>
 
+        <ListingBanner
+          failed={bannerFailures(stores.failed, tls.ingressListing)}
+          gaveUp={stores.gaveUp}
+        />
+
         <div className="CertManager-cards">
-          <StatCard
-            value={certificates.length}
-            label="Certificates"
-            title="Opens every certificate in the certificates page"
-            onOpen={() => openCertificates({ filter: "all" })}
-          />
-          <StatCard
-            value={certificates.filter((each) => !isReady(each)).length}
-            label="Not ready"
-            tone="critical"
-            title="Opens the certificates that are not ready"
-            onOpen={() => openCertificates({ filter: "not-ready" })}
-          />
-          <StatCard
-            value={certificates.filter((each) => isRenewalOverdue(each, now)).length}
-            label="Renewal failing"
-            tone="warning"
-            title="Opens the certificates whose renewal is failing"
-            onOpen={() => openCertificates({ filter: "failing" })}
-          />
-          {/* Not pressable: the picker's window is the month, which this card does not count. */}
-          <StatCard
-            value={certificates.filter((each) => expiresWithin(each, now, ALARM_DAYS)).length}
-            label={`Ending within ${ALARM_DAYS} days`}
-            tone="warning"
-          />
-          <StatCard
-            value={certificates.filter((each) => expiresWithin(each, now, EXPIRING_DAYS)).length}
-            label={`Ending within ${EXPIRING_DAYS} days`}
-            title={`Opens the certificates that end within ${EXPIRING_DAYS} days`}
-            onOpen={() => openCertificates({ filter: "expiring" })}
-          />
+          {certificateCards(certificates, now, certificatesKnown).map(
+            ({ key, filter, ...card }) => (
+              <StatCard
+                key={key}
+                {...card}
+                onOpen={filter ? () => openCertificates({ filter }) : undefined}
+              />
+            ),
+          )}
           <StatCard
             value={issuerTrouble}
             label="Issuers not ready or missing"
             tone="critical"
-            title="Opens the issuers page"
-            onOpen={() => void extension.navigate("issuers")}
+            title="Opens the issuers that are not ready or missing"
+            onOpen={() => void extension.navigate("issuers", { filter: "trouble" })}
           />
-          <StatCard
-            value={gaps.length}
-            label="Served TLS with no Certificate"
-            tone="critical"
-            title="Opens the unmanaged TLS page"
-            onOpen={() => void extension.navigate("unmanaged")}
-          />
+          {certificatesKnown && (
+            <StatCard
+              value={gaps.length}
+              label="Served TLS with no Certificate"
+              tone="critical"
+              title="Opens the served TLS Secrets no Certificate writes"
+              onOpen={() => void extension.navigate("unmanaged", { filter: "gaps" })}
+            />
+          )}
         </div>
 
         <section className="CertManager-section">
           <h2 className="CertManager-section__title">Needs attention</h2>
 
-          {certificates.length === 0 ? (
+          {!certificatesKnown ? (
+            <p className="CertManager-section__note">{CERTIFICATES_UNKNOWN}</p>
+          ) : certificates.length === 0 ? (
             <p className="CertManager-section__note">
               Nothing needs attention: no certificate is in the namespaces chosen.
             </p>
@@ -165,38 +145,25 @@ export const OverviewPage = observer(
                 const explanation = explanationOf(chainOf(item.certificate, inputs));
 
                 return (
-                  <button
-                    type="button"
-                    key={`${item.certificate.getNs()}/${item.certificate.getName()}`}
-                    className={`CertManager-row CertManager-row--${item.severity}`}
-                    title={`Opens ${item.certificate.getName()} in the certificates page`}
-                    onClick={(event) => {
-                      // Unprevented, the drawer this opens takes the click as outside and closes.
-                      event.preventDefault();
+                  <CertificateRow
+                    key={keyOf(item.certificate)}
+                    certificate={item.certificate}
+                    state={item.headline}
+                    tone={item.severity}
+                    meta={`${item.certificate.getNs() ?? ""} · ${item.certificate.spec.issuerRef.name}`}
+                    reason={
+                      explanation?.reason
+                        ? `${explanation.kind}: ${explanation.reason}`
+                        : (item.detail ?? "")
+                    }
+                    aside={describeTimeLeft(item.certificate, now)}
+                    onOpen={() =>
                       openCertificates({
                         namespace: item.certificate.getNs() ?? "",
                         name: item.certificate.getName(),
-                      });
-                    }}
-                  >
-                    <span className="CertManager-row__state">{item.headline}</span>
-                    <span className="CertManager-row__main">
-                      <span className="CertManager-row__name">
-                        <b>{item.certificate.getName()}</b>
-                        <span className="CertManager-row__meta">
-                          {item.certificate.getNs()} · {item.certificate.spec.issuerRef.name}
-                        </span>
-                      </span>
-                      <span className="CertManager-row__reason">
-                        {explanation?.reason
-                          ? `${explanation.kind}: ${explanation.reason}`
-                          : item.detail}
-                      </span>
-                    </span>
-                    <span className="CertManager-row__aside">
-                      {describeTimeLeft(item.certificate, now)}
-                    </span>
-                  </button>
+                      })
+                    }
+                  />
                 );
               })}
             </div>

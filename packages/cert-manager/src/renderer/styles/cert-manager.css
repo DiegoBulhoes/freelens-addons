@@ -70,37 +70,3 @@
   color: var(--textColorPrimary);
   font-variant-numeric: tabular-nums;
 }
-
-/* Commands */
-
-.CertManager-commands {
-  display: grid;
-  gap: var(--cert-manager-gap-sm);
-  padding: var(--cert-manager-gap-sm) var(--cert-manager-gap-md);
-  border: 1px solid var(--cert-manager-line);
-  border-radius: var(--cert-manager-radius);
-  background: var(--cert-manager-surface);
-}
-
-.CertManager-command {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas: "label copy" "text copy";
-  gap: 2px var(--cert-manager-gap-sm);
-  align-items: center;
-}
-
-.CertManager-command__label {
-  grid-area: label;
-  font-size: var(--cert-manager-small);
-  color: var(--textColorSecondary);
-}
-
-.CertManager-command__text {
-  grid-area: text;
-  overflow-wrap: anywhere;
-}
-
-.CertManager-command .CertManager-icon-button {
-  grid-area: copy;
-}

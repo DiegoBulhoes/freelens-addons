@@ -1,12 +1,12 @@
 import { Renderer } from "@freelensapp/extensions";
 import { computed } from "mobx";
-import { isInstalled } from "./api/installed";
+import { isInstalled } from "./api/shared/installed";
 import { CertManagerIcon } from "./icons/cert-manager";
 import { CertificatesRoute, type CertificatesRouteParams } from "./pages/certificates-route";
 import { IssuersPage, type IssuersPageParams } from "./pages/issuers-page";
 import { OverviewPage } from "./pages/overview-page";
 import { RequestsPage } from "./pages/requests-page";
-import { UnmanagedPage } from "./pages/unmanaged-page";
+import { UnmanagedPage, type UnmanagedPageParams } from "./pages/unmanaged-page";
 
 // Item ids start with `cert-manager-`: the e2e harness drives the sidebar by data-testid suffix.
 const PAGES = {
@@ -42,7 +42,7 @@ export default class CertManagerRenderer extends Renderer.LensExtension {
     },
     {
       id: PAGES.issuers,
-      params: { kind: "", namespace: "", name: "" },
+      params: { kind: "", namespace: "", name: "", filter: "" },
       components: {
         Page: (props: { params?: IssuersPageParams }) => (
           <IssuersPage params={props.params} extension={this} />
@@ -52,13 +52,16 @@ export default class CertManagerRenderer extends Renderer.LensExtension {
     {
       id: PAGES.requests,
       components: {
-        Page: () => <RequestsPage />,
+        Page: () => <RequestsPage extension={this} />,
       },
     },
     {
       id: PAGES.unmanaged,
+      params: { filter: "" },
       components: {
-        Page: () => <UnmanagedPage extension={this} />,
+        Page: (props: { params?: UnmanagedPageParams }) => (
+          <UnmanagedPage params={props.params} extension={this} />
+        ),
       },
     },
   ];

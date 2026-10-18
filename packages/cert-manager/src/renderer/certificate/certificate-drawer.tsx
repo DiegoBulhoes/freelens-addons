@@ -1,13 +1,20 @@
 import { Renderer } from "@freelensapp/extensions";
 
-import { certificateVerdict, problemOf } from "../api/attention";
-import { type ChainInputs, chainOf, explanationOf } from "../api/chain";
-import { commandsFor } from "../api/commands";
-import { isRenewalOverdue, validityOf } from "../api/expiry";
-import { issuerRouteOf } from "../api/issuers";
-import { renewalVerdict } from "../api/renewal";
-import type { CertificateLike } from "../api/types";
-import { CommandList } from "../components/command-list";
+import { certificateVerdict, problemOf } from "../api/certificates/attention";
+import { certificateNames } from "../api/certificates/certificate-filter";
+import { type ChainInputs, chainOf, explanationOf } from "../api/certificates/chain";
+import { isRenewalOverdue, validityOf } from "../api/certificates/expiry";
+import { type IssuerRoute, issuerRouteOf } from "../api/issuers/issuers";
+import { commandsFor } from "../api/shared/commands";
+import type { CertificateLike } from "../api/shared/types";
+import {
+  describeFailures,
+  issuanceFailuresOf,
+  renewalPhrase,
+  renewalVerdict,
+  renewNowNote,
+} from "../api/writes/renewal";
+import { CommandsSection } from "../components/commands-section";
 import { DrawerLink } from "../components/drawer-link";
 import { ObjectDrawer } from "../components/object-drawer";
 import { ChainView } from "./chain-view";
@@ -17,12 +24,6 @@ import { ValidityBar } from "./validity-bar";
 const {
   Navigation: { navigate },
 } = Renderer;
-
-export interface IssuerRoute {
-  kind: string;
-  namespace: string;
-  name: string;
-}
 
 export function CertificateDrawer({
   certificate,
@@ -42,6 +43,7 @@ export function CertificateDrawer({
   const verdict = certificate ? renewalVerdict(certificate, explanation) : undefined;
   const validity = certificate ? validityOf(certificate, now) : undefined;
   const issuerRoute = certificate ? issuerRouteOf(certificate) : undefined;
+  const failures = certificate ? issuanceFailuresOf(certificate) : undefined;
   const leave = (go: () => void) => {
     onClose();
     go();
@@ -76,9 +78,7 @@ export function CertificateDrawer({
               )}
             </dd>
             <dt>Names</dt>
-            <dd>
-              {(certificate.spec.dnsNames ?? []).join(", ") || certificate.spec.commonName || "—"}
-            </dd>
+            <dd>{certificateNames(certificate)}</dd>
             <dt>Secret</dt>
             <dd>
               {certificate.status?.notAfter ? (
@@ -104,14 +104,20 @@ export function CertificateDrawer({
             <dt>Lifetime</dt>
             <dd>
               {certificate.spec.duration ?? "cert-manager's default"}, renewing{" "}
-              {certificate.spec.renewBefore
-                ? `${certificate.spec.renewBefore} before the end`
-                : "at two thirds"}
+              {renewalPhrase(certificate.spec)}
             </dd>
+            {failures && (
+              <>
+                <dt>Failures</dt>
+                <dd>
+                  <span className="CertManager-text--warning">
+                    {describeFailures(failures, now)}
+                  </span>
+                </dd>
+              </>
+            )}
             <dt>Renew now</dt>
-            <dd>
-              {verdict.offer ? (verdict.warning ?? "Offered in the title bar.") : verdict.reason}
-            </dd>
+            <dd>{renewNowNote(verdict, failures, now)}</dd>
           </dl>
 
           {validity && (
@@ -130,12 +136,10 @@ export function CertificateDrawer({
             <ChainView chain={chain} explanation={explanation} />
           </section>
 
-          <section className="CertManager-section" data-section="cert-manager-commands">
-            <h2 className="CertManager-section__title">Commands</h2>
-            <CommandList
-              commands={commandsFor(certificate, problemOf(certificate, now), explanation)}
-            />
-          </section>
+          <CommandsSection
+            commands={commandsFor(certificate, problemOf(certificate, now), explanation)}
+            section="cert-manager-commands"
+          />
         </>
       )}
     </ObjectDrawer>

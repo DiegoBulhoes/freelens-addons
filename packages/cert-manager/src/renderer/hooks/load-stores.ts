@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-// 15 x 2s = 30s, to outlast a slow cluster connection.
-const MAX_LOAD_ATTEMPTS = 15;
-const RETRY_DELAY_MS = 2000;
+import { failedAfterList, nextLoadStep } from "../api/shared/store-state";
+
+const TICK_MS = 2000;
 
 interface LoadableStore {
   loadAll(options: { onLoadFailure: (error: unknown) => void }): Promise<unknown>;
@@ -10,66 +10,111 @@ interface LoadableStore {
   subscribe(): () => void;
 }
 
-// Every pass loads every store: they are shared, and isLoaded says a list arrived once,
-// not under the current scope. onLoadFailure stops resetOnError deafening the watches.
-export function useLoadedStores(stores: (LoadableStore | undefined)[], scope = ""): boolean {
+export interface LoadedStores<K extends string> {
+  gaveUp: boolean;
+  /** Kinds whose last list was refused or timed out: their stores read loaded and empty. */
+  failed: K[];
+  /** The scope this mount's own load completed for; undefined until it has. */
+  loadedFor?: string;
+  /** The scope each kind's own list completed for under this mount. */
+  listedFor: Partial<Record<K, string>>;
+}
+
+// Lists on every mount, since isLoaded ignores scope; onLoadFailure keeps the watches alive.
+export function useLoadedStores<K extends string>(
+  stores: Partial<Record<K, LoadableStore | undefined>>,
+  scope = "",
+): LoadedStores<K> {
   const [gaveUp, setGaveUp] = useState(false);
+  const [failed, setFailed] = useState<K[]>([]);
+  const [loadedFor, setLoadedFor] = useState<string>();
+  const [listedFor, setListedFor] = useState<Partial<Record<K, string>>>({});
+  const entries = (Object.entries(stores) as [K, LoadableStore | undefined][]).filter(
+    (entry): entry is [K, LoadableStore] => entry[1] !== undefined,
+  );
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: the stores themselves are the identity; the array is fresh every render.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: the stores themselves are the identity; the record is fresh every render.
   useEffect(() => {
-    const loaded = stores.filter((store): store is LoadableStore => store !== undefined);
+    if (entries.length === 0) return;
 
-    if (loaded.length === 0) return;
-
+    const kinds = entries.map(([kind]) => kind);
+    const listed = new Set<K>();
+    const inFlight = new Set<K>();
+    let refused: ReadonlySet<K> = new Set<K>();
+    const unsubscribers: (() => void)[] = [];
     let attempts = 0;
-    setGaveUp(false);
-    let retryTimer: ReturnType<typeof setTimeout> | undefined;
     let cancelled = false;
-    let unsubscribers: (() => void)[] = [];
+    let timer: ReturnType<typeof setTimeout> | undefined;
 
-    const loadUntilReady = async () => {
+    setGaveUp(false);
+    setFailed([]);
+    setLoadedFor(undefined);
+    setListedFor({});
+
+    const list = async (kind: K, store: LoadableStore) => {
+      let refusedNow = false;
+      const refuse = (error: unknown) => {
+        refusedNow = true;
+        console.warn(`[cert-manager] could not list ${kind}`, error);
+      };
+
+      inFlight.add(kind);
+      try {
+        await store.loadAll({ onLoadFailure: refuse });
+      } catch (error) {
+        refuse(error);
+      }
+      inFlight.delete(kind);
+
       if (cancelled) return;
+
+      const after = failedAfterList(kinds, refused, kind, refusedNow);
+
+      refused = after.refused;
+      setFailed(after.failed);
 
       // loadAll() swallows its failure, so a mount during cluster connect needs the retry.
-      await Promise.all(
-        loaded.map((store) =>
-          store.loadAll({
-            onLoadFailure: (error: unknown) =>
-              console.warn("[cert-manager] could not load a kind", error),
-          }),
-        ),
-      );
+      if (!store.isLoaded) return;
 
-      attempts += 1;
+      listed.add(kind);
+      setListedFor((previous) => ({ ...previous, [kind]: scope }));
+      // Each as it lists: subscribe() watches from the list's resource version, and has none before.
+      unsubscribers.push(store.subscribe());
 
+      if (nextLoadStep(kinds, { listed, inFlight, attempts }).done) {
+        if (timer) clearTimeout(timer);
+        setGaveUp(false);
+        setLoadedFor(scope);
+      }
+    };
+
+    const tick = () => {
       if (cancelled) return;
 
-      // Retry only while something has never loaded: the cluster still connecting.
-      if (loaded.every((store) => store.isLoaded)) {
-        // Only now: subscribe() watches from the list's resource version, and before the list
-        // returns it has none, so it opens no watch at all and the page never updates.
-        unsubscribers = loaded.map((store) => store.subscribe());
+      const step = nextLoadStep(kinds, { listed, inFlight, attempts });
 
-        return;
-      }
-
-      if (attempts >= MAX_LOAD_ATTEMPTS) {
+      if (step.done) return;
+      if (step.gaveUp) {
         setGaveUp(true);
 
         return;
       }
 
-      retryTimer = setTimeout(() => void loadUntilReady(), RETRY_DELAY_MS);
+      attempts += 1;
+      for (const [kind, store] of entries) {
+        if (step.load.includes(kind)) void list(kind, store);
+      }
+      timer = setTimeout(tick, TICK_MS);
     };
 
-    void loadUntilReady();
+    tick();
 
     return () => {
       cancelled = true;
-      if (retryTimer) clearTimeout(retryTimer);
+      if (timer) clearTimeout(timer);
       for (const unsubscribe of unsubscribers) unsubscribe();
     };
-  }, [scope, ...stores]);
+  }, [scope, ...Object.values(stores)]);
 
-  return gaveUp;
+  return { gaveUp, failed, loadedFor, listedFor };
 }

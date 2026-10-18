@@ -1,8 +1,7 @@
 import { Renderer } from "@freelensapp/extensions";
-
-import { renewCertificate } from "../api/actions";
-import type { RenewalVerdict } from "../api/renewal";
-import type { CertificateLike } from "../api/types";
+import type { CertificateLike } from "../api/shared/types";
+import { renewCertificate } from "../api/writes/actions";
+import type { RenewalVerdict } from "../api/writes/renewal";
 import { confirmWrite, notifyDone } from "../components/confirm";
 import type { DrawerAction } from "../components/object-drawer";
 

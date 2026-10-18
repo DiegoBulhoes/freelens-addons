@@ -1,7 +1,7 @@
 import { Renderer } from "@freelensapp/extensions";
 import { type ReactNode, useState } from "react";
 
-import { nextSort, type Sort, sortRows } from "../api/table";
+import { nextSort, type Sort, sortRows } from "../api/shared/table";
 
 const {
   Component: { Checkbox },

@@ -1,29 +1,34 @@
 import type { Renderer as RendererTypes } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
-import { useEffect, useState } from "react";
 
 import {
-  getIssuerEntries,
-  getIssuerRows,
-  getMissingIssuers,
+  ISSUER_FILTER_LABELS,
+  ISSUER_FILTER_TITLES,
   type IssuerEntry,
-  type IssuerIndex,
+  isIssuerFilter,
+  issuerIndexOf,
   issuerKey,
-  issuersHeadline,
-} from "../api/issuers";
+  matchesIssuerFilter,
+  summariseIssuers,
+} from "../api/issuers/issuers";
+import { describeLoadState, rowsFor } from "../api/shared/store-state";
+import { FilterChips } from "../components/filter-chips";
 import { type Column, ListPage } from "../components/list-page";
+import { ListingBanner } from "../components/listing-banner";
 import { Status } from "../components/status";
 import { CertManagerStyles } from "../components/styles";
 import { useCertManagerStores } from "../hooks/use-cert-manager-stores";
+import { useNamedRow, useRequestedFilter } from "../hooks/use-list-params";
 import { IssuerDrawer } from "./drawers";
 
 export interface IssuersPageParams {
   kind: { get(): string };
   namespace: { get(): string };
   name: { get(): string };
+  filter: { get(): string };
 }
 
-const STATE_OF = { critical: "failed", ok: "ready" } as const;
+const DATA_STATE_BY_TONE = { critical: "failed", info: "unknown", ok: "ready" } as const;
 
 export const IssuersPage = observer(
   ({
@@ -34,30 +39,29 @@ export const IssuersPage = observer(
     extension: RendererTypes.LensExtension;
   }) => {
     const stores = useCertManagerStores();
-    const named = params?.name.get()
-      ? issuerKey(params.kind.get(), params.namespace.get(), params.name.get())
-      : "";
-    const [openKey, setOpenKey] = useState<string | undefined>(named || undefined);
+    const [selectedKey, setSelectedKey] = useNamedRow(
+      params?.name.get()
+        ? issuerKey(params.kind.get(), params.namespace.get(), params.name.get())
+        : "",
+    );
+    const [filter, setFilter] = useRequestedFilter(
+      params?.filter.get() ?? "",
+      isIssuerFilter,
+      "all",
+    );
 
-    // A certificate's issuer link names one: its drawer opens.
-    useEffect(() => {
-      if (named) setOpenKey(named);
-    }, [named]);
-
-    if (!stores.isReady) {
+    if (stores.state === "not-installed") {
       return (
         <div className="CertManager CertManager-page">
           <CertManagerStyles />
-          <p className="CertManager-section__note">Waiting for cert-manager's CRDs.</p>
+          <p className="CertManager-section__note">{describeLoadState(stores.state)}</p>
         </div>
       );
     }
 
-    const index: IssuerIndex = { issuers: stores.issuers, clusterIssuers: stores.clusterIssuers };
-    const rows = getIssuerRows(index, stores.certificates);
-    const missing = getMissingIssuers(index, stores.certificates);
-    const entries = getIssuerEntries(index, stores.certificates);
-    const failing = entries.some((entry) => entry.state.tone === "critical");
+    const summary = summariseIssuers(issuerIndexOf(stores), stores.certificates);
+    const entries = rowsFor(stores.state, summary.entries);
+    const failing = entries.some((entry) => matchesIssuerFilter(entry, "trouble"));
 
     const columns: Column<IssuerEntry>[] = [
       {
@@ -106,10 +110,14 @@ export const IssuersPage = observer(
     return (
       <ListPage
         title="Issuers"
-        subline={`${issuersHeadline(rows, missing)}. ClusterIssuers are listed whatever namespaces are chosen; their certificates, only in those.`}
+        subline={
+          stores.state === "connecting"
+            ? describeLoadState(stores.state)
+            : `${summary.headline}. ClusterIssuers are listed whatever namespaces are chosen; their certificates, only in those.`
+        }
         alarm={failing}
         section="cert-manager-issuers"
-        rows={entries}
+        rows={entries.filter((entry) => matchesIssuerFilter(entry, filter))}
         columns={columns}
         keyOf={(entry) => entry.key}
         searchTexts={(entry) => [
@@ -120,13 +128,31 @@ export const IssuersPage = observer(
           entry.state.label,
           ...entry.dependents.map((certificate) => certificate.getName()),
         ]}
-        stateOf={(entry) => (entry.issuer ? STATE_OF[entry.state.tone] : "missing")}
-        onOpen={(entry) => setOpenKey(entry.key)}
-        empty="No Issuer in the namespaces chosen and no ClusterIssuer, and no certificate there names one."
+        stateOf={(entry) =>
+          entry.issuer || entry.state.tone === "info"
+            ? DATA_STATE_BY_TONE[entry.state.tone]
+            : "missing"
+        }
+        banner={<ListingBanner failed={stores.failed} gaveUp={stores.gaveUp} />}
+        onOpen={(entry) => setSelectedKey(entry.key)}
+        empty={
+          describeLoadState(stores.state) ??
+          (entries.length > 0
+            ? "Every issuer is ready, and every one certificates name exists."
+            : "No Issuer in the namespaces chosen and no ClusterIssuer, and no certificate there names one.")
+        }
+        filters={
+          <FilterChips
+            labels={ISSUER_FILTER_LABELS}
+            titles={ISSUER_FILTER_TITLES}
+            current={filter}
+            onChange={setFilter}
+          />
+        }
       >
         <IssuerDrawer
-          entry={entries.find((entry) => entry.key === openKey)}
-          onClose={() => setOpenKey(undefined)}
+          entry={entries.find((entry) => entry.key === selectedKey)}
+          onClose={() => setSelectedKey(undefined)}
           onOpenCertificate={(certificate) =>
             void extension.navigate("certificates", {
               namespace: certificate.getNs() ?? "",

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { type ReactNode, useState } from "react";
 
-import { describeCount, searchRows } from "../api/table";
+import { describeCount, searchRows } from "../api/shared/table";
 import { NamespaceFilter } from "./namespace-filter";
 import { type SelectionAction, SelectionBar } from "./selection-bar";
 import { CertManagerStyles } from "./styles";
@@ -25,6 +25,8 @@ export interface ListPageProps<Row> {
   /** `data-section`, for an e2e suite to find the list. */
   section?: string;
   filters?: ReactNode;
+  /** Shown under the head, before the filters: what could not be loaded. */
+  banner?: ReactNode;
   /** The page's one action, after the namespace selector. */
   action?: ReactNode;
   /** Ticks rows and offers these actions on them; a write to several types "confirm". */
@@ -84,6 +86,8 @@ function ListPageView<Row>(props: ListPageProps<Row>) {
           {props.action}
         </div>
       </div>
+
+      {props.banner}
 
       {props.filters}
 

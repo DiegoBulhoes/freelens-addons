@@ -21,18 +21,18 @@ command to copy. It never reads Secret data.
 ```mermaid
 flowchart LR
   O["Overview<br/><i>what needs a person</i>"]
-  C["Certificates<br/><i>list, a row opens its drawer</i>"]
-  I["Issuers<br/><i>list, a row opens its drawer</i>"]
+  C["Certificates<br/><i>list and drawer</i>"]
+  I["Issuers<br/><i>list and drawer</i>"]
   R["Requests<br/><i>the host's list</i>"]
-  U["Unmanaged TLS<br/><i>two lists, a row opens its drawer</i>"]
+  U["Unmanaged TLS<br/><i>Ingresses and Secrets</i>"]
 
-  O -->|a row opens its drawer| C
-  O -->|a card| C
+  O -->|a row, a card| C
   O -->|a card| I
   O -->|a card| U
   C -->|its issuer| I
   I -->|a dependent| C
   U -->|its Certificate| C
+  R -->|its Certificate| C
   C -->|the Secret| H["Ingresses, Secrets<br/><i>the host's lists, narrowed</i>"]
   U -->|an Ingress, a Secret| H
 ```
@@ -42,9 +42,11 @@ flowchart LR
 ```mermaid
 flowchart LR
   I["issued<br/><i>notBefore</i>"] --> R["renewal due<br/><i>renewalTime</i>"]
-  R -->|renewed within 15 min| F["fine"]
+  R -->|renewed in time| F["fine"]
   R -->|not renewed| L["renewal failing<br/><i>still valid, still Ready</i>"]
+  R -->|new issue not ready| OD["out of date<br/><i>previous one still served</i>"]
   L --> E["expired<br/><i>notAfter</i>"]
+  OD --> E
 ```
 
 ## The chain
@@ -54,15 +56,26 @@ flowchart LR
   IS["Issuer"] --> CE["Certificate"] --> CR["CertificateRequest"] --> OR["Order"] --> CH["Challenge"]
 ```
 
+The drawer's Issuance chain marks the link that explains the state, a broken issuer first.
+
 ## Features
 
 | Page | Features |
 |------|----------|
-| Every page of its own | The host's namespace selector; narrowing it narrows the page at once. ClusterIssuers stay whatever is chosen |
-| Overview | Expired, not ready and renewal failing, worst first; cards for certificates ending within 7 and 30 days, issuers and unmanaged TLS |
-| Certificates | List with state, issuer, expiry and renewal, searched, sorted and narrowed by the chips. A row opens its drawer: the state and its cause, validity bar with issue, renewal and expiry dates, the chain from issuer to challenge with the link that explains the state marked, commands to copy. A route naming a certificate opens its drawer |
-| Renew now | Same as `cmctl renew`, in the drawer's title bar. Asks first, naming the certificate; not offered while cert-manager is already issuing, and the drawer says why; warns when the issuer is broken. A notification says it was requested; there is no undo |
-| Bulk renew | Tick certificates, then Renew. Type `confirm`; the ones already issuing are listed as skipped with the reason. One at a time, then the outcome |
-| Issuers | List of Issuers, ClusterIssuers and those named and missing, broken first. A row opens its drawer: kind, type, state and cert-manager's message, the ACME server, email and account or the CA Secret's name, the certificates that depend on it (each opens its drawer), a command to copy |
-| Requests | The host's list of CertificateRequests, each state as a dot and a word |
-| Unmanaged TLS | Two lists, searched and sorted: Ingresses serving a Secret no Certificate writes, or a Secret that is missing; TLS Secrets without a Certificate. An Ingress row opens its hosts, the Secret, why nothing renews it, and the host's Ingress list narrowed to it. A Secret row opens its type, cert-manager annotations, why it is unmanaged, the Ingresses serving it, and the host's Secret list narrowed to it |
+| Every page | The host's namespace selector; ClusterIssuers always show |
+| Loading | Says it is connecting (the overview shows a spinner); without cert-manager's CRDs it says it is waiting for them |
+| Refused lists | Named in a banner; what depends on them reads unknown, never missing or fine |
+| Overview | Expired, not ready, out of date and renewal failing, worst first |
+| Overview cards | All, not ready, out of date, renewal failing, ending within 7 and 30 days, issuers in trouble, served TLS with no Certificate |
+| Overview cards | Each card but the 7-day one opens its list on the matching chip |
+| Certificates list | State, issuer, expiry and renewal; searched, sorted, filtered by chips; late renewals marked |
+| Certificates drawer | State and cause, issuer and Secret as links, validity bar, failed attempts and next try, the chain, commands |
+| Renew now | Same as `cmctl renew`; asks first; hidden while cert-manager is issuing; warns when the issuer is broken |
+| Renew now | Refused, with nothing written, if the certificate changed or the user may not patch `certificates/status` |
+| Bulk renew | Tick, Renew, type `confirm`; skips those already issuing |
+| Issuers | Issuers, ClusterIssuers and missing ones named by a certificate, broken first |
+| Issuer drawer | Type, state, ACME account or CA Secret, dependent certificates, a command |
+| Requests | The host's list of CertificateRequests; unapproved ones read Awaiting approval |
+| Unmanaged TLS: Ingresses | Ingresses serving a Secret no Certificate writes, missing or still issuing; gaps first |
+| Unmanaged TLS: Secrets | TLS Secrets without a Certificate, including one left by a deleted Certificate |
+| Unmanaged TLS: loading | Nothing is judged until Ingresses and Certificates list; Secrets refused cluster-wide are listed per namespace |

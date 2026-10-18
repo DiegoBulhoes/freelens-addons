@@ -5,14 +5,41 @@
       "apiVersion": "cert-manager.io/v1",
       "kind": "Issuer",
       "metadata": {
+        "creationTimestamp": "2026-10-04T20:32:49Z",
+        "generation": 1,
+        "name": "selfsigned-issuer",
+        "namespace": "cnpg-system",
+        "resourceVersion": "4188",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/cnpg-system/issuers/selfsigned-issuer",
+        "uid": "074ab5ce-6d39-44b1-959f-fa3922e2464e"
+      },
+      "spec": {
+        "selfSigned": {}
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-04T20:32:49Z",
+            "observedGeneration": 1,
+            "reason": "IsReady",
+            "status": "True",
+            "type": "Ready"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "Issuer",
+      "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "creationTimestamp": "2026-10-04T20:32:17Z",
         "generation": 1,
         "name": "broken-ca",
         "namespace": "demo",
-        "resourceVersion": "11905",
+        "resourceVersion": "3594",
         "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/issuers/broken-ca",
-        "uid": "d2819c07-7cc2-4796-8ea6-685ab3333ca9"
+        "uid": "4e981775-6fb9-4e7f-a83e-13efc1bb692d"
       },
       "spec": {
         "ca": {
@@ -22,7 +49,7 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-04T20:32:17Z",
             "message": "Error getting keypair for CA issuer: secrets \"no-such-secret\" not found",
             "observedGeneration": 1,
             "reason": "ErrGetKeyPair",
@@ -37,13 +64,13 @@
       "kind": "Issuer",
       "metadata": {
         "annotations": {},
-        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "creationTimestamp": "2026-10-04T20:32:17Z",
         "generation": 1,
         "name": "flaky-ca",
         "namespace": "demo",
-        "resourceVersion": "12202",
+        "resourceVersion": "468885",
         "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/issuers/flaky-ca",
-        "uid": "ad4d09ed-3e8d-4c38-8ea7-4ed0a64ef3d8"
+        "uid": "e8f334f1-42c9-47ab-aae9-c66df7f3d9af"
       },
       "spec": {
         "ca": {
@@ -53,11 +80,41 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-27T03:46:45Z",
+            "lastTransitionTime": "2026-10-18T01:31:07Z",
             "message": "Error getting keypair for CA issuer: secrets \"flaky-ca-key\" not found",
             "observedGeneration": 1,
             "reason": "ErrGetKeyPair",
             "status": "False",
+            "type": "Ready"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "Issuer",
+      "metadata": {
+        "creationTimestamp": "2026-10-11T16:24:42Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/name": "opentelemetry-operator"
+        },
+        "name": "opentelemetry-operator-selfsigned-issuer",
+        "namespace": "opentelemetry-operator-system",
+        "resourceVersion": "83174",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/opentelemetry-operator-system/issuers/opentelemetry-operator-selfsigned-issuer",
+        "uid": "6df31e4d-85a3-4234-a7b3-27b5c0c5e085"
+      },
+      "spec": {
+        "selfSigned": {}
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-11T16:24:42Z",
+            "observedGeneration": 1,
+            "reason": "IsReady",
+            "status": "True",
             "type": "Ready"
           }
         ]

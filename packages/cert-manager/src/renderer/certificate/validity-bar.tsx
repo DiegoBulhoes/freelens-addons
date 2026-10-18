@@ -1,6 +1,6 @@
 import { Renderer } from "@freelensapp/extensions";
 
-import { describeMoment, formatUtc, type Validity } from "../api/expiry";
+import { describeMoment, formatUtc, type Validity } from "../api/certificates/expiry";
 
 const {
   Component: { WithTooltip },

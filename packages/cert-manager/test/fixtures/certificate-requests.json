@@ -8,9 +8,9 @@
         "annotations": {
           "cert-manager.io/certificate-name": "demo-ca-root",
           "cert-manager.io/certificate-revision": "1",
-          "cert-manager.io/private-key-secret-name": "demo-ca-root-gzl5q"
+          "cert-manager.io/private-key-secret-name": "demo-ca-root-868jd"
         },
-        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "creationTimestamp": "2026-10-04T20:32:17Z",
         "generation": 1,
         "name": "demo-ca-root-1",
         "namespace": "cert-manager",
@@ -21,12 +21,12 @@
             "controller": true,
             "kind": "Certificate",
             "name": "demo-ca-root",
-            "uid": "34b3e737-83a9-4569-bf0d-780e930eb50a"
+            "uid": "e5e0465f-11a9-4586-b487-ccfc01cadee0"
           }
         ],
-        "resourceVersion": "11945",
+        "resourceVersion": "3628",
         "selfLink": "/apis/cert-manager.io/v1/namespaces/cert-manager/certificaterequests/demo-ca-root-1",
-        "uid": "3e336c38-8d21-461b-ac97-385ddeede2e9"
+        "uid": "7a862ed4-c9f0-4d47-af6e-56cae8702c50"
       },
       "spec": {
         "duration": "8760h0m0s",
@@ -39,14 +39,183 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-04T20:32:17Z",
             "message": "Certificate request has been approved by cert-manager.io",
             "reason": "cert-manager.io",
             "status": "True",
             "type": "Approved"
           },
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-04T20:32:17Z",
+            "message": "Certificate fetched from issuer successfully",
+            "reason": "Issued",
+            "status": "True",
+            "type": "Ready"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "CertificateRequest",
+      "metadata": {
+        "annotations": {
+          "cert-manager.io/certificate-name": "barman-cloud-client",
+          "cert-manager.io/certificate-revision": "1",
+          "cert-manager.io/private-key-secret-name": "barman-cloud-client-kpn8p"
+        },
+        "creationTimestamp": "2026-10-04T20:32:49Z",
+        "generation": 1,
+        "name": "barman-cloud-client-1",
+        "namespace": "cnpg-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "cert-manager.io/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Certificate",
+            "name": "barman-cloud-client",
+            "uid": "cbd43078-0640-4f04-b21c-8d83ca715e3c"
+          }
+        ],
+        "resourceVersion": "4211",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/cnpg-system/certificaterequests/barman-cloud-client-1",
+        "uid": "5dcabb78-ff76-4eea-aa16-7f0074d38105"
+      },
+      "spec": {
+        "duration": "2160h0m0s",
+        "issuerRef": {
+          "group": "cert-manager.io",
+          "kind": "Issuer",
+          "name": "selfsigned-issuer"
+        },
+        "usages": [
+          "client auth"
+        ]
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-04T20:32:49Z",
+            "message": "Certificate request has been approved by cert-manager.io",
+            "reason": "cert-manager.io",
+            "status": "True",
+            "type": "Approved"
+          },
+          {
+            "lastTransitionTime": "2026-10-04T20:32:49Z",
+            "message": "Certificate fetched from issuer successfully",
+            "reason": "Issued",
+            "status": "True",
+            "type": "Ready"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "CertificateRequest",
+      "metadata": {
+        "annotations": {
+          "cert-manager.io/certificate-name": "barman-cloud-server",
+          "cert-manager.io/certificate-revision": "1",
+          "cert-manager.io/private-key-secret-name": "barman-cloud-server-whtw6"
+        },
+        "creationTimestamp": "2026-10-04T20:32:49Z",
+        "generation": 1,
+        "name": "barman-cloud-server-1",
+        "namespace": "cnpg-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "cert-manager.io/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Certificate",
+            "name": "barman-cloud-server",
+            "uid": "7f286ae2-309e-4f2b-bbfa-a8437e268ebb"
+          }
+        ],
+        "resourceVersion": "4234",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/cnpg-system/certificaterequests/barman-cloud-server-1",
+        "uid": "3610bdc4-eaec-4a3c-916f-8195c01fc27f"
+      },
+      "spec": {
+        "duration": "2160h0m0s",
+        "issuerRef": {
+          "group": "cert-manager.io",
+          "kind": "Issuer",
+          "name": "selfsigned-issuer"
+        },
+        "usages": [
+          "server auth"
+        ]
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-04T20:32:49Z",
+            "message": "Certificate request has been approved by cert-manager.io",
+            "reason": "cert-manager.io",
+            "status": "True",
+            "type": "Approved"
+          },
+          {
+            "lastTransitionTime": "2026-10-04T20:32:49Z",
+            "message": "Certificate fetched from issuer successfully",
+            "reason": "Issued",
+            "status": "True",
+            "type": "Ready"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "CertificateRequest",
+      "metadata": {
+        "annotations": {
+          "cert-manager.io/certificate-name": "inventory-db-server-tls",
+          "cert-manager.io/certificate-revision": "1",
+          "cert-manager.io/private-key-secret-name": "inventory-db-server-tls-d7mmp"
+        },
+        "creationTimestamp": "2026-10-04T20:33:17Z",
+        "generation": 1,
+        "name": "inventory-db-server-tls-1",
+        "namespace": "databases",
+        "ownerReferences": [
+          {
+            "apiVersion": "cert-manager.io/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Certificate",
+            "name": "inventory-db-server-tls",
+            "uid": "0701783e-1947-4d48-8436-02b40a49729e"
+          }
+        ],
+        "resourceVersion": "4589",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/databases/certificaterequests/inventory-db-server-tls-1",
+        "uid": "90c7d2a4-354c-43c1-af5b-0e07e2419647"
+      },
+      "spec": {
+        "issuerRef": {
+          "kind": "ClusterIssuer",
+          "name": "demo-ca"
+        },
+        "usages": [
+          "server auth"
+        ]
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-04T20:33:17Z",
+            "message": "Certificate request has been approved by cert-manager.io",
+            "reason": "cert-manager.io",
+            "status": "True",
+            "type": "Approved"
+          },
+          {
+            "lastTransitionTime": "2026-10-04T20:33:17Z",
             "message": "Certificate fetched from issuer successfully",
             "reason": "Issued",
             "status": "True",
@@ -62,9 +231,9 @@
         "annotations": {
           "cert-manager.io/certificate-name": "acme-web",
           "cert-manager.io/certificate-revision": "1",
-          "cert-manager.io/private-key-secret-name": "acme-web-48q29"
+          "cert-manager.io/private-key-secret-name": "acme-web-8sbfc"
         },
-        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "creationTimestamp": "2026-10-04T20:32:17Z",
         "generation": 1,
         "name": "acme-web-1",
         "namespace": "demo",
@@ -75,12 +244,12 @@
             "controller": true,
             "kind": "Certificate",
             "name": "acme-web",
-            "uid": "e75d9d65-dba9-4c96-bb89-f8f863d3cb53"
+            "uid": "723636c7-428d-434a-8b3a-ea13f43d4374"
           }
         ],
-        "resourceVersion": "12150",
+        "resourceVersion": "449569",
         "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificaterequests/acme-web-1",
-        "uid": "2db1a026-dd19-4fee-a59f-a21835c503aa"
+        "uid": "5917af2b-2150-43e4-ac8c-2dba4c1fd419"
       },
       "spec": {
         "issuerRef": {
@@ -91,14 +260,14 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-04T20:32:17Z",
             "message": "Certificate request has been approved by cert-manager.io",
             "reason": "cert-manager.io",
             "status": "True",
             "type": "Approved"
           },
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-04T20:32:18Z",
             "message": "Waiting on certificate issuance from order demo/acme-web-1-751204009: \"pending\"",
             "reason": "Pending",
             "status": "False",
@@ -113,12 +282,12 @@
       "metadata": {
         "annotations": {
           "cert-manager.io/certificate-name": "ends-this-month",
-          "cert-manager.io/certificate-revision": "1",
-          "cert-manager.io/private-key-secret-name": "ends-this-month-8d78s"
+          "cert-manager.io/certificate-revision": "3",
+          "cert-manager.io/private-key-secret-name": "ends-this-month-zcz98"
         },
-        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "creationTimestamp": "2026-10-18T01:31:06Z",
         "generation": 1,
-        "name": "ends-this-month-1",
+        "name": "ends-this-month-3",
         "namespace": "demo",
         "ownerReferences": [
           {
@@ -127,12 +296,12 @@
             "controller": true,
             "kind": "Certificate",
             "name": "ends-this-month",
-            "uid": "9f4f1b0e-94ec-432b-8ece-5caa2e11c4db"
+            "uid": "fbe57af2-e2e6-4ea4-8ae2-5f19f72305b6"
           }
         ],
-        "resourceVersion": "12068",
-        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificaterequests/ends-this-month-1",
-        "uid": "05fc1c0b-8e52-41ce-a422-e14def8f6dc5"
+        "resourceVersion": "468869",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificaterequests/ends-this-month-3",
+        "uid": "ef722b10-4346-43b9-9191-8d6bf64145e4"
       },
       "spec": {
         "duration": "480h0m0s",
@@ -144,14 +313,14 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-18T01:31:06Z",
             "message": "Certificate request has been approved by cert-manager.io",
             "reason": "cert-manager.io",
             "status": "True",
             "type": "Approved"
           },
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-18T01:31:06Z",
             "message": "Certificate fetched from issuer successfully",
             "reason": "Issued",
             "status": "True",
@@ -166,12 +335,12 @@
       "metadata": {
         "annotations": {
           "cert-manager.io/certificate-name": "ends-this-week",
-          "cert-manager.io/certificate-revision": "1",
-          "cert-manager.io/private-key-secret-name": "ends-this-week-f76mf"
+          "cert-manager.io/certificate-revision": "3",
+          "cert-manager.io/private-key-secret-name": "ends-this-week-qwwz9"
         },
-        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "creationTimestamp": "2026-10-17T17:17:26Z",
         "generation": 1,
-        "name": "ends-this-week-1",
+        "name": "ends-this-week-3",
         "namespace": "demo",
         "ownerReferences": [
           {
@@ -180,12 +349,12 @@
             "controller": true,
             "kind": "Certificate",
             "name": "ends-this-week",
-            "uid": "1a49be7d-d992-4529-b0b3-f22cc02c3d73"
+            "uid": "57f5e319-84af-4a02-8ad8-32110aa74d7e"
           }
         ],
-        "resourceVersion": "12023",
-        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificaterequests/ends-this-week-1",
-        "uid": "b26b7d4d-5003-413e-a496-dfc50cc46c3a"
+        "resourceVersion": "365525",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificaterequests/ends-this-week-3",
+        "uid": "b4854e5d-d223-41f8-9e16-de2677a85917"
       },
       "spec": {
         "duration": "144h0m0s",
@@ -197,14 +366,67 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-17T17:17:26Z",
             "message": "Certificate request has been approved by cert-manager.io",
             "reason": "cert-manager.io",
             "status": "True",
             "type": "Approved"
           },
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-17T17:17:26Z",
+            "message": "Certificate fetched from issuer successfully",
+            "reason": "Issued",
+            "status": "True",
+            "type": "Ready"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "CertificateRequest",
+      "metadata": {
+        "annotations": {
+          "cert-manager.io/certificate-name": "issuer-broken",
+          "cert-manager.io/certificate-revision": "1",
+          "cert-manager.io/private-key-secret-name": "issuer-broken-x8f6b"
+        },
+        "creationTimestamp": "2026-10-18T00:09:49Z",
+        "generation": 1,
+        "name": "issuer-broken-1",
+        "namespace": "demo",
+        "ownerReferences": [
+          {
+            "apiVersion": "cert-manager.io/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Certificate",
+            "name": "issuer-broken",
+            "uid": "de29350b-f9ff-447a-bd42-905535d2155b"
+          }
+        ],
+        "resourceVersion": "436035",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificaterequests/issuer-broken-1",
+        "uid": "ea513b8a-e057-4981-8d25-c494872b3137"
+      },
+      "spec": {
+        "duration": "2160h0m0s",
+        "issuerRef": {
+          "kind": "Issuer",
+          "name": "flaky-ca"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-18T00:09:49Z",
+            "message": "Certificate request has been approved by cert-manager.io",
+            "reason": "cert-manager.io",
+            "status": "True",
+            "type": "Approved"
+          },
+          {
+            "lastTransitionTime": "2026-10-18T00:09:49Z",
             "message": "Certificate fetched from issuer successfully",
             "reason": "Issued",
             "status": "True",
@@ -219,12 +441,12 @@
       "metadata": {
         "annotations": {
           "cert-manager.io/certificate-name": "managed-tls",
-          "cert-manager.io/certificate-revision": "1",
-          "cert-manager.io/private-key-secret-name": "managed-tls-mtxqf"
+          "cert-manager.io/certificate-revision": "2",
+          "cert-manager.io/private-key-secret-name": "managed-tls-l8lql"
         },
-        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "creationTimestamp": "2026-10-04T21:01:15Z",
         "generation": 1,
-        "name": "managed-tls-1",
+        "name": "managed-tls-2",
         "namespace": "demo",
         "ownerReferences": [
           {
@@ -233,12 +455,12 @@
             "controller": true,
             "kind": "Certificate",
             "name": "managed-tls",
-            "uid": "89de9529-f1c9-474e-8e79-d24c7c2a79bb"
+            "uid": "2e1b0391-7e60-4d25-9b17-0abed768e9b9"
           }
         ],
-        "resourceVersion": "12144",
-        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificaterequests/managed-tls-1",
-        "uid": "2f50048d-827b-4589-ac36-c6c32113013d"
+        "resourceVersion": "18439",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificaterequests/managed-tls-2",
+        "uid": "f76c5f92-7296-4fb8-b4d6-0f543f3a7f2e"
       },
       "spec": {
         "issuerRef": {
@@ -254,14 +476,14 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-04T21:01:15Z",
             "message": "Certificate request has been approved by cert-manager.io",
             "reason": "cert-manager.io",
             "status": "True",
             "type": "Approved"
           },
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-04T21:01:15Z",
             "message": "Certificate fetched from issuer successfully",
             "reason": "Issued",
             "status": "True",
@@ -277,9 +499,9 @@
         "annotations": {
           "cert-manager.io/certificate-name": "never-issued",
           "cert-manager.io/certificate-revision": "1",
-          "cert-manager.io/private-key-secret-name": "never-issued-grnn2"
+          "cert-manager.io/private-key-secret-name": "never-issued-hfznk"
         },
-        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "creationTimestamp": "2026-10-04T20:32:18Z",
         "generation": 1,
         "name": "never-issued-1",
         "namespace": "demo",
@@ -290,12 +512,12 @@
             "controller": true,
             "kind": "Certificate",
             "name": "never-issued",
-            "uid": "b9af6bee-4d67-43b6-8a43-64b975931ce6"
+            "uid": "31bd0799-2482-460c-8690-69bd0fd44056"
           }
         ],
-        "resourceVersion": "12106",
+        "resourceVersion": "3839",
         "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificaterequests/never-issued-1",
-        "uid": "5c4d3f68-7b5d-447d-9ac3-5d43ceb15427"
+        "uid": "8dada113-ff67-4904-bdf2-74acfda60500"
       },
       "spec": {
         "issuerRef": {
@@ -306,14 +528,14 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-04T20:32:18Z",
             "message": "Certificate request has been approved by cert-manager.io",
             "reason": "cert-manager.io",
             "status": "True",
             "type": "Approved"
           },
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-04T20:32:18Z",
             "message": "Referenced issuer does not have a Ready status condition",
             "reason": "Pending",
             "status": "False",
@@ -329,9 +551,9 @@
         "annotations": {
           "cert-manager.io/certificate-name": "orphan",
           "cert-manager.io/certificate-revision": "1",
-          "cert-manager.io/private-key-secret-name": "orphan-x2867"
+          "cert-manager.io/private-key-secret-name": "orphan-lfnnm"
         },
-        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "creationTimestamp": "2026-10-04T20:32:17Z",
         "generation": 1,
         "name": "orphan-1",
         "namespace": "demo",
@@ -342,12 +564,12 @@
             "controller": true,
             "kind": "Certificate",
             "name": "orphan",
-            "uid": "7fe4eeb2-aa42-47a9-a956-c5c3ec13a55e"
+            "uid": "f7a25f09-79bc-472c-a93a-1c69a55663e8"
           }
         ],
-        "resourceVersion": "12061",
+        "resourceVersion": "3780",
         "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificaterequests/orphan-1",
-        "uid": "800c6df5-b871-4520-91c0-a654b665fec4"
+        "uid": "cf255fa6-07cf-4764-bf2c-08da9bcac0f0"
       },
       "spec": {
         "issuerRef": {
@@ -358,14 +580,14 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-04T20:32:17Z",
             "message": "Certificate request has been approved by cert-manager.io",
             "reason": "cert-manager.io",
             "status": "True",
             "type": "Approved"
           },
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-04T20:32:17Z",
             "message": "Referenced \"ClusterIssuer\" not found: clusterissuer.cert-manager.io \"does-not-exist\" not found",
             "reason": "Pending",
             "status": "False",
@@ -379,13 +601,68 @@
       "kind": "CertificateRequest",
       "metadata": {
         "annotations": {
-          "cert-manager.io/certificate-name": "renewal-stalls",
-          "cert-manager.io/certificate-revision": "2",
-          "cert-manager.io/private-key-secret-name": "renewal-stalls-fgn2r"
+          "cert-manager.io/certificate-name": "out-of-date",
+          "cert-manager.io/certificate-revision": "3",
+          "cert-manager.io/private-key-secret-name": "out-of-date-tff49"
         },
-        "creationTimestamp": "2026-09-27T03:49:43Z",
+        "creationTimestamp": "2026-10-18T01:28:41Z",
         "generation": 1,
-        "name": "renewal-stalls-2",
+        "name": "out-of-date-3",
+        "namespace": "demo",
+        "ownerReferences": [
+          {
+            "apiVersion": "cert-manager.io/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Certificate",
+            "name": "out-of-date",
+            "uid": "fe29149e-87ba-428d-9cc4-58c59d7280f9"
+          }
+        ],
+        "resourceVersion": "468053",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificaterequests/out-of-date-3",
+        "uid": "3cf0c6ac-56aa-46d0-9a31-3870f27d4c59"
+      },
+      "spec": {
+        "duration": "2160h0m0s",
+        "issuerRef": {
+          "group": "cert-manager.io",
+          "kind": "ClusterIssuer",
+          "name": "pebble"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-18T01:28:41Z",
+            "message": "Certificate request has been approved by cert-manager.io",
+            "reason": "cert-manager.io",
+            "status": "True",
+            "type": "Approved"
+          },
+          {
+            "lastTransitionTime": "2026-10-18T01:28:41Z",
+            "message": "Failed to wait for order resource \"out-of-date-3-3818100267\" to become ready: order is in \"errored\" state: Failed to create Order: 400 urn:ietf:params:acme:error:rejectedIdentifier: Order included an identifier for which issuance is forbidden by policy: \"out-of-date.demo.test\"; subproblems:\n\turn:ietf:params:acme:error:rejectedIdentifier: [dns: out-of-date.demo.test] out-of-date.demo.test is a forbidden domain",
+            "reason": "Failed",
+            "status": "False",
+            "type": "Ready"
+          }
+        ],
+        "failureTime": "2026-10-18T01:28:41Z"
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "CertificateRequest",
+      "metadata": {
+        "annotations": {
+          "cert-manager.io/certificate-name": "renewal-stalls",
+          "cert-manager.io/certificate-revision": "8",
+          "cert-manager.io/private-key-secret-name": "renewal-stalls-5rxgh"
+        },
+        "creationTimestamp": "2026-10-18T01:34:06Z",
+        "generation": 1,
+        "name": "renewal-stalls-8",
         "namespace": "demo",
         "ownerReferences": [
           {
@@ -394,15 +671,15 @@
             "controller": true,
             "kind": "Certificate",
             "name": "renewal-stalls",
-            "uid": "1a34dcae-27ab-46b6-b811-1d02b5ca771c"
+            "uid": "42b6d193-506a-45a1-a113-532024296852"
           }
         ],
-        "resourceVersion": "12491",
-        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificaterequests/renewal-stalls-2",
-        "uid": "12f1256f-3f64-4376-b6b0-2127d71ab6d6"
+        "resourceVersion": "469834",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificaterequests/renewal-stalls-8",
+        "uid": "6717e3c9-cc4a-47c0-a217-5bb51b795325"
       },
       "spec": {
-        "duration": "24h0m0s",
+        "duration": "2160h0m0s",
         "issuerRef": {
           "kind": "Issuer",
           "name": "flaky-ca"
@@ -411,14 +688,14 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-27T03:49:43Z",
+            "lastTransitionTime": "2026-10-18T01:34:06Z",
             "message": "Certificate request has been approved by cert-manager.io",
             "reason": "cert-manager.io",
             "status": "True",
             "type": "Approved"
           },
           {
-            "lastTransitionTime": "2026-09-27T03:49:43Z",
+            "lastTransitionTime": "2026-10-18T01:34:06Z",
             "message": "Referenced issuer does not have a Ready status condition",
             "reason": "Pending",
             "status": "False",
@@ -433,12 +710,12 @@
       "metadata": {
         "annotations": {
           "cert-manager.io/certificate-name": "web-tls",
-          "cert-manager.io/certificate-revision": "1",
-          "cert-manager.io/private-key-secret-name": "web-tls-mh5zc"
+          "cert-manager.io/certificate-revision": "2",
+          "cert-manager.io/private-key-secret-name": "web-tls-zcwsw"
         },
-        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "creationTimestamp": "2026-10-04T21:01:12Z",
         "generation": 1,
-        "name": "web-tls-1",
+        "name": "web-tls-2",
         "namespace": "demo",
         "ownerReferences": [
           {
@@ -447,12 +724,12 @@
             "controller": true,
             "kind": "Certificate",
             "name": "web-tls",
-            "uid": "d5c7d9e5-2640-497b-9c24-566ececd4790"
+            "uid": "3a496ea2-6baa-4815-a818-308ab04529c5"
           }
         ],
-        "resourceVersion": "12080",
-        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificaterequests/web-tls-1",
-        "uid": "98df2ff5-b30a-4e2d-8f5a-c0d18c376b2f"
+        "resourceVersion": "18384",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/demo/certificaterequests/web-tls-2",
+        "uid": "14bb9004-6650-407d-8090-4cad1229d172"
       },
       "spec": {
         "duration": "2160h0m0s",
@@ -464,14 +741,173 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-04T21:01:12Z",
             "message": "Certificate request has been approved by cert-manager.io",
             "reason": "cert-manager.io",
             "status": "True",
             "type": "Approved"
           },
           {
-            "lastTransitionTime": "2026-09-27T03:46:43Z",
+            "lastTransitionTime": "2026-10-04T21:01:12Z",
+            "message": "Certificate fetched from issuer successfully",
+            "reason": "Issued",
+            "status": "True",
+            "type": "Ready"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "CertificateRequest",
+      "metadata": {
+        "annotations": {
+          "cert-manager.io/certificate-name": "secure-rs-tls",
+          "cert-manager.io/certificate-revision": "1",
+          "cert-manager.io/private-key-secret-name": "secure-rs-tls-9ndqh"
+        },
+        "creationTimestamp": "2026-10-04T20:36:49Z",
+        "generation": 1,
+        "name": "secure-rs-tls-1",
+        "namespace": "mongodb",
+        "ownerReferences": [
+          {
+            "apiVersion": "cert-manager.io/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Certificate",
+            "name": "secure-rs-tls",
+            "uid": "de932891-ab07-4739-b6be-2016d7ad17b3"
+          }
+        ],
+        "resourceVersion": "7879",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/mongodb/certificaterequests/secure-rs-tls-1",
+        "uid": "e22913e7-8a5c-4927-a1df-e9ff83985631"
+      },
+      "spec": {
+        "issuerRef": {
+          "kind": "ClusterIssuer",
+          "name": "demo-ca"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-04T20:36:49Z",
+            "message": "Certificate request has been approved by cert-manager.io",
+            "reason": "cert-manager.io",
+            "status": "True",
+            "type": "Approved"
+          },
+          {
+            "lastTransitionTime": "2026-10-04T20:36:49Z",
+            "message": "Certificate fetched from issuer successfully",
+            "reason": "Issued",
+            "status": "True",
+            "type": "Ready"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "CertificateRequest",
+      "metadata": {
+        "annotations": {
+          "cert-manager.io/certificate-name": "opentelemetry-operator-serving-cert",
+          "cert-manager.io/certificate-revision": "1",
+          "cert-manager.io/private-key-secret-name": "opentelemetry-operator-serving-cert-fhhd4"
+        },
+        "creationTimestamp": "2026-10-11T16:24:42Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/name": "opentelemetry-operator"
+        },
+        "name": "opentelemetry-operator-serving-cert-1",
+        "namespace": "opentelemetry-operator-system",
+        "ownerReferences": [
+          {
+            "apiVersion": "cert-manager.io/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Certificate",
+            "name": "opentelemetry-operator-serving-cert",
+            "uid": "a09e0317-12d0-4acf-ad5f-97cdce8e8b51"
+          }
+        ],
+        "resourceVersion": "83193",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/opentelemetry-operator-system/certificaterequests/opentelemetry-operator-serving-cert-1",
+        "uid": "1cca3bdf-6a76-49bf-9b90-18d1a34f682e"
+      },
+      "spec": {
+        "issuerRef": {
+          "kind": "Issuer",
+          "name": "opentelemetry-operator-selfsigned-issuer"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-11T16:24:42Z",
+            "message": "Certificate request has been approved by cert-manager.io",
+            "reason": "cert-manager.io",
+            "status": "True",
+            "type": "Approved"
+          },
+          {
+            "lastTransitionTime": "2026-10-11T16:24:42Z",
+            "message": "Certificate fetched from issuer successfully",
+            "reason": "Issued",
+            "status": "True",
+            "type": "Ready"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "cert-manager.io/v1",
+      "kind": "CertificateRequest",
+      "metadata": {
+        "annotations": {
+          "cert-manager.io/certificate-name": "sessions-tls",
+          "cert-manager.io/certificate-revision": "1",
+          "cert-manager.io/private-key-secret-name": "sessions-tls-p8wgx"
+        },
+        "creationTimestamp": "2026-10-04T20:41:29Z",
+        "generation": 1,
+        "name": "sessions-tls-1",
+        "namespace": "redis",
+        "ownerReferences": [
+          {
+            "apiVersion": "cert-manager.io/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Certificate",
+            "name": "sessions-tls",
+            "uid": "d337090e-d837-4407-8034-11a1b28b3e9f"
+          }
+        ],
+        "resourceVersion": "11419",
+        "selfLink": "/apis/cert-manager.io/v1/namespaces/redis/certificaterequests/sessions-tls-1",
+        "uid": "530943ee-ff0e-41dc-84b8-4a368ee52861"
+      },
+      "spec": {
+        "issuerRef": {
+          "kind": "ClusterIssuer",
+          "name": "demo-ca"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2026-10-04T20:41:29Z",
+            "message": "Certificate request has been approved by cert-manager.io",
+            "reason": "cert-manager.io",
+            "status": "True",
+            "type": "Approved"
+          },
+          {
+            "lastTransitionTime": "2026-10-04T20:41:29Z",
             "message": "Certificate fetched from issuer successfully",
             "reason": "Issued",
             "status": "True",

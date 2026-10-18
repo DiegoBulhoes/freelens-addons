@@ -1,10 +1,16 @@
+import type { Renderer as RendererTypes } from "@freelensapp/extensions";
 import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
-
-import { CertificateRequest } from "../api/kinds";
-import { certificateOfRequest, requestStateOf, revisionOfRequest } from "../api/requests";
+import {
+  certificateOfRequest,
+  certificateRouteOf,
+  requestStateOf,
+  revisionOfRequest,
+} from "../api/requests/requests";
+import { CertificateRequest } from "../api/shared/kinds";
 import { Status } from "../components/status";
 import { CertManagerStyles } from "../components/styles";
+import { CellLink } from "../components/table";
 import { useKubeStore } from "../components/use-kube-store";
 
 const {
@@ -13,14 +19,11 @@ const {
 
 type RequestApi = Renderer.K8sApi.KubeApi<CertificateRequest>;
 
-const certificateOf = (request: CertificateRequest) => certificateOfRequest(request);
-const revisionOf = (request: CertificateRequest) => revisionOfRequest(request);
-
 const sortingCallbacks = {
   name: (request: CertificateRequest) => request.getName(),
   namespace: (request: CertificateRequest) => request.getNs(),
-  certificate: certificateOf,
-  revision: revisionOf,
+  certificate: certificateOfRequest,
+  revision: revisionOfRequest,
   state: (request: CertificateRequest) => requestStateOf(request).label,
   age: (request: CertificateRequest) => request.getCreationTimestamp(),
 };
@@ -34,40 +37,57 @@ const renderTableHeader = [
   { title: "Age", sortBy: "age" as const },
 ];
 
-export const RequestsPage = observer(() => {
-  const store = useKubeStore(() => CertificateRequest.getStore<CertificateRequest>());
+export const RequestsPage = observer(
+  ({ extension }: { extension: RendererTypes.LensExtension }) => {
+    const store = useKubeStore(() => CertificateRequest.getStore<CertificateRequest>());
 
-  if (!store) return null;
+    if (!store) return null;
 
-  // No root of ours above the host's layout: mount the stylesheet, root class on each state.
-  return (
-    <>
-      <CertManagerStyles />
-      <KubeObjectListLayout<CertificateRequest, RequestApi>
-        tableId="certManagerRequestsTable"
-        className="CertManagerRequests"
-        store={store}
-        sortingCallbacks={sortingCallbacks}
-        searchFilters={[(request: CertificateRequest) => request.getSearchFields(), certificateOf]}
-        renderHeaderTitle="Certificate Requests"
-        renderTableHeader={renderTableHeader}
-        renderTableContents={(request: CertificateRequest) => {
-          const state = requestStateOf(request);
+    // No root of ours above the host's layout: mount the stylesheet, root class on each state.
+    return (
+      <>
+        <CertManagerStyles />
+        <KubeObjectListLayout<CertificateRequest, RequestApi>
+          tableId="certManagerRequestsTable"
+          className="CertManagerRequests"
+          store={store}
+          sortingCallbacks={sortingCallbacks}
+          searchFilters={[
+            (request: CertificateRequest) => request.getSearchFields(),
+            certificateOfRequest,
+          ]}
+          renderHeaderTitle="Certificate Requests"
+          renderTableHeader={renderTableHeader}
+          renderTableContents={(request: CertificateRequest) => {
+            const state = requestStateOf(request);
+            const route = certificateRouteOf(request);
 
-          return [
-            <WithTooltip key="name">{request.getName()}</WithTooltip>,
-            <span key="namespace">{request.getNs()}</span>,
-            <WithTooltip key="certificate">{certificateOf(request) || "—"}</WithTooltip>,
-            <span key="revision">{revisionOf(request) || "—"}</span>,
-            <WithTooltip key="state" tooltip={state.message}>
-              <span className="CertManager">
-                <Status tone={state.tone} label={state.label} />
-              </span>
-            </WithTooltip>,
-            <KubeObjectAge object={request} key="age" />,
-          ];
-        }}
-      />
-    </>
-  );
-});
+            return [
+              <WithTooltip key="name">{request.getName()}</WithTooltip>,
+              <span key="namespace">{request.getNs()}</span>,
+              route ? (
+                <span key="certificate" className="CertManager">
+                  <CellLink
+                    title={`Opens ${route.name} in the certificates page`}
+                    onClick={() => void extension.navigate("certificates", route)}
+                  >
+                    {route.name}
+                  </CellLink>
+                </span>
+              ) : (
+                <span key="certificate">—</span>
+              ),
+              <span key="revision">{revisionOfRequest(request) || "—"}</span>,
+              <WithTooltip key="state" tooltip={state.message}>
+                <span className="CertManager">
+                  <Status tone={state.tone} label={state.label} />
+                </span>
+              </WithTooltip>,
+              <KubeObjectAge object={request} key="age" />,
+            ];
+          }}
+        />
+      </>
+    );
+  },
+);

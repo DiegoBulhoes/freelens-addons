@@ -5,12 +5,12 @@
       "apiVersion": "acme.cert-manager.io/v1",
       "kind": "Challenge",
       "metadata": {
-        "creationTimestamp": "2026-09-27T03:46:43Z",
+        "creationTimestamp": "2026-10-04T20:32:18Z",
         "finalizers": [
           "acme.cert-manager.io/finalizer"
         ],
         "generation": 1,
-        "name": "acme-web-1-751204009-3652422171",
+        "name": "acme-web-1-751204009-76234786",
         "namespace": "demo",
         "ownerReferences": [
           {
@@ -19,15 +19,15 @@
             "controller": true,
             "kind": "Order",
             "name": "acme-web-1-751204009",
-            "uid": "9ec33193-a392-4a04-974b-0c24d9794a74"
+            "uid": "fdbfc98c-f9fd-4a61-9398-4104cbbb35e5"
           }
         ],
-        "resourceVersion": "12196",
-        "selfLink": "/apis/acme.cert-manager.io/v1/namespaces/demo/challenges/acme-web-1-751204009-3652422171",
-        "uid": "9e9e1163-07dc-4ef2-bf2d-c9fdfcb08353"
+        "resourceVersion": "263000",
+        "selfLink": "/apis/acme.cert-manager.io/v1/namespaces/demo/challenges/acme-web-1-751204009-76234786",
+        "uid": "27e2f6e5-b2fd-4591-8da1-7c828495d245"
       },
       "spec": {
-        "authorizationURL": "https://pebble.acme-test.svc.cluster.local:14000/authZ/Ij8tfjupVPvnJB3mq_cnvhIOTTd4DTxO-xBNeIUfLOk",
+        "authorizationURL": "https://pebble.acme-test.svc.cluster.local:14000/authZ/q3JeRZmwdkKfHFmolFksXq6rOnn3aznFihxwiJKOWD8",
         "dnsName": "acme.demo.test",
         "issuerRef": {
           "kind": "ClusterIssuer",
@@ -41,12 +41,12 @@
           }
         },
         "type": "HTTP-01",
-        "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/35XUQ7uODBpTzobPn02zLv_qlWDPeMS20LEZB08EJ_U",
+        "url": "https://pebble.acme-test.svc.cluster.local:14000/chalZ/RdIKOfz34CORVY5TpwMbAL0VJLtQZImkzMLJQwqxiVA",
         "wildcard": false
       },
       "status": {
         "presented": true,
-        "presentedAt": "2026-09-27T03:46:45Z",
+        "presentedAt": "2026-10-04T20:32:19Z",
         "processing": true,
         "reason": "Waiting for HTTP-01 challenge propagation: failed to perform self check GET request 'http://acme.demo.test/.well-known/acme-challenge/redacted-by-fixture-export': Get \"http://acme.demo.test/.well-known/acme-challenge/redacted-by-fixture-export\": dial tcp: lookup acme.demo.test on 198.51.100.10:53: no such host",
         "state": "pending"
