@@ -33,14 +33,12 @@ This file holds only what those do not, plus the rules that must never be broken
 | Fact | Rule |
 |------|------|
 | A rebuild alone does not reload an extension | `make up` builds and restarts Freelens |
-| Sidebar group only with its CRDs | `visible` is a MobX computed over `Renderer.K8sApi.crdStore`, via `isInstalled()` in each `api/installed.ts` |
+| Sidebar group only with its CRDs | `visible` is a MobX computed over `Renderer.K8sApi.crdStore`, via `isInstalled()` in each `api/shared/installed.ts` |
 | The API is not legacy | `Renderer.LensExtension` is the only API, despite the `@freelensapp/legacy-extensions` name. No `Feature`-based API exists |
-| Forms in a `ConfirmDialog` | Report values through a callback, never a shared object: the dialog copies plain-object props (`test/dialog-state.test.ts`) |
+| Forms in a `ConfirmDialog` | Report values through a callback, never a shared object: the dialog copies plain-object props (`packages/argocd/test/shared/dialog-state.test.ts`) |
 | Secrets | Read them as a `PartialObjectMetadataList` (`use-tls-inventory.ts`); `secret-metadata.ts` keeps only cert-manager's annotations. `secretsStore` loads every key into the renderer |
 | Everything under `packages/` is an extension | A helper package there breaks discovery; shared code goes in `build/` |
 | Upstream example misspells a global | It uses `global.ReactDom`; the host exports `ReactDOM` |
-| vite stays on 7 | `electron-vite@5` declares `vite ^5 \|\| ^6 \|\| ^7` |
-| @types/node stays on 24 | The container's Node |
 
 ## Consistent styles
 

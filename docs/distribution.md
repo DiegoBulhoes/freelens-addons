@@ -5,31 +5,50 @@ description: "How an extension is packaged, installed, enabled and released"
 
 # Distribution
 
-Each extension ships as a `.tgz` attached to a GitHub release and is installed by file path. Nothing
-is published to a registry.
+Each extension ships as a `.tgz` on a GitHub release and installs by file path. Nothing goes to a
+registry.
 
 ## Contents
 
+- [Compatibility](#compatibility)
 - [What ships](#what-ships)
 - [Installing a release](#installing-a-release)
 - [Enabling an extension](#enabling-an-extension)
 - [Cutting a release](#cutting-a-release)
 - [Why not a registry](#why-not-a-registry)
-- [The files field](#the-files-field)
+
+## Compatibility
+
+Tested on the versions the dev cluster installs and the e2e suites drive.
+
+| Component | Tested | Note |
+|-----------|--------|------|
+| Freelens | 1.10.3 | `engines.freelens: ^1.10.3`: any 1.x from 1.10 installs, 2.x is refused |
+| Kubernetes | k3s v1.36.4 | |
+| ArgoCD | v3.5.2 | |
+| Argo CD Image Updater | v1.3.0 | Needs v1.0 or later (the `ImageUpdater` CRD) |
+| Trivy operator | v0.34.0 | |
+| cert-manager | v1.21.2 | |
+| CloudNativePG | 1.30.0 | |
+| Barman Cloud plugin | v0.15.0 | Optional |
+| MongoDB Controllers for Kubernetes (Community) | 1.12.0 | |
+| redis-operator (OT-Container-Kit) | v0.26.0 | |
+| OpenTelemetry Operator | v0.158.0 | |
+| Prometheus Operator | v0.93.1 | |
 
 ## What ships
 
-| Path in the tarball | What it is |
-|---------------------|------------|
-| `package/package.json` | The manifest: entrypoints and `engines.freelens` |
-| `package/out/main/index.js` | Main-process bundle, plus sourcemap |
-| `package/out/renderer/index.js` | Renderer bundle, plus sourcemap |
-| `package/LICENSE` | Apache 2.0 |
+| In the tarball | What it is |
+|----------------|------------|
+| `package/package.json` | Entrypoints and `engines.freelens` |
+| `package/out/main/index.js` | Main-process bundle and sourcemap |
+| `package/out/renderer/index.js` | Renderer bundle and sourcemap |
+| `package/LICENSE` | Apache 2.0; `pnpm pack` adds the root `LICENSE` to a package that has none |
 
-The tarball has no sources, configuration or `dependencies`. The extension API, React and MobX come
-from the host as globals.
+No sources and no `dependencies`: the extension API, React and MobX come from the host. Every
+manifest declares `"files": ["out"]`, or npm would leave out the `renderer` bundle.
 
-Build them with:
+Build the tarballs into `dist/`:
 
 ```bash
 docker compose -f dev/docker-compose.yml --project-directory . \
@@ -39,97 +58,66 @@ docker compose -f dev/docker-compose.yml --project-directory . \
 
 ## Installing a release
 
-Download the `.tgz` from the release. `sha256sum -c SHA256SUMS` checks it against the checksum file
-attached to the same release. Then, in Freelens:
+1. Download the `.tgz` and `SHA256SUMS`; check with `sha256sum -c SHA256SUMS`.
+2. In Freelens, open File > Extensions (`Ctrl+Shift+E`, `Cmd+Shift+E` on macOS).
+3. Give it the file path and press Install, or drag the file there.
+4. It is listed as Disabled: [enable it](#enabling-an-extension).
 
-1. Open File > Extensions (`Ctrl+Shift+E`, `Cmd+Shift+E` on macOS).
-2. Put the path to the file in the input and press Install, or drag the file onto that area.
-3. The extension appears under *Installed extensions* as Disabled. Enable it as in
-   [Enabling an extension](#enabling-an-extension).
-
-Extension pages are per cluster, so connect to a cluster before looking for them in the sidebar.
-
-To install without the window, extract the tarball into `~/.freelens/extensions/<name>/`. Freelens
-picks it up while running, disabled:
+Without the window, extract it into `~/.freelens/extensions/<name>/`. Freelens picks it up, disabled:
 
 ```bash
 mkdir -p ~/.freelens/extensions/freelens-addons-argocd
-tar xzf freelens-addons-argocd-0.1.0.tgz --strip-components=1 \
+tar xzf freelens-addons-argocd-<version>.tgz --strip-components=1 \
   -C ~/.freelens/extensions/freelens-addons-argocd
 ```
 
+To remove one, choose Uninstall in its `⋮` menu, or delete its folder.
+
 ## Enabling an extension
 
-Every newly installed extension starts disabled, and a disabled extension looks the same as one
-that failed to load.
+A new extension starts disabled, and disabled looks the same as failed to load.
 
-1. Open File > Extensions (`Ctrl+Shift+E`, `Cmd+Shift+E` on macOS).
-2. Find it under *Installed extensions* by package name: `@freelens-addons/argocd`,
-   `@freelens-addons/cert-manager` or `@freelens-addons/trivy`.
-3. Open the `⋮` menu on its row and choose Enable. No restart is needed.
-4. Open a cluster and pick "All Namespaces" in any list, such as Pods. Freelens opens scoped to one
-   namespace, and the pages are nearly empty until the scope is widened.
+1. In File > Extensions, find `@freelens-addons/<name>`.
+2. Open its `⋮` menu and choose Enable. No restart needed.
+3. Open a cluster and pick "All Namespaces" in any list. Freelens opens scoped to one namespace.
 
-The extension's group (ArgoCD, cert-manager or Trivy) then appears in the cluster's sidebar.
+The group then appears in the cluster's sidebar.
 
-When the group is missing:
-
-| What you see | Cause and fix |
-|--------------|---------------|
-| The extension is not listed on the Extensions page | It was not installed. Install it again and read `~/.config/Freelens/logs/lens.log` for `EXTENSION-INSTALLER` |
-| Listed as *Disabled* | Step 3 |
-| Enabled, and the group is missing on one cluster but not another | The group shows only on a cluster that runs the tool: `applications.argoproj.io` for ArgoCD, `certificates.cert-manager.io` for cert-manager, any Trivy report CRD for Trivy. Check with `kubectl get crd` |
-| The cluster runs the tool and the group is still missing | Your credentials cannot list CRDs. Check with `kubectl auth can-i list customresourcedefinitions` |
-| The group is there and its pages are empty | The namespace scope, step 4 |
-
-To remove an extension, choose Uninstall from the same `⋮` menu, or delete its folder under
-`~/.freelens/extensions/` if it was installed that way.
+| Group missing? | Cause and fix |
+|----------------|---------------|
+| Not listed on the Extensions page | Not installed. Retry, and read `EXTENSION-INSTALLER` in `~/.config/Freelens/logs/lens.log` |
+| Listed as Disabled | Enable it |
+| Missing on one cluster only | That cluster lacks the tool's CRDs. Check with `kubectl get crd` |
+| CRDs present, still missing | You cannot list CRDs: `kubectl auth can-i list customresourcedefinitions` |
+| Group there, pages empty | The namespace scope, step 3 |
 
 ## Cutting a release
 
-Push a tag:
+Nobody pushes a tag: the workflow tags only after CI passes.
 
-```bash
-git tag v0.1.0 && git push origin v0.1.0
+1. Set the same new version in every `packages/*/package.json` and push to `main`.
+2. Run **Release** from the Actions tab on `main`, or `gh workflow run release.yaml --ref main`.
+
+```mermaid
+flowchart LR
+  G["Gate<br/>OSV scan, on main,<br/>one version, new tag"] --> C["CI<br/>ci.yaml in full"]
+  C --> R["Build, verify bundles,<br/>pack, check tarballs"]
+  R --> T["Tag the version<br/>GitHub release with<br/>.tgz and SHA256SUMS"]
 ```
 
-`.github/workflows/release.yaml` then runs, in order:
-
-| Step | Purpose |
-|------|---------|
-| Dependency malware and vulnerabilities (`osv-direct.sh`) | The same gate as CI, before the install runs anything. See [security](security.md#vulnerabilities) |
-| Install with the lockfile | Re-checks the 15-day age floor on every entry |
-| Build | Produces the bundles |
-| `verify-bundles.sh` | The loader contract CI asserts, and no code from outside each extension's `src/` |
-| Pack | Writes the `.tgz` files and `SHA256SUMS` |
-| Unpack each tarball again | Confirms both entrypoints are in the tarball |
-| Attach to a GitHub release | The tarballs and `SHA256SUMS` |
-
-The repository and its releases are public.
+| Step | Why |
+|------|-----|
+| Gate | Same dependency scan as CI ([security](security.md#vulnerabilities)); refuses a mixed version or an existing tag |
+| Install with the lockfile | Re-checks the 15-day age floor |
+| `verify-bundles.sh` | The loader contract, and no code from outside each extension's `src/` |
+| Check tarballs | Both entrypoints and the manifest are inside |
 
 ## Why not a registry
 
-Every extension manifest keeps `"private": true`, so an accidental `npm publish` fails. `pnpm pack`
-is unaffected.
+Every manifest keeps `"private": true`, so `npm publish` fails; `pnpm pack` still works.
 
-| Registry | Why it is not used |
-|----------|--------------------|
-| Any authenticated registry | Freelens never authenticates: its registry fetches carry only a timeout, with no headers or token, and its npmrc setting reads only the URL |
-| GitHub Packages | Its npm registry requires a token for every read, public packages included |
-| npmjs | Would work, since it allows anonymous reads. Not chosen: distribution is release tarballs |
-
-Publishing to npmjs would mean dropping `private` from the extension's `package.json`, adding
-`publishConfig: { access: "public" }`, and adding a publish step to the release workflow.
-
-## The files field
-
-npm packs whatever `main` names but knows nothing about the Freelens `renderer` field. Without a
-`files` field, and with `out/` in `.gitignore`, the tarball has no renderer bundle and the
-extension has no UI. Every extension declares:
-
-```json
-"files": ["out"]
-```
-
-`scripts/checks/verify-bundles.sh` fails the build when it is missing, and the release workflow re-checks
-the packed tarball.
+| Registry | Why not |
+|----------|---------|
+| Any authenticated one | Freelens sends no token when it fetches from a registry |
+| GitHub Packages | Needs a token even for public reads |
+| npmjs | Would work. Not chosen: release tarballs are enough |
