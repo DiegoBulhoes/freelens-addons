@@ -53,7 +53,7 @@ else
   log "WARNING: no readable kubeconfig at ${KUBECONFIG} — Freelens will start with no cluster"
 fi
 
-log "noVNC ready at http://localhost:${NOVNC_PORT}/vnc.html?autoconnect=1&resize=remote"
+log "noVNC ready at http://localhost:${NOVNC_PORT}/vnc.html?autoconnect=1&resize=scale"
 
 # The Chromium sandbox needs privileges the container lacks. FREELENS_EXTRA_ARGS is word-split.
 # shellcheck disable=SC2086

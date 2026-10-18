@@ -3,6 +3,8 @@
 #
 #   cluster.sh install [component...]    installs components/*, in order, or only those named
 #   cluster.sh install --for PACKAGE     installs only what that package's e2e suites need
+#   cluster.sh settle component...       waits again for what those components' seeds declare
+#   cluster.sh rejections                has the Prometheus operator emit its expired rejections again
 #   cluster.sh kubectl ARGS...           kubectl on the dev k3s
 #   cluster.sh fixtures [package...]     writes the test fixtures, from a full install; read the diff
 
@@ -20,11 +22,15 @@ if [[ "${1:-}" == install ]]; then
   kubectl wait --for=condition=Ready node --all --timeout=180s
 fi
 
-[[ "$(kubectl get nodes -o jsonpath='{.items[*].metadata.name}')" == "freelens-addons-dev" ]] \
-  || { echo "refusing: ${KUBECONFIG} is not the dev k3s" >&2; exit 1; }
+if [[ "$(kubectl get nodes -o jsonpath='{.items[*].metadata.name}' 2>/dev/null)" != "freelens-addons-dev" ]]; then
+  # make e2e asks for rejections whatever cluster Freelens shows.
+  [[ "${1:-}" == rejections ]] && exit 0
+  echo "refusing: ${KUBECONFIG} is not the dev k3s" >&2
+  exit 1
+fi
 
-# trivy needs the workloads; cert-manager-samples, cnpg, mongodb and redis need cert-manager.
-COMPONENTS=(workloads argocd trivy cert-manager cert-manager-samples cnpg mongodb redis)
+# Order: trivy after workloads; cert-manager before its dependents; opentelemetry before prometheus.
+COMPONENTS=(workloads argocd trivy cert-manager cert-manager-samples cnpg mongodb redis opentelemetry prometheus)
 
 # What each package's e2e suites need, in install order. scripts/checks/e2e-legs.sh reads the keys.
 declare -A NEEDS=(
@@ -34,6 +40,8 @@ declare -A NEEDS=(
   [cnpg]="cert-manager cnpg"
   [mongodb]="cert-manager mongodb"
   [redis]="cert-manager redis"
+  [opentelemetry]="cert-manager opentelemetry"
+  [prometheus]="cert-manager opentelemetry prometheus"
 )
 
 # Helpers for components/*/install.sh, states.sh and settle.sh.
@@ -48,7 +56,7 @@ apply() { for file in "$@"; do kubectl apply -f "${file}"; done; }
 retry_for() { # seconds command...
   local end=$((SECONDS + $1)); shift
   while ((SECONDS < end)); do "$@" >/dev/null 2>&1 && return 0; sleep 5; done
-  "$@"
+  "$@" || { echo "gave up waiting for: $*" >&2; return 1; }
 }
 
 retry() { retry_for 900 "$@"; }
@@ -88,6 +96,23 @@ case "${1:-}" in
     done
     echo "==> Ready. KUBECONFIG=${KUBECONFIG}"
     ;;
+  settle)
+    shift
+    for name in "$@"; do
+      [[ -f "${HERE}/components/${name}/settle.sh" ]] || { echo "no settle.sh for ${name}" >&2; exit 1; }
+      (
+        cd "${HERE}/components/${name}"
+        source settle.sh
+      )
+    done
+    ;;
+  rejections)
+    # Only where the Prometheus seed is: a leg's cluster may not have it.
+    kubectl -n monitoring get prometheus seed >/dev/null 2>&1 || exit 0
+    cd "${HERE}/components/prometheus"
+    source rejections.sh
+    wait_rejections
+    ;;
   kubectl)
     shift
     exec kubectl "$@"
@@ -98,13 +123,15 @@ case "${1:-}" in
     { kubectl -n demo get deployment web && kubectl -n acme-test get deployment pebble \
         && kubectl get crd applications.argoproj.io vulnerabilityreports.aquasecurity.github.io \
           certificates.cert-manager.io clusters.postgresql.cnpg.io \
-          mongodbcommunity.mongodbcommunity.mongodb.com redis.redis.redis.opstreelabs.in; } >/dev/null \
+          mongodbcommunity.mongodbcommunity.mongodb.com redis.redis.redis.opstreelabs.in \
+          instrumentations.opentelemetry.io servicemonitors.monitoring.coreos.com \
+        && kubectl -n monitoring get prometheus seed; } >/dev/null \
       || { echo "refusing: fixtures need every component; run cluster.sh install" >&2; exit 1; }
     cd "${HERE}/../.."
     source dev/cluster/fixtures/export.sh "$@"
     ;;
   *)
-    sed -n '4,7p' "${HERE}/cluster.sh" >&2
+    sed -n '4,9p' "${HERE}/cluster.sh" >&2
     exit 1
     ;;
 esac

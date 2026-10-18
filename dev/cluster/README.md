@@ -1,59 +1,97 @@
 # Development cluster
 
-A disposable k3s cluster to develop the extensions against. The kubeconfig is written to
+A disposable k3s to develop the extensions against. The kubeconfig goes to
 `/tmp/freelens-addons-k3s/kubeconfig.yaml`, outside the repository.
 
 | Command | What it does |
 |---------|--------------|
-| `make cluster` | Start k3s and install what the extensions read |
-| `make cluster PACKAGE=cnpg` | Start k3s and install only what that extension's e2e suites read, as its CI leg does |
+| `make cluster` | Start k3s and install every component |
+| `make cluster PACKAGE=cnpg` | Install only what that package's e2e suites need, as its CI leg does. Run `make cluster-down` first for a cluster with nothing else |
 | `make cluster-down` | Stop it and delete its data |
+
+## Contents
+
+- [cluster.sh](#clustersh)
+- [What gets installed](#what-gets-installed)
+- [States no manifest declares](#states-no-manifest-declares)
+- [Changing the seed](#changing-the-seed)
+- [Helpers](#helpers)
 
 ## cluster.sh
 
 Everything that touches this cluster goes through `cluster.sh`, which refuses any other.
 
+```mermaid
+flowchart LR
+  A[install.sh] --> B[states.sh]
+  B -->|next component| A
+  B -->|all installed| C[each settle.sh]
+```
+
 | Command | What it does |
 |---------|--------------|
-| `cluster.sh install` | Installs every component in `components/`, in order. `make cluster` runs it |
-| `cluster.sh install redis` | Installs only that component |
-| `cluster.sh install --for cnpg` | Installs what that package's e2e suites need, from `NEEDS` in `cluster.sh`. `make cluster PACKAGE=cnpg` runs it. An unknown package fails and lists the known ones |
-| `cluster.sh kubectl ARGS...` | kubectl on this cluster. `make kubectl ARGS="..."` runs it |
-| `cluster.sh fixtures [package...]` | Writes the test fixtures, through `fixtures/sanitise.py` ([testing](../../docs/testing.md#fixtures)). Refuses unless every component is installed: fixtures read across namespaces |
-
-An install runs each component's `install.sh` and `states.sh`, in order, then each one's
-`settle.sh`, in the same order, so what a `settle.sh` waits for progresses while the rest installs.
-
-`--for` installs a package's own component after the ones it needs (the Needs column below); the
-cert-manager package's own component is `cert-manager-samples`. A new extension adds its component,
-its `--for` entry in `NEEDS` and its leg in the CI matrix; `scripts/checks/e2e-legs.sh` fails until
-`packages/`, the entries and the legs name the same set.
+| `cluster.sh install [component...]` | Installs every component in `COMPONENTS` order, or only those named. `make cluster` runs it |
+| `cluster.sh install --for cnpg` | Installs what that package needs, from `NEEDS`. `make cluster PACKAGE=cnpg` runs it |
+| `cluster.sh settle prometheus` | Runs that component's `settle.sh` again, for a state that expired |
+| `cluster.sh rejections` | Has the Prometheus operator emit its expired rejection Events again; `make e2e` runs it |
+| `cluster.sh kubectl ARGS...` | kubectl on this cluster; `make kubectl ARGS="..."` runs it |
+| `cluster.sh fixtures [package...]` | Writes the test fixtures, from a full install only ([testing](../../docs/testing.md#fixtures)) |
 
 ## What gets installed
 
-One directory per component, under `components/`:
+One directory per component under `components/`:
 
 | File | What it does |
 |------|--------------|
-| `install.sh` | Installs the operator at a pinned version (at its top) and applies the samples, with the helpers in `cluster.sh` |
-| `*.yaml` | The samples it applies, in each state the pages render |
-| `states.sh` | States no manifest can declare, caused after the install. Not every component has one |
-| `settle.sh` | Waits, once every component is installed, for asynchronous results the e2e suites read once and nothing else waits for. It never changes the cluster. Not every component has one |
+| `install.sh` | Installs the tool at a pinned version and applies the samples |
+| `*.yaml` | The samples, in each state the pages render |
+| `states.sh` | Causes the states no manifest can declare. Optional |
+| `settle.sh` | Waits for asynchronous results the e2e suites read once. Optional |
 
-| Directory | Needs | Installs | Samples | States |
-|-----------|-------|----------|---------|--------|
-| `workloads/` | — | Nothing | Workloads in `demo`, running as root with no limits, for Trivy to flag | — |
-| `argocd/` | — | ArgoCD and Argo CD Image Updater | Applications (one synced, one unresolvable, one with automated sync off); Image Updater rules in each state the page ranks | A deploy history with two revisions, and drift |
-| `trivy/` | `workloads` | Trivy operator | — | `web` rolls once its SBOM exists, so an old ReplicaSet keeps it |
-| `cert-manager/` | — | cert-manager | `demo-ca`, the CA chain the other components' certificates come from | — |
-| `cert-manager-samples/` | `cert-manager` | Pebble, a test ACME server | Issuers, Certificates and Ingresses in each state the pages render | `flaky-ca` loses its key, so one certificate stops renewing |
-| `cnpg/` | `cert-manager` | CloudNativePG and its Barman Cloud plugin | RustFS as the S3 store; Postgres clusters, backups, schedules, poolers, managed roles, a tablespace, publications and subscriptions; one server certificate from cert-manager | The replicated table, a switchover, a hibernated cluster, a replica that stopped replaying |
-| `mongodb/` | `cert-manager` | MongoDB Controllers for Kubernetes | Replica sets: healthy with a preferred primary, an arbiter on the previous series, a volume that cannot bind, a user whose password Secret is missing, a version with no image, TLS from cert-manager | — |
-| `redis/` | `cert-manager` | redis-operator | A replication watched by sentinels, a sharded cluster, a standalone with TLS from cert-manager, one whose volume cannot bind, one whose image does not exist | — |
+| Directory | Needs | Installs | Samples |
+|-----------|-------|----------|---------|
+| `workloads/` | — | Nothing | Workloads in `demo` for Trivy to flag: root with no limits, one never ready, one whose image does not exist, a ClusterRole reading secrets cluster-wide |
+| `argocd/` | — | ArgoCD, Argo CD Image Updater | Applications synced, failing on a missing path, revision or namespace, with automated sync off, an app-of-apps, a multi-source one, one pinned to a commit. An unused scoped AppProject. Image Updater rules in each state. ApplicationSets: `guestbooks`, and `broken-template`, which always fails |
+| `trivy/` | `workloads` | Trivy operator | `stalled`, a rollout that never finishes: its old ReplicaSet is "No verdict" |
+| `cert-manager/` | — | cert-manager | `demo-ca`, the chain the other components' certificates come from |
+| `cert-manager-samples/` | `cert-manager` | Pebble, a test ACME server | Issuers, Certificates and Ingresses in each state the pages render |
+| `cnpg/` | `cert-manager` | CloudNativePG, Barman Cloud plugin, RustFS as S3 | Postgres clusters (one a replica cluster), backups, schedules, poolers, roles, publications and subscriptions |
+| `mongodb/` | `cert-manager` | MongoDB Controllers for Kubernetes | Replica sets in each state, and a healthy one in a second watched namespace, `mongodb-apps` |
+| `redis/` | `cert-manager` | redis-operator | A replication with sentinels, a cluster, a standalone with TLS, one whose volume cannot bind, and a replication whose image does not exist |
+| `opentelemetry/` | `cert-manager` | OpenTelemetry Operator | Collectors, and workloads opted in to auto-instrumentation in each Coverage state, blocked ones included |
+| `prometheus/` | `cert-manager`, `opentelemetry` | Prometheus Operator, node-exporter | Instances, monitors and rules in each state the pages rank; a collector whose TargetAllocator selects monitors |
 
-`argocd/image-updater-refused.yaml` is a rule the controller refuses (Ready=False). It is never
-applied, since it makes the controller crash-loop; apply it by hand only to export that fixture
-(steps in its header).
+`argocd/image-updater-refused.yaml` is never applied: it makes the controller crash-loop. Apply it
+by hand only to export that fixture (steps in its header).
+
+## States no manifest declares
+
+| State | How |
+|-------|-----|
+| A certificate valid while its renewal fails | `flaky-ca` loses its key, so `renewal-stalls` stops renewing |
+| A failed re-issue while the old certificate is served | `out-of-date` moves to the Pebble issuer, whose blocklist refuses its name |
+| A Secret left behind | `retired-tls`'s Certificate is deleted once issued |
+| A deploy history | `guestbook` is synced by hand several times |
+| Drift that stays | `helm-guestbook` has no automated sync and its Deployment is scaled |
+| A ReplicaSet scaled away | `web` is rolled once: the old ReplicaSet keeps its SBOM, loses its config audit, and reads Scaled away |
+| A switchover, a hibernated cluster, a stopped replica | `cnpg/states.sh` |
+| An upgrade and a memory change stopped halfway | `upgrade-rs` and `ledger-rs` in `mongodb/states.sh` |
+| A workload opted in after its pods started | `otel-late`'s Namespace is annotated once its pods run |
+| A CronJob's run | Job `nightly-run` is created from `otel-batch/nightly` |
+| Pressure on the node | k3s flags in `dev/docker-compose.yml` make image garbage collection unreachable |
+
+## Changing the seed
+
+| Rule | Why |
+|------|-----|
+| Fetch upstream manifests at a release tag | Tags follow the 15-day floor, so the pin is often not the newest |
+| Apply server-side (`apply_url`) | Some CRDs, such as ArgoCD's ApplicationSet, are too big for a client-side apply |
+| A state to cause goes into `states.sh` | `settle.sh` only waits; Prometheus's re-labels to re-emit rejections, nothing else changes |
+| A component another needs goes into that package's `NEEDS`, in install order | The full seed hides a missing one; `make cluster PACKAGE=<name>` on a fresh cluster shows it |
+| Every fixture comes from this cluster | The repository is public; never hand-write one ([testing](../../docs/testing.md#fixtures)) |
+| A new extension adds its component, `NEEDS` entry and CI leg | `scripts/checks/e2e-legs.sh` fails until they name the same set |
+
+The sample TLS Secrets hold placeholders, so `tls: failed to find any PEM data` on apply is expected.
 
 ## Helpers
 
@@ -61,9 +99,8 @@ applied, since it makes the controller crash-loop; apply it by hand only to expo
 
 | Helper | What it does |
 |--------|--------------|
-| `namespace NAME` | Creates the namespace if it does not exist |
+| `namespace NAME` | Creates the namespace if missing |
 | `apply FILE...` | `kubectl apply -f` each file |
-| `apply_url URL...` | Applies each URL server-side, retried since a fetch can fail |
-| `wait_deploy NAMESPACE DEPLOYMENT...` | Waits for each deployment to roll out |
-| `retry COMMAND...` | Runs the command every 5s until it succeeds, for up to 15 minutes; the last attempt shows its output |
-| `retry_for SECONDS COMMAND...` | The same, for up to that many seconds |
+| `apply_url URL...` | Applies each URL server-side, retried |
+| `wait_deploy NAMESPACE DEPLOYMENT...` | Waits for each rollout |
+| `retry COMMAND...`, `retry_for SECONDS COMMAND...` | Runs the command until it succeeds or times out |

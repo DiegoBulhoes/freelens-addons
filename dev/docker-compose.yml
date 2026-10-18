@@ -21,6 +21,8 @@ services:
       # Unreachable GC target: real FreeDiskSpaceFailed warnings for the ArgoCD overview.
       - --kubelet-arg=image-gc-high-threshold=1
       - --kubelet-arg=image-gc-low-threshold=0
+      # The whole seed and Trivy's scan pods pass the default 110; the node's /24 holds 254.
+      - --kubelet-arg=max-pods=250
     privileged: true
     ports:
       - "127.0.0.1:${K3S_PORT:-6443}:${K3S_PORT:-6443}"
