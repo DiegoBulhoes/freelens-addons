@@ -50,6 +50,7 @@ Run `make up`, set `KUBECONFIG_PATH` in the `.env` it writes, and run it again. 
 | [testing.md](docs/testing.md) | Test approach and where fixtures come from |
 | [distribution.md](docs/distribution.md) | Installing, enabling and cutting a release |
 | [security.md](docs/security.md) | Supply-chain rules and what CI enforces |
+| [kubernetes-mcp.md](docs/kubernetes-mcp.md) | The read-only Kubernetes MCP the agent uses on the dev k3s |
 
 ## Licence
 

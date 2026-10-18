@@ -135,7 +135,7 @@ alias dc='docker compose -f dev/docker-compose.yml --project-directory .'
 | `make check` | CI's first four jobs: dependency gate, lint, typecheck, unit tests with coverage, build, policy checks |
 | `bash scripts/deps-refresh.sh` | Resolve the lockfile again within the ranges and the floor; monthly, and the fix for a transitive advisory |
 | `make cluster`, `make cluster-down` | The dev k3s; see [dev/cluster/README.md](../dev/cluster/README.md) |
-| `bash dev/cluster/cluster.sh kubectl ...` | kubectl on the dev k3s, refused on any other cluster |
+| MCP server `k3s-dev` | How the agent reads the dev k3s, read-only; see [kubernetes-mcp](kubernetes-mcp.md) |
 | `make e2e`, `make e2e-writes` | End-to-end suites and real writes; see [testing](testing.md#commands) |
 | `dev/act/run.sh` | The CI workflow through act, beside the dev setup; `JOB=` and `LEG=` narrow it |
 | `bash scripts/security/scan.sh` | Secret, dependency and Dockerfile scanners |
