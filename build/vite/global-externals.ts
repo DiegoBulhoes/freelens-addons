@@ -6,7 +6,7 @@ import type { Plugin } from "vite";
 // The host provides these as globals; a bundled React or MobX is a second instance and breaks
 // hooks and observability. Upstream's example spells `ReactDom`; the host exports `ReactDOM`.
 
-const PREFIX = "\0freelens-global:";
+const VIRTUAL_ID_PREFIX = "\0freelens-global:";
 
 export const MAIN_GLOBALS: Readonly<Record<string, string>> = {
   "@freelensapp/extensions": "LensExtensions",
@@ -14,8 +14,7 @@ export const MAIN_GLOBALS: Readonly<Record<string, string>> = {
 };
 
 export const RENDERER_GLOBALS: Readonly<Record<string, string>> = {
-  "@freelensapp/extensions": "LensExtensions",
-  mobx: "Mobx",
+  ...MAIN_GLOBALS,
   "mobx-react": "MobxReact",
   react: "React",
   "react-dom": "ReactDOM",
@@ -24,12 +23,13 @@ export const RENDERER_GLOBALS: Readonly<Record<string, string>> = {
   "react-router-dom": "ReactRouterDom",
 };
 
-const requireFrom = createRequire(join(process.cwd(), "__resolve__.cjs"));
+const requireFromCwd = createRequire(join(process.cwd(), "__resolve__.cjs"));
 
-const IDENTIFIER = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
+const NAME = "[A-Za-z_$][A-Za-z0-9_$]*";
+const IDENTIFIER = new RegExp(`^${NAME}$`);
 
 // Valid object keys that cannot be re-exported as `export const <name>`.
-const RESERVED = new Set([
+const UNEXPORTABLE_NAMES = new Set([
   "default",
   "__esModule",
   "break",
@@ -78,7 +78,7 @@ function packageNameOf(id: string): string {
 // Falls back to pnpm's virtual store, which sits at the workspace root.
 function resolveEntry(id: string): string | null {
   try {
-    return requireFrom.resolve(id);
+    return requireFromCwd.resolve(id);
   } catch {
     // fall through to the virtual store
   }
@@ -115,17 +115,17 @@ function namesFromSource(source: string): string[] {
   for (const block of source.matchAll(
     /__webpack_require__\.d\(\s*\w+\s*,\s*\{([\s\S]*?)\}\s*\)/g,
   )) {
-    for (const match of (block[1] ?? "").matchAll(/([A-Za-z_$][A-Za-z0-9_$]*)\s*:/g)) {
+    for (const match of (block[1] ?? "").matchAll(new RegExp(`(${NAME})\\s*:`, "g"))) {
       if (match[1]) found.add(match[1]);
     }
   }
 
   // plain CJS
-  for (const match of source.matchAll(/exports\.([A-Za-z_$][A-Za-z0-9_$]*)\s*=/g)) {
+  for (const match of source.matchAll(new RegExp(`exports\\.(${NAME})\\s*=`, "g"))) {
     if (match[1]) found.add(match[1]);
   }
   for (const match of source.matchAll(
-    /Object\.defineProperty\(\s*exports\s*,\s*["']([A-Za-z_$][A-Za-z0-9_$]*)["']/g,
+    new RegExp(`Object\\.defineProperty\\(\\s*exports\\s*,\\s*["'](${NAME})["']`, "g"),
   )) {
     if (match[1]) found.add(match[1]);
   }
@@ -135,11 +135,12 @@ function namesFromSource(source: string): string[] {
 
 // Read from the installed devDependency: the global exists only inside Freelens.
 function exportNamesOf(id: string): string[] {
-  const usable = (names: string[]) => names.filter((n) => IDENTIFIER.test(n) && !RESERVED.has(n));
+  const usable = (names: string[]) =>
+    names.filter((n) => IDENTIFIER.test(n) && !UNEXPORTABLE_NAMES.has(n));
   const entry = resolveEntry(id);
 
   try {
-    const names = usable(Object.keys(requireFrom(entry ?? id)));
+    const names = usable(Object.keys(requireFromCwd(entry ?? id)));
     if (names.length > 0) return names;
   } catch {
     // the module refuses to load outside a browser; parse it instead
@@ -156,6 +157,20 @@ function exportNamesOf(id: string): string[] {
   return [];
 }
 
+function shimSource(moduleId: string, globalName: string, names: string[]): string {
+  return [
+    `const __m = globalThis[${JSON.stringify(globalName)}];`,
+    `if (__m === undefined) {`,
+    `  throw new Error(${JSON.stringify(
+      `Freelens did not provide global.${globalName}, needed for "${moduleId}". ` +
+        `Is this bundle loaded in the process it was built for?`,
+    )});`,
+    `}`,
+    `export default __m;`,
+    ...names.map((name) => `export const ${name} = __m.${name};`),
+  ].join("\n");
+}
+
 export function globalExternals(globals: Readonly<Record<string, string>>): Plugin {
   const cache = new Map<string, string>();
 
@@ -164,31 +179,19 @@ export function globalExternals(globals: Readonly<Record<string, string>>): Plug
     enforce: "pre",
 
     resolveId(id: string) {
-      return Object.hasOwn(globals, id) ? { id: `${PREFIX}${id}`, moduleSideEffects: false } : null;
+      return Object.hasOwn(globals, id)
+        ? { id: `${VIRTUAL_ID_PREFIX}${id}`, moduleSideEffects: false }
+        : null;
     },
 
     load(id: string) {
-      if (!id.startsWith(PREFIX)) return null;
+      if (!id.startsWith(VIRTUAL_ID_PREFIX)) return null;
 
-      const moduleId = id.slice(PREFIX.length);
+      const moduleId = id.slice(VIRTUAL_ID_PREFIX.length);
       let code = cache.get(moduleId);
 
       if (code === undefined) {
-        const globalName = globals[moduleId] as string;
-        const names = exportNamesOf(moduleId);
-
-        code = [
-          `const __m = globalThis[${JSON.stringify(globalName)}];`,
-          `if (__m === undefined) {`,
-          `  throw new Error(${JSON.stringify(
-            `Freelens did not provide global.${globalName}, needed for "${moduleId}". ` +
-              `Is this bundle loaded in the process it was built for?`,
-          )});`,
-          `}`,
-          `export default __m;`,
-          ...names.map((name) => `export const ${name} = __m.${name};`),
-        ].join("\n");
-
+        code = shimSource(moduleId, globals[moduleId] as string, exportNamesOf(moduleId));
         cache.set(moduleId, code);
       }
 

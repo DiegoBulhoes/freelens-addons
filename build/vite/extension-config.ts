@@ -3,11 +3,6 @@ import { defineConfig } from "electron-vite";
 import { firstPartyOnly } from "./first-party-only";
 import { globalExternals, MAIN_GLOBALS, RENDERER_GLOBALS } from "./global-externals";
 
-export interface ExtensionConfigOptions {
-  mainEntry?: string;
-  rendererEntry?: string;
-}
-
 const runtimeExternals = [
   "electron",
   /^electron\//,
@@ -41,25 +36,17 @@ function cjsLib(entry: string, outDir: string) {
   };
 }
 
-export function defineExtensionConfig(options: ExtensionConfigOptions = {}) {
-  const { mainEntry = "src/main/index.ts", rendererEntry = "src/renderer/index.tsx" } = options;
-
-  const define = {
-    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
-  };
-
+export function defineExtensionConfig() {
   return defineConfig({
     main: {
-      define,
       plugins: [globalExternals(MAIN_GLOBALS), firstPartyOnly()],
-      build: cjsLib(mainEntry, "out/main"),
+      build: cjsLib("src/main/index.ts", "out/main"),
     },
 
     // Renderer built in the `preload` slot: the `renderer` slot demands an index.html.
     preload: {
-      define,
       plugins: [globalExternals(RENDERER_GLOBALS), firstPartyOnly()],
-      build: cjsLib(rendererEntry, "out/renderer"),
+      build: cjsLib("src/renderer/index.tsx", "out/renderer"),
     },
   });
 }
