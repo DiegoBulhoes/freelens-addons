@@ -1,6 +1,6 @@
 {
   "name": "@freelens-addons/opentelemetry",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "description": "Shows whether workloads opted into OpenTelemetry auto-instrumentation got the agent, and why collectors fail",
   "license": "Apache-2.0",

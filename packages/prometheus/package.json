@@ -1,6 +1,6 @@
 {
   "name": "@freelens-addons/prometheus",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "description": "Shows which Prometheus or TargetAllocator selects each monitor and rule, whether its targets are up, and how nodes and pods use their resources",
   "license": "Apache-2.0",
