@@ -72,6 +72,7 @@ export interface PodLike extends Named {
   spec?: { nodeName?: string; containers?: { name: string }[] };
   status?: {
     phase?: string;
+    podIP?: string;
     startTime?: string;
     conditions?: { type: string; status: string; reason?: string; message?: string }[];
     containerStatuses?: ContainerStatus[];

@@ -17,11 +17,13 @@ import {
   nodeRestartRefusalNow,
   podReplaced,
   redisCliCommand,
+  replicasUnknownToSentinel,
   restartAllPlan,
   scaleAdvice,
   scalePatch,
   scaleRefusal,
   scaleWarnings,
+  sentinelReplicasCommand,
   stepRefusal,
 } from "../../src/renderer/api/writes/operations";
 import { named, objects, pods, pvcs, variantOf } from "../support/fixtures";
@@ -133,6 +135,36 @@ describe("restarting", () => {
     expect(restartAllPlan(named("cache"), unlabelled)).toMatchObject({
       refused: expect.stringMatching(/master could not be told/),
     });
+  });
+
+  it("refuses, and does not call settled, while a restarted replica is still labelled master", () => {
+    const cache = named("cache");
+    const list = nodes(cache);
+    const replica = list.find((each) => each.role === "replica")?.name;
+    const twoMasters = list.map((each) =>
+      each.name === replica ? { ...each, role: "master" as const } : each,
+    );
+
+    expect(restartAllPlan(cache, twoMasters)).toMatchObject({
+      refused: expect.stringMatching(/are each labelled master/),
+    });
+    expect(isSettled(cache, twoMasters)).toBe(false);
+  });
+
+  it("names the replicas a sentinel does not list as up, by their pods' IPs", () => {
+    const cache = named("cache");
+    const replicas = nodes(cache).filter((each) => each.role === "replica");
+    const [first, second] = replicas.map((each) => each.pod?.status?.podIP ?? "");
+
+    expect(replicasUnknownToSentinel(`${first} slave\n${second} slave\n`, replicas)).toEqual([]);
+    expect(replicasUnknownToSentinel(`${first} slave\n`, replicas)).toEqual([replicas[1]?.name]);
+    expect(
+      replicasUnknownToSentinel(`${first} s_down,slave,disconnected\n${second} slave`, replicas),
+    ).toEqual([replicas[0]?.name]);
+    expect(replicasUnknownToSentinel("", replicas)).toEqual(replicas.map((each) => each.name));
+    expect(sentinelReplicasCommand(named("cache-sentinel")).at(-1)).toMatch(
+      /SENTINEL replicas myMaster \| awk/,
+    );
   });
 
   it("re-checks each step against fresh pods", () => {

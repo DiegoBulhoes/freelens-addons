@@ -35,15 +35,17 @@ describe("Redis writes, checked in the cluster", () => {
     frame,
   }));
 
-  // The replication is settled once every pod is ready and the operator has labelled each one.
+  // Settled once every pod is ready and labelled, with one master: a restarted replica is labelled master until relinked.
   const settled = async () => {
     const pods = await podsOf("cache");
     const replication = await get(`${GROUP}/redisreplications/cache`);
-    const master = pods.find((each) => role(each) === "master");
+    const masters = pods.filter((each) => role(each) === "master");
+    const master = masters[0];
 
     return (
       pods.length === replication?.spec?.clusterSize &&
       pods.every((each) => ready(each) && role(each)) &&
+      masters.length === 1 &&
       master !== undefined &&
       replication?.status?.masterNode === master.metadata.name
     );

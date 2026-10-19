@@ -120,6 +120,14 @@ export function restartAllPlan(
     return { refused: "Its master could not be told from its pods' labels." };
   }
 
+  const masters = current.filter(isMaster);
+
+  if (kindOf(object) === "Replication" && masters.length > 1) {
+    return {
+      refused: `${masters.map((each) => each.name).join(" and ")} are each labelled master; wait until the operator relinks all but one.`,
+    };
+  }
+
   return {
     steps: [
       ...current
@@ -186,10 +194,12 @@ export function isSettled(object: RedisLike, nodes: RedisNode[]): boolean {
 
   if (kindOf(object) === "Replication") {
     const master = masterOf(current)?.name;
+    // A restarted replica starts as a master and is labelled one until the operator relinks it.
+    const masters = current.filter((each) => each.role === "master").length;
 
     // A replica answers its probe before the operator relinks it: until its role is set, it may still be resyncing.
     return (
-      Boolean(master) &&
+      masters === 1 &&
       current.every((each) => each.role !== undefined) &&
       (!object.status?.masterNode || object.status.masterNode === master)
     );
@@ -273,6 +283,32 @@ export function failoverCommand(sentinel: RedisLike): string[] {
     "-c",
     `redis-cli -p 26379${tlsFlags(sentinel)}${authFlag(sentinel)} SENTINEL failover ${group}`,
   ];
+}
+
+/** Run in a sentinel pod: one line per replica it knows, its IP and its flags. */
+export function sentinelReplicasCommand(sentinel: RedisLike): string[] {
+  const group = sentinel.spec.redisSentinelConfig?.masterGroupName ?? "myMaster";
+
+  return [
+    "sh",
+    "-c",
+    `redis-cli -p 26379${tlsFlags(sentinel)}${authFlag(sentinel)} SENTINEL replicas ${group} | awk 'NR % 2 == 1 { key = $0; next } key == "ip" { ip = $0 } key == "flags" { print ip, $0 }'`,
+  ];
+}
+
+/** The replicas a sentinel does not list as up: its failover reconfigures only those it lists. */
+export function replicasUnknownToSentinel(listed: string, replicas: RedisNode[]): string[] {
+  const up = new Set(
+    listed
+      .split("\n")
+      .map((line) => line.trim().split(/\s+/))
+      .filter(([, flags]) => flags !== undefined && !/s_down|o_down|disconnected/.test(flags))
+      .map(([ip]) => ip),
+  );
+
+  return replicas
+    .filter((each) => !each.pod?.status?.podIP || !up.has(each.pod.status.podIP))
+    .map((each) => each.name);
 }
 
 /** Opens redis-cli in a pod; the password is expanded inside it and never leaves the pod. */

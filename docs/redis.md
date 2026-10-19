@@ -68,8 +68,8 @@ Every write asks first and reports by notification.
 | redis-cli | A terminal tab in a pod, with cluster mode, sentinel port and TLS as needed; the password stays inside the pod |
 | Fail over | For a watched replication: a ready sentinel promotes a replica. Asks for the name |
 | Scale | Replications, clusters (three leaders minimum) and sentinels; the dialog says what the new size removes or breaks. Undo puts it back |
-| Restart a pod | Deletes it; it comes back on its volume. A ready pod is refused while another is down. Asks for the pod's name |
-| Restart all | From the drawer for replications and sentinels with more than one pod; from ticked rows for replications, standalones and sentinels. One pod at a time, a replication's master last, each waiting for the set to settle. The drawer asks for the name, ticked rows for "confirm" |
+| Restart a pod | Deletes it; it comes back on its volume. A ready pod is refused while another is down, and a watched master while its sentinels do not list every replica. Asks for the pod's name |
+| Restart all | From the drawer for replications and sentinels with more than one pod; from ticked rows for replications, standalones and sentinels. One pod at a time, a replication's master last, each waiting for the set to settle with one master; the master only once its sentinels list every replica. The drawer asks for the name, ticked rows for "confirm" |
 | No cluster restart | redis-operator v0.26.0 does not rejoin a pod back on a new IP; the cluster stays in Bootstrap |
 | Logs | A pod's log in a log tab |
 | Copy commands | `kubectl describe`, the operator's log, `cluster nodes`, the password from its Secret |

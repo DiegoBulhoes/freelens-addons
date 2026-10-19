@@ -1,5 +1,6 @@
 import { Renderer } from "@freelensapp/extensions";
-import { appSelector, kindOf, nodesOf, type RedisNode } from "../objects/nodes";
+import { appSelector, currentNodes, kindOf, nodesOf, type RedisNode } from "../objects/nodes";
+import { sentinelsOf } from "../objects/rows";
 import {
   METADATA_ONLY,
   type PartialObjectMetadataList,
@@ -17,7 +18,9 @@ import {
   nodeRestartRefusalNow,
   podReplaced,
   type RestartStep,
+  replicasUnknownToSentinel,
   restartAllPlan,
+  sentinelReplicasCommand,
   stepRefusal,
 } from "./operations";
 
@@ -190,6 +193,16 @@ export async function restartNode(
 
   if (refused) throw new Error(refused);
 
+  if (confirmed === "master" && kindOf(object) === "Replication") {
+    const missed = await withTimeout(() => replicasSentinelsMiss(now.object, now.nodes));
+
+    if (missed.length > 0) {
+      throw new Error(
+        `The sentinels do not list ${missed.join(", ")} yet: their failover would leave ${missed.length === 1 ? "it" : "them"} following the old master. Nothing was changed.`,
+      );
+    }
+  }
+
   await deletePod(object, node);
 }
 
@@ -221,8 +234,52 @@ export async function until(what: string, check: () => Promise<boolean>): Promis
   }
 }
 
+/** The replicas some ready sentinel watching the replication does not list as up; none without sentinels. */
+export async function replicasSentinelsMiss(
+  object: RedisLike,
+  nodes: RedisNode[],
+): Promise<string[]> {
+  const namespace = object.getNs() ?? "";
+  const sentinels = (await RedisSentinel.getApi().list({ namespace })) as unknown as
+    | RedisLike[]
+    | null;
+  const replicas = currentNodes(nodes).filter((each) => each.role !== "master");
+  const missed = new Set<string>();
+
+  for (const sentinel of sentinelsOf(object, sentinels ?? [])) {
+    const pods = (await Renderer.K8sApi.podsApi.list(
+      { namespace },
+      { labelSelector: appSelector(sentinel) },
+    )) as unknown as PodLike[] | null;
+
+    for (const node of nodesOf(sentinel, pods ?? [], []).filter(
+      (each) => each.ready && each.container,
+    )) {
+      const listed = await execIn(
+        namespace,
+        node.name,
+        node.container ?? "",
+        sentinelReplicasCommand(sentinel),
+      );
+
+      for (const name of replicasUnknownToSentinel(listed, replicas)) missed.add(name);
+    }
+  }
+
+  return [...missed];
+}
+
 async function restartStep(object: RedisLike, step: RestartStep): Promise<void> {
   const namespace = object.getNs();
+
+  if (step.last && kindOf(object) === "Replication") {
+    await until(`the sentinels to list every replica of ${object.getName()}`, async () => {
+      const now = await freshState(object);
+
+      return (await replicasSentinelsMiss(now.object, now.nodes)).length === 0;
+    });
+  }
+
   const now = await withTimeout(() => freshState(object));
   const refused = stepRefusal(now.object, step, now.nodes);
 
