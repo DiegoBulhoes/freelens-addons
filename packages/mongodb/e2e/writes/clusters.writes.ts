@@ -74,6 +74,12 @@ describe("MongoDB writes, checked in the cluster", () => {
     );
     await memberMenu("catalog-rs-2", "Make primary");
     await confirmDialog(session, frame, "Switch", "catalog-rs");
+    // The dialog closes first; the patch lands after the re-check at OK has read every agent.
+    await notificationMatching(
+      session,
+      frame,
+      /catalog-rs-2 will be elected primary of catalog-rs/,
+    );
 
     expect(await priorities("catalog-rs")).toEqual(["1", "1", "2"]);
     await untilCluster("catalog-rs-2 elected again", () => settled("catalog-rs", "catalog-rs-2"));

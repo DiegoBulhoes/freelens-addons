@@ -115,13 +115,11 @@ export const writesOn = (at: () => { session: Session; frame: number }) => {
     );
   };
 
-  // The seed's override has no restart annotation; removing one rolls the pod once more.
+  // The operator merges the override onto its StatefulSet, which keeps the annotation: no roll follows.
   const putBackSecure = async () => {
     const { session, frame } = at();
 
     if ((await restartedAt("secure-rs")) !== undefined) {
-      const before = await uid("secure-rs-0");
-
       await restore(session, frame, "PATCH", `${SETS}/secure-rs`, {
         spec: {
           statefulSet: {
@@ -129,12 +127,6 @@ export const writesOn = (at: () => { session: Session; frame: number }) => {
           },
         },
       });
-      // Settled holds before the operator starts that roll; wait for the new pod first.
-      await untilCluster(
-        "secure-rs-0 rolled back",
-        () => replaced("secure-rs-0", before),
-        10 * 60_000,
-      );
     }
     await untilCluster("secure-rs to settle", () => settled("secure-rs"), 10 * 60_000);
   };

@@ -59,7 +59,7 @@ e2e: e2e-freelens
 
 # --if-present: trivy and prometheus have no writes.
 e2e-writes: e2e-freelens
-	$(DEV) "$(E2E_RUN) --if-present test:e2e-writes"
+	$(DEV) "$(E2E_RUN) --if-present test:e2e-writes $(FILES)"
 
 .env: .env.example
 	@[[ -f .env ]] || { cp .env.example .env; sed -i "s|^USER_UID=.*|USER_UID=$$(id -u)|; s|^USER_GID=.*|USER_GID=$$(id -g)|" .env; }

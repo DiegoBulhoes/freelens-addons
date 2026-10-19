@@ -245,8 +245,10 @@ export const cnpgWrites = (page: () => { session: Session; frame: number }) => {
     return clusterObject(session, frame, path);
   };
   const cluster = (name: string) => get(`${NS}/clusters/${name}`);
+  // A Pooler's pods carry the cluster label too; only instances sleep with it.
   const podsOf = async (name: string) =>
-    ((await get(`${PODS}?labelSelector=cnpg.io%2Fcluster%3D${name}`))?.items ?? []) as KubeObject[];
+    ((await get(`${PODS}?labelSelector=cnpg.io%2Fcluster%3D${name}%2Ccnpg.io%2FpodRole%3Dinstance`))
+      ?.items ?? []) as KubeObject[];
   const healthy = async (name: string) => (await cluster(name))?.status?.phase === HEALTHY;
   const backups = () => {
     const { session, frame } = page();
