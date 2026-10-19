@@ -10,11 +10,11 @@ import {
   type ErrorLog,
   openMenu,
   openWorkbench,
-  textOf,
+  typeInto,
   waitFor,
 } from "../../../../build/e2e/freelens";
 import { controlsHelpers } from "../support/argocd";
-import { showAllAttention } from "../support/attention";
+import { ATTENTION_ROWS, showAllAttention } from "../support/attention";
 
 // Read-only on purpose: Sync and Refresh are opened as far as their confirmation, then cancelled.
 
@@ -36,34 +36,55 @@ describe("the controls on the ArgoCD pages", () => {
   }));
 
   describe("the confirmations that ask for a typed word", () => {
+    // Seeded OutOfSync with no automated sync, so it never has an operation hiding Sync.
+    const NAME = "helm-guestbook";
+    const SEARCH = '[data-section="attention"] .ArgoCD-search';
+
+    const pressKebab = () =>
+      session.evaluate<boolean>(
+        `(() => {
+          const row = [...document.querySelectorAll(${JSON.stringify(ATTENTION_ROWS)})]
+            .find((each) => each.querySelector('.ArgoCD-row__name b')?.textContent.trim() === ${JSON.stringify(NAME)});
+          const kebab = row?.querySelector('.ArgoCD-row__actions i.Icon');
+          kebab?.click();
+          return Boolean(kebab);
+        })()`,
+        frame,
+      );
+
     it("asks for an Application's name only once prune or force is ticked", async () => {
       await openDashboard();
       await showAllAttention(session, frame);
 
-      const name = await textOf(session, frame, '[data-section="attention"] .ArgoCD-row__name b');
+      await typeInto(session, frame, SEARCH, NAME);
 
-      await session.evaluate(
-        "document.querySelector('[data-section=\"attention\"] .ArgoCD-row__actions i.Icon')?.click()",
-        frame,
-      );
-      await openMenu(session, frame);
-      expect(await ellipses()).toEqual([]);
-      await clickMenuItem(session, frame, "Sync");
+      try {
+        await waitFor(`${NAME} on the attention list`, async () =>
+          (await pressKebab()) ? true : undefined,
+        );
+        await openMenu(session, frame);
+        expect(await ellipses()).toEqual([]);
+        await clickMenuItem(session, frame, "Sync");
 
-      expect(await dialogText(session, frame)).toContain(`Sync ${name}`);
-      expect(await typedFields(), "a plain sync asks for no name").toBe(0);
+        expect(await dialogText(session, frame)).toContain(`Sync ${NAME}`);
+        expect(await typedFields(), "a plain sync asks for no name").toBe(0);
 
-      await clickWhenShown(session, frame, ".ConfirmDialog .Checkbox", "Prune");
-      await waitFor("the name field", async () => ((await typedFields()) === 1 ? true : undefined));
-      expect(await dialogText(session, frame)).toContain(`Type ${name} to confirm.`);
-      expect(await dialogColourViolations(session, frame, "ArgoCD")).toEqual([]);
+        await clickWhenShown(session, frame, ".ConfirmDialog .Checkbox", "Prune");
+        await waitFor("the name field", async () =>
+          (await typedFields()) === 1 ? true : undefined,
+        );
+        expect(await dialogText(session, frame)).toContain(`Type ${NAME} to confirm.`);
+        expect(await dialogColourViolations(session, frame, "ArgoCD")).toEqual([]);
 
-      await clickWhenShown(session, frame, ".ConfirmDialog .Checkbox", "Prune");
-      await waitFor("the name field to go", async () =>
-        (await typedFields()) === 0 ? true : undefined,
-      );
+        await clickWhenShown(session, frame, ".ConfirmDialog .Checkbox", "Prune");
+        await waitFor("the name field to go", async () =>
+          (await typedFields()) === 0 ? true : undefined,
+        );
 
-      await measureAndCancelDialog();
+        await measureAndCancelDialog();
+      } finally {
+        await typeInto(session, frame, SEARCH, "");
+      }
     }, 90_000);
 
     it("asks for the word confirm before the overview syncs what it shows", async () => {
