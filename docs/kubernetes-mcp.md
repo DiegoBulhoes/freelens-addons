@@ -51,7 +51,7 @@ flowchart LR
         "kubeconfig",
         "--read-only",
         "--toolsets",
-        "core,config"
+        "core"
       ]
     }
   }
@@ -68,7 +68,7 @@ flowchart LR
 | `--kubeconfig` | The dev k3s only; never `~/.kube/config` or another cluster |
 | `--cluster-provider kubeconfig` | Uses that file, no auto-detection |
 | `--read-only` | Only tools that read are loaded |
-| `--toolsets core,config` | The basic tools; the rest is not needed here |
+| `--toolsets core` | The basic tools; `config` would hand the agent the kubeconfig and its key |
 
 ## What it can do
 
@@ -78,7 +78,6 @@ flowchart LR
 | `resources_list`, `resources_get` | Any kind, CRDs included |
 | `events_list` | Warnings while a seed settles |
 | `namespaces_list`, `nodes_*` | Namespaces and the node |
-| `configuration_view` | Which cluster it points at |
 
 ## Rules
 
