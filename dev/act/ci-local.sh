@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-# Runs .github/workflows/ci.yaml through act, on a copy of the working tree, as another project
-# on other ports, so the dev setup beside it is left alone. dev/act/run.sh calls it.
-# Usage: ci-local [job]; every job, in order, when none is named. LEG=<leg> runs one e2e leg,
-# and JOB=smoke the smoke run.
+# ci-local [job]: ci.yaml through act, beside the dev setup. LEG=<leg> runs one e2e leg.
 
 set -euo pipefail
 
@@ -26,17 +23,16 @@ fi
 mkdir -p "${HOME}" "${DEV_KUBECONFIG_DIR}"
 git config --global --add safe.directory /repo
 
-# What is tracked and what is not ignored, as a push would carry it, with its history (the secret
-# scan reads it); no .env, no node_modules. A job's steps write as root, so the last copy goes as root.
+# What a push would carry, with history for the secret scan; steps write as root.
 fresh_copy() {
   docker run --rm --user 0 -v "${ROOT}:${ROOT}" "${IMAGE}" rm -rf "${SRC}"
   mkdir -p "${SRC}"
   git -C /repo ls-files -z -co --exclude-standard --deduplicate \
     | tar -C /repo --null --ignore-failed-read -T - -cf - | tar -C "${SRC}" -xf -
   tar -C /repo -cf - .git | tar -C "${SRC}" -xf -
-  # act -j also runs a job's needs, and the loop below already keeps that order; the copy act runs
-  # sits outside .github/workflows, so the policy check still reads the real ci.yaml.
-  sed '/^    needs: /d' "${SRC}/.github/workflows/ci.yaml" >"${ROOT}/ci-act.yaml"
+  # act checks out the working tree only when a checkout names no ref.
+  sed -e '/^    needs: /d' -e '/^          ref: \${{ github\.ref }}$/d' \
+    "${SRC}/.github/workflows/ci.yaml" >"${ROOT}/ci-act.yaml"
 }
 
 # Otherwise act asks which runner image to use.
@@ -84,8 +80,7 @@ run_e2e() {
   done
 }
 
-# One job at a time, in the workflow's order, each on a fresh copy as on GitHub; --bind would
-# otherwise hand one job's node_modules to the next. Stops at the first that fails.
+# A fresh copy per job, or --bind hands one job's node_modules to the next.
 run() {
   case "$1" in
     e2e) run_e2e ;;

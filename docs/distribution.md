@@ -93,24 +93,44 @@ The group then appears in the cluster's sidebar.
 
 ## Cutting a release
 
-Nobody pushes a tag: the workflow tags only after CI passes.
+Run **Release** from the Actions tab and pick `patch`, `minor` or `major`, or:
 
-1. Set the same new version in every `packages/*/package.json` and push to `main`.
-2. Run **Release** from the Actions tab on `main`, or `gh workflow run release.yaml --ref main`.
+```bash
+gh workflow run release.yaml --ref main -f bump=minor
+```
+
+| Bump | When | From 0.6.0 |
+|------|------|------------|
+| `patch` | Fixes only | 0.6.1 |
+| `minor` | New features; nothing users rely on changes | 0.7.0 |
+| `major` | Something users relied on changes or goes away | 1.0.0 |
+
+Nobody edits a version or pushes a tag by hand.
 
 ```mermaid
 flowchart LR
-  G["Gate<br/>OSV scan, on main,<br/>one version, new tag"] --> C["CI<br/>ci.yaml in full"]
+  G["Gate<br/>OSV scan, on main,<br/>latest tag + bump,<br/>tag is new"] --> V["Version commit<br/>every package.json,<br/>pushed to main"]
+  V --> C["CI<br/>ci.yaml in full,<br/>on that commit"]
   C --> R["Build, verify bundles,<br/>pack, check tarballs"]
-  R --> T["Tag the version<br/>GitHub release with<br/>.tgz and SHA256SUMS"]
+  R --> T["Tag that commit<br/>GitHub release with<br/>.tgz and SHA256SUMS"]
 ```
 
 | Step | Why |
 |------|-----|
-| Gate | Same dependency scan as CI ([security](security.md#vulnerabilities)); refuses a mixed version or an existing tag |
+| Gate | Same dependency scan as CI ([security](security.md#vulnerabilities)). Next version from the latest `vX.Y.Z` tag (none: `v0.0.0`); refuses an existing tag |
+| Version commit | `chore(release): X.Y.Z` by `github-actions[bot]`; only the version lines change. Already at that version (a retry): no commit. Refused if `main` moved since the run began |
+| CI, build, tag | All on the version commit, so the tag holds what was tested |
 | Install with the lockfile | Re-checks the 15-day age floor |
 | `verify-bundles.sh` | The loader contract, and no code from outside each extension's `src/` |
-| Check tarballs | Both entrypoints and the manifest are inside |
+| Check tarballs | Both entrypoints, the manifest and `LICENSE` are inside |
+
+| Job | Token |
+|-----|-------|
+| Gate, CI | `contents: read` |
+| Version commit, tag and publish | `contents: write` |
+
+A failed release leaves no tag: start a new run with the same `bump`. A push made by the workflow
+starts no other workflow.
 
 ## Why not a registry
 

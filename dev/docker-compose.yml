@@ -1,8 +1,7 @@
 name: freelens-addons
 
 services:
-  # Do not bind-mount /sys/fs/cgroup (pods hang in ContainerCreating) and do not use
-  # network_mode: host (flannel would write bridges and iptables on the host, beside a VPN).
+  # No /sys/fs/cgroup mount (pods hang) and no host network (flannel would rewrite iptables).
   k3s:
     image: rancher/k3s:v1.36.4-k3s1@sha256:edad48e12bf81c3a09ac1c05c0c0ffaaa22145980b989d6fae84543a76b83657
     profiles: ["cluster"]
@@ -23,6 +22,8 @@ services:
       - --kubelet-arg=image-gc-low-threshold=0
       # The whole seed and Trivy's scan pods pass the default 110; the node's /24 holds 254.
       - --kubelet-arg=max-pods=250
+      # The seed pulls many images at once; the default limit fails some.
+      - --kubelet-arg=registry-qps=0
     privileged: true
     ports:
       - "127.0.0.1:${K3S_PORT:-6443}:${K3S_PORT:-6443}"
@@ -61,8 +62,7 @@ services:
       # Set by `make e2e` to open the debugging port.
       FREELENS_EXTRA_ARGS: ${FREELENS_EXTRA_ARGS:-}
     volumes:
-      # create_host_path: false, or a missing kubeconfig becomes a root-owned directory
-      # and k3s, which writes it after a reboot, fails forever on "is a directory".
+      # Else a missing kubeconfig becomes a root-owned directory k3s can never write.
       - type: bind
         source: ${KUBECONFIG_PATH:?set KUBECONFIG_PATH in .env — see .env.example}
         target: /home/dev/.kube/config

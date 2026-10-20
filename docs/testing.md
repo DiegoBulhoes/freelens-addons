@@ -134,8 +134,9 @@ the dev k3s has no VolumeSnapshotClass.
 
 ## In CI
 
-One workflow, `.github/workflows/ci.yaml`; each job runs only if the one before passed. The release
-calls it before it tags ([distribution](distribution.md#cutting-a-release)).
+One workflow, `.github/workflows/ci.yaml`, on pull requests to `main`, by hand, and from the release,
+which runs it on its version commit before it tags ([distribution](distribution.md#cutting-a-release)).
+Each job runs only if the one before passed. A new push to a pull request cancels its older run.
 
 ```mermaid
 flowchart LR
@@ -147,8 +148,8 @@ flowchart LR
 
 | Job | When | What |
 |-----|------|------|
-| 1–6 | Every pull request and push | Checks, unit tests, build, scans and the Freelens image |
-| 7 | Push to `main`, by hand, and from the release | One leg per extension: `make cluster`, `make e2e`, `make e2e-writes` with its `PACKAGE`. A failing leg does not cancel the others; it prints logs and cluster state |
+| 1–6 | Every run | Checks, unit tests, build, scans and the Freelens image |
+| 7 | Every run: pull requests, by hand and the release | One leg per extension: `make cluster`, `make e2e`, `make e2e-writes` with its `PACKAGE`. A failing leg does not cancel the others; it prints logs and cluster state |
 | 8 | After every leg passed | Every `pages-render` suite in one window on the full seed, as a person who installs them all |
 
 `scripts/checks/e2e-legs.sh` fails unless the legs, `packages/` and the `NEEDS` map in

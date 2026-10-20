@@ -55,7 +55,8 @@ pnpm runs a dependency's install scripts only when `allowBuilds` sets it to `tru
 | Node | Copied from the official image; no downloaded script is piped into a shell |
 
 No third-party Action runs: a new check is a digest-pinned image. Workflows default to
-`contents: read`.
+`contents: read`; only the release's version commit and its tag and publish jobs get `contents: write`
+([distribution](distribution.md#cutting-a-release)).
 
 ## What CI enforces
 

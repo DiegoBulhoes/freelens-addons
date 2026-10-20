@@ -1,14 +1,23 @@
 name: Release
 
-# By hand, from main: CI runs first, on this commit, and only if it passes are the tarballs packed
-# and the tag created.
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "patch: fixes only (0.6.0 → 0.6.1). minor: new features, nothing breaks (0.6.0 → 0.7.0). major: something users relied on changes or goes (0.6.0 → 1.0.0)"
+        type: choice
+        required: true
+        options: [patch, minor, major]
 
 permissions:
   contents: read
 
-# Digest-pinned, as in ci.yaml. Keep in step with scripts/security/scan.sh.
+# A second release waits rather than racing for the same version.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+# Keep in step with scripts/security/scan.sh.
 env:
   OSV_SCANNER: ghcr.io/google/osv-scanner@sha256:afd838850ac1a0fcc15ff4a041dc9ba11123c3f0d2666217a5f0fcf9222b55fa # v2.6.0
 
@@ -18,40 +27,86 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
-      tag: ${{ steps.version.outputs.tag }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      # The same gate as CI, before anything installs.
       - name: Vulnerable dependencies and malware
         run: bash scripts/security/osv-direct.sh "${OSV_SCANNER}"
 
-      # Before CI's hour, so a wrong branch, version or tag fails at once.
-      - name: Main, one version, and a new tag
+      # Before CI's hour, so a wrong branch or tag fails at once.
+      - name: Main, and the next version
         id: version
         env:
           GH_TOKEN: ${{ github.token }}
+          BUMP: ${{ inputs.bump }}
         run: |
           [[ "${GITHUB_REF}" == refs/heads/main ]] || { echo "releases come from main, not ${GITHUB_REF}" >&2; exit 1; }
-          versions=$(jq -r .version packages/*/package.json | sort -u)
-          [[ $(wc -l <<<"${versions}") -eq 1 ]] || { echo "the extensions disagree on their version: ${versions//$'\n'/ }" >&2; exit 1; }
-          if gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/v${versions}" >/dev/null 2>&1; then
-            echo "v${versions} exists already: set a new version first" >&2
+          latest=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/git/matching-refs/tags/v" --jq '.[].ref' \
+            | sed -nE 's|^refs/tags/v([0-9]+\.[0-9]+\.[0-9]+)$|\1|p' | sort -V | tail -1)
+          IFS=. read -r major minor patch <<<"${latest:-0.0.0}"
+          case "${BUMP}" in
+            major) version="$((major + 1)).0.0" ;;
+            minor) version="${major}.$((minor + 1)).0" ;;
+            patch) version="${major}.${minor}.$((patch + 1))" ;;
+            *) echo "bump must be patch, minor or major, not ${BUMP}" >&2; exit 1 ;;
+          esac
+          if gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/v${version}" >/dev/null 2>&1; then
+            echo "v${version} exists already" >&2
             exit 1
           fi
-          echo "tag=v${versions}" >> "${GITHUB_OUTPUT}"
+          echo "v${latest:-0.0.0} + ${BUMP} = v${version}"
+          echo "version=${version}" >> "${GITHUB_OUTPUT}"
+
+  bump:
+    name: Version commit
+    needs: gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # A re-run whose files already carry the version commits nothing.
+      - name: Set the version, commit and push
+        id: commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.gate.outputs.version }}
+        run: |
+          for manifest in packages/*/package.json; do
+            sed -i -E "0,/^  \"version\": \"[^\"]*\",\$/s//  \"version\": \"${VERSION}\",/" "${manifest}"
+            [[ $(jq -r .version "${manifest}") == "${VERSION}" ]] || { echo "${manifest}: version not set" >&2; exit 1; }
+          done
+          changed=$(git diff --numstat | awk '$1 != 1 || $2 != 1 || $3 !~ /^packages\/[^/]+\/package\.json$/')
+          [[ -z "${changed}" ]] || { echo "more than the version line changed: ${changed}" >&2; exit 1; }
+          if git diff --quiet; then
+            echo "already at ${VERSION}: nothing to commit"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit --quiet -am "chore(release): ${VERSION}"
+            git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:refs/heads/main
+          fi
+          echo "sha=$(git rev-parse HEAD)" >> "${GITHUB_OUTPUT}"
 
   ci:
     name: CI
-    needs: gate
+    needs: bump
     uses: ./.github/workflows/ci.yaml
 
   release:
     name: Tag and publish tarballs
-    needs: [gate, ci]
+    needs: [gate, bump, ci]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -60,7 +115,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.ref }}
           persist-credentials: false
+
+      # CI tested the branch head; a push since then would tag code it never saw.
+      - name: Still the version commit
+        env:
+          SHA: ${{ needs.bump.outputs.sha }}
+        run: |
+          [[ "$(git rev-parse HEAD)" == "${SHA}" ]] || { echo "main moved past the version commit since CI ran" >&2; exit 1; }
 
       - name: Node, from .nvmrc
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -100,11 +163,12 @@ jobs:
       - name: Tag and publish
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ needs.gate.outputs.tag }}
+          TAG: v${{ needs.gate.outputs.version }}
+          SHA: ${{ needs.bump.outputs.sha }}
         run: |
           gh release create "${TAG}" \
             --repo "${GITHUB_REPOSITORY}" \
-            --target "${GITHUB_SHA}" \
+            --target "${SHA}" \
             --title "${TAG}" \
             --generate-notes \
             dist/*.tgz dist/SHA256SUMS

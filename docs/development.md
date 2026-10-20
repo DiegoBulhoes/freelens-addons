@@ -110,6 +110,8 @@ devtools inside the app.
 Run `make check` and `bash scripts/security/scan.sh`
 ([security](security.md#running-the-checks-locally)). Dependency rules, the 15-day floor and
 lifecycle scripts: [security](security.md#dependency-age-floor).
+CI runs them again on every pull request to `main`; a push to `main` alone starts nothing
+([testing](testing.md#in-ci)).
 
 | Failure | What to do |
 |---------|------------|
