@@ -30,8 +30,8 @@ flowchart LR
 |-------|--------|---------|
 | Unit | Every decision in `src/renderer/api/` | `make check`, CI |
 | Bundle check | Bundles Freelens would skip, and code from outside each extension's `src/` | `make check`, CI |
-| End-to-end | Pages, controls, numbers, layout and design in the real app | `make e2e`, CI on `main` |
-| Real writes | Each write done through the UI, its effect read from the cluster | `make e2e-writes`, CI on `main` |
+| End-to-end | Pages, controls, numbers, layout and design in the real app | `make e2e`, CI |
+| Real writes | Each write done through the UI, its effect read from the cluster | `make e2e-writes`, CI |
 
 ## Commands
 
@@ -57,10 +57,10 @@ docker compose -f dev/docker-compose.yml --project-directory . \
 
 | Topic | Rule |
 |-------|------|
-| Host | `@freelensapp/extensions` resolves to `test/support/freelens-host.ts`, the real `KubeObject` and `KubeApi` |
+| Host | `@freelensapp/extensions` resolves to `test/support/freelens-host.ts`: the real `KubeObject` and `KubeApi`, from `@freelensapp/kube-object` and `kube-api` 1.10.3 (test-only; Freelens 2 no longer publishes them). The v2 package throws outside the host. `tsc` still checks against the v2 declarations |
 | Layout | `src/renderer/api/` has a folder per page, `shared/` and `writes/`; `test/` mirrors it |
 | Support | `test/support/` holds the host and fixture helpers; `test/fixtures/` the export |
-| Coverage | 95% of statements, branches, functions and lines in `src/renderer/api/` |
+| Coverage | 95% of statements, branches, functions and lines in `src/renderer/api/`, and in main modules that decide (argocd's `src/main/state-file.ts`) |
 | Excluded | Modules that only declare, register or send, such as `shared/types.ts` and `writes/actions.ts`; the list is in each package's `vitest.config.ts` |
 | React pages | Covered by the e2e suite and `verify-bundles.sh` |
 
@@ -148,7 +148,7 @@ flowchart LR
 
 | Job | When | What |
 |-----|------|------|
-| 1–6 | Every run | Checks, unit tests, build, scans and the Freelens image |
+| 1 to 6 | Every run | Checks, unit tests, build, scans and the Freelens image |
 | 7 | Every run: pull requests, by hand and the release | One leg per extension: `make cluster`, `make e2e`, `make e2e-writes` with its `PACKAGE`. A failing leg does not cancel the others; it prints logs and cluster state |
 | 8 | After every leg passed | Every `pages-render` suite in one window on the full seed, as a person who installs them all |
 

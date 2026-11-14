@@ -84,7 +84,7 @@ flowchart TD
 
 ## Usage and the cluster's metrics setting
 
-The Usage pages ask the Prometheus set in the cluster's **Settings → Metrics**, through the host's
+The Usage pages ask the Prometheus set in the cluster's Settings → Metrics, through the host's
 metrics route. Requests, limits and capacity come from the pod and node objects.
 
 | Source of metrics | What to set in Settings → Metrics |

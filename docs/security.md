@@ -80,9 +80,9 @@ transitive advisory gets fixed. Never `pnpm update`: it asks to write `minimumRe
 
 | Held back | Reason |
 |-----------|--------|
-| `vite` on 7 | electron-vite 5 supports up to 7 |
+| `vite` on 7 | Vite 8 bundles with Rolldown; `first-party-only.ts` reads Rollup's bundle API |
 | `@types/node` | Tracks the Node in the containers |
-| `react` on 17 | The host supplies it |
+| `react` on 19.3, `mobx` on 7.0, `mobx-react` on 10.0 | The host supplies them; types match the host's versions |
 
 ## Vulnerabilities
 
@@ -102,7 +102,7 @@ flowchart TD
 |-------|------|
 | Why a transitive finding only warns | Users get no third-party code: the build and `verify-bundles.sh` fail on anything from outside `src/` but the host's globals, `electron` and Node |
 | Where that code runs | Build and test tooling here (vite, vitest, jsdom) |
-| Overrides | None for a transitive advisory; `dompurify` and `decode-uri-component` predate the rule and now block as chosen versions |
+| Overrides | None; a transitive advisory waits for `deps-refresh.sh` or its parent's release |
 | No fix yet | One `[[IgnoredVulns]]` per advisory in `osv-scanner.toml`, with `reason` and `ignoreUntil`; never per version, never for `MAL-` |
 | The gate itself | `verify-supply-chain.sh` checks every workflow runs it first and unguarded, and tests it on probe lockfiles |
 | A scanner failure | Blocks |

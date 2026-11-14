@@ -23,7 +23,7 @@ Tested on the versions the dev cluster installs and the e2e suites drive.
 
 | Component | Tested | Note |
 |-----------|--------|------|
-| Freelens | 1.10.3 | `engines.freelens: ^1.10.3`: any 1.x from 1.10 installs, 2.x is refused |
+| Freelens | 2.0.0 | `engines.freelens: ^2.0.0`: any 2.x loads it. Tarballs up to 0.6.0 are for 1.10 |
 | Kubernetes | k3s v1.36.4 | |
 | ArgoCD | v3.5.2 | |
 | Argo CD Image Updater | v1.3.0 | Needs v1.0 or later (the `ImageUpdater` CRD) |
@@ -41,8 +41,8 @@ Tested on the versions the dev cluster installs and the e2e suites drive.
 | In the tarball | What it is |
 |----------------|------------|
 | `package/package.json` | Entrypoints and `engines.freelens` |
-| `package/out/main/index.js` | Main-process bundle and sourcemap |
-| `package/out/renderer/index.js` | Renderer bundle and sourcemap |
+| `package/out/main/index.mjs` | Main-process bundle (ES module) and sourcemap |
+| `package/out/renderer/index.js` | Renderer bundle (ES module) and sourcemap |
 | `package/LICENSE` | Apache 2.0; `pnpm pack` adds the root `LICENSE` to a package that has none |
 
 No sources and no `dependencies`: the extension API, React and MobX come from the host. Every
@@ -60,15 +60,19 @@ docker compose -f dev/docker-compose.yml --project-directory . \
 
 1. Download the `.tgz` and `SHA256SUMS`; check with `sha256sum -c SHA256SUMS`.
 2. In Freelens, open File > Extensions (`Ctrl+Shift+E`, `Cmd+Shift+E` on macOS).
-3. Give it the file path and press Install, or drag the file there.
+3. Give it the file path or the release asset's URL and press Install, or drag the file there.
 4. It is listed as Disabled: [enable it](#enabling-an-extension).
 
-Without the window, extract it into `~/.freelens/extensions/<name>/`. Freelens picks it up, disabled:
+Freelens 2 does not carry over extensions installed under 1.x: install the 2.x tarball again.
+
+Without the window, extract it into `<userData>/extensions/<name>/`; a running Freelens picks it
+up. `<userData>` is `~/.config/Freelens` on Linux, `~/Library/Application Support/Freelens` on
+macOS and `%APPDATA%\Freelens` on Windows. Freelens lists it as unverified, disabled:
 
 ```bash
-mkdir -p ~/.freelens/extensions/freelens-addons-argocd
+mkdir -p ~/.config/Freelens/extensions/freelens-addons-argocd
 tar xzf freelens-addons-argocd-<version>.tgz --strip-components=1 \
-  -C ~/.freelens/extensions/freelens-addons-argocd
+  -C ~/.config/Freelens/extensions/freelens-addons-argocd
 ```
 
 To remove one, choose Uninstall in its `⋮` menu, or delete its folder.
@@ -86,6 +90,8 @@ The group then appears in the cluster's sidebar.
 | Group missing? | Cause and fix |
 |----------------|---------------|
 | Not listed on the Extensions page | Not installed. Retry, and read `EXTENSION-INSTALLER` in `~/.config/Freelens/logs/lens.log` |
+| Not listed after a manual extract | `package.json` is not directly in `<userData>/extensions/<name>/` |
+| Listed as incompatible | A tarball for Freelens 1.x (0.6.0 or older) |
 | Listed as Disabled | Enable it |
 | Missing on one cluster only | That cluster lacks the tool's CRDs. Check with `kubectl get crd` |
 | CRDs present, still missing | You cannot list CRDs: `kubectl auth can-i list customresourcedefinitions` |
@@ -93,7 +99,7 @@ The group then appears in the cluster's sidebar.
 
 ## Cutting a release
 
-Run **Release** from the Actions tab and pick `patch`, `minor` or `major`, or:
+Run the Release workflow from the Actions tab and pick `patch`, `minor` or `major`, or:
 
 ```bash
 gh workflow run release.yaml --ref main -f bump=minor

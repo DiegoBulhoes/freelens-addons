@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Freelens extensions, developed against a containerised Freelens (noVNC) pointed at a disposable
+Freelens 2.x extensions, developed against a containerised Freelens (noVNC) pointed at a disposable
 k3s (`make cluster`) or any cluster by kubeconfig.
 
 ## Read first
@@ -34,11 +34,14 @@ This file holds only what those do not, plus the rules that must never be broken
 |------|------|
 | A rebuild alone does not reload an extension | `make up` builds and restarts Freelens |
 | Sidebar group only with its CRDs | `visible` is a MobX computed over `Renderer.K8sApi.crdStore`, via `isInstalled()` in each `api/shared/installed.ts` |
-| The API is not legacy | `Renderer.LensExtension` is the only API, despite the `@freelensapp/legacy-extensions` name. No `Feature`-based API exists |
+| The API | `Main.LensExtension` and `Renderer.LensExtension` from `@freelensapp/extensions` 2.x are the only API. No `Feature`-based API exists |
 | Forms in a `ConfirmDialog` | Report values through a callback, never a shared object: the dialog copies plain-object props (`packages/argocd/test/shared/dialog-state.test.ts`) |
 | Secrets | Read them as a `PartialObjectMetadataList` (`use-tls-inventory.ts`); `secret-metadata.ts` keeps only cert-manager's annotations. `secretsStore` loads every key into the renderer |
 | Everything under `packages/` is an extension | A helper package there breaks discovery; shared code goes in `build/` |
-| Upstream example misspells a global | It uses `global.ReactDom`; the host exports `ReactDOM` |
+| A page registration | `Page` is a plain arrow, `(props) => <X {...props} />`: the host wraps it in `observer`, and an `observer` passed there fails the route registration |
+| The renderer has no Node | File and process work lives in main, reached over `Main.Ipc`/`Renderer.Ipc` (argocd's state file); the build refuses a builtin or `electron` in the renderer |
+| `FREELENS_VERSION` in `.env` | Overrides the compose default; the dev image and the e2e suites run that Freelens |
+| Host globals | Every host module comes from `globalThis.FreelensExtensionApi` (`ReactDom`, not `ReactDOM`); `build/vite/global-externals.ts` maps them |
 
 ## Consistent styles
 

@@ -1,7 +1,7 @@
 # freelens-addons
 
-Extensions for [Freelens](https://freelens.app). Each one ships as its own `.tgz` and installs on
-its own.
+Extensions for [Freelens](https://freelens.app) 2.x. Each one ships as its own `.tgz` and installs
+on its own.
 
 ## Extensions
 
@@ -20,8 +20,17 @@ Tested versions: [distribution.md](docs/distribution.md#compatibility).
 
 ## Installing
 
-Download a release's `.tgz` and install it from File > Extensions. It starts disabled. Steps,
-enabling, and what to check when the group is missing: [distribution.md](docs/distribution.md).
+| Your Freelens | Use |
+|---------------|-----|
+| 2.x | Releases after 0.6.0 |
+| 1.x | 0.6.0 or older, no longer updated |
+
+1. Download the release's `.tgz`.
+2. Install it from File > Extensions (Ctrl+Shift+E). Extensions installed under 1.x are not
+   carried over.
+3. Enable it from its ⋮ menu: it starts disabled.
+
+What to check when the group is missing: [distribution.md](docs/distribution.md).
 
 ## Developing
 
