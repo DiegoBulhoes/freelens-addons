@@ -1,5 +1,6 @@
 import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
+import type { JSX } from "react";
 
 import { RedisStyles } from "./styles";
 

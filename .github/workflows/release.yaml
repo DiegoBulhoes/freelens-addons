@@ -151,7 +151,7 @@ jobs:
           for tarball in dist/*.tgz; do
             echo "== ${tarball}"
             contents=$(tar tzf "${tarball}")
-            for required in package/package.json package/LICENSE package/out/main/index.js package/out/renderer/index.js; do
+            for required in package/package.json package/LICENSE package/out/main/index.mjs package/out/renderer/index.js; do
               if ! grep -qx "${required}" <<<"${contents}"; then
                 echo "  missing ${required}" >&2
                 status=1

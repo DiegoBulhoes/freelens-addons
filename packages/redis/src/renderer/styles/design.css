@@ -33,7 +33,7 @@
 }
 
 /* The host's ConfirmDialog is white in every theme; ours follows the theme. */
-.ConfirmDialog:has(.Redis-dialog) > .box {
+.ConfirmDialog:has(.Redis-dialog) > .dialog-content {
   border: 1px solid var(--borderColor);
   background-color: var(--contentColor);
   color: var(--textColorPrimary);

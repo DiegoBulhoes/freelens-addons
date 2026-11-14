@@ -19,6 +19,9 @@ export class Application extends Renderer.K8sApi.LensExtensionKubeObject<
   ApplicationStatus,
   ApplicationSpec
 > {
+  declare kind: "Application";
+  declare apiVersion: "argoproj.io/v1alpha1";
+
   static override readonly kind = "Application";
   static override readonly namespaced = true;
   static override readonly apiBase = "/apis/argoproj.io/v1alpha1/applications";

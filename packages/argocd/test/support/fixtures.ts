@@ -1,11 +1,18 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-import { Ingress, KubeEvent, Node, Pod } from "@freelensapp/kube-object";
+import { Renderer } from "@freelensapp/extensions";
 import { ApplicationSet } from "../../src/renderer/api/application-sets/application-set";
 import { Application } from "../../src/renderer/api/applications/application";
 import { ImageUpdater } from "../../src/renderer/api/image-updater/image-updater";
 import { AppProject } from "../../src/renderer/api/projects/app-project";
+
+// Typed as the host's classes; at run time the test host supplies the same kinds.
+export const { Ingress, KubeEvent, Node, Pod } = Renderer.K8sApi;
+export type Ingress = Renderer.K8sApi.Ingress;
+export type KubeEvent = Renderer.K8sApi.KubeEvent;
+export type Node = Renderer.K8sApi.Node;
+export type Pod = Renderer.K8sApi.Pod;
 
 // Real cluster contents from `dev/cluster/cluster.sh fixtures`, built through the real `KubeObject` subclasses.
 
@@ -172,5 +179,3 @@ export function projectVariantOf(
 
   return new AppProject(data as never);
 }
-
-export { Ingress, KubeEvent, Node, Pod };

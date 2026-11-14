@@ -1,6 +1,6 @@
 import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
-import { type ReactNode, useState } from "react";
+import { type JSX, type ReactNode, useState } from "react";
 
 import { describeCount, nextSort, type Sort, searchRows, sortRows } from "../api/shared/table";
 import { NamespaceFilter } from "./namespace-filter";
@@ -31,7 +31,7 @@ export interface ListPageProps<Row> {
   searchTexts: (row: Row) => string[];
   /** Call it from a click that has had preventDefault, or the drawer closes at once. */
   onOpen?: (row: Row) => void;
-  menu?: (row: Row) => ReactNode;
+  menu?: (row: Row) => Renderer.Component.MenuActionsProps["children"];
   empty: string;
   initialQuery?: string;
   filters?: ReactNode;

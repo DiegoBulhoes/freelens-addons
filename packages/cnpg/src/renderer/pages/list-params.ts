@@ -1,8 +1,5 @@
-/** The route params every list page reads; see LIST_PARAMS in index.tsx. */
-export interface ListParams {
-  kind?: { get(): string };
-  namespace?: { get(): string };
-  name?: { get(): string };
-  cluster?: { get(): string };
-  filter?: { get(): string };
-}
+import type { OpenPage } from "../api/shared/navigation";
+import type { RouteProps } from "../hooks/route-params";
+
+/** A list page's props: the route params LIST_PARAMS in index.tsx declares, and a way to open another page. */
+export type ListPageRouteProps = RouteProps & { open: OpenPage };

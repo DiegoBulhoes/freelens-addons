@@ -10,7 +10,7 @@ import type {
 } from "./types";
 
 const GROUP = "aquasecurity.github.io";
-const API_VERSION = `${GROUP}/v1alpha1`;
+const API_VERSION = `${GROUP}/v1alpha1` as const;
 
 export class VulnerabilityReport
   extends Renderer.K8sApi.LensExtensionKubeObject<Renderer.K8sApi.KubeObjectMetadata>
@@ -28,6 +28,8 @@ export class VulnerabilityReport
     title: "Vulnerability Reports",
   };
 
+  declare kind: "VulnerabilityReport";
+  declare apiVersion: typeof API_VERSION;
   declare report?: VulnerabilityReportBody;
 }
 
@@ -47,6 +49,8 @@ export class ConfigAuditReport
     title: "Config Audit Reports",
   };
 
+  declare kind: "ConfigAuditReport";
+  declare apiVersion: typeof API_VERSION;
   declare report?: ConfigAuditReportBody;
 }
 
@@ -66,6 +70,8 @@ export class RbacAssessmentReport
     title: "RBAC Assessment Reports",
   };
 
+  declare kind: "RbacAssessmentReport";
+  declare apiVersion: typeof API_VERSION;
   declare report?: RbacAssessmentReportBody;
 }
 
@@ -85,6 +91,8 @@ export class ClusterRbacAssessmentReport
     title: "Cluster RBAC Assessment Reports",
   };
 
+  declare kind: "ClusterRbacAssessmentReport";
+  declare apiVersion: typeof API_VERSION;
   declare report?: RbacAssessmentReportBody;
 }
 
@@ -104,6 +112,8 @@ export class SbomReport
     title: "SBOM Reports",
   };
 
+  declare kind: "SbomReport";
+  declare apiVersion: typeof API_VERSION;
   declare report?: SbomReportBody;
 }
 
@@ -123,6 +133,8 @@ export class ExposedSecretReport
     title: "Exposed Secret Reports",
   };
 
+  declare kind: "ExposedSecretReport";
+  declare apiVersion: typeof API_VERSION;
   declare report?: ExposedSecretReportBody;
 }
 

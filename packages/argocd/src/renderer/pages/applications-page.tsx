@@ -16,6 +16,7 @@ import { SelectionActions } from "../components/selection-actions";
 import { HealthBadge, SyncBadge } from "../components/status";
 import { ArgoCDStyles } from "../components/styles";
 import { useKubeStore } from "../components/use-kube-store";
+import { paramText, type RouteProps } from "../hooks/route-params";
 import { useNamespaceScope } from "../hooks/use-namespace-scope";
 
 const {
@@ -82,30 +83,20 @@ function renderRevision(object: Application) {
   );
 }
 
-export interface ApplicationsPageProps {
-  params?: {
-    project: { get(): string };
-    projectNamespace: { get(): string };
-    status: { get(): string };
-    name: { get(): string };
-    namespace: { get(): string };
-  };
-}
-
-export const ApplicationsPage = observer(({ params }: ApplicationsPageProps) => {
+export const ApplicationsPage = observer(({ params }: RouteProps) => {
   const store = useKubeStore(() => Application.getStore<Application>());
   const projectStore = useKubeStore(() => AppProject.getStore<AppProject>());
   const scope = useNamespaceScope();
   const query = {
-    project: params?.project.get() ?? "",
-    projectNamespace: params?.projectNamespace.get() ?? "",
-    status: params?.status.get() ?? "",
-    name: params?.name.get() ?? "",
-    namespace: params?.namespace.get() ?? "",
+    project: paramText(params, "project"),
+    projectNamespace: paramText(params, "projectNamespace"),
+    status: paramText(params, "status"),
+    name: paramText(params, "name"),
+    namespace: paramText(params, "namespace"),
   };
   const all = withinScope((store?.items ?? []) as Application[], scope);
   const named = namedApplication(all, query);
-  const opened = useRef<string>();
+  const opened = useRef<string | undefined>(undefined);
 
   // A link that names one Application opens its drawer, once, so it can still be closed.
   useEffect(() => {

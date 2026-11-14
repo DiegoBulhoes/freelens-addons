@@ -23,22 +23,18 @@ import { getWorkloadRows, sortWorkloads, type WorkloadRow } from "../api/workloa
 import { type Column, ListPage } from "../components/list-page";
 import { LoadGaps } from "../components/load-gaps";
 import { Status } from "../components/status";
+import { paramText, type RouteProps } from "../hooks/route-params";
 import { useTrivyStores } from "../hooks/use-trivy-stores";
 import { WorkloadDrawer } from "../workload/workload-drawer";
 import { PageGate } from "./page-head";
 
 // A link names a workload and a filter in the route params; the page opens on them.
-export interface WorkloadsRouteParams {
-  namespace: { get(): string };
-  kind: { get(): string };
-  name: { get(): string };
-  filter?: { get(): string };
-}
+type WorkloadsRouteProps = RouteProps;
 
-function subjectFromParams(params?: WorkloadsRouteParams): ReportSubject | undefined {
-  const namespace = params?.namespace.get() ?? "";
-  const kind = params?.kind.get() ?? "";
-  const name = params?.name.get() ?? "";
+function subjectFromParams(params: WorkloadsRouteProps["params"]): ReportSubject | undefined {
+  const namespace = paramText(params, "namespace");
+  const kind = paramText(params, "kind");
+  const name = paramText(params, "name");
 
   if (!namespace || !kind || !name) return undefined;
 
@@ -111,9 +107,9 @@ const COLUMNS: Column<WorkloadRow>[] = [
   countColumn("Fix published"),
 ];
 
-export const WorkloadsRoute = observer(({ params }: { params?: WorkloadsRouteParams }) => {
+export const WorkloadsRoute = observer(({ params }: WorkloadsRouteProps) => {
   const stores = useTrivyStores();
-  const routedFilter = params?.filter?.get();
+  const routedFilter = paramText(params, "filter") || undefined;
   const [filter, setFilter] = useState<WorkloadFilter>(() => filterFromRoute(routedFilter));
   const routed = subjectFromParams(params);
   const routedKey = routed ? subjectKey(routed) : undefined;

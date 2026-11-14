@@ -1,53 +1,18 @@
 // Enables each extension under packages/ once (Freelens registers new ones disabled);
 // one disabled later in the UI stays disabled.
-import {
-  existsSync,
-  lstatSync,
-  mkdirSync,
-  readFileSync,
-  readdirSync,
-  rmSync,
-  symlinkSync,
-  writeFileSync,
-} from "node:fs";
-import { dirname, join } from "node:path";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
-const EXTENSIONS_DIR = process.env.EXTENSIONS_DIR ?? "/home/dev/.freelens/extensions";
 const USER_DATA = process.env.FREELENS_USER_DATA ?? "/home/dev/.config/Freelens";
+const EXTENSIONS_DIR = process.env.EXTENSIONS_DIR ?? join(USER_DATA, "extensions");
 const STATE_FILE = join(USER_DATA, "lens-extensions.json");
 
 // Freelens' watcher registers a new directory as disabled before the next boot, so
 // "missing from the state file" cannot mean "never seeded".
-const SEEDED_FILE = join(USER_DATA, "seeded-extensions.json");
+// Not seeded-extensions.json: that one lists names enabled under the old path keys.
+const SEEDED_FILE = join(USER_DATA, "seeded-extensions-v2.json");
 
 const log = (msg) => console.error(`[seed-extensions] ${msg}`);
-
-// Freelens links <user-data>/node_modules/<name> only for a manifest appearing while it
-// runs; one mounted at boot fails with "Cannot find module" without this.
-function linkExtension(sourceDir, installedDir, name) {
-  mkdirSync(dirname(installedDir), { recursive: true });
-
-  if (existsSync(installedDir) || isBrokenLink(installedDir)) {
-    const current = lstatSync(installedDir);
-    if (current.isSymbolicLink()) {
-      rmSync(installedDir, { force: true });
-    } else {
-      log(`${name}: ${installedDir} exists and is not a symlink; leaving it alone`);
-      return;
-    }
-  }
-
-  symlinkSync(sourceDir, installedDir, "dir");
-  log(`${name}: linked ${installedDir} -> ${sourceDir}`);
-}
-
-function isBrokenLink(path) {
-  try {
-    return lstatSync(path).isSymbolicLink();
-  } catch {
-    return false;
-  }
-}
 
 if (!existsSync(EXTENSIONS_DIR)) {
   log(`${EXTENSIONS_DIR} does not exist; nothing to seed`);
@@ -63,11 +28,8 @@ for (const entry of readdirSync(EXTENSIONS_DIR, { withFileTypes: true })) {
 
   try {
     const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
-    if (!manifest.name) continue;
-    // Freelens keys an extension by the manifest path inside that symlink tree.
-    const installedDir = join(USER_DATA, "node_modules", manifest.name);
-    linkExtension(join(EXTENSIONS_DIR, entry.name), installedDir, manifest.name);
-    discovered.push([join(installedDir, "package.json"), manifest.name]);
+    // Freelens 2 keys an extension by its manifest name.
+    if (manifest.name) discovered.push(manifest.name);
   } catch (error) {
     log(`skipping ${entry.name}: ${error.message}`);
   }
@@ -106,13 +68,13 @@ const alreadySeeded = new Set(seeded);
 const byId = new Map(state.extensions.map((entry) => [entry[0], entry]));
 const touched = [];
 
-for (const [id, name] of discovered) {
+for (const name of discovered) {
   if (alreadySeeded.has(name)) continue;
 
-  const existing = byId.get(id);
+  const existing = byId.get(name);
 
   if (!existing) {
-    state.extensions.push([id, { enabled: true, name }]);
+    state.extensions.push([name, { enabled: true, name }]);
   } else if (existing[1]?.enabled !== true) {
     existing[1] = { ...existing[1], enabled: true, name };
   } else {

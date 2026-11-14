@@ -18,6 +18,7 @@ import { FixMenuItems } from "../components/commands-section";
 import { FilterChips } from "../components/filter-chips";
 import { type Column, ListPage } from "../components/list-page";
 import { StateCell } from "../components/state-cell";
+import { paramText } from "../hooks/route-params";
 import { useInventory } from "../hooks/use-inventory";
 import { MonitorDrawer } from "../monitors/monitor-drawer";
 import { type ListParams, useListRoute } from "./list-params";
@@ -78,7 +79,7 @@ const COLUMNS: Column<MonitorRow>[] = [
 ];
 
 interface MonitorsPageProps {
-  params?: ListParams;
+  params: ListParams;
   open: OpenPage;
 }
 
@@ -123,7 +124,7 @@ export const MonitorsPage = observer(({ params, open }: MonitorsPageProps) => {
           ? "No ServiceMonitor, PodMonitor or ScrapeConfig in the namespaces in scope."
           : "No monitor matches that filter."
       }
-      initialQuery={params?.name?.get()}
+      initialQuery={paramText(params, "name")}
       filters={
         <FilterChips
           filters={MONITOR_FILTERS}

@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
 
+import { stateFiles } from "../../src/main/state-file";
 import { hydrate, readState, writeState } from "../../src/renderer/api/shared/local-state";
 import { flushState, startPersistingState } from "../../src/renderer/api/shared/persist";
 
@@ -13,8 +14,9 @@ let folder: string;
 let logged: MockInstance<typeof console.log>;
 let reported: MockInstance<typeof console.error>;
 
-function extensionWithFolder(path: string) {
-  return { getExtensionFileFolder: async () => path };
+// The real main-side file access, called directly instead of over IPC.
+function filesIn(path: string) {
+  return stateFiles(async () => path);
 }
 
 beforeEach(async () => {
@@ -32,7 +34,7 @@ afterEach(async () => {
 
 describe("keeping an operator's state across a restart", () => {
   it("writes what was changed, under a file named after the cluster", async () => {
-    await startPersistingState(extensionWithFolder(folder), CLUSTER_HOST);
+    await startPersistingState(filesIn(folder), CLUSTER_HOST);
 
     writeState("freelens-addons.argocd.pins", ["argocd/guestbook"]);
     await flushState();
@@ -47,7 +49,7 @@ describe("keeping an operator's state across a restart", () => {
   });
 
   it("reads it back on the next activate, which is the whole point", async () => {
-    await startPersistingState(extensionWithFolder(folder), CLUSTER_HOST);
+    await startPersistingState(filesIn(folder), CLUSTER_HOST);
     writeState("freelens-addons.argocd.pins", ["argocd/helm-guestbook"]);
     await flushState();
 
@@ -56,7 +58,7 @@ describe("keeping an operator's state across a restart", () => {
     expect(readState("freelens-addons.argocd.pins", [])).toEqual([]);
 
     await startPersistingState(
-      extensionWithFolder(folder),
+      filesIn(folder),
       "289e8b234825329f053f98f8d145e660.renderer.freelens.app:33899",
     );
 
@@ -64,14 +66,11 @@ describe("keeping an operator's state across a restart", () => {
   });
 
   it("gives two clusters two files, so a pin does not follow an Application across them", async () => {
-    await startPersistingState(extensionWithFolder(folder), CLUSTER_HOST);
+    await startPersistingState(filesIn(folder), CLUSTER_HOST);
     writeState("freelens-addons.argocd.pins", ["argocd/one"]);
     await flushState();
 
-    await startPersistingState(
-      extensionWithFolder(folder),
-      "otherclusterid.renderer.freelens.app:1",
-    );
+    await startPersistingState(filesIn(folder), "otherclusterid.renderer.freelens.app:1");
     hydrate({});
     writeState("freelens-addons.argocd.pins", ["argocd/two"]);
     await flushState();
@@ -80,7 +79,7 @@ describe("keeping an operator's state across a restart", () => {
   });
 
   it("leaves no temporary file behind, so a crash cannot be read back as no state", async () => {
-    await startPersistingState(extensionWithFolder(folder), CLUSTER_HOST);
+    await startPersistingState(filesIn(folder), CLUSTER_HOST);
     writeState("freelens-addons.argocd.preferences", { filter: "drift" });
     await flushState();
 
@@ -88,7 +87,7 @@ describe("keeping an operator's state across a restart", () => {
   });
 
   it("keeps both of two writes issued without waiting", async () => {
-    await startPersistingState(extensionWithFolder(folder), CLUSTER_HOST);
+    await startPersistingState(filesIn(folder), CLUSTER_HOST);
 
     writeState("freelens-addons.argocd.pins", ["argocd/one"]);
     writeState("freelens-addons.argocd.preferences", { filter: "mine" });
@@ -104,18 +103,16 @@ describe("keeping an operator's state across a restart", () => {
 /** Every failure must degrade to no persistence, never block startup. */
 describe("starting up when the state cannot be reached", () => {
   it("survives a folder lookup that rejects, and still remembers within the session", async () => {
-    const failing = {
-      getExtensionFileFolder: async () => {
-        throw new Error("no filesystem provisioner");
-      },
-    };
+    const failing = stateFiles(async () => {
+      throw new Error("no filesystem provisioner");
+    });
 
     await expect(startPersistingState(failing, CLUSTER_HOST)).resolves.toBeUndefined();
 
     writeState("freelens-addons.argocd.pins", ["argocd/one"]);
     expect(readState("freelens-addons.argocd.pins", [])).toEqual(["argocd/one"]);
     expect(reported).toHaveBeenCalledWith(
-      "[argocd] no folder for operator state; pins stay in memory",
+      "[argocd] no operator state file; pins stay in memory",
       expect.objectContaining({ message: "no filesystem provisioner" }),
     );
   });
@@ -126,7 +123,7 @@ describe("starting up when the state cannot be reached", () => {
     try {
       // A never-settling promise would hang the host's Promise.all over every extension.
       const starting = startPersistingState(
-        { getExtensionFileFolder: () => new Promise<string>(() => {}) },
+        stateFiles(() => new Promise<string>(() => {})),
         CLUSTER_HOST,
       );
 
@@ -134,7 +131,7 @@ describe("starting up when the state cannot be reached", () => {
 
       await expect(starting).resolves.toBeUndefined();
       expect(reported).toHaveBeenCalledWith(
-        "[argocd] getExtensionFileFolder did not answer; pins stay in memory",
+        "[argocd] operator state did not answer; pins stay in memory",
       );
     } finally {
       vi.useRealTimers();
@@ -142,7 +139,7 @@ describe("starting up when the state cannot be reached", () => {
   });
 
   it("treats a first run with no file as no state, not as a fault", async () => {
-    await startPersistingState(extensionWithFolder(folder), CLUSTER_HOST);
+    await startPersistingState(filesIn(folder), CLUSTER_HOST);
 
     expect(readState("freelens-addons.argocd.pins", [])).toEqual([]);
     expect(await fs.readdir(folder)).toEqual([]);
@@ -154,7 +151,7 @@ describe("starting up against a file nobody should have written", () => {
   it("ignores a file that is not JSON at all", async () => {
     await fs.writeFile(join(folder, CLUSTER_FILE), "{ this is not json", "utf8");
 
-    await startPersistingState(extensionWithFolder(folder), CLUSTER_HOST);
+    await startPersistingState(filesIn(folder), CLUSTER_HOST);
 
     expect(readState("freelens-addons.argocd.pins", ["fallback"])).toEqual(["fallback"]);
   });
@@ -162,13 +159,13 @@ describe("starting up against a file nobody should have written", () => {
   it("ignores JSON that is not an object, rather than rendering against it", async () => {
     await fs.writeFile(join(folder, CLUSTER_FILE), '["a list, not a record"]', "utf8");
 
-    await startPersistingState(extensionWithFolder(folder), CLUSTER_HOST);
+    await startPersistingState(filesIn(folder), CLUSTER_HOST);
 
     expect(readState("freelens-addons.argocd.pins", ["fallback"])).toEqual(["fallback"]);
   });
 
   it("survives the folder disappearing under it, without losing the session", async () => {
-    await startPersistingState(extensionWithFolder(folder), CLUSTER_HOST);
+    await startPersistingState(filesIn(folder), CLUSTER_HOST);
     await fs.rm(folder, { recursive: true, force: true });
 
     writeState("freelens-addons.argocd.pins", ["argocd/one"]);
@@ -181,8 +178,27 @@ describe("starting up against a file nobody should have written", () => {
     );
   });
 
+  it("keeps the session when main stops taking writes, and says so", async () => {
+    let lookups = 0;
+    const lost = stateFiles(async () => {
+      lookups += 1;
+      if (lookups > 1) throw new Error("folder lookup failed");
+      return folder;
+    });
+
+    await startPersistingState(lost, CLUSTER_HOST);
+    writeState("freelens-addons.argocd.pins", ["argocd/one"]);
+
+    await expect(flushState()).resolves.toBeUndefined();
+    expect(readState("freelens-addons.argocd.pins", [])).toEqual(["argocd/one"]);
+    expect(reported).toHaveBeenCalledWith(
+      `[argocd] could not hand operator state ${CLUSTER_FILE} to main`,
+      expect.objectContaining({ message: "folder lookup failed" }),
+    );
+  });
+
   it("writes nothing at all in the root frame, which shows no cluster", async () => {
-    await startPersistingState(extensionWithFolder(folder), "renderer.freelens.app:45555");
+    await startPersistingState(filesIn(folder), "renderer.freelens.app:45555");
 
     writeState("freelens-addons.argocd.pins", ["argocd/one"]);
     await flushState();

@@ -75,7 +75,7 @@ selector (`namespace-filter.tsx`), and one action.
 
 ## Drawers
 
-- From a host list: the host's details drawer (`kubeObjectDetailItems`).
+- From a host list: the host's details drawer (`kubeObjectDetailItems`, through `Renderer.K8sApi.detailsFor`).
 - From our pages: `object-drawer.tsx`. Actions in the title bar through the host's toolbar `MenuActions`, as its own drawers do; destructive last.
 - What the drawer holds: the state with its cause in a banner, the facts, what belongs to the object (its runs, its instances, its children) as links, commands to copy. More than the row, never a copy of it.
 - A link in a drawer closes the drawer first, then opens what it names.

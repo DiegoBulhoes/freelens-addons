@@ -1,7 +1,7 @@
 import { resolve } from "node:path";
 import { defineConfig } from "vitest/config";
 
-// `@freelensapp/extensions` cannot load outside Electron; the real classes stand in, not a mock.
+// `@freelensapp/extensions` throws outside Freelens; the real classes stand in, not a mock.
 export default defineConfig({
   resolve: {
     alias: {

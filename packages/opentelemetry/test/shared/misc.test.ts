@@ -241,7 +241,7 @@ describe("host lists", () => {
     expect(url.pathname).toBe(route);
     expect(index).toMatch(new RegExp(`const LIST_PARAMS = \\{[^}]*\\b${param}: ""`));
     expect(read("src/renderer/pages/monitors-page.tsx")).toContain(
-      `initialQuery={params?.${param}?.get()}`,
+      `initialQuery={paramText(params, "${param}")}`,
     );
   });
 });

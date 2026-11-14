@@ -20,6 +20,7 @@ import { FixMenuItems } from "../components/commands-section";
 import { FilterChips } from "../components/filter-chips";
 import { type Column, ListPage } from "../components/list-page";
 import { StateCell } from "../components/state-cell";
+import { paramText } from "../hooks/route-params";
 import { useInventory } from "../hooks/use-inventory";
 import { RuleDrawer } from "../rules/rule-drawer";
 import { type ListParams, useListRoute } from "./list-params";
@@ -80,7 +81,7 @@ const COLUMNS: Column<RuleRow>[] = [
   },
 ];
 
-export const RulesPage = observer(({ params, open }: { params?: ListParams; open: OpenPage }) => {
+export const RulesPage = observer(({ params, open }: { params: ListParams; open: OpenPage }) => {
   const { stores, rules, eventsRefused, live } = useInventory({ monitors: false, rules: true });
   const { filter, setFilter, selectedKey, setSelectedKey } = useListRoute(params, isRuleFilter);
   const selected = rules.find((row) => row.key === selectedKey);
@@ -118,7 +119,7 @@ export const RulesPage = observer(({ params, open }: { params?: ListParams; open
           ? "No PrometheusRule in the namespaces in scope."
           : "No rule matches that filter."
       }
-      initialQuery={params?.name?.get()}
+      initialQuery={paramText(params, "name")}
       filters={
         <FilterChips
           filters={RULE_FILTERS}

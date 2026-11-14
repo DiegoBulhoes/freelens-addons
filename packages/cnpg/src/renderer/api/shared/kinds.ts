@@ -16,8 +16,8 @@ import type {
   SubscriptionLike,
 } from "./types";
 
-const CNPG = "postgresql.cnpg.io/v1";
-const BARMAN = "barmancloud.cnpg.io/v1";
+const CNPG = "postgresql.cnpg.io/v1" as const;
+const BARMAN = "barmancloud.cnpg.io/v1" as const;
 
 type Metadata = Renderer.K8sApi.KubeObjectMetadata;
 
@@ -26,6 +26,9 @@ export class Cluster extends Renderer.K8sApi.LensExtensionKubeObject<
   ClusterStatus,
   ClusterSpec
 > {
+  declare kind: "Cluster";
+  declare apiVersion: typeof CNPG;
+
   static override readonly kind = "Cluster";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${CNPG}/clusters`;
@@ -43,6 +46,9 @@ export class Backup extends Renderer.K8sApi.LensExtensionKubeObject<
   BackupStatus,
   BackupSpec
 > {
+  declare kind: "Backup";
+  declare apiVersion: typeof CNPG;
+
   static override readonly kind = "Backup";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${CNPG}/backups`;
@@ -60,6 +66,9 @@ export class ScheduledBackup extends Renderer.K8sApi.LensExtensionKubeObject<
   ScheduledBackupStatus,
   ScheduledBackupSpec
 > {
+  declare kind: "ScheduledBackup";
+  declare apiVersion: typeof CNPG;
+
   static override readonly kind = "ScheduledBackup";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${CNPG}/scheduledbackups`;
@@ -77,6 +86,9 @@ export class Pooler extends Renderer.K8sApi.LensExtensionKubeObject<
   PoolerStatus,
   PoolerSpec
 > {
+  declare kind: "Pooler";
+  declare apiVersion: typeof CNPG;
+
   static override readonly kind = "Pooler";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${CNPG}/poolers`;
@@ -95,6 +107,9 @@ export class ObjectStore extends Renderer.K8sApi.LensExtensionKubeObject<
   ObjectStoreStatus,
   ObjectStoreSpec
 > {
+  declare kind: "ObjectStore";
+  declare apiVersion: typeof BARMAN;
+
   static override readonly kind = "ObjectStore";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${BARMAN}/objectstores`;
@@ -112,6 +127,9 @@ export class Publication extends Renderer.K8sApi.LensExtensionKubeObject<
   PublicationLike["status"],
   PublicationLike["spec"]
 > {
+  declare kind: "Publication";
+  declare apiVersion: typeof CNPG;
+
   static override readonly kind = "Publication";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${CNPG}/publications`;
@@ -129,6 +147,9 @@ export class Subscription extends Renderer.K8sApi.LensExtensionKubeObject<
   SubscriptionLike["status"],
   SubscriptionLike["spec"]
 > {
+  declare kind: "Subscription";
+  declare apiVersion: typeof CNPG;
+
   static override readonly kind = "Subscription";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${CNPG}/subscriptions`;

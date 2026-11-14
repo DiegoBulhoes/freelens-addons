@@ -1,28 +1,24 @@
 import { useEffect, useState } from "react";
 
 import { namedKey } from "../api/overview/attention";
+import { paramText, type RouteProps } from "../hooks/route-params";
 
 /** The route params every list page reads; see LIST_PARAMS in index.tsx. */
-export interface ListParams {
-  kind?: { get(): string };
-  namespace?: { get(): string };
-  name?: { get(): string };
-  filter?: { get(): string };
-}
+export type ListParams = RouteProps["params"];
 
 /** The filter and the open drawer a route names, kept in state so the page can change them. */
 export function useListRoute<Filter extends string>(
-  params: ListParams | undefined,
+  params: ListParams,
   isFilter: (value: string | undefined) => value is Filter,
 ) {
-  const requested = params?.filter?.get();
+  const requested = paramText(params, "filter");
   const [filter, setFilter] = useState<Filter | undefined>(() =>
     isFilter(requested) ? requested : undefined,
   );
   const named = namedKey({
-    kind: params?.kind?.get(),
-    namespace: params?.namespace?.get(),
-    name: params?.name?.get(),
+    kind: paramText(params, "kind"),
+    namespace: paramText(params, "namespace"),
+    name: paramText(params, "name"),
   });
   const [selectedKey, setSelectedKey] = useState(named);
 

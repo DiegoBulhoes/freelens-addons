@@ -12,6 +12,8 @@ import type {
 } from "./types";
 
 const GROUP = "monitoring.coreos.com";
+const V1 = `${GROUP}/v1` as const;
+const V1ALPHA1 = `${GROUP}/v1alpha1` as const;
 
 type Metadata = Renderer.K8sApi.KubeObjectMetadata;
 type ConfigStatus = { bindings?: Binding[] };
@@ -31,6 +33,8 @@ export class ServiceMonitor extends Renderer.K8sApi.LensExtensionKubeObject<
   ConfigStatus,
   MonitorSpec
 > {
+  declare kind: "ServiceMonitor";
+  declare apiVersion: typeof V1;
   static override readonly kind = "ServiceMonitor";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${GROUP}/v1/servicemonitors`;
@@ -48,6 +52,8 @@ export class PodMonitor extends Renderer.K8sApi.LensExtensionKubeObject<
   ConfigStatus,
   MonitorSpec
 > {
+  declare kind: "PodMonitor";
+  declare apiVersion: typeof V1;
   static override readonly kind = "PodMonitor";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${GROUP}/v1/podmonitors`;
@@ -59,6 +65,8 @@ export class ScrapeConfig extends Renderer.K8sApi.LensExtensionKubeObject<
   ConfigStatus,
   MonitorSpec
 > {
+  declare kind: "ScrapeConfig";
+  declare apiVersion: typeof V1ALPHA1;
   static override readonly kind = "ScrapeConfig";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${GROUP}/v1alpha1/scrapeconfigs`;
@@ -76,6 +84,8 @@ export class PrometheusRule extends Renderer.K8sApi.LensExtensionKubeObject<
   ConfigStatus,
   RuleSpec
 > {
+  declare kind: "PrometheusRule";
+  declare apiVersion: typeof V1;
   static override readonly kind = "PrometheusRule";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${GROUP}/v1/prometheusrules`;
@@ -93,6 +103,8 @@ export class Prometheus extends Renderer.K8sApi.LensExtensionKubeObject<
   InstanceStatus,
   PrometheusSpec
 > {
+  declare kind: "Prometheus";
+  declare apiVersion: typeof V1;
   static override readonly kind = "Prometheus";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${GROUP}/v1/prometheuses`;
@@ -104,6 +116,8 @@ export class PrometheusAgent extends Renderer.K8sApi.LensExtensionKubeObject<
   InstanceStatus,
   PrometheusSpec
 > {
+  declare kind: "PrometheusAgent";
+  declare apiVersion: typeof V1ALPHA1;
   static override readonly kind = "PrometheusAgent";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${GROUP}/v1alpha1/prometheusagents`;
@@ -121,6 +135,8 @@ export class Alertmanager extends Renderer.K8sApi.LensExtensionKubeObject<
   InstanceStatus,
   AlertmanagerLike["spec"]
 > {
+  declare kind: "Alertmanager";
+  declare apiVersion: typeof V1;
   static override readonly kind = "Alertmanager";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${GROUP}/v1/alertmanagers`;
@@ -135,6 +151,8 @@ export class OpenTelemetryCollector extends Renderer.K8sApi.LensExtensionKubeObj
   unknown,
   { mode?: string; targetAllocator?: TargetAllocatorSpec }
 > {
+  declare kind: "OpenTelemetryCollector";
+  declare apiVersion: "opentelemetry.io/v1beta1";
   static override readonly kind = "OpenTelemetryCollector";
   static override readonly namespaced = true;
   static override readonly apiBase = "/apis/opentelemetry.io/v1beta1/opentelemetrycollectors";

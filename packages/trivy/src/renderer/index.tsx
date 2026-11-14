@@ -1,4 +1,4 @@
-import { Renderer } from "@freelensapp/extensions";
+import { type Common, Renderer } from "@freelensapp/extensions";
 import { computed } from "mobx";
 import { isInstalled } from "./api/shared/installed";
 import { VulnerabilityReport } from "./api/shared/kinds";
@@ -7,7 +7,7 @@ import { TrivyIcon } from "./icons/trivy";
 import { DashboardPage } from "./pages/dashboard-page";
 import { RbacPage } from "./pages/rbac-page";
 import { VulnerabilityReportsPage } from "./pages/vulnerability-reports-page";
-import { WorkloadsRoute, type WorkloadsRouteParams } from "./pages/workloads-route";
+import { WorkloadsRoute } from "./pages/workloads-route";
 
 const PAGES = {
   dashboard: "dashboard",
@@ -23,16 +23,10 @@ const installed = computed(() =>
 
 export default class TrivyRenderer extends Renderer.LensExtension {
   override kubeObjectDetailItems = [
-    {
-      kind: VulnerabilityReport.kind,
-      apiVersions: VulnerabilityReport.crd.apiVersions,
+    Renderer.K8sApi.detailsFor(VulnerabilityReport, {
       priority: 10,
-      components: {
-        Details: (props: Renderer.Component.KubeObjectDetailsProps<VulnerabilityReport>) => (
-          <VulnerabilityReportDetails {...props} extension={this} />
-        ),
-      },
-    },
+      Details: (props) => <VulnerabilityReportDetails {...props} extension={this} />,
+    }),
   ];
 
   override clusterPages = [
@@ -47,9 +41,8 @@ export default class TrivyRenderer extends Renderer.LensExtension {
       id: PAGES.workloads,
       params: { namespace: "", kind: "", name: "", filter: "" },
       components: {
-        Page: (props: { params?: WorkloadsRouteParams }) => (
-          <WorkloadsRoute params={props.params} />
-        ),
+        // Freelens 2 wraps Page in observer, and an observer passed here fails the registration.
+        Page: (props: Common.Types.PageComponentProps) => <WorkloadsRoute {...props} />,
       },
     },
     {

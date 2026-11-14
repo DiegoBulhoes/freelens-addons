@@ -12,6 +12,7 @@ import { worstFirst } from "../api/shared/verdict";
 import { FilterChips } from "../components/filter-chips";
 import { type Column, ListPage } from "../components/list-page";
 import { StateCell } from "../components/state-cell";
+import { paramText } from "../hooks/route-params";
 import { useInventory } from "../hooks/use-inventory";
 import { InstanceDrawer } from "../instances/instance-drawer";
 import { type ListParams, useListRoute } from "./list-params";
@@ -64,7 +65,7 @@ const COLUMNS: Column<InstanceRow>[] = [
   },
 ];
 
-export const InstancesPage = observer(({ params }: { params?: ListParams }) => {
+export const InstancesPage = observer(({ params }: { params: ListParams }) => {
   const { stores, instances, live } = useInventory({
     monitors: false,
     rules: false,
@@ -92,7 +93,7 @@ export const InstancesPage = observer(({ params }: { params?: ListParams }) => {
           ? "No Prometheus, PrometheusAgent or Alertmanager in the namespaces in scope."
           : "No instance matches that filter."
       }
-      initialQuery={params?.name?.get()}
+      initialQuery={paramText(params, "name")}
       filters={
         <FilterChips
           filters={FILTERS}

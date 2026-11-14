@@ -1,6 +1,6 @@
 import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
-import { type ReactNode, useState } from "react";
+import { type JSX, type ReactNode, useState } from "react";
 
 import {
   describeCount,
@@ -35,7 +35,7 @@ export interface ListPageProps<Row> {
   keyOf: (row: Row) => string;
   searchTexts: (row: Row) => string[];
   onOpen?: (row: Row) => void;
-  menu?: (row: Row) => ReactNode;
+  menu?: (row: Row) => Renderer.Component.MenuActionsProps["children"];
   empty: string;
   /** `data-section`, for an e2e suite to find the list. */
   section?: string;

@@ -1,11 +1,11 @@
-import { Renderer } from "@freelensapp/extensions";
+import { type Common, Renderer } from "@freelensapp/extensions";
 import { computed } from "mobx";
 import { isInstalled } from "./api/shared/installed";
 import { KIND_TITLES, type OpenPage } from "./api/shared/navigation";
 import type { RedisKind } from "./api/shared/types";
 import { RedisIcon } from "./icons/redis";
 import { OverviewPage } from "./pages/overview-page";
-import { RedisListPage, type RedisListParams } from "./pages/redis-list-page";
+import { RedisListPage } from "./pages/redis-list-page";
 
 const KINDS: RedisKind[] = ["Replication", "Cluster", "Standalone", "Sentinel"];
 
@@ -31,7 +31,7 @@ export default class RedisRenderer extends Renderer.LensExtension {
       filter: params.filter ?? "",
     });
 
-  override clusterPages = [
+  override clusterPages: Renderer.LensExtension["clusterPages"] = [
     {
       id: PAGES.overview,
       components: { Page: () => <OverviewPage open={this.open} /> },
@@ -41,8 +41,8 @@ export default class RedisRenderer extends Renderer.LensExtension {
       // A card opens a list on a filter; an attention row or a drawer link, one row's drawer.
       params: { namespace: "", name: "", filter: "" },
       components: {
-        Page: (props: { params?: RedisListParams }) => (
-          <RedisListPage kind={kind} params={props.params} open={this.open} />
+        Page: (props: Common.Types.PageComponentProps) => (
+          <RedisListPage {...props} kind={kind} open={this.open} />
         ),
       },
     })),

@@ -17,15 +17,12 @@ import { FilterChips } from "../components/filter-chips";
 import { type Column, ListPage } from "../components/list-page";
 import { Status } from "../components/status";
 import { useInventory } from "../hooks/use-inventory";
-import { useNamedRow, useRequestedFilter } from "../hooks/use-list-params";
+import {
+  type ReplicaSetsPageProps,
+  useNamedRow,
+  useRequestedFilter,
+} from "../hooks/use-list-params";
 import { ReplicaSetDrawer } from "../replica-sets/replica-set-drawer";
-
-/** See LIST_PARAMS in index.tsx. */
-export interface ReplicaSetsPageParams {
-  namespace?: { get(): string };
-  name?: { get(): string };
-  filter?: { get(): string };
-}
 
 const rowKey = (row: ReplicaSetRow) => keyOf(row.rs);
 
@@ -99,7 +96,7 @@ const COLUMNS: Column<ReplicaSetRow>[] = [
   },
 ];
 
-export const ReplicaSetsPage = observer(({ params }: { params?: ReplicaSetsPageParams }) => {
+export const ReplicaSetsPage = observer(({ params }: ReplicaSetsPageProps) => {
   const { stores, rows, agentError } = useInventory();
   const [selectedKey, setSelectedKey] = useNamedRow(params);
   const [filter, setFilter] = useRequestedFilter(params);

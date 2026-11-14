@@ -48,10 +48,10 @@ services:
     build:
       context: ./dev/freelens
       args:
-        FREELENS_VERSION: ${FREELENS_VERSION:-1.10.3}
+        FREELENS_VERSION: ${FREELENS_VERSION:-2.0.0}
         USER_UID: ${USER_UID:-1000}
         USER_GID: ${USER_GID:-1000}
-    image: freelens-addons/freelens:${FREELENS_VERSION:-1.10.3}
+    image: freelens-addons/freelens:${FREELENS_VERSION:-2.0.0}
     network_mode: host
     environment:
       DISPLAY: ":99"
@@ -70,7 +70,8 @@ services:
         bind:
           create_host_path: false
       - .:/workspace
-      - ./packages:/home/dev/.freelens/extensions:ro
+      # Freelens 2 adopts each directory under <userData>/extensions as an unpacked install.
+      - ./packages:/home/dev/.config/Freelens/extensions:ro
       - freelens-state:/home/dev/.config/Freelens
       - pnpm-store:/usr/local/share/pnpm/store
       - corepack-cache:/home/dev/.cache/node/corepack

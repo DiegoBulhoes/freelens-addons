@@ -23,13 +23,33 @@ async function okJson<T>(response: Response): Promise<T> {
 
 const API_PROXY = "/api-kube";
 
-// Through the API server's pod proxy, as cnpg reads its instance manager; needs get on pods/proxy.
-async function promGet(url: string): Promise<unknown> {
-  const { request } = Renderer.K8sApi.podsApi as unknown as {
-    request: { get(url: string, params?: undefined, init?: RequestInit): Promise<unknown> };
-  };
+function parsed(text: string): { json: true; value: unknown } | { json: false } {
+  try {
+    return { json: true, value: JSON.parse(text || "{}") };
+  } catch {
+    return { json: false };
+  }
+}
 
-  return withTimeout((signal) => request.get(url, undefined, { signal }));
+// The reason the host's JSON API gave: the API server's Status message, else the proxied body.
+async function proxiedJson(response: Response): Promise<unknown> {
+  const text = await response.text();
+  const body = parsed(text);
+
+  if (response.ok) return body.json ? body.value : text;
+
+  const message = body.json ? (body.value as { message?: unknown } | null)?.message : text.trim();
+
+  throw new Error(
+    typeof message === "string" && message
+      ? message
+      : `${response.status} ${response.statusText}`.trim(),
+  );
+}
+
+// Through the API server's pod proxy, as cnpg reads its instance manager; needs get on pods/proxy.
+function promGet(url: string): Promise<unknown> {
+  return withTimeout(async (signal) => proxiedJson(await fetch(`${API_PROXY}${url}`, { signal })));
 }
 
 export async function readPrometheus(

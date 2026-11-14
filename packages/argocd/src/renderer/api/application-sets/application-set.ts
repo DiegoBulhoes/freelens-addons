@@ -57,6 +57,9 @@ export class ApplicationSet extends Renderer.K8sApi.LensExtensionKubeObject<
   ApplicationSetStatus,
   ApplicationSetSpec
 > {
+  declare kind: "ApplicationSet";
+  declare apiVersion: "argoproj.io/v1alpha1";
+
   static override readonly kind = "ApplicationSet";
   static override readonly namespaced = true;
   static override readonly apiBase = "/apis/argoproj.io/v1alpha1/applicationsets";

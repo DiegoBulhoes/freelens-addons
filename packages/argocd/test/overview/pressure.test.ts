@@ -1,4 +1,3 @@
-import { KubeEvent, Node } from "@freelensapp/kube-object";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -6,7 +5,7 @@ import {
   NODE_WARNINGS,
   RECENT_EVENT_MS,
 } from "../../src/renderer/api/overview/pressure";
-import { events, nodes } from "../support/fixtures";
+import { events, KubeEvent, Node, nodes } from "../support/fixtures";
 
 /** The newest warning in the fixtures, used as `now`. */
 function newestEventAt(): number {

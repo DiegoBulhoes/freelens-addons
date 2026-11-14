@@ -4,13 +4,17 @@ set -uo pipefail
 
 cd "$(dirname "$0")/../.."
 
-# Host-provided globals: requiring one bundles a second React or MobX.
-HOST_MODULES='@freelensapp/extensions|react|react-dom|react/jsx-runtime|mobx|mobx-react|react-router|react-router-dom'
+# Host-provided on globalThis.FreelensExtensionApi: importing one bundles a second React or MobX.
+HOST_MODULES='@freelensapp/extensions|react|react-dom|react/jsx-runtime|mobx|mobx-react'
 
 FAIL=0
 bad() { echo "  ✗ $*"; FAIL=1; }
 
-for dir in packages/*; do
+# Usage: verify-bundles.sh [packages/<name> ...]; every extension by default.
+dirs=("$@")
+[[ ${#dirs[@]} -gt 0 ]] || dirs=(packages/*)
+
+for dir in "${dirs[@]}"; do
   echo "==> ${dir}"
   read -r engine private files main renderer < <(node -p "const p = require('./${dir}/package.json');
     [p.engines?.freelens || '-', p.private === true, (p.files ?? []).includes('out'), p.main || '-', p.renderer || '-'].join(' ')")
@@ -30,9 +34,14 @@ for dir in packages/*; do
   for bundle in "${main}" "${renderer}"; do
     [[ "${bundle}" == - ]] && continue
     if [[ ! -f "${dir}/${bundle}" ]]; then bad "${bundle} was not built"; continue; fi
-    grep -q '^exports\.default' "${dir}/${bundle}" || bad "${bundle}: no top-level exports.default"
-    if grep -qE "require\(\"(${HOST_MODULES})\"\)" "${dir}/${bundle}"; then
-      bad "${bundle}: requires a host module instead of reading its global"
+    # Freelens 2 imports each bundle as an ES module and reads its default export.
+    grep -qE '^(export default |  [A-Za-z_$][A-Za-z0-9_$]* as default$|export \{ ?[A-Za-z_$][A-Za-z0-9_$]* as default ?\};?$)' "${dir}/${bundle}" \
+      || bad "${bundle}: no ES module default export"
+    if grep -qE '^(module\.)?exports\.|\brequire\("' "${dir}/${bundle}"; then
+      bad "${bundle}: CommonJS; Freelens 2 loads only ES modules"
+    fi
+    if grep -qE "(from|import) \"(${HOST_MODULES})(/[^\"]*)?\"" "${dir}/${bundle}"; then
+      bad "${bundle}: imports a host module instead of reading FreelensExtensionApi"
     fi
     # Only the extension's own src/: docs/security.md rests on no third-party code being shipped.
     if [[ ! -f "${dir}/${bundle}.map" ]]; then
@@ -45,6 +54,11 @@ for dir in packages/*; do
       fi
     fi
   done
+
+  # The renderer is loaded by URL: any import, of a builtin or a bare id, fails to resolve.
+  if [[ "${renderer}" != - && -f "${dir}/${renderer}" ]] && grep -qE '^import |^export .* from "' "${dir}/${renderer}"; then
+    bad "${renderer}: imports a module; the renderer bundle must be self-contained"
+  fi
 
   # The tarball packs all of out/: anything beside the bundles and their maps would ship unchecked.
   if [[ -d "${dir}/out" ]]; then

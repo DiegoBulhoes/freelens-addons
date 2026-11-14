@@ -15,7 +15,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text-summary", "html", "lcov"],
-      include: ["src/renderer/api/**/*.ts"],
+      include: ["src/renderer/api/**/*.ts", "src/main/state-file.ts"],
       // Store-access boundary: these only read stores or send patches; their decisions live in covered modules.
       exclude: [
         "src/renderer/api/shared/types.ts",

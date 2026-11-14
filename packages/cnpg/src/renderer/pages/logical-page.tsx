@@ -1,6 +1,5 @@
 import { observer } from "mobx-react";
 import { type LogicalRow, logicalRows } from "../api/replication/logical";
-import type { OpenPage } from "../api/shared/navigation";
 import { logicalSearchTexts } from "../api/shared/search";
 import { emptyText } from "../api/shared/store-state";
 import { deleteLogical } from "../api/writes/actions";
@@ -11,12 +10,12 @@ import { StateCell } from "../components/state-cell";
 import { useCnpgStores } from "../hooks/use-cnpg-stores";
 import { useNamedRow } from "../hooks/use-list-params";
 import { LogicalDrawer } from "./drawers";
-import type { ListParams } from "./list-params";
+import type { ListPageRouteProps } from "./list-params";
 import { logicalActions, RowMenu } from "./row-dialogs";
 
 const logicalKey = (row: LogicalRow) => `${row.kind}/${row.object.getNs()}/${row.object.getName()}`;
 
-export const LogicalPage = observer(({ params, open }: { params?: ListParams; open: OpenPage }) => {
+export const LogicalPage = observer(({ params, open }: ListPageRouteProps) => {
   const stores = useCnpgStores("logical");
   const [selectedKey, setSelectedKey] = useNamedRow(params, true);
   const rows = logicalRows(stores.publications ?? [], stores.subscriptions ?? []);

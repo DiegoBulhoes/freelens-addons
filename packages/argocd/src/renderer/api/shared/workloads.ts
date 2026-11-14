@@ -19,13 +19,7 @@ const {
 
 export type Pod = (typeof podsStore.items)[number];
 
-type NamespacedStore = {
-  loadAll(params: {
-    namespaces: string[];
-    reqInit: RequestInit;
-    onLoadFailure: (error: unknown) => void;
-  }): Promise<unknown>;
-};
+type NamespacedStore = Pick<typeof podsStore, "loadAll">;
 
 // Without `onLoadFailure`, one refused namespace makes the host empty this shared store.
 // One call for all namespaces: `loadItems` overwrites `loadedNamespaces`, which the watch reads.

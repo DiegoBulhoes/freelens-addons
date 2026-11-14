@@ -2,7 +2,7 @@ import { Renderer } from "@freelensapp/extensions";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
 import { backupsNewestFirst, backupTime } from "../api/backups/backups";
-import { clusterKeyOf, keyOf, namedKey, type OpenPage } from "../api/shared/navigation";
+import { clusterKeyOf, keyOf, namedKey } from "../api/shared/navigation";
 import { backupDuration, backupVerdict, clusterNamed } from "../api/shared/rows";
 import { backupSearchTexts } from "../api/shared/search";
 import { emptyText } from "../api/shared/store-state";
@@ -14,11 +14,12 @@ import { CellLink } from "../components/drawer-link";
 import { FilterChips } from "../components/filter-chips";
 import { type Column, ListPage } from "../components/list-page";
 import { StateCell } from "../components/state-cell";
+import { paramText } from "../hooks/route-params";
 import { useBackupCause } from "../hooks/use-causes";
 import { useCnpgStores } from "../hooks/use-cnpg-stores";
 import { useNamedRow } from "../hooks/use-list-params";
 import { BackupDrawer } from "./drawers";
-import type { ListParams } from "./list-params";
+import type { ListPageRouteProps } from "./list-params";
 import { backupActions, confirmBackupPicker, RowMenu } from "./row-dialogs";
 
 const {
@@ -28,11 +29,11 @@ const {
 // Search and sort run over every Backup; only the DOM is capped.
 const DRAWN = 200;
 
-export const BackupsPage = observer(({ params, open }: { params?: ListParams; open: OpenPage }) => {
+export const BackupsPage = observer(({ params, open }: ListPageRouteProps) => {
   const stores = useCnpgStores("backups");
   const [selectedKey, setSelectedKey] = useNamedRow(params);
   // A cluster drawer's "All N backups" narrows the list to that cluster.
-  const requested = namedKey(params?.namespace?.get(), params?.cluster?.get());
+  const requested = namedKey(paramText(params, "namespace"), paramText(params, "cluster"));
   const [ofCluster, setOfCluster] = useState(requested);
 
   useEffect(() => {
@@ -129,7 +130,7 @@ export const BackupsPage = observer(({ params, open }: { params?: ListParams; op
         ofCluster && (
           <FilterChips
             filters={[ofCluster]}
-            labels={{ [ofCluster]: `Cluster ${params?.cluster?.get()}` }}
+            labels={{ [ofCluster]: `Cluster ${paramText(params, "cluster")}` }}
             titles={{
               [ofCluster]: "Shows the backups of the cluster whose drawer opened this list",
             }}

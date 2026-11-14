@@ -2,7 +2,7 @@ import { Renderer } from "@freelensapp/extensions";
 
 import type { RedisCRD, RedisSpec, RedisStatus } from "./types";
 
-const GROUP = "redis.redis.opstreelabs.in/v1beta2";
+const GROUP = "redis.redis.opstreelabs.in/v1beta2" as const;
 
 type Metadata = Renderer.K8sApi.KubeObjectMetadata;
 
@@ -11,6 +11,9 @@ export class RedisStandalone extends Renderer.K8sApi.LensExtensionKubeObject<
   RedisStatus,
   RedisSpec
 > {
+  declare kind: "Redis";
+  declare apiVersion: typeof GROUP;
+
   static override readonly kind = "Redis";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${GROUP}/redis`;
@@ -27,6 +30,9 @@ export class RedisReplication extends Renderer.K8sApi.LensExtensionKubeObject<
   RedisStatus,
   RedisSpec
 > {
+  declare kind: "RedisReplication";
+  declare apiVersion: typeof GROUP;
+
   static override readonly kind = "RedisReplication";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${GROUP}/redisreplications`;
@@ -43,6 +49,9 @@ export class RedisCluster extends Renderer.K8sApi.LensExtensionKubeObject<
   RedisStatus,
   RedisSpec
 > {
+  declare kind: "RedisCluster";
+  declare apiVersion: typeof GROUP;
+
   static override readonly kind = "RedisCluster";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${GROUP}/redisclusters`;
@@ -59,6 +68,9 @@ export class RedisSentinel extends Renderer.K8sApi.LensExtensionKubeObject<
   RedisStatus,
   RedisSpec
 > {
+  declare kind: "RedisSentinel";
+  declare apiVersion: typeof GROUP;
+
   static override readonly kind = "RedisSentinel";
   static override readonly namespaced = true;
   static override readonly apiBase = `/apis/${GROUP}/redissentinels`;

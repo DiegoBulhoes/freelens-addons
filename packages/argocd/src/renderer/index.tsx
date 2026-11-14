@@ -1,5 +1,7 @@
 import { Renderer } from "@freelensapp/extensions";
 import { computed } from "mobx";
+
+import { STATE_CHANNELS } from "../common/state-channels";
 import { Application } from "./api/applications/application";
 import { AppProject } from "./api/projects/app-project";
 import { hasApplicationSets, hasImageUpdater, isInstalled } from "./api/shared/installed";
@@ -7,24 +9,16 @@ import { flushState, startPersistingState } from "./api/shared/persist";
 import { AppProjectDetails } from "./details/app-project-details";
 import { ApplicationDetails } from "./details/application-details";
 import { ArgoCDIcon } from "./icons/argocd";
-import { type ImagesParams, ImageUpdaterImagesPage } from "./image-updater/images-page";
+import { ImageUpdaterImagesPage } from "./image-updater/images-page";
 import { ImageUpdaterOverviewPage } from "./image-updater/overview-page";
 import { IMAGE_UPDATER_PAGES } from "./image-updater/pages";
-import { ImageUpdaterRulesPage, type RulesParams } from "./image-updater/rules-page";
+import { ImageUpdaterRulesPage } from "./image-updater/rules-page";
 import { ImageUpdaterUpdatesPage } from "./image-updater/updates-page";
 import { AppProjectMenuItem } from "./menus/app-project-menu";
 import { ApplicationMenuItem } from "./menus/application-menu";
 import { AppProjectsPage } from "./pages/app-projects-page";
-import {
-  APPLICATION_SETS_PAGE,
-  ApplicationSetsPage,
-  type ApplicationSetsParams,
-} from "./pages/application-sets-page";
-import {
-  APPLICATIONS_PAGE,
-  ApplicationsPage,
-  type ApplicationsPageProps,
-} from "./pages/applications-page";
+import { APPLICATION_SETS_PAGE, ApplicationSetsPage } from "./pages/application-sets-page";
+import { APPLICATIONS_PAGE, ApplicationsPage } from "./pages/applications-page";
 import { DashboardPage } from "./pages/dashboard-page";
 
 const PAGES = {
@@ -51,45 +45,25 @@ const imageUpdaterInstalled = computed(() => {
   return isInstalled(names) && hasImageUpdater(names);
 });
 
+class ArgoCDIpc extends Renderer.Ipc {}
+
 export default class ArgoCDRenderer extends Renderer.LensExtension {
   override kubeObjectDetailItems = [
-    {
-      kind: Application.kind,
-      apiVersions: Application.crd.apiVersions,
+    Renderer.K8sApi.detailsFor(Application, {
       priority: 10,
-      components: {
-        Details: (props: Renderer.Component.KubeObjectDetailsProps<Application>) => (
-          <ApplicationDetails {...props} extension={this} />
-        ),
-      },
-    },
-    {
-      kind: AppProject.kind,
-      apiVersions: AppProject.crd.apiVersions,
+      Details: (props) => <ApplicationDetails {...props} extension={this} />,
+    }),
+    Renderer.K8sApi.detailsFor(AppProject, {
       priority: 10,
-      components: {
-        Details: (props: Renderer.Component.KubeObjectDetailsProps<AppProject>) => (
-          <AppProjectDetails {...props} extension={this} />
-        ),
-      },
-    },
+      Details: (props) => <AppProjectDetails {...props} extension={this} />,
+    }),
   ];
 
   override kubeObjectMenuItems = [
-    {
-      kind: Application.kind,
-      apiVersions: Application.crd.apiVersions,
-      components: { MenuItem: ApplicationMenuItem },
-    },
-    {
-      kind: AppProject.kind,
-      apiVersions: AppProject.crd.apiVersions,
-      components: {
-        MenuItem: (props: { object: AppProject; toolbar?: boolean }) => (
-          <AppProjectMenuItem {...props} extension={this} />
-        ),
-      },
-    },
+    Renderer.K8sApi.menuItemFor(Application, { MenuItem: ApplicationMenuItem }),
+    Renderer.K8sApi.menuItemFor(AppProject, {
+      MenuItem: (props) => <AppProjectMenuItem {...props} extension={this} />,
+    }),
   ];
 
   override clusterPages: Renderer.LensExtension["clusterPages"] = [
@@ -103,9 +77,8 @@ export default class ArgoCDRenderer extends Renderer.LensExtension {
       id: PAGES.applications,
       params: { project: "", projectNamespace: "", status: "", name: "", namespace: "" },
       components: {
-        Page: (props: { params?: ApplicationsPageProps["params"] }) => (
-          <ApplicationsPage params={props.params} />
-        ),
+        // Freelens 2 wraps Page in observer, and an observer passed here fails the registration.
+        Page: (props) => <ApplicationsPage {...props} />,
       },
     },
     {
@@ -118,9 +91,7 @@ export default class ArgoCDRenderer extends Renderer.LensExtension {
       id: APPLICATION_SETS_PAGE,
       params: { name: "", namespace: "" },
       components: {
-        Page: (props: { params?: ApplicationSetsParams }) => (
-          <ApplicationSetsPage extension={this} params={props.params} />
-        ),
+        Page: (props) => <ApplicationSetsPage {...props} extension={this} />,
       },
     },
     {
@@ -131,18 +102,14 @@ export default class ArgoCDRenderer extends Renderer.LensExtension {
       id: IMAGE_UPDATER_PAGES.rules,
       params: { name: "", namespace: "", filter: "" },
       components: {
-        Page: (props: { params?: RulesParams }) => (
-          <ImageUpdaterRulesPage extension={this} params={props.params} />
-        ),
+        Page: (props) => <ImageUpdaterRulesPage {...props} extension={this} />,
       },
     },
     {
       id: IMAGE_UPDATER_PAGES.images,
       params: { filter: "" },
       components: {
-        Page: (props: { params?: ImagesParams }) => (
-          <ImageUpdaterImagesPage extension={this} params={props.params} />
-        ),
+        Page: (props) => <ImageUpdaterImagesPage {...props} extension={this} />,
       },
     },
     {
@@ -219,8 +186,16 @@ export default class ArgoCDRenderer extends Renderer.LensExtension {
   ];
 
   override async onActivate(): Promise<void> {
+    const ipc = ArgoCDIpc.createInstance(this);
+
     // Awaited so state is loaded before register() mounts any page; it never rejects.
-    await startPersistingState(this, location.host);
+    await startPersistingState(
+      {
+        read: (fileName) => ipc.invoke(STATE_CHANNELS.read, fileName),
+        write: (fileName, text) => ipc.invoke(STATE_CHANNELS.write, fileName, text),
+      },
+      location.host,
+    );
 
     console.log(
       `[argocd] renderer activated for ${Application.crd.plural} and ${AppProject.crd.plural}`,

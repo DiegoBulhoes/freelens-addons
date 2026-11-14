@@ -50,6 +50,8 @@ jobs:
         run: bash scripts/checks/copy-design-standard.sh --check
       - name: E2E legs
         run: bash scripts/checks/e2e-legs.sh
+      - name: Page registrations
+        run: bash scripts/checks/page-registrations.sh
       - name: Supply-chain policy
         run: bash scripts/security/verify-supply-chain.sh
 

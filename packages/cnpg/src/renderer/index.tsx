@@ -5,7 +5,6 @@ import type { OpenPage } from "./api/shared/navigation";
 import { CNPGIcon } from "./icons/cnpg";
 import { BackupsPage } from "./pages/backups-page";
 import { ClustersPage } from "./pages/clusters-page";
-import type { ListParams } from "./pages/list-params";
 import { LogicalPage } from "./pages/logical-page";
 import { OverviewPage } from "./pages/overview-page";
 import { PoolersPage } from "./pages/poolers-page";
@@ -39,7 +38,7 @@ export default class CNPGRenderer extends Renderer.LensExtension {
       filter: params.filter ?? "",
     });
 
-  override clusterPages = [
+  override clusterPages: Renderer.LensExtension["clusterPages"] = [
     {
       id: PAGES.overview,
       components: { Page: () => <OverviewPage open={this.open} /> },
@@ -48,45 +47,35 @@ export default class CNPGRenderer extends Renderer.LensExtension {
       id: PAGES.clusters,
       params: LIST_PARAMS,
       components: {
-        Page: (props: { params?: ListParams }) => (
-          <ClustersPage params={props.params} open={this.open} />
-        ),
+        Page: (props) => <ClustersPage {...props} open={this.open} />,
       },
     },
     {
       id: PAGES.backups,
       params: LIST_PARAMS,
       components: {
-        Page: (props: { params?: ListParams }) => (
-          <BackupsPage params={props.params} open={this.open} />
-        ),
+        Page: (props) => <BackupsPage {...props} open={this.open} />,
       },
     },
     {
       id: PAGES.schedules,
       params: LIST_PARAMS,
       components: {
-        Page: (props: { params?: ListParams }) => (
-          <SchedulesPage params={props.params} open={this.open} />
-        ),
+        Page: (props) => <SchedulesPage {...props} open={this.open} />,
       },
     },
     {
       id: PAGES.poolers,
       params: LIST_PARAMS,
       components: {
-        Page: (props: { params?: ListParams }) => (
-          <PoolersPage params={props.params} open={this.open} />
-        ),
+        Page: (props) => <PoolersPage {...props} open={this.open} />,
       },
     },
     {
       id: PAGES.logical,
       params: LIST_PARAMS,
       components: {
-        Page: (props: { params?: ListParams }) => (
-          <LogicalPage params={props.params} open={this.open} />
-        ),
+        Page: (props) => <LogicalPage {...props} open={this.open} />,
       },
     },
   ];

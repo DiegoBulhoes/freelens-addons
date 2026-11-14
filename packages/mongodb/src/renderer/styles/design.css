@@ -33,7 +33,7 @@
 }
 
 /* The host's ConfirmDialog is white in every theme; ours follows the theme. */
-.ConfirmDialog:has(.MongoDB-dialog) > .box {
+.ConfirmDialog:has(.MongoDB-dialog) > .dialog-content {
   border: 1px solid var(--borderColor);
   background-color: var(--contentColor);
   color: var(--textColorPrimary);

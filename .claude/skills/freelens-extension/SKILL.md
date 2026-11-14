@@ -10,7 +10,7 @@ description: |
   one look like the rest, even if they do not say "design".
 license: Apache-2.0
 metadata:
-  version: "2.7.0"
+  version: "3.0.0"
 ---
 
 # Freelens extension
@@ -39,6 +39,7 @@ If they disagree, follow the repository and tell the person.
 | `design.md` | The design standard. Read before drawing a screen |
 | `templates/` | A minimal extension: manifest, build, tests, pages, ready-made components, the store-loading hook and its decisions |
 | `templates/src/renderer/styles/design.css` | The standard's components, with a `__Name__` prefix |
+| `templates/src/renderer/hooks/route-params.ts` | `RouteProps` and `paramText()`, the one way a page reads a route param; copied unchanged |
 | `scripts/copy-design-standard.sh` | Writes `design.css` into every extension; `--check` fails on drift |
 | `harness/design.ts`, `harness/cdp.ts` | `designViolations()`, `dialogColourViolations()` and the CDP client they run on |
 
@@ -52,7 +53,7 @@ Each finding changes what gets written.
 | `README.md`, `docs/` | How extensions are listed and documented |
 | An existing extension (`grep -rl '"renderer"' --include=package.json .`) | Layout, names, ids, styling. It is the template |
 | A `design.css` in an extension | The standard to copy. Never edit a copy |
-| A shared build config (`grep -rl 'exports: "named"' .`, `build/`) | Re-export it instead of carrying one |
+| A shared build config (`grep -rl 'FreelensExtensionApi' .`, `build/`) | Re-export it instead of carrying one |
 | Lockfile, `packageManager` | Install command and its traps |
 | `pnpm-workspace.yaml`, `.npmrc`, renovate | Age floors, allowed build scripts, versions to match |
 | `vitest.config.*`, `test/` | Runner, how `@freelensapp/extensions` resolves, coverage |
@@ -70,23 +71,26 @@ Most of these fail silently.
 
 | Rule | Otherwise |
 |------|-----------|
-| One CommonJS bundle per entrypoint; `require(entry).default` is a class | Rollup's `exports: "auto"` drops `.default`; the extension is skipped |
-| `@freelensapp/extensions`, React, MobX are globals | A second React or MobX breaks hooks and observability |
-| `engines.freelens` starts with `^` or a digit, names `MAJOR.MINOR` | Listed as incompatible. Freelens keeps only `MAJOR.MINOR` |
+| One ES module per entrypoint, its default export a class; the renderer imports nothing | The renderer is loaded by URL: a `require`, a builtin or a bare import fails to load |
+| `@freelensapp/extensions`, React, MobX are read off `globalThis.FreelensExtensionApi` | A second React or MobX breaks hooks and observability |
+| `engines.freelens` is `^2.0.0` or another 2.x range | Refused at discovery, silently |
 | `main` and `renderer` point at the build output | Nothing loads |
 | `files` includes the build output | The tarball ships no UI |
 | `private: true` unless the repository publishes | Accidental publish |
 | `jsx: "react-jsx"` | A lint fix to `import type React` breaks JSX at runtime |
-| `moduleResolution: node10` | `Renderer` becomes `any` |
-| `react-dom` maps to `global.ReactDOM` | Upstream's example writes `ReactDom`: undefined |
+| Main imports only `@freelensapp/extensions` and `mobx` of the host's | Main has no React; the build refuses it |
+| No Node in the renderer: file and process work lives in main, reached over `Main.Ipc`/`Renderer.Ipc` | A builtin or `electron` import fails the renderer load; the build refuses it |
+| A page takes `Common.Types.PageComponentProps` and reads `params.<name>.get()` | Does not compile; `navigate` rejects a param the registration does not declare |
+| `Page` is a plain arrow (`(props) => <X {...props} />`), never an `observer` itself | The host wraps it in `observer`; the route registration fails and the page never mounts |
 | A new install is disabled | Enable it from the `⋮` menu |
-| No hot reload | Build, then restart Freelens. A rebuild alone does nothing |
+| A rebuild reloads only a directory install (a folder given to File > Extensions) | A tarball, extracted or mounted install needs a restart |
 
 Host facts, true everywhere:
 
 - **Sidebar order.** A saved order in `lens-user-store.json` beats `orderNumber`. A new group lands last for existing users.
 - **Secrets.** `secretsStore` loads every value. Ask for a `PartialObjectMetadataList`; drop `last-applied-configuration`.
 - **Details drawer.** `Navigation.showDetails` does nothing from a plain `clusterPage`. Navigate to a host list with `?search=<name>`.
+- **Links.** From a drawer use the template's `HostLink`, which closes the drawer and then navigates. To one of our own lists, add a query param and filter on it. `getDetailsUrl` is for an `href`; `showDetails` expects a selfLink.
 - **`isLoaded`.** Means "loaded once", not "loaded for this namespace scope". Load on every mount, and trust a store only once its load finished for the scope asked (`loadedFor`).
 - **`ConfirmDialog`.** Copies plain-object props. Form values reach `ok` through callbacks.
 
@@ -130,8 +134,8 @@ done
 
 Then adapt to the repository:
 
-- Shared build config: replace `electron.vite.config.ts` with its re-export; delete `vite/`.
-- Shared tsconfig: extend it; keep `node10` and `react-jsx`.
+- Shared build config: replace `vite.config.ts` with its re-export; delete `vite/`.
+- Shared tsconfig: extend it; keep `bundler` and `react-jsx`.
 - Existing `test/support/freelens-host.ts`: copy theirs.
 - `design.css`: run the repository's copy-design-standard.sh, or `$SKILL/scripts/copy-design-standard.sh <where extensions live>`.
 - Do not copy another extension's hooks or stores. Start from the template's `hooks/load-stores.ts` and write what this one needs.
@@ -158,7 +162,7 @@ Use the repository's package manager, where its instructions say.
 | Minimum release age | Declare ranges. Never lower the floor |
 | Build-script allow-list | A new native dependency is a decision |
 
-Match the versions already resolved (React 17, `@freelensapp/*`, vite, electron-vite).
+Match the versions already resolved (`@freelensapp/extensions` 2, React 19, MobX 7, vite).
 
 **Check:** typecheck passes; the lockfile adds one importer and changes nothing else.
 
@@ -170,14 +174,18 @@ Build and load the repository's way. Enable the extension from `⋮`.
 
 | Symptom | Cause |
 |---------|-------|
-| No log | No manifest, or not directly under the extensions folder |
-| `Cannot find module` | Not built, or a host module not mapped to a global |
-| Listed, never activated | `.default` is not a class |
-| Incompatible | `engines.freelens` does not match |
+| No log | No manifest, or not directly under `<userData>/extensions/<name>/` |
+| "Failed to load" | Not built, or the renderer bundle imports something (a builtin, a bare id) |
+| Listed, never activated | The default export is not a class |
+| Incompatible | `engines.freelens` is not a 2.x range |
 
 ### 5. Write what it reads
 
-- One `KubeObject` class per kind, extending `Renderer.K8sApi.LensExtensionKubeObject`.
+- One `KubeObject` class per kind, extending `Renderer.K8sApi.LensExtensionKubeObject`, with
+  `declare kind: "<Kind>"; declare apiVersion: "<group>/<version>";`. Per-object logic as `static`
+  methods.
+- Details and menus for a kind: `Renderer.K8sApi.detailsFor(Class, { priority, Details })` and
+  `menuItemFor(Class, { MenuItem })`; the props type follows the class.
 - Export fixtures before writing parsers. The real shape is in the cluster.
 - Hide the group on clusters without the CRDs:
 
@@ -242,7 +250,7 @@ Break what each new test guards and watch it fail. If a CSS mutation fails nothi
 
 - Run what CI runs, locally, and the e2e suite, also as the extension's leg alone on a fresh cluster (here: `JOB=e2e LEG=<name> dev/act/run.sh`).
 - `copy-design-standard.sh --check` passes.
-- No bundle check? Verify by hand: `exports.default =` at the end, no `require("react")` or `require("@freelensapp/extensions")`.
+- No bundle check? Verify by hand: `export { X as default }` at the end, no `import` or `require` in the renderer bundle.
 - Commit the repository's way. Default: semantic, English, one commit per concern.
 
 ## Do not
@@ -255,4 +263,4 @@ Break what each new test guards and watch it fail. If a CSS mutation fails nothi
 - Mock. Split the decision from the lookup.
 - Lower coverage or widen exclusions.
 - Write cluster numbers into tests, docs or commits.
-- Say a rebuild is enough.
+- Say a rebuild is enough for a tarball or mounted install.

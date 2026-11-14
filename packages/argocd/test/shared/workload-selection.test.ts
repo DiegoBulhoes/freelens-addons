@@ -1,4 +1,3 @@
-import { Ingress, Pod } from "@freelensapp/kube-object";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -15,6 +14,8 @@ import {
 import {
   application,
   applications,
+  Ingress,
+  Pod,
   pods,
   podVariantOf,
   statusOf,

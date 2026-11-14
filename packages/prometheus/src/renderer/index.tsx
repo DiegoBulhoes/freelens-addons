@@ -1,11 +1,10 @@
-import { Renderer } from "@freelensapp/extensions";
+import { type Common, Renderer } from "@freelensapp/extensions";
 import { computed } from "mobx";
 
 import { type OpenPage, PAGE_TITLES } from "./api/overview/attention";
 import { isInstalled } from "./api/shared/installed";
 import { PrometheusIcon } from "./icons/prometheus";
 import { InstancesPage } from "./pages/instances-page";
-import type { ListParams } from "./pages/list-params";
 import { MonitorsPage } from "./pages/monitors-page";
 import { OverviewPage } from "./pages/overview-page";
 import { RulesPage } from "./pages/rules-page";
@@ -44,7 +43,7 @@ export default class PrometheusRenderer extends Renderer.LensExtension {
       filter: params.filter ?? "",
     });
 
-  override clusterPages = [
+  override clusterPages: Renderer.LensExtension["clusterPages"] = [
     {
       id: PAGES.overview,
       components: { Page: () => <OverviewPage open={this.open} /> },
@@ -53,25 +52,22 @@ export default class PrometheusRenderer extends Renderer.LensExtension {
       id: PAGES.monitors,
       params: LIST_PARAMS,
       components: {
-        Page: (props: { params?: ListParams }) => (
-          <MonitorsPage params={props.params} open={this.open} />
-        ),
+        Page: (props) => <MonitorsPage params={props.params} open={this.open} />,
       },
     },
     {
       id: PAGES.rules,
       params: LIST_PARAMS,
       components: {
-        Page: (props: { params?: ListParams }) => (
-          <RulesPage params={props.params} open={this.open} />
-        ),
+        Page: (props) => <RulesPage params={props.params} open={this.open} />,
       },
     },
     {
       id: PAGES.instances,
       params: LIST_PARAMS,
       components: {
-        Page: (props: { params?: ListParams }) => <InstancesPage params={props.params} />,
+        // Freelens 2 wraps Page in observer, and an observer passed here fails the registration.
+        Page: (props: Common.Types.PageComponentProps) => <InstancesPage {...props} />,
       },
     },
     {

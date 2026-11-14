@@ -6,7 +6,7 @@ import { findArgoCDUrl } from "../api/shared/workloads";
 
 export function useArgoCDUrl(applications: Application[]): string | undefined {
   const [url, setUrl] = useState<string>();
-  const tried = useRef<string>();
+  const tried = useRef<string | undefined>(undefined);
   const namespace = applications.length > 0 ? controllerNamespaceOf(applications) : undefined;
 
   // Keyed on the namespace: the applications array is new on every render.

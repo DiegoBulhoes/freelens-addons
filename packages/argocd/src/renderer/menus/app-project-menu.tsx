@@ -1,4 +1,4 @@
-import { Renderer } from "@freelensapp/extensions";
+import { type Common, Renderer } from "@freelensapp/extensions";
 
 import type { AppProject } from "../api/projects/app-project";
 import { isFrozen } from "../api/projects/freeze";
@@ -20,16 +20,11 @@ const {
   Component: { Icon, MenuItem, Notifications },
 } = Renderer;
 
-export interface AppProjectMenuItemProps {
-  object: AppProject;
-  toolbar?: boolean;
-}
-
 export function AppProjectMenuItem({
   object,
   toolbar,
   extension,
-}: AppProjectMenuItemProps & { extension: Renderer.LensExtension }) {
+}: Common.Types.KubeObjectMenuItemProps<AppProject> & { extension: Renderer.LensExtension }) {
   const name = object.getName();
   const applications = applicationsOf(object);
   const frozen = isFrozen(object);

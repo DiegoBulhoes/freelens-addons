@@ -6,8 +6,8 @@ FROM debian@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906
 
 ARG PNPM_SPEC="pnpm@12.3.4+sha512.961aa41fb077da3a04a441d9f8e15ebc0c96da8ef710b2eb67bf9ee7cb0610eabd48f1fd85f51cffe73846785fa0f87c56a3a872a1d893f8446741b5cce45457"
 # Bump both together; the published checksum is <asset>.sha256 beside the release asset.
-ARG FREELENS_VERSION=1.10.3
-ARG FREELENS_SHA256=f25b7dadbc9e3a7f19b550457d913d01ecbb9c619d7dc7e84dc34995567673b4
+ARG FREELENS_VERSION=2.0.0
+ARG FREELENS_SHA256=fb8353131b2d6f0717fe4c397254993a2b8a980ffec2d41628e29240acf97fd5
 ARG TARGETARCH=amd64
 
 # The host's UID, so bind-mounted build output is not owned by root.
@@ -57,7 +57,7 @@ RUN curl -fsSL -o /tmp/freelens.deb \
 # -l keeps the login records from being padded out to the size of the UID.
 RUN groupadd -g "${USER_GID}" dev \
     && useradd -l -m -u "${USER_UID}" -g "${USER_GID}" -s /bin/bash dev \
-    && mkdir -p /home/dev/.freelens/extensions /home/dev/.kube /home/dev/.config/Freelens \
+    && mkdir -p /home/dev/.kube /home/dev/.config/Freelens/extensions \
                 "${PNPM_HOME}/store" "${COREPACK_HOME}" \
     && chown -R dev:dev /home/dev "${PNPM_HOME}"
 

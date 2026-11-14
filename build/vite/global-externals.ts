@@ -1,15 +1,16 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 import type { Plugin } from "vite";
 
-// The host provides these as globals; a bundled React or MobX is a second instance and breaks
-// hooks and observability. Upstream's example spells `ReactDom`; the host exports `ReactDOM`.
+// The host provides these on globalThis.FreelensExtensionApi; a bundled React or MobX is a second
+// instance and breaks hooks and observability.
 
 const VIRTUAL_ID_PREFIX = "\0freelens-global:";
+const API = "FreelensExtensionApi";
+const EXTENSIONS = "@freelensapp/extensions";
 
 export const MAIN_GLOBALS: Readonly<Record<string, string>> = {
-  "@freelensapp/extensions": "LensExtensions",
+  [EXTENSIONS]: API,
   mobx: "Mobx",
 };
 
@@ -17,16 +18,15 @@ export const RENDERER_GLOBALS: Readonly<Record<string, string>> = {
   ...MAIN_GLOBALS,
   "mobx-react": "MobxReact",
   react: "React",
-  "react-dom": "ReactDOM",
+  "react-dom": "ReactDom",
   "react/jsx-runtime": "ReactJsxRuntime",
-  "react-router": "ReactRouter",
-  "react-router-dom": "ReactRouterDom",
 };
+
+const HOST_PACKAGES = new Set(Object.keys(RENDERER_GLOBALS).map(packageNameOf));
 
 const requireFromCwd = createRequire(join(process.cwd(), "__resolve__.cjs"));
 
-const NAME = "[A-Za-z_$][A-Za-z0-9_$]*";
-const IDENTIFIER = new RegExp(`^${NAME}$`);
+const IDENTIFIER = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
 
 // Valid object keys that cannot be re-exported as `export const <name>`.
 const UNEXPORTABLE_NAMES = new Set([
@@ -75,99 +75,41 @@ function packageNameOf(id: string): string {
   return id.startsWith("@") ? parts.slice(0, 2).join("/") : (parts[0] ?? id);
 }
 
-// Falls back to pnpm's virtual store, which sits at the workspace root.
-function resolveEntry(id: string): string | null {
-  try {
-    return requireFromCwd.resolve(id);
-  } catch {
-    // fall through to the virtual store
-  }
-
-  const name = packageNameOf(id);
-  const prefix = `${name.replace(/\//g, "+")}@`;
-
-  for (let dir = process.cwd(); ; dir = dirname(dir)) {
-    const store = join(dir, "node_modules", ".pnpm");
-
-    if (existsSync(store)) {
-      for (const entry of readdirSync(store)
-        .filter((e) => e.startsWith(prefix))
-        .sort()) {
-        const base = join(store, entry, "node_modules", name);
-        try {
-          return createRequire(join(dirname(base), "__resolve__.cjs")).resolve(id);
-        } catch {
-          // try the next candidate
-        }
-      }
-    }
-
-    const parent = dirname(dir);
-    if (parent === dir) return null;
-  }
-}
-
-// Parsed, not required: @freelensapp/extensions runs browser-only code on require.
-function namesFromSource(source: string): string[] {
-  const found = new Set<string>();
-
-  // webpack harmony exports: __webpack_require__.d(exports, { Name: () => ... })
-  for (const block of source.matchAll(
-    /__webpack_require__\.d\(\s*\w+\s*,\s*\{([\s\S]*?)\}\s*\)/g,
-  )) {
-    for (const match of (block[1] ?? "").matchAll(new RegExp(`(${NAME})\\s*:`, "g"))) {
-      if (match[1]) found.add(match[1]);
-    }
-  }
-
-  // plain CJS
-  for (const match of source.matchAll(new RegExp(`exports\\.(${NAME})\\s*=`, "g"))) {
-    if (match[1]) found.add(match[1]);
-  }
-  for (const match of source.matchAll(
-    new RegExp(`Object\\.defineProperty\\(\\s*exports\\s*,\\s*["'](${NAME})["']`, "g"),
-  )) {
-    if (match[1]) found.add(match[1]);
-  }
-
-  return [...found];
-}
-
 // Read from the installed devDependency: the global exists only inside Freelens.
 function exportNamesOf(id: string): string[] {
-  const usable = (names: string[]) =>
-    names.filter((n) => IDENTIFIER.test(n) && !UNEXPORTABLE_NAMES.has(n));
-  const entry = resolveEntry(id);
-
   try {
-    const names = usable(Object.keys(requireFromCwd(entry ?? id)));
-    if (names.length > 0) return names;
+    return Object.keys(requireFromCwd(id)).filter(
+      (n) => IDENTIFIER.test(n) && !UNEXPORTABLE_NAMES.has(n),
+    );
   } catch {
-    // the module refuses to load outside a browser; parse it instead
+    return [];
   }
-
-  if (entry) {
-    try {
-      return usable(namesFromSource(readFileSync(entry, "utf8")));
-    } catch {
-      // unreadable; fall through
-    }
-  }
-
-  return [];
 }
 
-function shimSource(moduleId: string, globalName: string, names: string[]): string {
+function missing(what: string, moduleId: string): string {
+  return JSON.stringify(
+    `Freelens did not provide ${what}, needed for "${moduleId}". ` +
+      `Is this bundle loaded in the process it was built for?`,
+  );
+}
+
+// The published @freelensapp/extensions is this same read, and throws when required outside the host.
+function apiShim(): string {
   return [
-    `const __m = globalThis[${JSON.stringify(globalName)}];`,
-    `if (__m === undefined) {`,
-    `  throw new Error(${JSON.stringify(
-      `Freelens did not provide global.${globalName}, needed for "${moduleId}". ` +
-        `Is this bundle loaded in the process it was built for?`,
-    )});`,
-    `}`,
+    `const __api = globalThis.${API};`,
+    `if (__api === undefined) throw new Error(${missing(`globalThis.${API}`, EXTENSIONS)});`,
+    `export const Common = __api.Common;`,
+    `export const Main = __api.Main;`,
+    `export const Renderer = __api.Renderer;`,
+  ].join("\n");
+}
+
+function shimSource(moduleId: string, name: string, names: string[]): string {
+  return [
+    `const __m = globalThis.${API}?.${name};`,
+    `if (__m === undefined) throw new Error(${missing(`${API}.${name}`, moduleId)});`,
     `export default __m;`,
-    ...names.map((name) => `export const ${name} = __m.${name};`),
+    ...names.map((n) => `export const ${n} = __m.${n};`),
   ].join("\n");
 }
 
@@ -179,9 +121,18 @@ export function globalExternals(globals: Readonly<Record<string, string>>): Plug
     enforce: "pre",
 
     resolveId(id: string) {
-      return Object.hasOwn(globals, id)
-        ? { id: `${VIRTUAL_ID_PREFIX}${id}`, moduleSideEffects: false }
-        : null;
+      if (Object.hasOwn(globals, id)) {
+        return { id: `${VIRTUAL_ID_PREFIX}${id}`, moduleSideEffects: false };
+      }
+      // Bundling it would be a second copy; the host publishes nothing else under these names.
+      if (HOST_PACKAGES.has(packageNameOf(id))) {
+        this.error(
+          Object.hasOwn(RENDERER_GLOBALS, id)
+            ? `"${id}" is provided to the renderer only; this bundle cannot import it`
+            : `"${id}" is not provided by Freelens; import one of ${Object.keys(globals).join(", ")}`,
+        );
+      }
+      return null;
     },
 
     load(id: string) {
@@ -191,7 +142,10 @@ export function globalExternals(globals: Readonly<Record<string, string>>): Plug
       let code = cache.get(moduleId);
 
       if (code === undefined) {
-        code = shimSource(moduleId, globals[moduleId] as string, exportNamesOf(moduleId));
+        code =
+          moduleId === EXTENSIONS
+            ? apiShim()
+            : shimSource(moduleId, globals[moduleId] as string, exportNamesOf(moduleId));
         cache.set(moduleId, code);
       }
 

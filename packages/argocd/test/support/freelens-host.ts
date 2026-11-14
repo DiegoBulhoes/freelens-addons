@@ -1,7 +1,15 @@
 import { KubeApi } from "@freelensapp/kube-api";
-import { KubeObject, type KubeObjectMetadata } from "@freelensapp/kube-object";
+import {
+  Ingress,
+  KubeEvent,
+  KubeObject,
+  type KubeObjectMetadata,
+  Node,
+  Pod,
+} from "@freelensapp/kube-object";
 
-/** `@freelensapp/extensions` under test: the real `KubeObject` and `KubeApi` from the standalone packages. */
+// `@freelensapp/extensions` under test: the real KubeObject and KubeApi, from the standalone packages'
+// last release (1.10.3; Freelens 2 keeps them inside the host).
 
 class LensExtensionKubeObject<
   Metadata extends KubeObjectMetadata = KubeObjectMetadata,
@@ -25,10 +33,14 @@ class KubeObjectStore {}
 /** Only what api/ modules reference; anything else failing at import belongs behind a store boundary. */
 export const Renderer = {
   K8sApi: {
+    Ingress,
     KubeApi,
+    KubeEvent,
     KubeObject,
     KubeObjectStore,
     LensExtensionKubeObject,
+    Node,
+    Pod,
   },
 };
 

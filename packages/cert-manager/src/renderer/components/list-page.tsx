@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { type ReactNode, useState } from "react";
+import { type JSX, type ReactNode, useState } from "react";
 
 import { describeCount, searchRows } from "../api/shared/table";
 import { NamespaceFilter } from "./namespace-filter";

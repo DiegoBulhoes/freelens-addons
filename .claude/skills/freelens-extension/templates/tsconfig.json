@@ -3,11 +3,10 @@
   // Extend the repository's base tsconfig if it has one, keeping the two options below.
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
     "module": "ESNext",
 
-    // Not bundler: @freelensapp/core types only through `typesVersions`, so `Renderer` would be `any`.
-    "moduleResolution": "node10",
+    "moduleResolution": "bundler",
 
     // Not classic: a type-only React import would drop React and fail at runtime.
     "jsx": "react-jsx",
@@ -28,5 +27,5 @@
     "declaration": false,
     "types": ["node"]
   },
-  "include": ["src/**/*", "test/**/*", "vite/**/*", "electron.vite.config.ts", "vitest.config.ts"]
+  "include": ["src/**/*", "test/**/*", "vite/**/*", "vite.config.ts", "vitest.config.ts"]
 }

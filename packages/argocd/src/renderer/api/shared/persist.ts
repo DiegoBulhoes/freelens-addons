@@ -1,46 +1,40 @@
-import { promises as fs } from "node:fs";
-import { join } from "node:path";
-
 import { clusterIdFromHost, stateFileName } from "./cluster-scope";
 import { hydrate, onStateChange, snapshot } from "./local-state";
 
-// Not localStorage, which a new origin port wipes every launch. Node is reachable: the
-// cluster frame runs with nodeIntegration and without context isolation.
+// Not localStorage, which a new origin port wipes every launch. Main holds the file: the frame has no Node.
 
-interface FileFolderOwner {
-  getExtensionFileFolder(): Promise<string>;
+/** Main's side of the state file, reached over IPC. */
+export interface StateFileAccess {
+  read(fileName: string): Promise<string | undefined>;
+  write(fileName: string, text: string): Promise<void>;
 }
 
 // Every extension's onActivate is awaited in one Promise.all: a hang here stalls them all.
-const FOLDER_TIMEOUT_MS = 5_000;
+const ANSWER_TIMEOUT_MS = 5_000;
 
-let filePath: string | undefined;
+const UNREACHABLE = Symbol("unreachable");
+
+let target: { files: StateFileAccess; fileName: string } | undefined;
 let writes: Promise<void> = Promise.resolve();
 let unsubscribe: (() => void) | undefined;
 
 /** Never rejects; on failure the state stays in memory. */
-export async function startPersistingState(
-  extension: FileFolderOwner,
-  host: string,
-): Promise<void> {
+export async function startPersistingState(files: StateFileAccess, host: string): Promise<void> {
   const fileName = stateFileName(clusterIdFromHost(host));
 
   // The root frame: no cluster, no UI of ours.
   if (fileName === undefined) return;
 
-  const folder = await extensionFolderOrNothing(extension);
+  const loaded = await firstReadOrNothing(files, fileName);
 
-  if (folder === undefined) return;
+  if (loaded === UNREACHABLE) return;
 
-  filePath = join(folder, fileName);
-
-  // The folder name is a salted hash, so log where it landed.
-  console.log(`[argocd] operator state: ${filePath}`);
+  target = { files, fileName };
 
   try {
-    hydrate(JSON.parse(await fs.readFile(filePath, "utf8")));
+    if (loaded !== undefined) hydrate(JSON.parse(loaded));
   } catch {
-    // Missing or unreadable: start empty.
+    // Not JSON: start empty.
   }
 
   unsubscribe = onStateChange(() => {
@@ -55,41 +49,43 @@ export async function flushState(): Promise<void> {
   await writes;
 }
 
-async function extensionFolderOrNothing(extension: FileFolderOwner): Promise<string | undefined> {
+async function firstReadOrNothing(
+  files: StateFileAccess,
+  fileName: string,
+): Promise<string | undefined | typeof UNREACHABLE> {
   const timedOut = Symbol("timed out");
 
   try {
-    const folder = await Promise.race([
-      extension.getExtensionFileFolder(),
+    const answer = await Promise.race([
+      files.read(fileName),
       new Promise<typeof timedOut>((resolve) =>
-        setTimeout(() => resolve(timedOut), FOLDER_TIMEOUT_MS),
+        setTimeout(() => resolve(timedOut), ANSWER_TIMEOUT_MS),
       ),
     ]);
 
-    if (folder === timedOut) {
-      console.error("[argocd] getExtensionFileFolder did not answer; pins stay in memory");
+    if (answer === timedOut) {
+      console.error("[argocd] operator state did not answer; pins stay in memory");
 
-      return undefined;
+      return UNREACHABLE;
     }
 
-    return folder;
+    return answer;
   } catch (error) {
-    console.error("[argocd] no folder for operator state; pins stay in memory", error);
+    console.error("[argocd] no operator state file; pins stay in memory", error);
 
-    return undefined;
+    return UNREACHABLE;
   }
 }
 
-/** Writes are chained, and temp-then-rename keeps a crash from leaving a truncated file. */
+/** Writes are chained, so main never gets two at once for one file. */
 async function writeSnapshot(): Promise<void> {
-  if (filePath === undefined) return;
+  if (target === undefined) return;
 
-  const temporary = `${filePath}.tmp`;
+  const { files, fileName } = target;
 
   try {
-    await fs.writeFile(temporary, JSON.stringify(snapshot(), null, 2), "utf8");
-    await fs.rename(temporary, filePath);
+    await files.write(fileName, JSON.stringify(snapshot(), null, 2));
   } catch (error) {
-    console.error(`[argocd] could not save operator state to ${filePath}`, error);
+    console.error(`[argocd] could not hand operator state ${fileName} to main`, error);
   }
 }

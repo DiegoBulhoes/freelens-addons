@@ -28,14 +28,12 @@ const OPTIONS: Record<Unit, unknown> = {
   cores: { scales: cpuOptions.scales, ...tooltipOptions("cores") },
   bytes: { scales: memoryOptions.scales, ...tooltipOptions("bytes") },
   rate: {
-    scales: {
-      yAxes: [{ ticks: { callback: (value: number | string) => formatRate(Number(value)) } }],
-    },
+    scales: { y: { ticks: { callback: (value: number | string) => formatRate(Number(value)) } } },
     ...tooltipOptions("rate"),
   },
 };
 
-const LINE = { type: "line", fill: false, borderWidth: 2, pointRadius: 0, lineTension: 0 };
+const LINE = { type: "line", fill: false, borderWidth: 2, pointRadius: 0, tension: 0 };
 
 export interface ChartLine extends Dataset {
   /** A request, limit or capacity: dashed, in the host's capacity colour unless `colour` says. */
@@ -104,7 +102,8 @@ export const UsageChart = observer(
               // The host's update keeps a line that left and drops one that came, so a new set remounts.
               key={datasets.map((dataset) => dataset.id).join("|")}
               name={name}
-              data={{ datasets }}
+              // A null y is a gap to Chart.js; the host's point type leaves null out.
+              data={{ datasets: datasets as unknown as Renderer.Component.ChartDataSets[] }}
               options={OPTIONS[unit] as typeof cpuOptions}
               minTime={range?.start}
               maxTime={range?.end}

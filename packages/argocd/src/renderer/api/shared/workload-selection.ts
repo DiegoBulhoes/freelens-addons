@@ -1,6 +1,9 @@
-import type { Ingress, Pod } from "@freelensapp/kube-object";
+import type { Renderer } from "@freelensapp/extensions";
 
 import { Application } from "../applications/application";
+
+type Ingress = Renderer.K8sApi.Ingress;
+type Pod = Renderer.K8sApi.Pod;
 
 // Configurable in ArgoCD (`application.instanceLabelKey`), hence the pod-name fallback.
 export const INSTANCE_LABEL = "app.kubernetes.io/instance";

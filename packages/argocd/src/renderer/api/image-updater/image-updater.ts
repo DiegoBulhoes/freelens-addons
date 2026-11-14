@@ -87,6 +87,9 @@ export class ImageUpdater extends Renderer.K8sApi.LensExtensionKubeObject<
   ImageUpdaterStatus,
   ImageUpdaterSpec
 > {
+  declare kind: "ImageUpdater";
+  declare apiVersion: "argocd-image-updater.argoproj.io/v1alpha1";
+
   static override readonly kind = "ImageUpdater";
   static override readonly namespaced = true;
   static override readonly apiBase =

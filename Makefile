@@ -21,7 +21,7 @@ E2E_RUN := $(if $(PACKAGE),pnpm -C packages/$(PACKAGE) run,pnpm -r --no-bail --w
 
 .PHONY: up check cluster cluster-down e2e-freelens e2e e2e-writes
 
-# Restart, not just rebuild: Freelens caches the loaded bundle.
+# Restart, not just rebuild: Freelens reloads on rebuild only a directory install, not the mounted extensions.
 up: .env
 	$(DEV) "pnpm install && pnpm run -r build"
 	$(COMPOSE) up -d --build freelens
@@ -33,6 +33,7 @@ check:
 	  && pnpm run -r test:coverage && pnpm run -r build && bash scripts/checks/verify-bundles.sh"
 	bash scripts/checks/copy-design-standard.sh --check
 	bash scripts/checks/e2e-legs.sh
+	bash scripts/checks/page-registrations.sh
 	bash scripts/security/verify-supply-chain.sh
 
 cluster:

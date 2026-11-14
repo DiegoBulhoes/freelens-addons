@@ -7,33 +7,41 @@ export const FORMATS: Record<Unit, (value: number) => string> = {
   rate: formatRate,
 };
 
+interface TooltipDataset {
+  label?: string;
+  data?: { y?: number | null }[];
+}
+
+/** The part of Chart.js 4's TooltipItem these callbacks read. */
 export interface TooltipItem {
-  datasetIndex?: number;
-  index?: number;
+  datasetIndex: number;
+  dataIndex: number;
+  dataset: TooltipDataset;
 }
 
 export interface TooltipData {
-  datasets?: { label?: string; data?: { y?: number | null }[] }[];
+  datasets?: TooltipDataset[];
 }
 
-const pointAt = ({ datasetIndex = 0, index = 0 }: TooltipItem, { datasets = [] }: TooltipData) =>
-  datasets[datasetIndex]?.data?.[index]?.y;
+type Point = { datasetIndex: number; dataIndex: number };
+
+const pointAt = ({ datasetIndex, dataIndex }: Point, { datasets = [] }: TooltipData) =>
+  datasets[datasetIndex]?.data?.[dataIndex]?.y;
 
 /** The most rows a tooltip lists, so it fits inside the chart, which clips it. */
 export const TOOLTIP_ROWS = 10;
 
 /** How many lines are higher than this one at its time; a gap ranks last. */
-function rankOf(item: TooltipItem, data: TooltipData): number {
+function rankOf(item: Point, data: TooltipData): number {
   const value = pointAt(item, data);
 
   if (value == null) return Number.POSITIVE_INFINITY;
 
   return (data.datasets ?? []).filter((_, datasetIndex) => {
-    const other = pointAt({ datasetIndex, index: item.index }, data);
+    const other = pointAt({ datasetIndex, dataIndex: item.dataIndex }, data);
 
     return (
-      other != null &&
-      (other > value || (other === value && datasetIndex < (item.datasetIndex ?? 0)))
+      other != null && (other > value || (other === value && datasetIndex < item.datasetIndex))
     );
   }).length;
 }
@@ -41,24 +49,26 @@ function rankOf(item: TooltipItem, data: TooltipData): number {
 // The host's tooltip waits for the pointer on a point, which a line drawn without points rarely gets.
 export function tooltipOptions(unit: Unit) {
   return {
-    hover: { mode: "index", intersect: false },
-    tooltips: {
-      mode: "index",
-      intersect: false,
-      titleFontSize: 11,
-      bodyFontSize: 11,
-      bodySpacing: 1,
-      yPadding: 4,
-      titleMarginBottom: 4,
-      filter: (item: TooltipItem, data: TooltipData) => rankOf(item, data) < TOOLTIP_ROWS,
-      itemSort: (a: TooltipItem, b: TooltipItem, data: TooltipData) =>
-        (pointAt(b, data) ?? 0) - (pointAt(a, data) ?? 0),
-      callbacks: {
-        label: (item: TooltipItem, data: TooltipData) => {
-          const value = pointAt(item, data);
-          const label = data.datasets?.[item.datasetIndex ?? 0]?.label ?? "";
+    interaction: { mode: "index", intersect: false },
+    plugins: {
+      tooltip: {
+        mode: "index",
+        intersect: false,
+        titleFont: { size: 11 },
+        bodyFont: { size: 11 },
+        bodySpacing: 1,
+        padding: { top: 4, right: 6, bottom: 4, left: 6 },
+        titleMarginBottom: 4,
+        filter: (item: TooltipItem, _index: number, _items: unknown, data: TooltipData) =>
+          rankOf(item, data) < TOOLTIP_ROWS,
+        itemSort: (a: TooltipItem, b: TooltipItem, data: TooltipData) =>
+          (pointAt(b, data) ?? 0) - (pointAt(a, data) ?? 0),
+        callbacks: {
+          label: (item: TooltipItem) => {
+            const value = item.dataset.data?.[item.dataIndex]?.y;
 
-          return `${label}: ${value == null ? NO_DATA : FORMATS[unit](value)}`;
+            return `${item.dataset.label ?? ""}: ${value == null ? NO_DATA : FORMATS[unit](value)}`;
+          },
         },
       },
     },

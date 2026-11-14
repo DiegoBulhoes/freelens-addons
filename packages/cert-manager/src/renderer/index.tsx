@@ -2,11 +2,11 @@ import { Renderer } from "@freelensapp/extensions";
 import { computed } from "mobx";
 import { isInstalled } from "./api/shared/installed";
 import { CertManagerIcon } from "./icons/cert-manager";
-import { CertificatesRoute, type CertificatesRouteParams } from "./pages/certificates-route";
-import { IssuersPage, type IssuersPageParams } from "./pages/issuers-page";
+import { CertificatesRoute } from "./pages/certificates-route";
+import { IssuersPage } from "./pages/issuers-page";
 import { OverviewPage } from "./pages/overview-page";
 import { RequestsPage } from "./pages/requests-page";
-import { UnmanagedPage, type UnmanagedPageParams } from "./pages/unmanaged-page";
+import { UnmanagedPage } from "./pages/unmanaged-page";
 
 // Item ids start with `cert-manager-`: the e2e harness drives the sidebar by data-testid suffix.
 const PAGES = {
@@ -35,18 +35,14 @@ export default class CertManagerRenderer extends Renderer.LensExtension {
       id: PAGES.certificates,
       params: { namespace: "", name: "", filter: "" },
       components: {
-        Page: (props: { params?: CertificatesRouteParams }) => (
-          <CertificatesRoute params={props.params} extension={this} />
-        ),
+        Page: (props) => <CertificatesRoute {...props} extension={this} />,
       },
     },
     {
       id: PAGES.issuers,
       params: { kind: "", namespace: "", name: "", filter: "" },
       components: {
-        Page: (props: { params?: IssuersPageParams }) => (
-          <IssuersPage params={props.params} extension={this} />
-        ),
+        Page: (props) => <IssuersPage {...props} extension={this} />,
       },
     },
     {
@@ -59,9 +55,7 @@ export default class CertManagerRenderer extends Renderer.LensExtension {
       id: PAGES.unmanaged,
       params: { filter: "" },
       components: {
-        Page: (props: { params?: UnmanagedPageParams }) => (
-          <UnmanagedPage params={props.params} extension={this} />
-        ),
+        Page: (props) => <UnmanagedPage {...props} extension={this} />,
       },
     },
   ];

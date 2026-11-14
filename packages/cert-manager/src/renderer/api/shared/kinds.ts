@@ -14,8 +14,8 @@ import type {
   OrderStatus,
 } from "./types";
 
-const CORE = "cert-manager.io/v1";
-const ACME = "acme.cert-manager.io/v1";
+const CORE = "cert-manager.io/v1" as const;
+const ACME = "acme.cert-manager.io/v1" as const;
 
 type Metadata = Renderer.K8sApi.KubeObjectMetadata;
 
@@ -35,6 +35,9 @@ export class Certificate extends Renderer.K8sApi.LensExtensionKubeObject<
     shortNames: ["cert", "certs"],
     title: "Certificates",
   };
+
+  declare kind: "Certificate";
+  declare apiVersion: typeof CORE;
 }
 
 export class CertificateRequest extends Renderer.K8sApi.LensExtensionKubeObject<
@@ -53,6 +56,9 @@ export class CertificateRequest extends Renderer.K8sApi.LensExtensionKubeObject<
     shortNames: ["cr", "crs"],
     title: "Certificate Requests",
   };
+
+  declare kind: "CertificateRequest";
+  declare apiVersion: typeof CORE;
 }
 
 export class Issuer extends Renderer.K8sApi.LensExtensionKubeObject<
@@ -70,6 +76,9 @@ export class Issuer extends Renderer.K8sApi.LensExtensionKubeObject<
     singular: "issuer",
     title: "Issuers",
   };
+
+  declare kind: "Issuer";
+  declare apiVersion: typeof CORE;
 }
 
 export class ClusterIssuer extends Renderer.K8sApi.LensExtensionKubeObject<
@@ -87,6 +96,9 @@ export class ClusterIssuer extends Renderer.K8sApi.LensExtensionKubeObject<
     singular: "clusterissuer",
     title: "Cluster Issuers",
   };
+
+  declare kind: "ClusterIssuer";
+  declare apiVersion: typeof CORE;
 }
 
 export class Order extends Renderer.K8sApi.LensExtensionKubeObject<
@@ -104,6 +116,9 @@ export class Order extends Renderer.K8sApi.LensExtensionKubeObject<
     singular: "order",
     title: "Orders",
   };
+
+  declare kind: "Order";
+  declare apiVersion: typeof ACME;
 }
 
 export class Challenge extends Renderer.K8sApi.LensExtensionKubeObject<
@@ -121,4 +136,7 @@ export class Challenge extends Renderer.K8sApi.LensExtensionKubeObject<
     singular: "challenge",
     title: "Challenges",
   };
+
+  declare kind: "Challenge";
+  declare apiVersion: typeof ACME;
 }

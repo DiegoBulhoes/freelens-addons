@@ -1,4 +1,7 @@
-import type { KubeEvent, Node } from "@freelensapp/kube-object";
+import type { Renderer } from "@freelensapp/extensions";
+
+type KubeEvent = Renderer.K8sApi.KubeEvent;
+type Node = Renderer.K8sApi.Node;
 
 export interface ClusterPressure {
   node: string;

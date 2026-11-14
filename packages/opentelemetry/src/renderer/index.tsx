@@ -1,10 +1,10 @@
-import { Renderer } from "@freelensapp/extensions";
+import { type Common, Renderer } from "@freelensapp/extensions";
 import { computed } from "mobx";
 
 import { isInstalled } from "./api/shared/installed";
 import { OpenTelemetryIcon } from "./icons/opentelemetry";
-import { CollectorsPage, type CollectorsParams } from "./pages/collectors-page";
-import { CoveragePage, type CoverageParams } from "./pages/coverage-page";
+import { CollectorsPage } from "./pages/collectors-page";
+import { CoveragePage } from "./pages/coverage-page";
 import { type OpenPage, OverviewPage } from "./pages/overview-page";
 
 // Item ids start with `opentelemetry-`: the e2e harness drives the sidebar by data-testid suffix.
@@ -45,7 +45,7 @@ export default class OpenTelemetryRenderer extends Renderer.LensExtension {
         : { namespace: params.namespace ?? "", name: params.name ?? "" },
     );
 
-  override clusterPages = [
+  override clusterPages: Renderer.LensExtension["clusterPages"] = [
     {
       id: PAGES.overview,
       components: { Page: () => <OverviewPage open={this.open} /> },
@@ -55,16 +55,15 @@ export default class OpenTelemetryRenderer extends Renderer.LensExtension {
       id: PAGES.coverage,
       params: PARAMS.coverage,
       components: {
-        Page: (props: { params?: CoverageParams }) => (
-          <CoveragePage params={props.params} open={this.open} />
-        ),
+        Page: (props) => <CoveragePage {...props} open={this.open} />,
       },
     },
     {
       id: PAGES.collectors,
       params: PARAMS.collectors,
       components: {
-        Page: (props: { params?: CollectorsParams }) => <CollectorsPage params={props.params} />,
+        // Freelens 2 wraps Page in observer, and an observer passed here fails the registration.
+        Page: (props: Common.Types.PageComponentProps) => <CollectorsPage {...props} />,
       },
     },
   ];

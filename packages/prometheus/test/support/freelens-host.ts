@@ -1,7 +1,9 @@
 import { KubeApi } from "@freelensapp/kube-api";
 import { KubeObject, type KubeObjectMetadata } from "@freelensapp/kube-object";
 
-// The real KubeObject and KubeApi stand in for @freelensapp/extensions; getApi/getStore are left throwing, unused by tests.
+// `@freelensapp/extensions` under test: the real KubeObject and KubeApi, from the standalone packages'
+// last release (1.10.3; Freelens 2 keeps them inside the host).
+// getApi/getStore are left throwing, unused by tests.
 
 class LensExtensionKubeObject<
   Metadata extends KubeObjectMetadata = KubeObjectMetadata,

@@ -10,12 +10,8 @@ import { describeLoadState } from "../api/shared/store-state";
 import { CollectorDrawer } from "../collectors/collector-drawer";
 import { type Column, ListPage } from "../components/list-page";
 import { StateCell } from "../components/state-cell";
+import { paramText, type RouteProps } from "../hooks/route-params";
 import { useInventory } from "../hooks/use-inventory";
-
-export interface CollectorsParams {
-  namespace?: { get(): string };
-  name?: { get(): string };
-}
 
 const COLUMNS: Column<CollectorRow>[] = [
   {
@@ -62,11 +58,11 @@ const COLUMNS: Column<CollectorRow>[] = [
   },
 ];
 
-export const CollectorsPage = observer(({ params }: { params?: CollectorsParams }) => {
+export const CollectorsPage = observer(({ params }: RouteProps) => {
   const { stores, collectors } = useInventory({ collectors: true, coverage: false });
   const named = namedKey("collectors", {
-    namespace: params?.namespace?.get(),
-    name: params?.name?.get(),
+    namespace: paramText(params, "namespace"),
+    name: paramText(params, "name"),
   });
   const [selectedKey, setSelectedKey] = useState(named);
   const selected = collectors.find((row) => row.key === selectedKey);

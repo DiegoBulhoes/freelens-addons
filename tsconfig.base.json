@@ -2,19 +2,14 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
     "module": "ESNext",
 
-    // node10, not bundler. @freelensapp/core ships its type entrypoints through
-    // the legacy `typesVersions` field, while its `exports` map points ./renderer
-    // at a .js with no `types` condition. Bundler resolution honours `exports`
-    // and ignores `typesVersions`, so `Renderer` silently resolves to `any` and
-    // every check against the host API stops meaning anything.
-    "moduleResolution": "node10",
+    "moduleResolution": "bundler",
 
-    // The automatic runtime, so JSX compiles to react/jsx-runtime imports that
-    // the shared build maps onto the host's global.ReactJsxRuntime. The classic
-    // runtime would need React itself in scope as a value, which a type-only
+    // The automatic runtime, so JSX compiles to react/jsx-runtime imports that the
+    // shared build maps onto the host's FreelensExtensionApi.ReactJsxRuntime. The
+    // classic runtime would need React itself in scope as a value, which a type-only
     // import silently removes — and the JSX then fails at runtime, not at build.
     "jsx": "react-jsx",
 

@@ -1,5 +1,5 @@
-import { builtinModules } from "node:module";
-import { defineConfig } from "electron-vite";
+import { builtinModules, isBuiltin } from "node:module";
+import { defineConfig, type Plugin, type UserConfig } from "vite";
 import { firstPartyOnly } from "./first-party-only";
 import { globalExternals, MAIN_GLOBALS, RENDERER_GLOBALS } from "./global-externals";
 
@@ -10,43 +10,62 @@ const runtimeExternals = [
   ...builtinModules.map((name) => `node:${name}`),
 ];
 
-function cjsLib(entry: string, outDir: string) {
+// first-party-only allows builtins for both bundles; the renderer, loaded as ESM by URL, has none.
+function noNodeInRenderer(): Plugin {
+  return {
+    name: "freelens-no-node-in-renderer",
+    enforce: "pre",
+    resolveId(id) {
+      if (isBuiltin(id) || id === "electron" || id.startsWith("electron/")) {
+        this.error(`"${id}" is not available in the renderer; move this work to main over IPC`);
+      }
+      return null;
+    },
+  };
+}
+
+function esmLib(
+  entry: string,
+  outDir: string,
+  fileName: string,
+  external: (string | RegExp)[] = [],
+): UserConfig["build"] {
   return {
     outDir,
     emptyOutDir: true,
     sourcemap: true,
     minify: false,
-    // Bundled, so build/vite/first-party-only.ts sees and refuses it, not left to a runtime require.
-    externalizeDeps: false,
+    copyPublicDir: false,
     lib: {
       entry,
-      formats: ["cjs" as const],
-      fileName: () => "index.js",
+      formats: ["es"],
+      fileName: () => fileName,
     },
     rollupOptions: {
-      external: runtimeExternals,
+      external,
       output: {
-        // Freelens requires exactly one file per entrypoint.
+        // Freelens loads exactly one file per entrypoint.
         inlineDynamicImports: true,
-        // Freelens reads `.default`; "auto" emits `module.exports = Class` and the
-        // extension is skipped without an error.
-        exports: "named" as const,
       },
     },
   };
 }
 
+// `vite build` makes the renderer, `vite build --mode main` the main bundle.
 export function defineExtensionConfig() {
-  return defineConfig({
-    main: {
-      plugins: [globalExternals(MAIN_GLOBALS), firstPartyOnly()],
-      build: cjsLib("src/main/index.ts", "out/main"),
-    },
+  return defineConfig(({ mode }) => {
+    if (mode === "main") {
+      return {
+        plugins: [globalExternals(MAIN_GLOBALS), firstPartyOnly()],
+        // .mjs: an ES module without "type": "module", which would change every config and test file.
+        build: esmLib("src/main/index.ts", "out/main", "index.mjs", runtimeExternals),
+      };
+    }
 
-    // Renderer built in the `preload` slot: the `renderer` slot demands an index.html.
-    preload: {
-      plugins: [globalExternals(RENDERER_GLOBALS), firstPartyOnly()],
-      build: cjsLib("src/renderer/index.tsx", "out/renderer"),
-    },
+    return {
+      plugins: [noNodeInRenderer(), globalExternals(RENDERER_GLOBALS), firstPartyOnly()],
+      // .js: the host serves the renderer by extension, and .mjs can get the wrong MIME type.
+      build: esmLib("src/renderer/index.tsx", "out/renderer", "index.js"),
+    };
   });
 }

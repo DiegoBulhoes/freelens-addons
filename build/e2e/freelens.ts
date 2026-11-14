@@ -50,9 +50,9 @@ interface StackTrace {
   callFrames: { url: string }[];
 }
 
-// Leaving the cluster view (a reload, or the catalog) makes the host's main frame throw "illegal access" as it unmounts.
+// Leaving the cluster view (a reload, or the catalog) makes the host's frames throw as they unmount; Freelens 2 serves the cluster frame from a hashed subdomain.
 const leaving = new WeakMap<Session, number>();
-const MAIN_FRAME_SCRIPT = /^https:\/\/renderer\.freelens\.app[:/]/;
+const MAIN_FRAME_SCRIPT = /^https:\/\/([0-9a-f]+\.)?renderer\.freelens\.app[:/]/;
 
 async function whileLeaving<T>(session: Session, run: () => Promise<T>): Promise<T> {
   leaving.set(session, (leaving.get(session) ?? 0) + 1);
@@ -735,7 +735,7 @@ export function countOf(session: Session, contextId: number, selector: string): 
 export function dialogText(session: Session, contextId: number): Promise<string> {
   return waitFor("the confirmation", async () => {
     const text = await session.evaluate<string>(
-      "document.querySelector('.ConfirmDialog')?.textContent ?? ''",
+      "document.querySelector('.ConfirmDialog')?.innerText ?? ''",
       contextId,
     );
 

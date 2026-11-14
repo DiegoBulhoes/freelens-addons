@@ -3,7 +3,6 @@ import {
   isPoolerFilter,
   keyOf,
   matchesPoolerFilter,
-  type OpenPage,
   POOLER_FILTER_LABELS,
   POOLER_FILTER_TITLES,
   POOLER_FILTERS,
@@ -24,10 +23,10 @@ import { StateCell } from "../components/state-cell";
 import { useCnpgStores } from "../hooks/use-cnpg-stores";
 import { useNamedRow, useRequestedFilter } from "../hooks/use-list-params";
 import { PoolerDrawer } from "./drawers";
-import type { ListParams } from "./list-params";
+import type { ListPageRouteProps } from "./list-params";
 import { poolerActions, RowMenu } from "./row-dialogs";
 
-export const PoolersPage = observer(({ params, open }: { params?: ListParams; open: OpenPage }) => {
+export const PoolersPage = observer(({ params, open }: ListPageRouteProps) => {
   const stores = useCnpgStores("poolers");
   const [selectedKey, setSelectedKey] = useNamedRow(params);
   const [filter, setFilter] = useRequestedFilter(params, isPoolerFilter);

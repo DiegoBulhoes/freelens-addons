@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 
 import { namedKey } from "../api/shared/navigation";
-import type { ListParams } from "../pages/list-params";
+import type { ListPageRouteProps } from "../pages/list-params";
+import { paramText } from "./route-params";
 
 /** The selected row's key, starting at the one the route names; Logical keys carry the kind. */
-export function useNamedRow(params: ListParams | undefined, withKind = false) {
-  const key = namedKey(params?.namespace?.get(), params?.name?.get());
-  const kind = params?.kind?.get();
+export function useNamedRow(params: ListPageRouteProps["params"], withKind = false) {
+  const key = namedKey(paramText(params, "namespace"), paramText(params, "name"));
+  const kind = paramText(params, "kind");
   const named = key && withKind ? (kind ? `${kind}/${key}` : undefined) : key;
   const [selectedKey, setSelectedKey] = useState(named);
 
@@ -20,10 +21,10 @@ export function useNamedRow(params: ListParams | undefined, withKind = false) {
 
 /** The chip the route names, kept in step when a card names another while the page is mounted. */
 export function useRequestedFilter<Filter extends string>(
-  params: ListParams | undefined,
+  params: ListPageRouteProps["params"],
   isFilter: (value: string | undefined) => value is Filter,
 ) {
-  const requested = params?.filter?.get();
+  const requested = paramText(params, "filter");
   const [filter, setFilter] = useState<Filter | undefined>(() =>
     isFilter(requested) ? requested : undefined,
   );

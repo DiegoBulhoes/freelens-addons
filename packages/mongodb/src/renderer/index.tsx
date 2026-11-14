@@ -1,10 +1,10 @@
-import { Renderer } from "@freelensapp/extensions";
+import { type Common, Renderer } from "@freelensapp/extensions";
 import { computed } from "mobx";
 import { isInstalled } from "./api/shared/installed";
 import type { OpenReplicaSets } from "./api/shared/navigation";
 import { MongoDBIcon } from "./icons/mongodb";
 import { OverviewPage } from "./pages/overview-page";
-import { ReplicaSetsPage, type ReplicaSetsPageParams } from "./pages/replica-sets-page";
+import { ReplicaSetsPage } from "./pages/replica-sets-page";
 
 // Item ids start with `mongodb-`: the e2e harness drives the sidebar by data-testid suffix.
 const PAGES = {
@@ -39,9 +39,8 @@ export default class MongoDBRenderer extends Renderer.LensExtension {
       id: PAGES.replicaSets,
       params: LIST_PARAMS,
       components: {
-        Page: (props: { params?: ReplicaSetsPageParams }) => (
-          <ReplicaSetsPage params={props.params} />
-        ),
+        // Freelens 2 wraps Page in observer, and an observer passed here fails the registration.
+        Page: (props: Common.Types.PageComponentProps) => <ReplicaSetsPage {...props} />,
       },
     },
   ];

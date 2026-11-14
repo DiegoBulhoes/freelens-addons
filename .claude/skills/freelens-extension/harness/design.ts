@@ -133,7 +133,7 @@ export async function dialogColourViolations(
       if (!root) return ["the dialog's message has no ." + P + "dialog"];
       ${RESOLVE_VARIABLE}
       const problems = [];
-      const panel = getComputedStyle(dialog.querySelector(".box")).backgroundColor;
+      const panel = getComputedStyle(dialog.querySelector(".dialog-content")).backgroundColor;
       const surface = resolve("--contentColor").replace("rgb(", "rgba(").replace(")", ", 1)");
       const opaque = (colour) => colour.startsWith("rgba") ? colour : colour.replace("rgb(", "rgba(").replace(")", ", 1)");
       if (opaque(panel) !== surface) problems.push("the dialog's panel is " + panel + ", the theme's surface is " + resolve("--contentColor"));

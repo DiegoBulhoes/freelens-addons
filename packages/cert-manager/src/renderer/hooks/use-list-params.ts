@@ -1,4 +1,11 @@
+import type { Renderer } from "@freelensapp/extensions";
 import { useEffect, useState } from "react";
+
+import type { RouteProps } from "./route-params";
+
+export type ListPageRouteProps = RouteProps & {
+  extension: Renderer.LensExtension;
+};
 
 /** The open drawer's row key, starting at the one the route names. */
 export function useNamedRow(named: string) {

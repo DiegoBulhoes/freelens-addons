@@ -1,5 +1,6 @@
 packages:
   # Not under packages/: anything there must be a valid extension.
+  # It owns vite: pnpm writes broken root symlinks for peer-suffixed packages.
   - "build"
   - "packages/*"
 
@@ -9,12 +10,6 @@ minimumReleaseAge: 21600
 minimumReleaseAgeStrict: true
 
 minimumReleaseAgeIgnoreMissingTime: false
-
-# Kept from before the rule: no override for a transitive advisory, which waits for
-# scripts/deps-refresh.sh or its parent's release (docs/security.md).
-overrides:
-  dompurify: "3.4.16"
-  decode-uri-component: "0.5.0"
 
 # Lifecycle scripts are opt-in. electron and node-pty arrive only for their types;
 # the Electron in use is the one inside the Freelens container.
