@@ -9,9 +9,21 @@ scanned() { # app label
     -l "trivy-operator.resource.kind=ReplicaSet,trivy-operator.resource.name=${rs}")" ]]
 }
 
+# A report expires a day after its scan (report-ttl), and those of a seed expire together: a rerun
+# then waits behind a re-scan of every workload, five at a time. It gives up once no report is added.
+while_scanning() { # command...
+  local count last=-1 since=${SECONDS}
+  until "$@" >/dev/null 2>&1; do
+    count="$(kubectl get vulnerabilityreports -A -o name | wc -l)"
+    if ((count != last)); then last=${count}; since=${SECONDS}; fi
+    ((SECONDS - since < 900)) || { echo "gave up waiting for: $*, no report added for 900s" >&2; return 1; }
+    sleep 5
+  done
+}
+
 echo "==> Waiting for the scans of web and api"
-retry scanned web
-retry scanned api
+while_scanning scanned web
+while_scanning scanned api
 
 # unscannable's image does not exist: audited, never scanned, so "Not looked at" is always seeded.
 audited() { # app label
@@ -38,4 +50,4 @@ stalled_settled() {
 }
 
 echo "==> Waiting for stalled's old ReplicaSet to lose its verdict, and the new one's scan"
-retry stalled_settled
+while_scanning stalled_settled

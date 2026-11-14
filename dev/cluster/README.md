@@ -85,6 +85,7 @@ One directory per component under `components/`:
 |------|-----|
 | Fetch upstream manifests at a release tag | Tags follow the 15-day floor, so the pin is often not the newest |
 | Apply server-side (`apply_url`) | Some CRDs, such as ArgoCD's ApplicationSet, are too big for a client-side apply |
+| Change an upstream manifest with `apply_kustomized`, never `kubectl set` or `patch` after it | The apply puts the upstream value back, so each rerun can roll the Deployment away and back |
 | A state to cause goes into `states.sh` | `settle.sh` only waits; Prometheus's re-labels to re-emit rejections, nothing else changes |
 | A component another needs goes into that package's `NEEDS`, in install order | The full seed hides a missing one; `make cluster PACKAGE=<name>` on a fresh cluster shows it |
 | Every fixture comes from this cluster | The repository is public; never hand-write one ([testing](../../docs/testing.md#fixtures)) |
@@ -101,5 +102,6 @@ The sample TLS Secrets hold placeholders, so `tls: failed to find any PEM data` 
 | `namespace NAME` | Creates the namespace if missing |
 | `apply FILE...` | `kubectl apply -f` each file |
 | `apply_url URL...` | Applies each URL server-side, retried |
+| `apply_kustomized [-n NAMESPACE] URL... <<EOF` | Same, through a kustomization whose `images` and `patches` come from stdin |
 | `wait_deploy NAMESPACE DEPLOYMENT...` | Waits for each rollout |
 | `retry COMMAND...`, `retry_for SECONDS COMMAND...` | Runs the command until it succeeds or times out |

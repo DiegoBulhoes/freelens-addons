@@ -64,6 +64,17 @@ retry() { retry_for 900 "$@"; }
 # Retried: a fetch can fail; server-side: some CRDs are too big for the last-applied annotation.
 apply_url() { for url in "$@"; do retry kubectl apply --server-side --force-conflicts -f "${url}"; done; }
 
+# apply_url through a kustomization whose other fields come from stdin: the objects go in already
+# changed, so a rerun applies what is live and rolls nothing back and forth.
+apply_kustomized() { # [-n namespace] resource... < fields
+  local dir ns=()
+  if [[ "$1" == -n ]]; then ns=(-n "$2"); shift 2; fi
+  dir="$(mktemp -d)"
+  { echo "resources:"; printf '  - %s\n' "$@"; cat; } > "${dir}/kustomization.yaml"
+  retry kubectl apply --server-side --force-conflicts "${ns[@]}" -k "${dir}"
+  rm -rf "${dir}"
+}
+
 # Waits for each deployment in the namespace to roll out.
 wait_deploy() { # namespace deployment...
   local ns=$1; shift
