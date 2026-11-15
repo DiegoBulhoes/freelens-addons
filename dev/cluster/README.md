@@ -34,7 +34,7 @@ flowchart LR
 | `cluster.sh install --for cnpg` | Installs what that package needs, from `NEEDS`. `make cluster PACKAGE=cnpg` runs it |
 | `cluster.sh settle prometheus` | Runs that component's `settle.sh` again, for a state that expired |
 | `cluster.sh rejections` | Has the Prometheus operator emit its expired rejection Events again; `make e2e` runs it |
-| `cluster.sh fixtures [package...]` | Writes the test fixtures, from a full install only ([testing](../../docs/testing.md#fixtures)) |
+| `cluster.sh fixtures [package...]` | Writes the test fixtures, from a full install only ([testing](../../docs/general/testing.md#fixtures)) |
 
 ## What gets installed
 
@@ -88,7 +88,7 @@ One directory per component under `components/`:
 | Change an upstream manifest with `apply_kustomized`, never `kubectl set` or `patch` after it | The apply puts the upstream value back, so each rerun can roll the Deployment away and back |
 | A state to cause goes into `states.sh` | `settle.sh` only waits; Prometheus's re-labels to re-emit rejections, nothing else changes |
 | A component another needs goes into that package's `NEEDS`, in install order | The full seed hides a missing one; `make cluster PACKAGE=<name>` on a fresh cluster shows it |
-| Every fixture comes from this cluster | The repository is public; never hand-write one ([testing](../../docs/testing.md#fixtures)) |
+| Every fixture comes from this cluster | The repository is public; never hand-write one ([testing](../../docs/general/testing.md#fixtures)) |
 | A new extension adds its component, `NEEDS` entry and CI leg | `scripts/checks/e2e-legs.sh` fails until they name the same set |
 
 The sample TLS Secrets hold placeholders, so `tls: failed to find any PEM data` on apply is expected.

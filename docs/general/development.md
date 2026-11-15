@@ -44,7 +44,7 @@ scaffolds the package, tests, fixtures, docs page and e2e suite. Then:
 
 1. Run `pnpm install --fix-lockfile` in the container. A plain install leaves the peers unresolved.
 2. Add its component under `dev/cluster/components/<name>/`, and to `COMPONENTS` and `NEEDS` in
-   `dev/cluster/cluster.sh` ([dev/cluster/README.md](../dev/cluster/README.md)).
+   `dev/cluster/cluster.sh` ([dev/cluster/README.md](../../dev/cluster/README.md)).
 3. Add its leg to the `e2e` matrix in `.github/workflows/ci.yaml`.
 4. Run `make up`, then `make check`.
 5. Run its leg alone: `JOB=e2e LEG=<name> dev/act/run.sh` ([testing](testing.md#in-ci)).
@@ -96,7 +96,7 @@ alias dc='docker compose -f dev/docker-compose.yml --project-directory .'
 | `make up` | Build the extensions, then start or restart Freelens |
 | `make check` | CI's first four jobs: dependency gate, lint, typecheck, unit tests with coverage, build, policy checks |
 | `bash scripts/deps-refresh.sh` | Resolve the lockfile again within the ranges and the floor; monthly, and the fix for a transitive advisory |
-| `make cluster`, `make cluster-down` | The dev k3s; see [dev/cluster/README.md](../dev/cluster/README.md) |
+| `make cluster`, `make cluster-down` | The dev k3s; see [dev/cluster/README.md](../../dev/cluster/README.md) |
 | MCP server `k3s-dev` | How the agent reads the dev k3s, read-only; see [kubernetes-mcp](kubernetes-mcp.md) |
 | `make e2e`, `make e2e-writes` | End-to-end suites and real writes; see [testing](testing.md#commands) |
 | `dev/act/run.sh` | The CI workflow through act, beside the dev setup; `JOB=` and `LEG=` narrow it |

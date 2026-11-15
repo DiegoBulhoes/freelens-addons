@@ -8,7 +8,8 @@ k3s (`make cluster`) or any cluster by kubeconfig.
 | Where | What is there |
 |-------|---------------|
 | [README.md](README.md) | The extensions, install, the main commands |
-| [docs/](docs/) | Architecture, development and commands, testing, security and supply chain, distribution, one page per extension |
+| [docs/general/](docs/general/) | Architecture, development and commands, testing, security and supply chain, distribution |
+| [docs/extensions/](docs/extensions/) | One page per extension |
 | [.claude/skills/](.claude/skills/) | `freelens-extension`: how to create an extension, the design standard (`design.md`, `templates/.../design.css`). A new extension starts from this skill, not from copying a package |
 
 This file holds only what those do not, plus the rules that must never be broken.
@@ -17,13 +18,13 @@ This file holds only what those do not, plus the rules that must never be broken
 
 | Rule | Detail in |
 |------|-----------|
-| Run pnpm or Node on the host; everything runs in Docker | [docs/development.md](docs/development.md#commands) |
-| Lower the 15-day age floor; add a third-party GitHub Action; add an `osv-scanner.toml` entry without a `reason` and an expiry, or for a version instead of an advisory; add an override for a transitive advisory; edit `verify-supply-chain.sh`, `osv-direct.sh` or `first-party-only.ts` to make a build pass | [docs/security.md](docs/security.md) |
-| Make Trivy on the Freelens image blocking | [docs/security.md](docs/security.md) |
-| Propose an npm or GitHub Packages registry unless the user raises it | [docs/distribution.md](docs/distribution.md) |
-| Hand-write a fixture, or export one from any cluster but the dev k3s | [docs/testing.md](docs/testing.md) |
-| Mock a store; lower the 95% coverage or widen its exclusions | [docs/testing.md](docs/testing.md) |
-| Add a test that passes without its fix; let an e2e suite inherit state | [docs/testing.md](docs/testing.md) |
+| Run pnpm or Node on the host; everything runs in Docker | [docs/general/development.md](docs/general/development.md#commands) |
+| Lower the 15-day age floor; add a third-party GitHub Action; add an `osv-scanner.toml` entry without a `reason` and an expiry, or for a version instead of an advisory; add an override for a transitive advisory; edit `verify-supply-chain.sh`, `osv-direct.sh` or `first-party-only.ts` to make a build pass | [docs/general/security.md](docs/general/security.md) |
+| Make Trivy on the Freelens image blocking | [docs/general/security.md](docs/general/security.md) |
+| Propose an npm or GitHub Packages registry unless the user raises it | [docs/general/distribution.md](docs/general/distribution.md) |
+| Hand-write a fixture, or export one from any cluster but the dev k3s | [docs/general/testing.md](docs/general/testing.md) |
+| Mock a store; lower the 95% coverage or widen its exclusions | [docs/general/testing.md](docs/general/testing.md) |
+| Add a test that passes without its fix; let an e2e suite inherit state | [docs/general/testing.md](docs/general/testing.md) |
 | Edit a package's `styles/design.css`; edit the standard and run `scripts/checks/copy-design-standard.sh` | [design.md](.claude/skills/freelens-extension/design.md) |
 | Read Secrets through `secretsStore` | below |
 | Put screenshots or cluster-specific figures in docs | below |

@@ -8,7 +8,7 @@ const RUNTIME = new Set([
   ...builtinModules.map((name) => `node:${name}`),
 ]);
 
-// docs/security.md lets a transitive advisory only warn because a bundle carries nothing but the
+// docs/general/security.md lets a transitive advisory only warn because a bundle carries nothing but the
 // extension's own src/ and the host's globals. This checks what rollup actually built, which a
 // source map can leave out: inline workers, JSON, CSS reached by @import or url(), a plugin's
 // virtual module, and a require() left for the user's Freelens to resolve.

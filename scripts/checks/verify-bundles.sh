@@ -43,7 +43,7 @@ for dir in "${dirs[@]}"; do
     if grep -qE "(from|import) \"(${HOST_MODULES})(/[^\"]*)?\"" "${dir}/${bundle}"; then
       bad "${bundle}: imports a host module instead of reading FreelensExtensionApi"
     fi
-    # Only the extension's own src/: docs/security.md rests on no third-party code being shipped.
+    # Only the extension's own src/: docs/general/security.md rests on no third-party code being shipped.
     if [[ ! -f "${dir}/${bundle}.map" ]]; then
       bad "${bundle}: no source map, so what it bundles cannot be checked"
     else

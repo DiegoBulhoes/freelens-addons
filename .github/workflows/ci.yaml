@@ -32,7 +32,7 @@ jobs:
         with:
           ref: ${{ github.ref }}
           persist-credentials: false
-      # Before any install runs a dependency's code (docs/security.md).
+      # Before any install runs a dependency's code (docs/general/security.md).
       - name: Vulnerable dependencies and malware
         run: bash scripts/security/osv-direct.sh "${OSV_SCANNER}"
       - name: Node, from .nvmrc

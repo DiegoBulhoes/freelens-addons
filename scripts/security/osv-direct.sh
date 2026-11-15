@@ -3,7 +3,7 @@
 # depth, which no osv-scanner.toml exception can hide, and on a known vulnerability in a version
 # this repository chooses: declared in a package.json, set by an override, pnpm itself, or the
 # bundlers that write code into the shipped bundles. A finding in another transitive development
-# dependency is a warning; docs/security.md says why and how it gets fixed.
+# dependency is a warning; docs/general/security.md says why and how it gets fixed.
 # Usage: osv-direct.sh <digest-pinned osv-scanner image> [directory, default the repository]
 set -uo pipefail
 

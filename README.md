@@ -7,16 +7,16 @@ on its own.
 
 | Extension | What it shows | Writes | Docs |
 |-----------|---------------|--------|------|
-| ArgoCD | Applications ordered by what is wrong, with row actions | Yes | [argocd.md](docs/argocd.md) |
-| Trivy | Scan coverage first, then findings and upgrades | No | [trivy.md](docs/trivy.md) |
-| cert-manager | Certificates that will fail to renew, and why | Renew | [cert-manager.md](docs/cert-manager.md) |
-| CloudNativePG | Postgres clusters that need attention, and whether each can be restored | Yes | [cnpg.md](docs/cnpg.md) |
-| MongoDB | MongoDB clusters that need attention, and which member is primary | Yes | [mongodb.md](docs/mongodb.md) |
-| Redis | Redis setups that need attention, and which pod is master | Yes | [redis.md](docs/redis.md) |
-| OpenTelemetry | Workloads running without their agent, and crashing collectors | Restart | [opentelemetry.md](docs/opentelemetry.md) |
-| Prometheus | Monitors and rules nothing scrapes, and node and pod usage | No | [prometheus.md](docs/prometheus.md) |
+| ArgoCD | Applications ordered by what is wrong, with row actions | Yes | [argocd.md](docs/extensions/argocd.md) |
+| Trivy | Scan coverage first, then findings and upgrades | No | [trivy.md](docs/extensions/trivy.md) |
+| cert-manager | Certificates that will fail to renew, and why | Renew | [cert-manager.md](docs/extensions/cert-manager.md) |
+| CloudNativePG | Postgres clusters that need attention, and whether each can be restored | Yes | [cnpg.md](docs/extensions/cnpg.md) |
+| MongoDB | MongoDB clusters that need attention, and which member is primary | Yes | [mongodb.md](docs/extensions/mongodb.md) |
+| Redis | Redis setups that need attention, and which pod is master | Yes | [redis.md](docs/extensions/redis.md) |
+| OpenTelemetry | Workloads running without their agent, and crashing collectors | Restart | [opentelemetry.md](docs/extensions/opentelemetry.md) |
+| Prometheus | Monitors and rules nothing scrapes, and node and pod usage | No | [prometheus.md](docs/extensions/prometheus.md) |
 
-Tested versions: [distribution.md](docs/distribution.md#compatibility).
+Tested versions: [distribution.md](docs/general/distribution.md#compatibility).
 
 ## Installing
 
@@ -30,7 +30,7 @@ Tested versions: [distribution.md](docs/distribution.md#compatibility).
    carried over.
 3. Enable it from its ⋮ menu: it starts disabled.
 
-What to check when the group is missing: [distribution.md](docs/distribution.md).
+What to check when the group is missing: [distribution.md](docs/general/distribution.md).
 
 ## Developing
 
@@ -46,7 +46,7 @@ flowchart LR
 
 Run `make up`, set `KUBECONFIG_PATH` in the `.env` it writes, and run it again. Freelens opens at
 `http://localhost:6080/vnc.html?autoconnect=1&resize=scale`. The rest is in
-[development.md](docs/development.md); a disposable cluster is in
+[development.md](docs/general/development.md); a disposable cluster is in
 [dev/cluster/README.md](dev/cluster/README.md).
 
 ## Documentation
@@ -54,12 +54,12 @@ Run `make up`, set `KUBECONFIG_PATH` in the `.env` it writes, and run it again. 
 | Document | Contents |
 |----------|----------|
 | One page per extension | Linked in the table above |
-| [development.md](docs/development.md) | The loop, commands, adding an extension |
-| [architecture.md](docs/architecture.md) | The workbench container and what the extension loader requires |
-| [testing.md](docs/testing.md) | Test approach and where fixtures come from |
-| [distribution.md](docs/distribution.md) | Installing, enabling and cutting a release |
-| [security.md](docs/security.md) | Supply-chain rules and what CI enforces |
-| [kubernetes-mcp.md](docs/kubernetes-mcp.md) | The read-only Kubernetes MCP the agent uses on the dev k3s |
+| [development.md](docs/general/development.md) | The loop, commands, adding an extension |
+| [architecture.md](docs/general/architecture.md) | The workbench container and what the extension loader requires |
+| [testing.md](docs/general/testing.md) | Test approach and where fixtures come from |
+| [distribution.md](docs/general/distribution.md) | Installing, enabling and cutting a release |
+| [security.md](docs/general/security.md) | Supply-chain rules and what CI enforces |
+| [kubernetes-mcp.md](docs/general/kubernetes-mcp.md) | The read-only Kubernetes MCP the agent uses on the dev k3s |
 
 ## Licence
 
