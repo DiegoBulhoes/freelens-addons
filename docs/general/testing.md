@@ -90,7 +90,8 @@ volume-snapshot backups have unit tests only: the dev k3s has no VolumeSnapshotC
 
 One workflow, `.github/workflows/ci.yaml`, on pull requests to `main`, by hand, and from the release,
 which runs it on its version commit before it tags ([distribution](distribution.md#cutting-a-release)).
-Each job runs only if the one before passed. A new push to a pull request cancels its older run.
+A pull request that changes only Markdown or `.github/` starts no run. Each job runs only if the
+one before passed. A new push to a pull request cancels its older run.
 
 ```mermaid
 flowchart LR
