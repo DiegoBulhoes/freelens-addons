@@ -36,7 +36,7 @@ fresh_copy() {
 }
 
 # Otherwise act asks which runner image to use.
-echo "-P ubuntu-latest=${IMAGE}" > "${HOME}/.actrc"
+echo "-P ubuntu-26.04=${IMAGE}" > "${HOME}/.actrc"
 
 # As on GitHub, the next run's k3s and Freelens start with no state; the pnpm store is kept.
 remove_setup() {

@@ -24,7 +24,7 @@ env:
 jobs:
   lint:
     name: 1. Dependencies and lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -58,7 +58,7 @@ jobs:
   typecheck:
     name: 2. Typecheck
     needs: lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -80,7 +80,7 @@ jobs:
   test:
     name: 3. Unit tests
     needs: typecheck
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -103,7 +103,7 @@ jobs:
   build:
     name: 4. Build
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -127,7 +127,7 @@ jobs:
   security:
     name: 5. Secrets and Dockerfiles
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -153,7 +153,7 @@ jobs:
   image:
     name: 6. Freelens image
     needs: security
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
     steps:
       - name: Checkout
@@ -181,7 +181,7 @@ jobs:
   e2e:
     name: 7. End-to-end, ${{ matrix.leg }}
     needs: image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 45
     strategy:
       fail-fast: false
@@ -278,7 +278,7 @@ jobs:
   smoke:
     name: 8. Smoke, every extension on the full seed
     needs: e2e
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 60
     steps:
       - name: Checkout
