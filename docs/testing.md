@@ -26,12 +26,8 @@ flowchart LR
   W --> R["real writes<br/><i>checked in the cluster</i>"]
 ```
 
-| Layer | Covers | Runs in |
-|-------|--------|---------|
-| Unit | Every decision in `src/renderer/api/` | `make check`, CI |
-| Bundle check | Bundles Freelens would skip, and code from outside each extension's `src/` | `make check`, CI |
-| End-to-end | Pages, controls, numbers, layout and design in the real app | `make e2e`, CI |
-| Real writes | Each write done through the UI, its effect read from the cluster | `make e2e-writes`, CI |
+Unit tests run in `make check`; the other two need a running Freelens and the dev k3s. CI runs all
+three.
 
 ## Commands
 
@@ -45,37 +41,17 @@ The cluster commands are in [development](development.md#commands).
 | `make e2e PACKAGE=cnpg FILES=clusters/` | Only the files whose path matches: a file (`layout`) or a folder |
 | `make e2e-writes [PACKAGE=cnpg]` | Real writes; a package without any is skipped |
 
-Watch one package's unit tests:
-
-```bash
-docker compose -f dev/docker-compose.yml --project-directory . \
-  run --rm --no-deps --entrypoint sh -w /workspace freelens \
-  -lc "cd packages/argocd && pnpm test:watch"
-```
-
 ## Unit tests
 
-| Topic | Rule |
-|-------|------|
-| Host | `@freelensapp/extensions` resolves to `test/support/freelens-host.ts`: the real `KubeObject` and `KubeApi`, from `@freelensapp/kube-object` and `kube-api` 1.10.3 (test-only; Freelens 2 no longer publishes them). The v2 package throws outside the host. `tsc` still checks against the v2 declarations |
-| Layout | `src/renderer/api/` has a folder per page, `shared/` and `writes/`; `test/` mirrors it |
-| Support | `test/support/` holds the host and fixture helpers; `test/fixtures/` the export |
-| Coverage | 95% of statements, branches, functions and lines in `src/renderer/api/`, and in main modules that decide (argocd's `src/main/state-file.ts`) |
-| Excluded | Modules that only declare, register or send, such as `shared/types.ts` and `writes/actions.ts`; the list is in each package's `vitest.config.ts` |
-| React pages | Covered by the e2e suite and `verify-bundles.sh` |
-
-A case starts from a real fixture and changes only the field under test:
-
-```ts
-const stuck = variantOf("guestbook", (data) => {
-  statusOf(data).operationState = {
-    phase: "Running",
-    startedAt: new Date(NOW - 20 * 60_000).toISOString(),
-  };
-});
-
-expect(getAttentionItems([stuck], NOW)[0]?.headline).toBe("Sync stuck");
-```
+- **No mocks.** `@freelensapp/extensions` resolves to `test/support/freelens-host.ts`, which hands
+  out the real `KubeObject` and `KubeApi`. They come from `@freelensapp/kube-object` and `kube-api`
+  1.10.3, test-only: Freelens 2 no longer publishes them. `tsc` checks against the v2 declarations.
+- **Layout.** `test/` mirrors `src/renderer/api/`. `test/support/` holds the helpers,
+  `test/fixtures/` the export.
+- **Coverage.** 95% of `src/renderer/api/`, and of main modules that decide. Modules that only
+  declare, register or send are excluded; the list is in each package's `vitest.config.ts`.
+- **A case** starts from a real fixture and changes only the field under test (`variantOf`).
+- **React pages** are covered by the e2e suites.
 
 ## End-to-end
 
@@ -84,21 +60,8 @@ Protocol. Freelens loads every extension; `PACKAGE` and `FILES` narrow only the 
 
 | Path | Holds |
 |------|-------|
-| `build/e2e/cdp.ts` | The protocol client |
-| `build/e2e/freelens.ts` | Frame, sidebar, namespace scope, menus, dialogs; `leaveNothingBehind`, `freshClusterFrame` |
-| `build/e2e/design.ts` | `designViolations()` and `dialogColourViolations()` |
-| `build/e2e/writes.ts` | Helpers for [real writes](#real-writes) |
-| `packages/<name>/e2e/` | The extension's suites, one folder per page |
-
-| Folder of `e2e/` | Checks |
-|------------------|--------|
-| `shared/` | Every page: `pages-render`, `layout`, `namespace-scope` |
-| `overview/` | Cards and numbers against the cluster, read through the host's proxy |
-| One per page | The list, row menu, controls and drawer match the cluster and the standard |
-| `selection/` | Ticked rows: the bulk dialog, what it skips and why |
-| `flow-*` | One flow start to end (ArgoCD pin, cert-manager renewal) |
-| `writes/` | [Real writes](#real-writes) |
-| `support/` | The package's shared setup |
+| `build/e2e/` | The protocol client, the page helpers, the design measurements and the write helpers |
+| `packages/<name>/e2e/` | The suites: `shared/` for every page, then one folder per page, `selection/` and `writes/` |
 
 Read-only suites press a write up to its confirmation and cancel.
 
@@ -120,17 +83,8 @@ flowchart LR
 | Each test leaves the seed as it found it | Undo where there is one, else `restore()`, registered with `putBackWith` so it runs however the test ends |
 | A delete only for an object the test can recreate as seeded | CloudNativePG's Subscription is the one case |
 
-| Package | Writes |
-|---------|--------|
-| ArgoCD | Refresh, sync, terminate, roll back, freeze and resume, Image Updater edits |
-| cert-manager | Renew |
-| CloudNativePG | Back up, reload, switchover, restart, hibernate, maintenance window, schedules, poolers, subscriptions |
-| MongoDB | Switch primary, scale, restart |
-| Redis | Failover, scale, restart |
-| OpenTelemetry | Restart |
-
-Trivy and Prometheus write nothing. CloudNativePG's volume-snapshot backups have unit tests only:
-the dev k3s has no VolumeSnapshotClass.
+Each extension's page lists its writes; Trivy and Prometheus have none. CloudNativePG's
+volume-snapshot backups have unit tests only: the dev k3s has no VolumeSnapshotClass.
 
 ## In CI
 
@@ -146,11 +100,10 @@ flowchart LR
   E --> X["8. Smoke<br/>every extension, full seed"]
 ```
 
-| Job | When | What |
-|-----|------|------|
-| 1 to 6 | Every run | Checks, unit tests, build, scans and the Freelens image |
-| 7 | Every run: pull requests, by hand and the release | One leg per extension: `make cluster`, `make e2e`, `make e2e-writes` with its `PACKAGE`. A failing leg does not cancel the others; it prints logs and cluster state |
-| 8 | After every leg passed | Every `pages-render` suite in one window on the full seed, as a person who installs them all |
+- **1 to 6:** checks, unit tests, build, scans and the Freelens image.
+- **7:** one leg per extension: `make cluster`, `make e2e` and `make e2e-writes` with its `PACKAGE`.
+  A failing leg does not cancel the others.
+- **8:** every `pages-render` suite in one window on the full seed, as someone who installs them all.
 
 `scripts/checks/e2e-legs.sh` fails unless the legs, `packages/` and the `NEEDS` map in
 `dev/cluster/cluster.sh` name the same extensions.
@@ -179,14 +132,9 @@ dev/cluster/cluster.sh fixtures argocd   # one
 | Trivy namespaces | Only those in `TRIVY_NAMESPACES` in `export.sh`; a new Trivy case's namespace goes there |
 | Prometheus | Also what each Prometheus API answers, and each TargetAllocator's job names |
 
-| Removed or replaced | Reason |
-|---------------------|--------|
-| Node IPs, UUIDs, domains in `FIXTURE_REDACT_DOMAINS` | Identify the host |
-| `env` values, `envFrom`, credential flags in `args`, exporter and remote-write headers, tokens, proxy URLs | Credentials |
-| Secret `data`, ACME keys, certificate requests, last-applied annotations | Secrets, and addresses inside base64 |
-| `managedFields`, sync results, SBOM components | Size |
-
-The full list is `sanitise.py`. `metadata.selfLink` is filled in, since `KubeObject` needs it.
+The sanitiser removes what identifies the host (IPs, UUIDs, the domains in
+`FIXTURE_REDACT_DOMAINS`), credentials and Secret data, and bulk such as `managedFields`. The full
+list is `sanitise.py`.
 
 ## Rules
 
@@ -199,7 +147,6 @@ The full list is `sanitise.py`. `metadata.selfLink` is filled in, since `KubeObj
 | e2e sets up its own state | Freelens remembers sidebar groups and the namespace scope |
 | No leg inherits state | Each leg seeds its own k3s and starts its own Freelens |
 | Wait for a late state in `settle.sh` | Never with a longer timeout in a test |
-| `make e2e` has the Prometheus operator emit its rejections again | Those Events expire after an hour |
 | Prometheus pages mark `data-live="read"` | Suites wait on it instead of sleeping |
 | e2e follows a person's order | Narrow, look, widen, look |
 | Change a loading path, run every `namespace-scope` suite | The hooks share one pattern |

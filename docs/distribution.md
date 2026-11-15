@@ -38,15 +38,8 @@ Tested on the versions the dev cluster installs and the e2e suites drive.
 
 ## What ships
 
-| In the tarball | What it is |
-|----------------|------------|
-| `package/package.json` | Entrypoints and `engines.freelens` |
-| `package/out/main/index.mjs` | Main-process bundle (ES module) and sourcemap |
-| `package/out/renderer/index.js` | Renderer bundle (ES module) and sourcemap |
-| `package/LICENSE` | Apache 2.0; `pnpm pack` adds the root `LICENSE` to a package that has none |
-
-No sources and no `dependencies`: the extension API, React and MobX come from the host. Every
-manifest declares `"files": ["out"]`, or npm would leave out the `renderer` bundle.
+A tarball holds `package.json`, the two bundles under `out/` with their sourcemaps, and `LICENSE`.
+No sources and no `dependencies`: the extension API, React and MobX come from the host.
 
 Build the tarballs into `dist/`:
 
@@ -65,9 +58,8 @@ docker compose -f dev/docker-compose.yml --project-directory . \
 
 Freelens 2 does not carry over extensions installed under 1.x: install the 2.x tarball again.
 
-Without the window, extract it into `<userData>/extensions/<name>/`; a running Freelens picks it
-up. `<userData>` is `~/.config/Freelens` on Linux, `~/Library/Application Support/Freelens` on
-macOS and `%APPDATA%\Freelens` on Windows. Freelens lists it as unverified, disabled:
+Without the window, extract it into `<userData>/extensions/<name>/` (`~/.config/Freelens` on
+Linux). A running Freelens picks it up and lists it as unverified, disabled:
 
 ```bash
 mkdir -p ~/.config/Freelens/extensions/freelens-addons-argocd
@@ -121,19 +113,10 @@ flowchart LR
   R --> T["Tag that commit<br/>GitHub release with<br/>.tgz and SHA256SUMS"]
 ```
 
-| Step | Why |
-|------|-----|
-| Gate | Same dependency scan as CI ([security](security.md#vulnerabilities)). Next version from the latest `vX.Y.Z` tag (none: `v0.0.0`); refuses an existing tag |
-| Version commit | `chore(release): X.Y.Z` by `github-actions[bot]`; only the version lines change. Already at that version (a retry): no commit. Refused if `main` moved since the run began |
-| CI, build, tag | All on the version commit, so the tag holds what was tested |
-| Install with the lockfile | Re-checks the 15-day age floor |
-| `verify-bundles.sh` | The loader contract, and no code from outside each extension's `src/` |
-| Check tarballs | Both entrypoints, the manifest and `LICENSE` are inside |
-
-| Job | Token |
-|-----|-------|
-| Gate, CI | `contents: read` |
-| Version commit, tag and publish | `contents: write` |
+- The gate runs the same dependency scan as CI and refuses a tag that exists.
+- The version commit is `chore(release): X.Y.Z` by `github-actions[bot]`; only version lines change.
+- CI, the build and the tag all use that commit, so the tag holds what was tested.
+- The tarballs are checked before publishing: both entrypoints, the manifest and `LICENSE`.
 
 A failed release leaves no tag: start a new run with the same `bump`. A push made by the workflow
 starts no other workflow.
@@ -142,8 +125,5 @@ starts no other workflow.
 
 Every manifest keeps `"private": true`, so `npm publish` fails; `pnpm pack` still works.
 
-| Registry | Why not |
-|----------|---------|
-| Any authenticated one | Freelens sends no token when it fetches from a registry |
-| GitHub Packages | Needs a token even for public reads |
-| npmjs | Would work. Not chosen: release tarballs are enough |
+Freelens sends no token when it fetches from a registry, and GitHub Packages needs one even for
+public reads. npmjs would work; release tarballs are enough.
