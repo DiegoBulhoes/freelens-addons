@@ -13,7 +13,8 @@ patches:
   - target: {kind: Deployment, name: prometheus-operator}
     patch: '[{"op": "replace", "path": "/spec/template/spec/containers/0/resources/requests/cpu", "value": "20m"}]'
 EOF
-kubectl wait --for=condition=Established --timeout=120s \
+# Retried: a CRD just created has a null conditions list, which kubectl wait fails on.
+retry_for 180 kubectl wait --for=condition=Established --timeout=60s \
   crd/servicemonitors.monitoring.coreos.com crd/podmonitors.monitoring.coreos.com \
   crd/scrapeconfigs.monitoring.coreos.com crd/prometheusrules.monitoring.coreos.com \
   crd/prometheuses.monitoring.coreos.com crd/prometheusagents.monitoring.coreos.com \
