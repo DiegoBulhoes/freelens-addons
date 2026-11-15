@@ -11,7 +11,7 @@ import {
 import { cnpgWrites, DRAWER, PODS } from "../support/cnpg";
 
 // orders-db-3 keeps its replay paused, the seed's lag: nothing here restarts or promotes it, and
-// the last test checks the pause survived. Restarts use inventory-db and billing-db.
+// the last test checks it is still paused and streaming. Restarts use inventory-db and billing-db.
 describe("CloudNativePG writes, checked in the cluster", () => {
   let session: Session;
   let frame: number;
@@ -32,6 +32,37 @@ describe("CloudNativePG writes, checked in the cluster", () => {
         frame,
       )
     ).match(/^cnpg_pg_postmaster_start_time\S*\s+(\S+)/m)?.[1];
+
+  const psql = (pod: string, database: string, sql: string) =>
+    execIn(session, frame, "databases", pod, "postgres", [
+      "psql",
+      "-At",
+      "-d",
+      database,
+      "-c",
+      sql,
+    ]);
+
+  const streaming = async (replica: string) =>
+    (
+      await psql(
+        "orders-db-2",
+        "postgres",
+        `select count(*) from pg_stat_replication where application_name = '${replica}' and state = 'streaming'`,
+      )
+    ).trim() === "1";
+
+  // A paused replica cannot follow a switchover: resumed, it joins the new timeline, then lags again.
+  const pauseAgainBehind = async () => {
+    await psql("orders-db-3", "postgres", "select pg_wal_replay_resume()");
+    await untilCluster("orders-db-3 streaming", () => streaming("orders-db-3"), 10 * 60_000);
+    await psql("orders-db-3", "postgres", "select pg_wal_replay_pause()");
+    await psql(
+      "orders-db-2",
+      "app",
+      "insert into orders select m + g, now(), g * 1.5 from (select coalesce(max(id), 0) m from orders) t, generate_series(1, 20000) g",
+    );
+  };
 
   const switchBack = async () => {
     await untilCluster("orders-db healthy", () => healthy("orders-db"), 10 * 60_000);
@@ -59,15 +90,13 @@ describe("CloudNativePG writes, checked in the cluster", () => {
         await switchBack();
       }
       // A switchover drops orders-sub's logical slot; the seed creates it again, and so must we.
-      await execIn(session, frame, "databases", "orders-db-2", "postgres", [
-        "psql",
-        "-At",
-        "-d",
+      await psql(
+        "orders-db-2",
         "app",
-        "-c",
         "select pg_create_logical_replication_slot('orders_sub', 'pgoutput') where not exists (select from pg_replication_slots where slot_name = 'orders_sub')",
-      ]);
-    });
+      );
+      await pauseAgainBehind();
+    }, 25 * 60_000);
     await openCluster("orders-db");
     await icon("swap_horiz");
     await waitFor("the replica choice", async () =>
@@ -172,7 +201,7 @@ describe("CloudNativePG writes, checked in the cluster", () => {
     expect(slots.trim()).toBe("1");
   });
 
-  it("left orders-db-3 with its replay paused, as seeded", async () => {
+  it("left orders-db-3 with its replay paused and streaming, as seeded", async () => {
     const status = await get(`${PODS}/https:orders-db-3:8000/proxy/pg/status`);
 
     if (!status?.replayPaused) {
@@ -185,5 +214,6 @@ describe("CloudNativePG writes, checked in the cluster", () => {
     }
 
     expect(status?.replayPaused).toBe(true);
+    expect(await streaming("orders-db-3")).toBe(true);
   });
 });

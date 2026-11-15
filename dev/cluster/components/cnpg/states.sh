@@ -36,6 +36,8 @@ psql_on orders-db-2 app "select pg_create_logical_replication_slot('orders_sub',
 streaming() { [[ "$(psql_on orders-db-2 postgres "select count(*) from pg_stat_replication where application_name = '$1' and state = 'streaming'")" == 1 ]]; }
 
 echo "==> Pausing replay on orders-db-3, then writing on the primary"
+# A paused replica cannot follow a switchover: resumed, it joins the new timeline and streams again.
+psql_on orders-db-3 postgres "select pg_wal_replay_resume()"
 retry streaming orders-db-3
 psql_on orders-db-3 postgres "select pg_wal_replay_pause()"
 # New ids each run, so the paused replica falls behind again.
